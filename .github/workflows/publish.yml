@@ -7,6 +7,10 @@ jobs:
   Publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+        with:
+          ref: "main"
       - name: Install Python
         uses: actions/setup-python@v2
         with:
@@ -18,5 +22,7 @@ jobs:
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@master
         with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          username: __token__
+
