@@ -1,0 +1,20 @@
+# dataset.config.yaml
+
+logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/logs"
+
+my_tamr_instance:
+    host: $TAMR_HOST # Example: "1.2.3.4"
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+datasets:
+    my_mastering_project_dataset:
+        name: "my_mastering_project_unified_dataset_published_clusters_with_data"
+        id: "5"
+        export_file_path: "/path/to/data/output/my_mastering_project_unified_dataset_published_clusters_with_data.csv"
+    my_categorization_project_dataset:
+        name: "my_categorization_project_unified_dataset_classifications_with_data"
+        id: "12"
+        export_file_path: "/path/to/data/output/my_categorization_project_unified_dataset_classifications_with_data.csv"

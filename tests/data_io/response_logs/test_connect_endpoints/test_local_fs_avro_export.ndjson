@@ -1,0 +1,2 @@
+{"method": "GET", "url": "http://ip-00001:9030/api/service/health", "status": 200, "content_type": "application/json", "body": "{\"/api/user\":{\"healthy\":true,\"timestamp\":\"2020-07-13T15:52:35.810Z\"},\"Procurify\":{\"healthy\":true,\"timestamp\":\"2020-07-13T15:52:35.813Z\"},\"deadlocks\":{\"healthy\":true,\"timestamp\":\"2020-07-13T15:52:35.814Z\"}}"}
+{"method": "POST", "url": "http://ip-00001:9030/api/urlExport/serverfs/avro", "status": 200, "content_type": "application/json", "body": "true"}

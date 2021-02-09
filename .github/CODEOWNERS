@@ -1,0 +1,8 @@
+# Code owners are automatically added as reviewers to PRs for the code they own
+# Each line is a file pattern followed by one or more owners.
+# Details about code owners can be found in the link below
+# https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+
+# These owners will be the default owners for everything in the repo.
+*       @aitamr @along528 @clint-richardson @keziah-tamr @pareantoine

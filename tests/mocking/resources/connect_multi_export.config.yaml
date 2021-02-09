@@ -1,0 +1,23 @@
+df_connect:
+    host: localhost
+    protocol: "https"
+    port: ""
+    base_path: "df_connect"
+    tamr_username: my_user
+    tamr_password: my_password
+    jdbc:
+        ingest:
+            jdbc_url: tamr::jdbc_ingest
+            db_user: ingest_user
+            db_password: ingest_pw
+            fetch_size: 10000
+        oracle:
+            jdbc_url: jdbc::oracle_db
+            db_user: oracle_user
+            db_password: oracle_pw
+            fetch_size: 0
+        postgres:
+            jdbc_url: jdbc::postgres_db
+            db_user: postgres_user
+            db_password: postgres_pw
+            fetch_size: 0

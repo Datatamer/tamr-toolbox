@@ -1,0 +1,63 @@
+"""Tests for Tamr Schema Mapping project example scripts"""
+from tamr_toolbox import utils
+from tamr_toolbox.utils.testing import mock_api
+
+from examples.scripts.project.schema_mapping import (
+    run_schema_mapping_simple,
+    run_schema_mapping_verbose,
+)
+from tests._common import get_toolbox_root_dir
+
+CONFIG = utils.config.from_yaml(
+    path_to_file=get_toolbox_root_dir() / "examples/resources/conf/project.config.yaml"
+)
+
+
+@mock_api()
+def test_run_schema_mapping_simple():
+    run_schema_mapping_simple.LOGGER = utils.logger.create(__name__)
+
+    all_ops = run_schema_mapping_simple.main(
+        instance_connection_info=CONFIG["my_tamr_instance"],
+        schema_mapping_project_id=CONFIG["projects"]["my_schema_mapping_project"],
+    )
+
+    # Check that all operations run completed successfully
+    for op in all_ops:
+        assert op.succeeded()
+
+    # Check that the number of operations run is exactly 1
+    assert len(all_ops) == 1
+
+    # Check that the descriptions of the operations run, match the tasks we wanted to complete
+    tamr_client = utils.client.create(**CONFIG["my_tamr_instance"])
+    project = tamr_client.projects.by_resource_id(CONFIG["projects"]["my_schema_mapping_project"])
+    assert (
+        f"Materialize views [{project.unified_dataset().name}] to Elastic"
+        == all_ops[0].description
+    )
+
+
+@mock_api()
+def test_run_schema_mapping_verbose():
+    run_schema_mapping_verbose.LOGGER = utils.logger.create(__name__)
+
+    all_ops = run_schema_mapping_verbose.main(
+        instance_connection_info=CONFIG["my_tamr_instance"],
+        schema_mapping_project_id=CONFIG["projects"]["my_schema_mapping_project"],
+    )
+
+    # Check that all operations run completed successfully
+    for op in all_ops:
+        assert op.succeeded()
+
+    # Check that the number of operations run is exactly 1
+    assert len(all_ops) == 1
+
+    # Check that the descriptions of the operations run, match the tasks we wanted to complete
+    tamr_client = utils.client.create(**CONFIG["my_tamr_instance"])
+    project = tamr_client.projects.by_resource_id(CONFIG["projects"]["my_schema_mapping_project"])
+    assert (
+        f"Materialize views [{project.unified_dataset().name}] to Elastic"
+        == all_ops[0].description
+    )

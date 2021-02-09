@@ -1,0 +1,16 @@
+my_instance_name:
+    host: $TAMR_HOST    # Example: "10.0.0.0", or "0.0.0.0", or "localhost"
+    protocol: "http"
+    port: "9100"
+    username: $TAMR_USERNAME  # Example: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+my_other_instance:
+    host: $TAMR_OTHER_HOST    # Example: "10.0.0.0", or "0.0.0.0", or "localhost"
+    protocol: "http"
+    port: "9100"
+    username: $TAMR_USERNAME  # Example: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+logging_dir: "/full/path/to/logging/directory"
+
