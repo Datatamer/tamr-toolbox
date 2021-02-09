@@ -1,0 +1,5 @@
+# export environment variables which can be fed to yaml config files
+# use the bash command `source setup-variables.sh` to export the contents of this file
+export TAMR_HOST="<hostname or IP>"
+export TAMR_USERNAME="<username>"
+export TAMR_PASSWORD="<password>"
