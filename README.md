@@ -3,7 +3,7 @@ Tamr-Toolbox is a python library created to provide a simple interface for commo
 
 __Releases:__ https://github.com/Datatamer/tamr-toolbox/releases 
 
-__Documentation Home:__ https://datatamer.github.io/tamr-toolbox/latest/index.html
+__Documentation Home:__ https://datatamer.github.io/tamr-toolbox/latest/
 
 __Installation:__ https://datatamer.github.io/tamr-toolbox/latest/installation.html
 
