@@ -1,0 +1,14 @@
+logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/logs"
+
+my_tamr_instance:
+    host: $TAMR_HOST # Example: "1.2.3.4"
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+projects:
+    my_mastering_project: "1"
+    my_golden_records_project: "2"
+    my_categorization_project: "3"
+    my_schema_mapping_project: "4"

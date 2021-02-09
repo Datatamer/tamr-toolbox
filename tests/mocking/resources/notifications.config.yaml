@@ -1,0 +1,15 @@
+my_instance_name:
+    host: $TAMR_TOOLBOX_HOST
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_TOOLBOX_PASSWORD
+
+projects:
+    minimal_mastering: "1"
+    minimal_golden_records: "2"
+    minimal_categorization: "3"
+    minimal_schema_mapping: "4"
+
+my_slack_notification:
+    slack_api_token: "dummy_token"

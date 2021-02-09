@@ -1,0 +1,21 @@
+my_instance_name:
+    host: $TAMR_TOOLBOX_HOST
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_TOOLBOX_PASSWORD
+
+my_other_instance:
+    host: "1.2.3.4"
+    protocol: "http"
+    port: "9100"
+    username: "my_user_name"
+    password: "my_password"
+
+logging_dir: "/full/path/to/logging/directory"
+
+projects:
+    minimal_mastering: "1"
+    minimal_golden_records: "2"
+    minimal_categorization: "3"
+    minimal_schema_mapping: "4"
