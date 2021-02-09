@@ -1,0 +1,2 @@
+{"method": "GET", "url": "http://ip-00001:9030/api/service/health", "status": 200, "content_type": "application/json", "body": "{\"/api/user\":{\"healthy\":true,\"timestamp\":\"2020-07-07T13:42:03.280Z\"},\"Procurify\":{\"healthy\":true,\"timestamp\":\"2020-07-07T13:42:04.004Z\"},\"deadlocks\":{\"healthy\":true,\"timestamp\":\"2020-07-07T13:42:04.006Z\"}}"}
+{"method": "POST", "url": "http://ip-00001:9030/api/jdbcIngest/profile", "status": 200, "content_type": "application/json", "body": "true"}

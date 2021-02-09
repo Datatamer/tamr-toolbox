@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - release-*
+  pull_request:
+    branches:
+      - master
+      - release-*
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+    - name: Install requirements
+      run: python install.py
+    - name: Run flake8
+      run: invoke lint
+    - name: Run black
+      run: invoke format
+  Test:
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: invoke test
+  Test-Minimum-Versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Set requirements to minimum
+        run: sed -i 's/>=/==/g' requirements.txt
+      - name: Set optional_requirements to minimum
+        run: sed -i 's/>=/==/g' optional_requirements.txt
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: invoke test
+  Test-Windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python_version: [3.6, 3.7, 3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: python -m pytest
+  Test-Core-Dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install requirements
+        run: |
+          python -m pip install --upgrade pip==20.0.2
+          python -m pip install .
+      - name: Import tamr_toolbox
+        run: python -c 'import tamr_toolbox'
+  Docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install requirements
+        run: python install.py
+      - name: Build docs
+        run: invoke docs

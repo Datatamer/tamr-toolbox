@@ -1,0 +1,17 @@
+df_connect:
+    host: $CONNECT_HOST
+    protocol: "http"
+    port: "9030"
+    tamr_username: $TAMR_USERNAME
+    tamr_password: $TAMR_PASSWORD
+    jdbc:
+        oracle:
+            jdbc_url: $CONNECT_ORACLE_DB_URL
+            db_user: $CONNECT_ORACLE_DB_USERNAME
+            db_password: $CONNECT_ORACLE_DB_PASSWORD
+            fetch_size: 10000
+        postgres:
+            jdbc_url: $CONNECT_POSTGRES_DB_URL
+            db_user: $CONNECT_POSTGRES_DB_USERNAME
+            db_password: $CONNECT_POSTGRES_DB_PASSWORD
+            fetch_size: 10000

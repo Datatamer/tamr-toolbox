@@ -1,0 +1,23 @@
+df_connect:
+    host: $CONNECT_HOST
+    protocol: "https"
+    port: ""
+    base_path: "df_connect"
+    tamr_username: $TAMR_USERNAME
+    tamr_password: $TAMR_PASSWORD
+    jdbc:
+        ingest:
+            jdbc_url: $CONNECT_INGEST_DB_URL
+            db_user: $CONNECT_INGEST_DB_USERNAME
+            db_password: $CONNECT_INGEST_DB_PASSWORD
+            fetch_size: 10000
+        oracle:
+            jdbc_url: $CONNECT_EXPORT_ORACLE_DB_URL
+            db_user: $CONNECT_EXPORT_ORACLE_DB_USERNAME
+            db_password: $CONNECT_EXPORT_ORACLE_DB_PASSWORD
+            fetch_size: 0
+        postgres:
+            jdbc_url: $CONNECT_EXPORT_POSTGRES_DB_URL
+            db_user: $CONNECT_EXPORT_POSTGRES_DB_USERNAME
+            db_password: $CONNECT_EXPORT_POSTGRES_DB_PASSWORD
+            fetch_size: 0

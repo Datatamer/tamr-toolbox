@@ -1,0 +1,10 @@
+my_instance_name:
+    host: $TAMR_MY_INSTANCE_HOST
+    protocol: "http"
+    port: "9100"
+    username: $TAMR_MY_INSTANCE_USERNAME
+    password: $TAMR_MY_INSTANCE_PASSWORD
+
+price: "$12"
+price_words: "$twelve"
+

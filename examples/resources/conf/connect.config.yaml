@@ -1,0 +1,12 @@
+df_connect:
+    host: $CONNECT_HOST
+    protocol: "http"
+    port: "9030"
+    tamr_username: $TAMR_USERNAME
+    tamr_password: $TAMR_PASSWORD
+    jdbc:
+        ingest:
+            jdbc_url: $CONNECT_INGEST_DB_URL
+            db_user: $CONNECT_INGEST_DB_USERNAME
+            db_password: $CONNECT_INGEST_DB_PASSWORD
+            fetch_size: 10000
