@@ -12,7 +12,7 @@ jobs:
         with:
           python-version: 3.6
       - name: Upgrade wheel
-        run: pip install --upgrade wheel==0.34.2 setuptools twine
+        run: pip install --upgrade wheel==0.34.2 setuptools
       - name: Build wheel file
         run: python setup.py bdist_wheel sdist
       - name: Publish package
