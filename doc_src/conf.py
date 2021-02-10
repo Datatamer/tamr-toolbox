@@ -21,10 +21,10 @@ project = "Tamr Toolbox"
 copyright = "2020, Tamr"
 author = "Tamr"
 
-# Read version and format for website display. Change '0.1.0+axe' to '0.1.0 - Axe'
+# Read version and format for website display. Change '0.1.0-axe' to '0.1.0 - Axe'
 with open("../version.txt") as f:
     raw_version = f.read().splitlines()[0]
-raw_version_parts = raw_version.split("+")
+raw_version_parts = raw_version.split("-")
 version = f"{raw_version_parts[0]} - {raw_version_parts[1].capitalize()}"
 
 
