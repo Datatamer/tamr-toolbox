@@ -5,11 +5,12 @@ with open("requirements.txt") as f:
     required = f.read().splitlines()
 
 with open("version.txt") as f:
-    version = f.read().splitlines()[0]
+    full_version = f.read().splitlines()[0]
+    version_number = full_version.split("-")[0]
 
 setup(
     name="tamr_toolbox",
-    version=version,
+    version=version_number,
     author="Tamr Inc.",
     author_email="",
     description="Tools for Tamr",
