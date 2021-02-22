@@ -1,0 +1,71 @@
+name: Create Install Zip
+on:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'The name of the branch or tag to create an offline install zip for'
+        required: true
+      os:
+        description: 'Operation system to create an offline install zip for. Supported versions: centos:7, centos:8, ubuntu:16.04, ubuntu:18.04, ubuntu:20.04 '
+        required: true
+      python_version:
+        description: 'Python version to create an offline install zip for. Example: 3.7.5'
+        required: true
+
+jobs:
+  CreateZip:
+    runs-on: ubuntu-20.04
+    container:
+      image: ${{ github.event.inputs.os }}
+    steps:
+
+      # Checkout the target branch
+      - name: Checkout branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch_name }}
+
+      # Install OS specific requirements
+      - name: Install environment specific requirements
+        if: startsWith(github.event.inputs.os, 'ubuntu')
+        run: apt update -y  && apt install -y software-properties-common && apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget zip
+      - name: Install environment specific requirements
+        if: startsWith(github.event.inputs.os, 'centos')
+        run: yum update -y && yum -y groupinstall "Development Tools" && yum install -y wget gcc openssl-devel bzip2-devel libffi-devel zip
+
+      # Install toolbox and Python
+      - name: Install Python
+        run: wget https://www.python.org/ftp/python/${{ github.event.inputs.python_version }}/Python-${{ github.event.inputs.python_version }}.tgz && tar xzf Python-${{ github.event.inputs.python_version }}.tgz && cd Python-${{ github.event.inputs.python_version }} && ./configure --with-ensurepip=install &&  make install -j 8
+      - name: Install toolbox requirements
+        run: python3 install.py
+
+      # Create zip file
+      - name: Upgrade wheel
+        run: pip install --upgrade wheel==0.34.2
+      - name: Export Python Verion
+        id: get_python
+        run: echo ::set-output name=version::$(python3 -V | sed 's/ //g')
+      - name: Export File Name
+        run: echo ::set-output name=file_name::$(echo '${{ github.event.inputs.branch_name }}_${{ github.event.inputs.os }}_${{ steps.get_python.outputs.version }}' |  sed 's/://')
+        id: get_name
+
+      - name: Create wheel dir - minimal
+        run: pip wheel --wheel-dir ./tamr_toolbox_minimal_dependencies .
+      - name: Zip wheel dir - minimal
+        run:  zip -r tamr_toolbox_minimal_dependencies.zip tamr_toolbox_minimal_dependencies
+      - name: Upload wheel dir - minimal
+        uses: actions/upload-artifact@v2
+        with:
+          path: tamr_toolbox_minimal_dependencies.zip
+          name: ${{ steps.get_name.outputs.file_name }}_minimal_dependencies.zip
+
+      - name: Create wheel dir - all
+        run: pip wheel --wheel-dir ./tamr_toolbox_all_dependencies .[all]
+      - name: Zip wheel dir - all
+        run: zip -r tamr_toolbox_all_dependencies.zip tamr_toolbox_all_dependencies
+      - name: Upload wheel dir - all
+        uses: actions/upload-artifact@v2
+        with:
+          path: tamr_toolbox_all_dependencies.zip
+          name: ${{ steps.get_name.outputs.file_name }}_all_dependencies.zip
+
