@@ -21,3 +21,7 @@ Testing
 ------------------------
 .. automodule:: tamr_toolbox.utils.testing
 
+Downstream
+------------------------
+.. automodule:: tamr_toolbox.utils.downstream
+
