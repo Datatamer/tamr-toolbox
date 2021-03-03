@@ -2,6 +2,10 @@ name: Publish to TestPyPi
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to publish with on TestPyPi.  Cannot be a value used previously.  Consider the date followed by a number, e.g. 3.3.21.1'
+        required: true
 
 jobs:
   Publish:
@@ -11,6 +15,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: "main"
+      - name: Set version
+        run: echo ${{ github.event.inputs.version }} > version.txt
       - name: Install Python
         uses: actions/setup-python@v2
         with:
