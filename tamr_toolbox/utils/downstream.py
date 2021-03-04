@@ -64,13 +64,14 @@ def projects(dataset: Dataset, *, include_dependencies_by_name: bool = False) ->
     project_ids = []
     # downstream dataset list is ordered by number of dependency ascending
     for dependency in downstream_datasets:
-        temp = _find_associated_projects(dependency)
-        project_ids.extend(temp)
+        project_ids.extend(_find_associated_projects(dependency))
     # add project_list of the target dataset
     project_ids.extend(_find_associated_projects(dataset))
-    LOGGER.debug(project_ids)
+
     # use Ordered Dict to keep the order (set doesn't keep the order)
     project_ids = OrderedDict().fromkeys(project_ids)
+    LOGGER.debug(f"Downstrema project ids found: {project_ids}")
+
     # Need to reverse to get the most upstream project first
     project_list = [
         dataset.client.projects.by_resource_id(i) for i in reversed(project_ids.keys())
@@ -93,9 +94,10 @@ def _find_downstream_datasets(
         dataset: A Dataset object of the target dataset.
         client: Tamr client
         include_dependencies_by_name: Whether to include datasets based on name similarity.
-        all_tamr_datasets: A dictionary of all datasets existing in Tamr by name. Default to None.
-        all_unified_datasets: A List of current unified datasets in Tamr. Default to None
-        downstream_datasets: A dictionary of downstream datasets by name. Default to None.
+        all_tamr_datasets: A dictionary of all datasets existing in Tamr by name.
+        all_unified_datasets: A List of current unified datasets in Tamr.
+        downstream_datasets: A dictionary of downstream datasets by name. This argument is not to be set by users,
+            and only used internally.
 
     Returns:
         List of Dataset objects.
@@ -153,6 +155,7 @@ def _find_downstream_datasets(
 
     # check further downstream for either dependencies suggested by name
     # or dependencies that used to or is unified dataset
+    # note: dictionary `downstream_datasets` is passed by reference
     for d in datasets_check:
         _find_downstream_datasets(
             d,
