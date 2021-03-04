@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 import importlib
 
+
 def test__valid_toolbox_root_dir():
     path = get_toolbox_root_dir()
     assert path.exists()
@@ -15,7 +16,6 @@ def test__valid_toolbox_root_dir():
 
 
 def test__import_namespaces():
-
     def check_subpackage_imports(subpackage: ModuleType, directory_path: Path) -> None:
         """Recursively asserts that all files/directories within a directory path are importable
         from the subpackage
@@ -40,10 +40,11 @@ def test__import_namespaces():
         for sub_module_name in modules_by_namespace:
             sub_module_path = directory_path / sub_module_name
             if os.path.isdir(sub_module_path):
-                sub_module = importlib.import_module(f'{subpackage.__name__}.{sub_module_name}')
+                sub_module = importlib.import_module(f"{subpackage.__name__}.{sub_module_name}")
                 check_subpackage_imports(sub_module, sub_module_path)
 
     import tamr_toolbox
+
     toolbox_dir = get_toolbox_root_dir() / "tamr_toolbox"
 
     check_subpackage_imports(tamr_toolbox, toolbox_dir)
