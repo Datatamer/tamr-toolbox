@@ -1,2 +1,2 @@
 # Notifications
- * [Slack](/modules/notifications/slack)
+ * [Slack](/modules/notifications/slack.md)
