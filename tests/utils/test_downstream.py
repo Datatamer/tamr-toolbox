@@ -125,7 +125,9 @@ def test_get_dataset_downstream_dependencies_suggest_name():
         "minimal_mastering_unified_dataset.internal_comments",
         "minimal_mastering_unified_dataset.global_record_id",
     }
-    assert PIPELINE_DEPENDENT_DATASETS.union(DEPENDENT_DATASETS_BY_NAME) == set([d.name for d in downstream_datasets])
+    assert PIPELINE_DEPENDENT_DATASETS.union(DEPENDENT_DATASETS_BY_NAME) == set(
+        [d.name for d in downstream_datasets]
+    )
 
 
 @mock_api()
@@ -136,8 +138,8 @@ def test_get_downstream_projects():
         dataset, include_dependencies_by_name=True
     )
     assert len(downstream_projects) == 2
-    assert downstream_projects[0].relative_id == 'projects/1'
-    assert downstream_projects[1].relative_id == 'projects/2'
+    assert downstream_projects[0].relative_id == "projects/1"
+    assert downstream_projects[1].relative_id == "projects/2"
 
 
 @mock_api()

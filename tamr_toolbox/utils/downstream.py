@@ -96,8 +96,8 @@ def _find_downstream_datasets(
         include_dependencies_by_name: Whether to include datasets based on name similarity.
         all_tamr_datasets: A dictionary of all datasets existing in Tamr by name.
         all_unified_datasets: A List of current unified datasets in Tamr.
-        downstream_datasets: A dictionary of downstream datasets by name. This argument is not to be set by users,
-            and only used internally.
+        downstream_datasets: A dictionary of downstream datasets by name.
+            This argument is not to be set by users, and only used internally.
 
     Returns:
         List of Dataset objects.
