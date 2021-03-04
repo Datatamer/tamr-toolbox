@@ -10,6 +10,16 @@ import argparse
 
 
 def main(*, instance_connection_info: Dict[str, Any], dataset_name_to_cleanup: str) -> bool:
+    """Check and clean up a Tamr dataset and its downstream datasets if possible.
+
+        Args:
+        instance_connection_info: Information for connecting to Tamr (host, port, username etc)
+        dataset_name_to_cleanup: name of target dataset to clean up
+
+    Returns:
+        Whether the cleanup of the dataset and its downstream datasets has been done successfully.
+
+    """
     # Create Tamr Client
     tamr = tbox.utils.client.create(**instance_connection_info)
     my_dataset = tamr.datasets.by_name(dataset_name_to_cleanup)
