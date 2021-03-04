@@ -15,8 +15,7 @@ def datasets(dataset: Dataset, *, include_dependencies_by_name: bool = False) ->
 
     Args:
         dataset: The target dataset.
-        include_dependencies_by_name: A Boolean indicating whether to return datasets with
-            dependencies suggested by name matching. Default to False.
+        include_dependencies_by_name: Whether to include datasets based on name similarity.
             No dependencies will be found by name if the `dataset` is not an unified dataset
             either based on backened pipeline (if project still exists) or based on
             regex (dataset name has suffix 'unified_dataset').
@@ -49,8 +48,7 @@ def projects(dataset: Dataset, *, include_dependencies_by_name: bool = False) ->
 
     Args:
         dataset: The target dataset.
-        include_dependencies_by_name: A Boolean indicating whether to return datasets with
-            dependencies suggested by name matching. Default to False.
+        include_dependencies_by_name: Whether to include datasets based on name similarity.
             No dependencies will be found by name if the `dataset` is not an unified dataset
             either based on backened pipeline (if project still exists) or based on
             regex (dataset name has suffix 'unified_dataset').
@@ -94,8 +92,7 @@ def _find_downstream_datasets(
     Args:
         dataset: A Dataset object of the target dataset.
         client: Tamr client
-        include_dependencies_by_name: A Boolean indicating whether to return datasets with
-            dependencies suggested by name matching.
+        include_dependencies_by_name: Whether to include datasets based on name similarity.
         all_tamr_datasets: A dictionary of all datasets existing in Tamr by name. Default to None.
         all_unified_datasets: A List of current unified datasets in Tamr. Default to None
         downstream_datasets: A dictionary of downstream datasets by name. Default to None.
