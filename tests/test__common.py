@@ -16,6 +16,7 @@ def test__valid_toolbox_root_dir():
 
 
 def test__import_namespaces():
+
     def check_subpackage_imports(subpackage: ModuleType, directory_path: Path) -> None:
         """Recursively asserts that all files/directories within a directory path are importable
         from the subpackage
@@ -30,14 +31,16 @@ def test__import_namespaces():
             f.replace(".py", "") for f in os.listdir(directory_path) if not f.startswith("_")
         }
         # Collect names of packages that are importable from the module
-        modules_by_namespace = set(subpackage.__all__)
+        modules_by_namespace_all = set(subpackage.__all__)
+        modules_by_namespace_dir = {p for p in subpackage.__dir__() if (not p.startswith("_"))}
 
         # We use subset here to allow for imports that are not in the direct file system folder
         # such as the project._common files which are imported through specific project types
-        assert modules_by_files.issubset(modules_by_namespace)
+        assert modules_by_files.issubset(modules_by_namespace_all)
+        assert modules_by_files.issubset(modules_by_namespace_dir)
 
         # For any subpackages that are also directories, perform the same check
-        for sub_module_name in modules_by_namespace:
+        for sub_module_name in modules_by_namespace_dir:
             sub_module_path = directory_path / sub_module_name
             if os.path.isdir(sub_module_path):
                 sub_module = importlib.import_module(f"{subpackage.__name__}.{sub_module_name}")
