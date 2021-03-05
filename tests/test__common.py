@@ -16,7 +16,6 @@ def test__valid_toolbox_root_dir():
 
 
 def test__import_namespaces():
-
     def check_subpackage_imports(subpackage: ModuleType, directory_path: Path) -> None:
         """Recursively asserts that all files/directories within a directory path are importable
         from the subpackage
