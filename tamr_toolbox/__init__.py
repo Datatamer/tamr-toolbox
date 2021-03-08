@@ -16,7 +16,6 @@ __all__ = [
     "data_io",
     "models",
     "filesystem",
-    "models",
     "project",
     "utils",
     "workflow",
