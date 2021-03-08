@@ -190,7 +190,7 @@ def _is_unified_dataset(
     *,
     check_regex: bool = True,
     regex=".*unified_dataset$",
-    all_unified_datasets: List[str]
+    all_unified_datasets: List[str],
 ) -> bool:
     """Check if a dataset is or used to be unified dataset.
 
@@ -230,10 +230,11 @@ def _get_all_unified_datasets(client: Client) -> List[str]:
         project.spec().to_dict()["unifiedDatasetName"]
         for project in client.projects
         # GOLDEN_RECORDS project does not have unified dataset
-        if ProjectType[project.type] in [
+        if ProjectType[project.type]
+        in [
             ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS,
             ProjectType.DEDUP,
-            ProjectType.CATEGORIZATION]
+            ProjectType.CATEGORIZATION,
+        ]
     ]
     return unified_dataset_names
-
