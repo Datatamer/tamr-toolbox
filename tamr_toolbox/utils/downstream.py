@@ -39,7 +39,7 @@ def datasets(dataset: Dataset, *, include_dependencies_by_name: bool = False) ->
     # note that there can be bidirectional dependency so datasets with same number of
     # dependencies can depend on each other
     LOGGER.info("Sorting the downstream datasets by number of dependencies")
-    sorted_datasets = sorted(downstream_datasets, key=lambda x: _count_dependencies(x))
+    sorted_datasets = sorted(downstream_datasets, key=lambda x: len(x.usage().dependencies))
     return sorted_datasets
 
 
@@ -80,7 +80,7 @@ def projects(dataset: Dataset, *, include_dependencies_by_name: bool = False) ->
 
 
 def _find_downstream_datasets(
-    dataset_name,
+    dataset_name: str,
     *,
     client: Client,
     include_dependencies_by_name: bool = False,
@@ -91,7 +91,7 @@ def _find_downstream_datasets(
     """Returns a dataset's downstream datasets.
 
     Args:
-        dataset: A Dataset object of the target dataset.
+        dataset_name: Name of the target dataset.
         client: Tamr client
         include_dependencies_by_name: Whether to include datasets based on name similarity.
         all_tamr_datasets: A dictionary of all datasets existing in Tamr by name.
@@ -105,7 +105,7 @@ def _find_downstream_datasets(
     """
     # initialize optional variables
     if not all_tamr_datasets:
-        all_tamr_datasets = _get_all_tamr_datasets(client)
+        all_tamr_datasets = {dataset.name: dataset for dataset in client.datasets}
     if not all_unified_datasets:
         all_unified_datasets = _get_all_unified_datasets(client)
     if not downstream_datasets:
@@ -185,35 +185,22 @@ def _find_associated_projects(dataset: Dataset) -> List[str]:
     return list(project_list)
 
 
-def _count_dependencies(dataset: Dataset) -> int:
-    """Return number of dependencies of a dataset.
-
-    Args:
-        dataset: The target dataset.
-
-    Returns:
-        Number of dependencies of the target `dataset`.
-
-    """
-    dependencies = dataset.usage().dependencies
-    return len(dependencies)
-
-
 def _is_unified_dataset(
     dataset_name: str,
     *,
     check_regex: bool = True,
     regex=".*unified_dataset$",
-    all_unified_datasets: Optional[List[str]] = None,
+    all_unified_datasets: List[str]
 ) -> bool:
     """Check if a dataset is or used to be unified dataset.
 
     Args:
-        dataset: The target dataset.
+        dataset_name: Name of the target dataset.
         check_regex: A Boolean to determine whether to check for regex matching if a dataset is
             not part of the pipeline (if its project has been deleted.) Default to True.
         regex: A string of regex to check. Default to '.*unified_dataset$' which is Tamr's current
             default unified dataset naming.
+        all_unified_datasets: List of unified dataset names.
 
     Returns:
         A Boolean, if True, the target `dataset` is or used to be unified dataset.
@@ -229,17 +216,24 @@ def _is_unified_dataset(
 
 
 def _get_all_unified_datasets(client: Client) -> List[str]:
+    """
+
+    Args:
+        client: Tamr client
+
+    Returns:
+        List of unified dataset names.
+
+    """
     # Use Project Spec to minimize number of API calls
     unified_dataset_names = [
         project.spec().to_dict()["unifiedDatasetName"]
         for project in client.projects
         # GOLDEN_RECORDS project does not have unified dataset
-        if ProjectType[project.type] not in [ProjectType.GOLDEN_RECORDS]
+        if ProjectType[project.type] in [
+            ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS,
+            ProjectType.DEDUP,
+            ProjectType.CATEGORIZATION]
     ]
     return unified_dataset_names
 
-
-def _get_all_tamr_datasets(client: Client) -> Dict[str, Dataset]:
-    # Use Project Spec to minimize number of API calls
-    all_datasets = {dataset.name: dataset for dataset in client.datasets}
-    return all_datasets
