@@ -70,7 +70,7 @@ def projects(dataset: Dataset, *, include_dependencies_by_name: bool = False) ->
 
     # use Ordered Dict to keep the order (set doesn't keep the order)
     project_ids = OrderedDict().fromkeys(project_ids)
-    LOGGER.debug(f"Downstrema project ids found: {project_ids}")
+    LOGGER.debug(f"Downstream project ids found: {project_ids}")
 
     # Need to reverse to get the most upstream project first
     project_list = [
