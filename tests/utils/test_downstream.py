@@ -194,7 +194,7 @@ def test_get_downstream_datasets_for_source_dataset():
         "minimal_golden_records_source_list_diff",
         "minimal_mastering_unified_dataset_dedup_cluster_stats",
         "minimal_mastering_unified_dataset_dedup_clusters_with_data",
-        "minimal_golden_records_golden_records_draft"
+        "minimal_golden_records_golden_records_draft",
     }
     assert source_downstream_datasets_names == SOURCE_DATASET_DEPENDENCIES
 
@@ -263,6 +263,6 @@ def test_get_downstream_datasets_for_source_dataset_suggest_name():
         "minimal_golden_records_source_list_diff",
         "minimal_mastering_unified_dataset_dedup_cluster_stats",
         "minimal_mastering_unified_dataset_dedup_clusters_with_data",
-        "minimal_golden_records_golden_records_draft"
+        "minimal_golden_records_golden_records_draft",
     }
     assert source_downstream_datasets_names == SOURCE_DATASET_DEPENDENCIES_SUGGEST_NAME
