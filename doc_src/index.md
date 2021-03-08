@@ -7,7 +7,7 @@ Tamr-Toolbox is a python library created to provide a simple interface for commo
 
 `pip install tamr-toolbox[all]`
  
- [See more installation options](installation)
+ [See more installation options](installation.md)
 
 ## Basic Example
 **project.config.yaml**  
@@ -53,8 +53,8 @@ workflow.jobs.run(my_projects)
 ```
 
 ## Reference
-  * [Installation](installation)
+  * [Installation](installation.md)
   
-  * [Examples](examples)
+  * [Examples](examples.md)
 
-  * [Modules](modules)
+  * [Modules](modules.md)

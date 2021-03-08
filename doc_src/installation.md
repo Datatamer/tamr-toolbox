@@ -31,7 +31,7 @@ Install instructions:
 Install instructions:
 `pip install tamr_toolbox[translation]`
 
-Required for [Translation Enrichment](modules/enrichment/translation)
+Required for [Translation Enrichment](modules/enrichment/translation.md)
 
 Library: [GoogleTranslate](https://github.com/googleapis/python-translate) (Tamr-toolbox uses version == 2.0.1)
 
@@ -51,7 +51,7 @@ Library: [Responses](https://github.com/getsentry/responses) (Tamr-Toolbox uses 
 Install instructions:
 `pip install tamr_toolbox[pandas]`
 
-Required for [DataFrame I/O](modules/data_io/dataframe)
+Required for [DataFrame I/O](modules/data_io/dataframe.md)
 
 Library: [Pandas](https://pandas.pydata.org/pandas-docs/stable/) (Tamr-Toolbox uses version >= 0.21.0)
 
@@ -60,7 +60,7 @@ Library: [Pandas](https://pandas.pydata.org/pandas-docs/stable/) (Tamr-Toolbox u
 Install instructions:
 `pip install tamr_toolbox[slack]`
 
-Required for [Slack](modules/notifications/slack)
+Required for [Slack](modules/notifications/slack.md)
 
 Library: [Slack Client](https://github.com/slackapi/python-slackclient) (Tamr-Toolbox uses version >= 2.7.2)
 
