@@ -8,3 +8,5 @@ __Documentation Home:__ https://datatamer.github.io/tamr-toolbox/latest/
 __Installation:__ https://datatamer.github.io/tamr-toolbox/latest/installation.html
 
 __Examples:__ https://datatamer.github.io/tamr-toolbox/latest/examples.html
+
+Rebases are interesting
