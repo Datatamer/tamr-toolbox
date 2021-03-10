@@ -190,3 +190,78 @@ def test_unmapping_dataset_and_remove():
 
     # assert that the dataset is no longer in the project
     assert source_dataset.name not in [x.name for x in project.input_datasets()]
+
+
+@mock_api()
+def test_create_unified_attribute():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_schema_mapping")
+    unified_attribute_name = "New Unified Attribute"
+
+    assert schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
+
+
+@mock_api()
+def test_create_unified_attribute_that_already_exists():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_schema_mapping")
+    unified_attribute_name = "New Unified Attribute"
+
+    with pytest.raises(AttributeError):
+        schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
+
+    attribute_resource_id = (
+        project.unified_dataset().attributes.by_name(unified_attribute_name).resource_id
+    )
+    project.unified_dataset().attributes.delete_by_resource_id(attribute_resource_id)
+
+
+@mock_api()
+def test_set_unified_attribute_configurations_text():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_mastering")
+    unified_attribute_name = "attribute test"
+
+    schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
+    assert schema.set_unified_attribute_configurations(
+        project,
+        unified_attribute_name=unified_attribute_name,
+        similarity_function="COSINE",
+        tokenizer="TRIGRAM",
+        is_numeric=False,
+        override=False,
+    )
+
+
+@mock_api()
+def test_set_unified_attribute_configurations_with_existing_configuration():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_mastering")
+    unified_attribute_name = "attribute test"
+
+    with pytest.raises(RuntimeError):
+        schema.set_unified_attribute_configurations(
+            project, unified_attribute_name=unified_attribute_name,
+        )
+    # delete the test attribute
+    response = client.get(f"projects/{project.resource_id}/attributeConfigurations")
+    attribute_configuration_list = response.json()
+    for configuration in attribute_configuration_list:
+        if configuration["attributeName"] == unified_attribute_name:
+            attribute_configuration_id = configuration["id"].split("/")[-1]
+            project.client.delete(
+                f"projects/{project.resource_id}/"
+                f"attributeConfigurations/{attribute_configuration_id}"
+            )
+
+
+@mock_api()
+def test_set_unified_attribute_configurations_for_nonexisting_attribute():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_mastering")
+    unified_attribute_name = "New Unified Attribute"
+
+    with pytest.raises(AttributeError):
+        schema.set_unified_attribute_configurations(
+            project, unified_attribute_name=unified_attribute_name,
+        )
