@@ -8,6 +8,7 @@ with open("version.txt") as f:
     full_version = f.read().splitlines()[0]
     version_number = full_version.split("-")[0]
 
+# More comments are always better, right?
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
 
