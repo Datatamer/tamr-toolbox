@@ -43,6 +43,135 @@ def _get_mapping_spec_for_ud(
     return spec
 
 
+def create_unified_attribute(project: Project, *, unified_attribute_name: str) -> bool:
+    """
+    Adds a unified attribute to a project
+
+    Args:
+        project: Tamr project in which to create a unified attribute
+        unified_attribute_name: Name of the unified attribute
+
+    Returns:
+        True if the attribute is created successfully
+
+    Raises:
+        AttributeError if the unified attribute already exists
+    """
+    try:
+        assert unified_attribute_name in [x.name for x in project.unified_dataset().attributes]
+    except AssertionError:
+        pass
+    else:
+        error_message = (
+            f"A unified attribute with name {unified_attribute_name} already exists in "
+            f"{project.name}. Please try again using a new name for the attribute."
+        )
+        LOGGER.error(error_message)
+        raise AttributeError(error_message)
+
+    # Create a new attribute in the project unified dataset
+    attr_spec = {
+        "name": unified_attribute_name,
+        "type": {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
+    }
+    project.unified_dataset().attributes.create(attr_spec)
+
+    return True
+
+
+def set_unified_attribute_configurations(
+    project: Project,
+    *,
+    unified_attribute_name: str,
+    similarity_function: str = "COSINE",
+    tokenizer: str = "DEFAULT",
+    attribute_role: str = "",
+    is_numeric: bool = False,
+    override: bool = False,
+) -> bool:
+    """
+    Enables machine learning on a new unified attribute according to the specified configuration
+
+    Args:
+        is_numeric: Boolean indicating whether the attribute is numeric (True) or not (False)
+        similarity_function: Similarity function for the unified attribute
+        tokenizer: Tokenizer for the unified attribute
+        project: Project containing the unified attribute
+        unified_attribute_name: Name of the attribute on which to enable machine learning
+        attribute_role: Optional string to describe the role of the attribute
+        override: deletes existing configuration and updates if set to True
+
+    Returns:
+        True if attribute is successfully enabled for ML
+
+    Raises:
+        AttributeError if the attribute name is not found
+
+    """
+    try:
+        assert unified_attribute_name in [x.name for x in project.unified_dataset().attributes]
+    except AssertionError:
+        error_msg = (
+            f"Attribute {unified_attribute_name} not found in {project.unified_dataset().name}."
+        )
+        LOGGER.error(error_msg)
+        raise AttributeError(error_msg)
+
+    # Check if the attribute has an associated configuration already
+    response = project.client.get(f"projects/{project.resource_id}/attributeConfigurations")
+    attribute_configuration_list = response.json()
+    for configuration in attribute_configuration_list:
+        if configuration["attributeName"] == unified_attribute_name:
+            if override:
+                attribute_configuration_id = configuration["id"].split("/")[-1]
+                project.client.delete(
+                    f"projects/{project.resource_id}/attributeConfigurations/"
+                    f"{attribute_configuration_id}"
+                )
+                break
+            else:
+                attribute_configuration_exists_error = (
+                    f"Attribute Configuration exists for {unified_attribute_name}. "
+                    "Try override=True to update the current configuration with the new one."
+                )
+                LOGGER.error(attribute_configuration_exists_error)
+                raise RuntimeError(attribute_configuration_exists_error)
+
+    # Check if the attribute is numeric
+    if is_numeric and project.type == "CATEGORIZATION" and tokenizer != "":
+        LOGGER.info(
+            "Attribute is numeric for a categorization project. Similarity function will be set "
+            "to COSINE and tokenizer value will be ignored."
+        )
+        attr_conf = [
+            {
+                "attributeRole": attribute_role,
+                "similarityFunction": "COSINE",
+                "enabledForMl": True,
+                "tokenizer": "",
+                "numericFieldResolution": [10, 100],
+                "attributeName": unified_attribute_name,
+            }
+        ]
+    else:
+        attr_conf = [
+            {
+                "attributeRole": attribute_role,
+                "similarityFunction": similarity_function,
+                "enabledForMl": True,
+                "tokenizer": tokenizer,
+                "numericFieldResolution": [],
+                "attributeName": unified_attribute_name,
+            }
+        ]
+
+    project.client.post(
+        f"projects/{project.resource_id}/attributeConfigurations", json=attr_conf
+    ).successful()
+
+    return True
+
+
 def map_attribute(
     project: Project,
     *,
