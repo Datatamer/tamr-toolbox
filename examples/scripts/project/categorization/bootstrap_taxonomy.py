@@ -131,7 +131,7 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
         {
             "action": "CREATE",
             "recordId": hash(key),
-            "record": {"verified": {"category": {"path": path}, "reason": "Taxonomy bootstrap",}},
+            "record": {"verified": {"category": {"path": path}, "reason": "Taxonomy bootstrap"}},
         }
         for key, path in category_dict.items()
     ]
