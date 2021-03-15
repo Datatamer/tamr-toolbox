@@ -27,6 +27,8 @@ datasets:
     people_tiny_copy: "70"
     people_0_records: "97"
     dictionary_auto_to_fr.json: "99"
+    minimal_mastering_unified_dataset: "5"
+    people_tiny.csv: "3"
 
 df_connect:
     host: $TAMR_TOOLBOX_HOST

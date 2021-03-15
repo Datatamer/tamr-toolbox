@@ -69,3 +69,14 @@ How to get a list of projects upstream from a specified project
   :language: yaml
 .. literalinclude:: ../../examples/scripts/utils/upstream/get_upstream_projects.py
   :language: python
+
+
+Downstream
+-------------------------------------------------------------------------------
+How to get a list of datasets and projects downstream from a specified dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. literalinclude:: ../../examples/resources/conf/project.config.yaml
+  :language: yaml
+.. literalinclude:: ../../examples/scripts/utils/downstream/cleanup_downstream_resources.py
+  :language: python
