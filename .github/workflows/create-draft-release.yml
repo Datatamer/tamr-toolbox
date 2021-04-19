@@ -1,0 +1,64 @@
+name: Create Draft Release
+on:
+  workflow_dispatch:
+
+jobs:
+  CreateZip:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+        with:
+          ref: "main"
+
+      - name: Export version
+        run: echo ::set-output name=version::$(cat version.txt)
+        id: get_version
+      - name: Export short version
+        # this sed drops the patch version from the name changing 1.2.3-axe into 1.2-axe
+        run: echo ::set-output name=version::$(cat version.txt | sed "s/\([0-9]\.[0-9]\).[0-9]/\1/g")
+        id: get_version_short
+
+      - name: Install toolbox requirements
+        run: python install.py
+
+      - name: Run tests
+        run: invoke test
+      - name: Run lint check
+        run: invoke lint
+      - name: Run format check
+        run: invoke format
+
+      - name: Build docs
+        run: invoke docs
+
+      - name: Install wkhtmltopdf
+        run:  sudo apt-get update && sudo apt-get install openssl build-essential xorg libssl-dev && wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && sudo cp wkhtmltox/bin/wkhtmlto* /usr/bin/
+      - name: Create pdf
+        run: python ./doc_src/generate_pdf.py
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: ${{ steps.get_version.outputs.version }}
+          draft: true
+          prerelease: false
+          body: "Documentation: https://datatamer.github.io/tamr-toolbox/${{ steps.get_version_short.outputs.version }}/ \n\n Highlights:\n  * Highlight 1\n  * Highlight 2"
+
+      - name: Upload pdf docs
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./docs/_draft_build/tamr-toolbox.pdf
+          asset_name: tamr_toolbox_${{ steps.get_version.outputs.version }}.pdf
+          asset_content_type: application/pdf

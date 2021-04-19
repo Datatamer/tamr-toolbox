@@ -109,6 +109,9 @@ venv.bak/
 # pycharm
 .idea
 
+# intellij
+*.iml
+
 # release artifacts
 release/*
 

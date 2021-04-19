@@ -8,12 +8,16 @@ with open("version.txt") as f:
     full_version = f.read().splitlines()[0]
     version_number = full_version.split("-")[0]
 
+with open("README.md", encoding="utf-8") as f:
+    readme = f.read()
+
 setup(
     name="tamr_toolbox",
     version=version_number,
     author="Tamr Inc.",
     author_email="",
     description="Tools for Tamr",
+    long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/Datatamer/tamr-toolbox",
     packages=find_packages(exclude=["tests", "tests.*"]),
