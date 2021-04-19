@@ -9,3 +9,4 @@ sphinx-autodoc-typehints==1.11.1
 recommonmark==0.7.1
 click==7.1.1
 pdfkit==0.6.1
+docutils==0.16
