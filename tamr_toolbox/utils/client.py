@@ -5,7 +5,7 @@ from base64 import b64decode
 
 import requests
 from json import dumps
-from typing import Optional
+from typing import Optional, Union
 from time import sleep, time as now
 
 from requests import Response
@@ -44,7 +44,7 @@ def create(
     username: str,
     password: str,
     host: str,
-    port: str = "9100",
+    port: Optional[Union[str, int]] = 9100,
     protocol: str = "http",
     enforce_healthy: bool = False,
 ) -> Client:
@@ -65,7 +65,7 @@ def create(
     client = Client(
         auth=UsernamePasswordAuth(username=username, password=password),
         host=host,
-        port=int(port),
+        port=int(port) if port is not None else None,
         protocol=protocol,
     )
     healthy_status = health_check(client)
