@@ -28,6 +28,12 @@ def test_client_create():
 
 
 @mock_api()
+def test_client_create_none_port():
+    my_client = utils.client.create(**CONFIG["my_portless_instance"])
+    assert my_client.port is None
+
+
+@mock_api()
 def test_invalid_credentials():
     with pytest.raises(SystemError):
         utils.client.create(**CONFIG["my_other_instance"], enforce_healthy=True)

@@ -12,6 +12,13 @@ my_other_instance:
     username: "my_user_name"
     password: "my_password"
 
+my_portless_instance:
+    host: "1.2.3.4"
+    protocol: "http"
+    port: null
+    username: "my_user_name"
+    password: "my_password"
+
 logging_dir: "/full/path/to/logging/directory"
 
 projects:
