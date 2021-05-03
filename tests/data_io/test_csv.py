@@ -273,3 +273,14 @@ def test_invalid_delimiters():
 
     with pytest.raises(ValueError):
         csv.from_taxonomy(project, filepath, csv_delimiter=",", flatten_delimiter=",")
+
+
+@mock_api()
+def test_bad_encoding():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    bad_encoding_dataset_id = CONFIG["datasets"]["bad_encoding"]
+    dataset = client.datasets.by_resource_id(bad_encoding_dataset_id)
+
+    filepath = os.path.join(get_toolbox_root_dir(), "tests/data_io/temp_bad_encoding.csv")
+    csv.from_dataset(dataset, filepath)
+    os.remove(filepath)
