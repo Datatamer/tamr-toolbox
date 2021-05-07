@@ -7,6 +7,7 @@ class SchemaMappingArtifacts:
     """A dataclass representing artifact codes for Schema Mapping projects in Tamr
 
     """
+
     # Schema Mapping artifacts
     UNIFIED_ATTRIBUTES = "UNIFIED_ATTRIBUTES"
     TRANSFORMATIONS = "TRANSFORMATIONS"
@@ -19,6 +20,7 @@ class MasteringArtifacts:
     """A dataclass representing artifact codes for Mastering projects in Tamr
 
     """
+
     # Schema Mapping artifacts
     UNIFIED_ATTRIBUTES = "UNIFIED_ATTRIBUTES"
     TRANSFORMATIONS = "TRANSFORMATIONS"
@@ -43,6 +45,7 @@ class CategorizationArtifacts:
     """A dataclass representing artifact codes for Categorization projects in Tamr
 
     """
+
     # Schema Mapping artifacts
     UNIFIED_ATTRIBUTES = "UNIFIED_ATTRIBUTES"
     TRANSFORMATIONS = "TRANSFORMATIONS"
@@ -62,6 +65,7 @@ class GoldenRecordsArtifacts:
     """A dataclass representing artifact codes for Golden Records projects in Tamr
 
     """
+
     # Golden Records artifacts
     GR_CONFIGURATION = "GR_CONFIGURATION"
     GR_RULES = "GR_RULES"
@@ -73,6 +77,7 @@ class Artifacts:
     """A dataclass representing artifact codes for all project types in Tamr
 
     """
+
     # Schema Mapping artifacts
     UNIFIED_ATTRIBUTES = "UNIFIED_ATTRIBUTES"
     TRANSFORMATIONS = "TRANSFORMATIONS"
@@ -113,6 +118,7 @@ class ProjectArtifacts:
         CATEGORIZATION: MasteringArtifacts dataclass instance
         GOLDEN_RECORDS: MasteringArtifacts dataclass instance
     """
+
     SCHEMA_MAPPING = SchemaMappingArtifacts()
     MASTERING = MasteringArtifacts()
     CATEGORIZATION = CategorizationArtifacts()

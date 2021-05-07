@@ -103,10 +103,7 @@ def get_active(tamr: Client) -> List[Operation]:
 
 
 def wait(
-        operation: Operation,
-        *,
-        poll_interval_seconds: int = 3,
-        timeout_seconds: Optional[int] = None,
+    operation: Operation, *, poll_interval_seconds: int = 3, timeout_seconds: Optional[int] = None,
 ) -> Operation:
     """Continuously polls for this operation's server-side state.
 
@@ -124,9 +121,11 @@ def wait(
             return operation
         elif operation.status["state"] in [OperationState.PENDING, OperationState.RUNNING]:
             sleep(poll_interval_seconds)
-        elif operation.status["state"] in [OperationState.CANCELED, OperationState.SUCCEEDED, OperationState.FAILED]:
+        elif operation.status["state"] in [
+            OperationState.CANCELED,
+            OperationState.SUCCEEDED,
+            OperationState.FAILED,
+        ]:
             return operation
         operation = operation.poll()
-    raise TimeoutError(
-        f"Waiting for operation took longer than {timeout_seconds} seconds."
-    )
+    raise TimeoutError(f"Waiting for operation took longer than {timeout_seconds} seconds.")

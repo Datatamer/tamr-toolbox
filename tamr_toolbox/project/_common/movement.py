@@ -12,8 +12,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def export_project(
-        project: Project, *, artifact_directory_path: str, exclude_artifacts: Optional[List[str]] = [],
-        asynchronous: bool = False
+    project: Project,
+    *,
+    artifact_directory_path: str,
+    exclude_artifacts: Optional[List[str]] = [],
+    asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
 
@@ -31,9 +34,7 @@ def export_project(
     """
     # check version compatibility for project movement
     tamr_client = project.client
-    utils.version.enforce_after_or_equal(
-        client=tamr_client, compare_version="2021.005.0"
-    )
+    utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
     logging.info("Tamr version has movement compatibility.")
 
     # make project export api request
@@ -58,18 +59,18 @@ def export_project(
 
 
 def import_project(
-        *,
-        tamr_client: Client,
-        project_artifact_path: str,
-        target_project: Project = None,
-        new_project_name: str = None,
-        new_unified_dataset_name: Optional[str] = None,
-        exclude_artifacts: Optional[List[str]] = [],
-        include_additive_artifacts: Optional[List[str]] = [],
-        include_destructive_artifacts: Optional[List[str]] = [],
-        fail_if_not_present: bool = False,
-        asynchronous: bool = False,
-        overwrite_existing: bool = False
+    *,
+    tamr_client: Client,
+    project_artifact_path: str,
+    target_project: Project = None,
+    new_project_name: str = None,
+    new_unified_dataset_name: Optional[str] = None,
+    exclude_artifacts: Optional[List[str]] = [],
+    include_additive_artifacts: Optional[List[str]] = [],
+    include_destructive_artifacts: Optional[List[str]] = [],
+    fail_if_not_present: bool = False,
+    asynchronous: bool = False,
+    overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
 
@@ -93,9 +94,7 @@ def import_project(
         operation for project import api call
     """
     # check version compatibility for project movement
-    utils.version.enforce_after_or_equal(
-        client=tamr_client, compare_version="2021.005.0"
-    )
+    utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
     logging.info("Tamr version has movement compatibility.")
 
     # make project import api request
@@ -111,17 +110,18 @@ def import_project(
     if target_project:
         if overwrite_existing:
             logging.info(
-                f"Sending query to import existing project {target_project.name} with id {target_project.resource_id}."
+                f"importing existing project {target_project.name} "
+                f"with id {target_project.resource_id}."
             )
-            response = tamr_client.post(f'/v1/projects/{target_project.resource_id}:import', json=body)
+            response = tamr_client.post(
+                f"/v1/projects/{target_project.resource_id}:import", json=body
+            )
         else:
-            logging.info(
-                "Unable to overwrite existing project; overwrite flag is off."
-            )
+            logging.info("Unable to overwrite existing project; overwrite flag is off.")
             raise KeyError("Unable to overwrite existing project; overwrite flag is off.")
     else:
         logging.info(f"Sending query to import new project, {new_project_name}.")
-        response = tamr_client.post('/v1/projects:import', json=body)
+        response = tamr_client.post("/v1/projects:import", json=body)
     response.successful()
 
     # get operation
