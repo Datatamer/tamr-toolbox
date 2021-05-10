@@ -126,7 +126,7 @@ def from_dataset(
         )
         buffer = []
         header = None
-        # Set record number to -1 in case the dataset streamed has no recordsgg
+        # Set record number to -1 in case the dataset streamed has no records
         record_number = -1
 
         for record_number, record in enumerate(
