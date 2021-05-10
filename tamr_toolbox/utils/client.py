@@ -54,14 +54,15 @@ def create(
         username: The username to log access Tamr as
         password: the password for the user
         host: The ip address of Tamr
-        port: The port of the Tamr UI
+        port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port
         protocol: https or http
         enforce_healthy: If true will enforce a healthy state upon creation
 
     Returns:
         Tamr client
     """
-    LOGGER.info(f"Creating client as user {username} at {protocol}://{host}:{port}.")
+    full_address = f"{protocol}://{host}:{port}" if port is not None else f"{protocol}://{host}"
+    LOGGER.info(f"Creating client as user {username} at {full_address}.")
     client = Client(
         auth=UsernamePasswordAuth(username=username, password=password),
         host=host,
