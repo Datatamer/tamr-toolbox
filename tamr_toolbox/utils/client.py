@@ -69,12 +69,11 @@ def create(
         port=int(port) if port is not None else None,
         protocol=protocol,
     )
-    healthy_status = health_check(client)
-    if healthy_status or not enforce_healthy:
-        return client
-    else:
-        LOGGER.error(f"Tamr is not healthy. Check logs and Tamr.")
-        raise SystemError("Tamr is not healthy. Check logs and Tamr.")
+    if enforce_healthy:
+        if not health_check(client):
+            LOGGER.error(f"Tamr is not healthy. Check logs and Tamr.")
+            raise SystemError("Tamr is not healthy. Check logs and Tamr.")
+    return client
 
 
 def get_with_connection_retry(
