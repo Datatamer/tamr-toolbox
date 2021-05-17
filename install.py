@@ -1,4 +1,4 @@
-"""Install requirements for development of the Tamr-Toolbox"""
+"""Install requirements for development of the Tamr Toolbox"""
 from pathlib import Path
 from subprocess import run
 
