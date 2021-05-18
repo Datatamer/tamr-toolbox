@@ -22,10 +22,11 @@ def test_run():
     for op in all_ops:
         assert op.succeeded()
 
-    assert len(all_ops) == 2
+    assert len(all_ops) == 3
 
-    assert "Updating Golden Records" == all_ops[0].description
-    assert "Updating published datasets for Golden Records" == all_ops[1].description
+    assert "Updating all profiling information for Golden Records" == all_ops[0].description
+    assert "Updating Golden Records" == all_ops[1].description
+    assert "Updating published datasets for GoldenRecords module" == all_ops[2].description
 
 
 @mock_api()
