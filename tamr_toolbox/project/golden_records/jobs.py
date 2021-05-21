@@ -100,7 +100,7 @@ def run(project: Project) -> List[Operation]:
     )
 
 
-def profile_information_for_golden_records(project: Project) -> List[Operation]:
+def update_input_dataset_profiling_information(project: Project) -> List[Operation]:
     """Updating all profiling information for golden records project
 
     Args:
