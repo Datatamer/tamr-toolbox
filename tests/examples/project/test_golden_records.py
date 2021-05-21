@@ -27,11 +27,12 @@ def test_run_golden_records_simple():
         assert op.succeeded()
 
     # Check that the number of operations run is exactly 2
-    assert len(all_ops) == 2
+    assert len(all_ops) == 3
 
     # Check that the descriptions of the operations run, match the tasks we wanted to complete
-    assert "Updating Golden Records" == all_ops[0].description
-    assert "Updating published datasets for Golden Records" == all_ops[1].description
+    assert "Updating all profiling information for Golden Records" == all_ops[0].description
+    assert "Updating Golden Records" == all_ops[1].description
+    assert "Updating published datasets for GoldenRecords module" == all_ops[2].description
 
 
 @mock_api()
