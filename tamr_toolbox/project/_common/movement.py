@@ -14,9 +14,9 @@ LOGGER = logging.getLogger(__name__)
 
 def export_artifacts(
         *,
-        exclude_artifacts: Optional[List[str]] = [],
         project: Project,
         artifact_directory_path: str,
+        exclude_artifacts: Optional[List[str]] = [],
         asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
@@ -57,7 +57,7 @@ def export_artifacts(
         operation = operation.wait()
         utils.operation.enforce_success(operation)
 
-    logging.info("Export completed successfully.")
+    logging.info(f"Export complete: {operation.description}.")
 
     return operation
 
