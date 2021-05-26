@@ -1,6 +1,7 @@
 """Tasks related to project movement as part of Tamr projects"""
 from typing import List, Optional
 import logging
+import json
 
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client import Client
@@ -11,12 +12,12 @@ from tamr_toolbox.utils.operation import Operation
 LOGGER = logging.getLogger(__name__)
 
 
-def export_project(
-    project: Project,
-    *,
-    artifact_directory_path: str,
-    exclude_artifacts: Optional[List[str]] = [],
-    asynchronous: bool = False,
+def export_artifacts(
+        *,
+        exclude_artifacts: Optional[List[str]] = [],
+        project: Project,
+        artifact_directory_path: str,
+        asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
 
@@ -33,44 +34,47 @@ def export_project(
         operation for project export api call
     """
     # check version compatibility for project movement
-    tamr_client = project.client
-    utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
-    logging.info("Tamr version has movement compatibility.")
+    utils.version.enforce_after_or_equal(client=project.client, compare_version="2021.005.0")
 
     # make project export api request
     body = {"artifactDirectory": artifact_directory_path, "excludeArtifacts": exclude_artifacts}
-    logging.info(f"Sending query to export project, {project.name}.")
-    response = tamr_client.post(
+    logging.info(f"Starting to export {project.name} or type {project.type}.")
+    response = project.client.post(
         f"/api/versioned/v1/projects/{project.resource_id}:export", json=body
     )
-    response.successful()
+    # Raise exception if export was not successful
+    if response.status_code != 200:
+        error_message = f"Error exporting project artifacts: {response.json()['message']}"
+        LOGGER.error(error_message)
+        raise ValueError(error_message)
 
     # get operation
     job_id = response.json()["id"]
-    operation = utils.operation.from_resource_id(tamr=tamr_client, job_id=job_id)
+    operation = utils.operation.from_resource_id(tamr=project.client, job_id=job_id)
     if not asynchronous:
         # periodically check export job until completion
         logging.info(f"Waiting for export to be created.")
         operation = operation.wait()
         utils.operation.enforce_success(operation)
-        logging.info("Export completed successfully.")
+
+    logging.info("Export completed successfully.")
 
     return operation
 
 
-def import_project(
-    *,
-    tamr_client: Client,
-    project_artifact_path: str,
-    target_project: Project = None,
-    new_project_name: str = None,
-    new_unified_dataset_name: Optional[str] = None,
-    exclude_artifacts: Optional[List[str]] = [],
-    include_additive_artifacts: Optional[List[str]] = [],
-    include_destructive_artifacts: Optional[List[str]] = [],
-    fail_if_not_present: bool = False,
-    asynchronous: bool = False,
-    overwrite_existing: bool = False,
+def import_artifacts(
+        *,
+        project_artifact_path: str,
+        tamr_client: Client,
+        target_project: Project = None,
+        new_project_name: str = None,
+        new_unified_dataset_name: Optional[str] = None,
+        exclude_artifacts: Optional[List[str]] = [],
+        include_additive_artifacts: Optional[List[str]] = [],
+        include_destructive_artifacts: Optional[List[str]] = [],
+        fail_if_not_present: bool = False,
+        asynchronous: bool = False,
+        overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
 
@@ -95,10 +99,9 @@ def import_project(
     """
     # check version compatibility for project movement
     utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
-    logging.info("Tamr version has movement compatibility.")
 
     # make project import api request
-    body = {
+    body = json.dumps({
         "projectArtifact": project_artifact_path,
         "newProjectName": new_project_name,
         "newUnifiedDatasetName": new_unified_dataset_name,
@@ -106,7 +109,7 @@ def import_project(
         "includeAdditiveArtifacts": include_additive_artifacts,
         "includeDestructiveArtifacts": include_destructive_artifacts,
         "failIfNotPresent": fail_if_not_present,
-    }
+    })
     if target_project:
         if overwrite_existing:
             logging.info(
@@ -117,12 +120,18 @@ def import_project(
                 f"/v1/projects/{target_project.resource_id}:import", json=body
             )
         else:
-            logging.info("Unable to overwrite existing project; overwrite flag is off.")
-            raise KeyError("Unable to overwrite existing project; overwrite flag is off.")
+            error_message = "Unable to overwrite existing project; overwrite flag is off."
+            logging.error(error_message)
+            raise KeyError(error_message)
     else:
         logging.info(f"Sending query to import new project, {new_project_name}.")
         response = tamr_client.post("/v1/projects:import", json=body)
-    response.successful()
+
+    # Raise exception if import was not successful
+    if response.status_code != 200:
+        error_message = f"Error importing project artifacts: {response.json()['message']}"
+        LOGGER.error(error_message)
+        raise ValueError(error_message)
 
     # get operation
     job_id = response.json()["id"]
