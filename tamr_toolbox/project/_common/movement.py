@@ -113,7 +113,7 @@ def import_artifacts(
     if target_project:
         if overwrite_existing:
             logging.info(
-                f"importing existing project {target_project.name} "
+                f"Starting to import artifacts into existing project {target_project.name} "
                 f"with id {target_project.resource_id}."
             )
             response = tamr_client.post(
@@ -124,7 +124,7 @@ def import_artifacts(
             logging.error(error_message)
             raise KeyError(error_message)
     else:
-        logging.info(f"Sending query to import new project, {new_project_name}.")
+        logging.info(f"Starting to import artifacts into new project {new_project_name}.")
         response = tamr_client.post("/v1/projects:import", json=body)
 
     # Raise exception if import was not successful
