@@ -13,11 +13,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def export_artifacts(
-        *,
-        project: Project,
-        artifact_directory_path: str,
-        exclude_artifacts: Optional[List[str]] = [],
-        asynchronous: bool = False,
+    *,
+    project: Project,
+    artifact_directory_path: str,
+    exclude_artifacts: Optional[List[str]] = [],
+    asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
 
@@ -63,18 +63,18 @@ def export_artifacts(
 
 
 def import_artifacts(
-        *,
-        project_artifact_path: str,
-        tamr_client: Client,
-        target_project: Project = None,
-        new_project_name: str = None,
-        new_unified_dataset_name: Optional[str] = None,
-        exclude_artifacts: Optional[List[str]] = [],
-        include_additive_artifacts: Optional[List[str]] = [],
-        include_destructive_artifacts: Optional[List[str]] = [],
-        fail_if_not_present: bool = False,
-        asynchronous: bool = False,
-        overwrite_existing: bool = False,
+    *,
+    project_artifact_path: str,
+    tamr_client: Client,
+    target_project: Project = None,
+    new_project_name: str = None,
+    new_unified_dataset_name: Optional[str] = None,
+    exclude_artifacts: Optional[List[str]] = [],
+    include_additive_artifacts: Optional[List[str]] = [],
+    include_destructive_artifacts: Optional[List[str]] = [],
+    fail_if_not_present: bool = False,
+    asynchronous: bool = False,
+    overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
 
@@ -101,15 +101,17 @@ def import_artifacts(
     utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
 
     # make project import api request
-    body = json.dumps({
-        "projectArtifact": project_artifact_path,
-        "newProjectName": new_project_name,
-        "newUnifiedDatasetName": new_unified_dataset_name,
-        "excludeArtifacts": exclude_artifacts,
-        "includeAdditiveArtifacts": include_additive_artifacts,
-        "includeDestructiveArtifacts": include_destructive_artifacts,
-        "failIfNotPresent": fail_if_not_present,
-    })
+    body = json.dumps(
+        {
+            "projectArtifact": project_artifact_path,
+            "newProjectName": new_project_name,
+            "newUnifiedDatasetName": new_unified_dataset_name,
+            "excludeArtifacts": exclude_artifacts,
+            "includeAdditiveArtifacts": include_additive_artifacts,
+            "includeDestructiveArtifacts": include_destructive_artifacts,
+            "failIfNotPresent": fail_if_not_present,
+        }
+    )
     if target_project:
         if overwrite_existing:
             logging.info(
