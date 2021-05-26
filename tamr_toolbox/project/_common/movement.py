@@ -13,11 +13,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def export_artifacts(
-    *,
-    project: Project,
-    artifact_directory_path: str,
-    exclude_artifacts: Optional[List[str]] = [],
-    asynchronous: bool = False,
+        *,
+        project: Project,
+        artifact_directory_path: str,
+        exclude_artifacts: Optional[List[str]] = [],
+        asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
 
@@ -42,7 +42,7 @@ def export_artifacts(
     response = project.client.post(
         f"/api/versioned/v1/projects/{project.resource_id}:export", json=body
     )
-    # Raise exception if export was not successful
+    # Raise exception if export api call not successful
     if response.status_code != 200:
         error_message = f"Error exporting project artifacts: {response.json()['message']}"
         LOGGER.error(error_message)
@@ -56,25 +56,26 @@ def export_artifacts(
         logging.info(f"Waiting for export to be created.")
         operation = operation.wait()
         utils.operation.enforce_success(operation)
-
-    logging.info(f"Export complete: {operation.description}.")
+        logging.info(f"Export complete: {operation}.")
+    else:
+        logging.info(f"Export called asynchronously: {operation}.")
 
     return operation
 
 
 def import_artifacts(
-    *,
-    project_artifact_path: str,
-    tamr_client: Client,
-    target_project: Project = None,
-    new_project_name: str = None,
-    new_unified_dataset_name: Optional[str] = None,
-    exclude_artifacts: Optional[List[str]] = [],
-    include_additive_artifacts: Optional[List[str]] = [],
-    include_destructive_artifacts: Optional[List[str]] = [],
-    fail_if_not_present: bool = False,
-    asynchronous: bool = False,
-    overwrite_existing: bool = False,
+        *,
+        project_artifact_path: str,
+        tamr_client: Client,
+        target_project: Project = None,
+        new_project_name: str = None,
+        new_unified_dataset_name: Optional[str] = None,
+        exclude_artifacts: Optional[List[str]] = [],
+        include_additive_artifacts: Optional[List[str]] = [],
+        include_destructive_artifacts: Optional[List[str]] = [],
+        fail_if_not_present: bool = False,
+        asynchronous: bool = False,
+        overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
 
@@ -101,17 +102,16 @@ def import_artifacts(
     utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
 
     # make project import api request
-    body = json.dumps(
-        {
-            "projectArtifact": project_artifact_path,
-            "newProjectName": new_project_name,
-            "newUnifiedDatasetName": new_unified_dataset_name,
-            "excludeArtifacts": exclude_artifacts,
-            "includeAdditiveArtifacts": include_additive_artifacts,
-            "includeDestructiveArtifacts": include_destructive_artifacts,
-            "failIfNotPresent": fail_if_not_present,
-        }
-    )
+    body = {
+        "projectArtifact": project_artifact_path,
+        "newProjectName": new_project_name,
+        "newUnifiedDatasetName": new_unified_dataset_name,
+        "excludeArtifacts": exclude_artifacts,
+        "includeAdditiveArtifacts": include_additive_artifacts,
+        "includeDestructiveArtifacts": include_destructive_artifacts,
+        "failIfNotPresent": fail_if_not_present,
+    }
+
     if target_project:
         if overwrite_existing:
             logging.info(
@@ -119,7 +119,7 @@ def import_artifacts(
                 f"with id {target_project.resource_id}."
             )
             response = tamr_client.post(
-                f"/v1/projects/{target_project.resource_id}:import", json=body
+                f"/api/versioned/v1/projects/{target_project.resource_id}:import", json=body
             )
         else:
             error_message = "Unable to overwrite existing project; overwrite flag is off."
@@ -127,7 +127,7 @@ def import_artifacts(
             raise KeyError(error_message)
     else:
         logging.info(f"Starting to import artifacts into new project {new_project_name}.")
-        response = tamr_client.post("/v1/projects:import", json=body)
+        response = tamr_client.post("/api/versioned/v1/projects:import", json=body)
 
     # Raise exception if import was not successful
     if response.status_code != 200:
@@ -143,6 +143,8 @@ def import_artifacts(
         logging.info(f"Waiting for project to be imported.")
         operation = operation.wait()
         utils.operation.enforce_success(operation)
-        logging.info("Project imported successfully.")
+        logging.info(f"Import complete: {operation}.")
+    else:
+        logging.info(f"Import called asynchronously: {operation}.")
 
     return operation
