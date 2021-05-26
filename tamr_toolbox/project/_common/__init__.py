@@ -1,6 +1,6 @@
 """Tasks related to Tamr projects"""
 from . import schema
 from . import transformations
-from . import movement
+from .movement import export_artifacts, import_artifacts
 
-__all__ = ["schema", "transformations", "movement"]
+__all__ = ["schema", "transformations", "export_artifacts", "import_artifacts"]
