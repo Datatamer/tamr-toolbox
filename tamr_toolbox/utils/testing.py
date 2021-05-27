@@ -125,7 +125,9 @@ def _log_response(*, log_path: Path, ip_dict: Dict[str, int], response: Response
             re.match(re.compile(".*/api/versioned/v1/operations/.*"), response.url)
         )
         is_get_request = response.request.method == "GET"
-        if is_get_request and is_operation_request:
+        is_not_error = response.ok
+
+        if is_get_request and is_operation_request and is_not_error:
             wait_resp = _collect_operation_calls(response=response)
             all_responses.extend(wait_resp)
 
