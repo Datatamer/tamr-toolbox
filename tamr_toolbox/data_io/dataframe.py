@@ -99,6 +99,7 @@ def from_dataset(
         flatten_columns: optional, list of columns to flatten
         force_flatten:  if False, arrays with inner types other than string will not be flattened.
             if True, will force all inner types to strings when flattening values.
+            if True, `flatten_delimiter` must be specified.
         nrows: number of rows to read. default None will read all rows
         allow_dataset_refresh: if True, allows running a job to refresh dataset to make streamable
 
@@ -109,6 +110,10 @@ def from_dataset(
         ValueError: if `columns` or `flatten_columns` contain columns that are not present in
             `dataset`
     """
+    # Validate arguments
+    if force_flatten and flatten_delimiter is None:
+        raise ValueError("`force_flatten` is True but no `flatten_delimiter` is specified.")
+
     # This function requires pandas, an optional dependency
     import pandas
 
