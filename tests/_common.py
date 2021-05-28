@@ -1,4 +1,4 @@
-"""Tasks for use in the testing of the Tamr-Toolbox"""
+"""Tasks for use in the testing of the Tamr Toolbox"""
 from pathlib import Path
 
 

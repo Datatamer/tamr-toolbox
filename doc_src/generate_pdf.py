@@ -1,4 +1,4 @@
-"""Generate a PDF of the Tamr-Toolbox doc_src
+"""Generate a PDF of the Tamr Toolbox doc_src
 Requires installation of wkhtmltopdf, Mac install command: brew cask install wkhtmltopdf
 """
 from pathlib import Path

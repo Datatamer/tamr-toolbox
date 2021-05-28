@@ -1,4 +1,4 @@
-"""Defines the package Tamr-Toolbox for user installations"""
+"""Defines the package tamr_toolbox for user installations"""
 from setuptools import setup, find_packages
 
 with open("requirements.txt") as f:
