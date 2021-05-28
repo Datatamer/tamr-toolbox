@@ -1,7 +1,6 @@
 """Tasks related to project movement as part of Tamr projects"""
 from typing import List, Optional
 import logging
-import json
 
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client import Client
