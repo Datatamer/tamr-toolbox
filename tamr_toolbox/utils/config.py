@@ -2,13 +2,12 @@
 from typing import Union, Optional
 from pathlib import Path
 
+from pyrsistent import freeze, PMap
 import yaml
 import logging
 import re
 
 import os
-
-from tamr_toolbox.models.data_type import JsonDict
 
 LOGGER = logging.getLogger(__name__)
 
@@ -34,8 +33,9 @@ def _yaml_env_variable_constructor(loader, node):
     return value
 
 
-def _yaml_env_loader(path_to_file: Optional[Union[str, Path]]) -> JsonDict:
-    """Reads a yaml file and creates a dictionary, retrieving environment variables as needed
+def _yaml_env_loader(path_to_file: Optional[Union[str, Path]]) -> PMap:
+    """Reads a yaml file and creates an immutable pyrsistent PMap (dictionary),
+    retrieving environment variables as needed
 
     Args:
         path_to_file: Path to config yaml file
@@ -51,16 +51,16 @@ def _yaml_env_loader(path_to_file: Optional[Union[str, Path]]) -> JsonDict:
     with open(path_to_file, "r") as config_file:
         configs = yaml.load(config_file.read(), Loader=yaml_loader)
     LOGGER.info(f"Configurations have been loaded from {path_to_file}")
-    return configs
+    return freeze(configs)
 
 
 def from_yaml(
     path_to_file: Optional[Union[str, Path]],
     *,
     default_path_to_file: Optional[Union[str, Path]] = None,
-) -> JsonDict:
-    """Reads a yaml file and creates a dictionary. Input values can be retrieved from environment
-    variables
+) -> PMap:
+    """Reads a yaml file and creates an immutable pyrsistent PMap (dictionary).
+    Input values can be retrieved from environment variables
 
     Args:
         path_to_file: Path to config yaml file

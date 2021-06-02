@@ -81,3 +81,30 @@ def test_from_yaml_with_path():
         ),
     )
     assert my_config_2["my_other_instance"]["host"] == "1.2.3.4"
+
+
+def test_config_immutable():
+    # set needed environment variables and ensure we read them in correctly
+    os.environ["TAMR_MY_INSTANCE_HOST"] = "localhost"
+    os.environ["TAMR_MY_INSTANCE_USERNAME"] = "user"
+    os.environ["TAMR_MY_INSTANCE_PASSWORD"] = "password"
+
+    my_config = tamr_toolbox.utils.config.from_yaml(
+        get_toolbox_root_dir() / "tests/mocking/resources/environment_variables.config.yaml"
+    )
+    assert my_config["my_instance_name"]["host"] == "localhost"
+    assert my_config["my_instance_name"]["username"] == "user"
+    assert my_config["my_instance_name"]["password"] == "password"
+
+    # delete or reassignment raises TypeError
+    # top-level dict
+    with pytest.raises(TypeError):
+        my_config["my_instance_name"] = {}
+    with pytest.raises(TypeError):
+        del my_config["my_instance_name"]
+
+    # top-level dict
+    with pytest.raises(TypeError):
+        my_config["my_instance_name"]["host"] = "newhost"
+    with pytest.raises(TypeError):
+        del my_config["my_instance_name"]["host"]
