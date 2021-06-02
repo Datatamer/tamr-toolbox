@@ -1,10 +1,6 @@
 name: Create Draft Release
 on:
   workflow_dispatch:
-    inputs:
-      branch_name:
-        description: 'The name of the release branch'
-        required: true
 
 jobs:
   CreateZip:
@@ -16,8 +12,6 @@ jobs:
           python-version: 3.6
       - name: Checkout release branch
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.inputs.branch_name }}
 
       - name: Export version
         run: echo ::set-output name=version::$(cat version.txt)
