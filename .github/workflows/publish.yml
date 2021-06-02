@@ -9,10 +9,8 @@ jobs:
   Publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main branch
+      - name: Checkout release branch
         uses: actions/checkout@v2
-        with:
-          ref: "main"
       - name: Install Python
         uses: actions/setup-python@v2
         with:

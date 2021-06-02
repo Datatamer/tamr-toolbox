@@ -1,4 +1,5 @@
-name: Create Release Pull Requests
+name: Create Release Pull Request
+
 on:
   workflow_dispatch:
     inputs:
@@ -42,26 +43,21 @@ jobs:
         run: invoke lint
       - name: Run format check
         run: invoke format
-        
+
+      - name: Build docs
+        run: invoke docs
+
+      - name: Remove previous latest doc
+        run: rm -r docs/latest
+      - name: Move docs to online pages location
+        run: cp -r docs/_draft_build docs/${{ steps.get_version_short.outputs.version }} && cp -r docs/_draft_build docs/latest
+
       - name: Configure git
         run: git config --global user.email "tamr-toolbox@tamr.com" && git config --global user.name "Tamr"
       - name: Init release branch
         run: git checkout -b 'release-${{ steps.get_version.outputs.version }}'
-        
-      - name: Remove previous latest doc
-        run: rm -r docs/latest
-      - name: Delete previous latests docs
-        run: git add . && git commit -m 'remove previous latest docs'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build docs
-        run: invoke docs
-          
-      - name: Move docs to online pages location
-        run: cp -r docs/_draft_build docs/${{ steps.get_version_short.outputs.version }} && cp -r docs/_draft_build docs/latest
-
-      - name: Commit new docs
+      - name: Commit changes
         run: git add . && git commit -m 'add docs for release ${{ steps.get_version.outputs.version }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,10 +68,6 @@ jobs:
 
       - name: Install github cli
         run: brew install hub
-      - name: Create PR for main
-        run: hub pull-request -m "Merge release-${{ steps.get_version.outputs.version }} into main" -b main -h release-${{ steps.get_version.outputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create PR for develop
         run: hub pull-request -m "Merge release-${{ steps.get_version.outputs.version }} into develop" -b develop -h release-${{ steps.get_version.outputs.version }}
         env:
