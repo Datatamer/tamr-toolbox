@@ -11,7 +11,7 @@ on:
         required: true
 
 jobs:
-  create_release_prs:
+  CreateReleasePRs:
     runs-on: ubuntu-20.04
     outputs:
       release_branch: release-${{ steps.get_version.outputs.version }}
