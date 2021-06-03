@@ -1,4 +1,5 @@
-name: Create Release Pull Requests
+name: Create Release Pull Request
+
 on:
   workflow_dispatch:
     inputs:
@@ -67,10 +68,6 @@ jobs:
 
       - name: Install github cli
         run: brew install hub
-      - name: Create PR for main
-        run: hub pull-request -m "Merge release-${{ steps.get_version.outputs.version }} into main" -b main -h release-${{ steps.get_version.outputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create PR for develop
         run: hub pull-request -m "Merge release-${{ steps.get_version.outputs.version }} into develop" -b develop -h release-${{ steps.get_version.outputs.version }}
         env:

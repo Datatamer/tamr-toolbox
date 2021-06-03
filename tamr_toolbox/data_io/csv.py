@@ -31,6 +31,7 @@ def from_dataset(
     allow_dataset_refresh: bool = False,
     buffer_size: int = 10000,
     overwrite: bool = False,
+    encoding: str = "utf-8",
 ) -> int:
     """
     Export a Tamr Dataset to a csv file. Records are streamed to disk and written according to a
@@ -57,6 +58,8 @@ def from_dataset(
         buffer_size: Number of records to store in memory before writing to disk
         overwrite: if True and export_file_name already exists, overwrite the file.
             Otherwise throw an error
+        encoding: The encoding to use in the written file.
+            See https://docs.python.org/3/library/functions.html#open
 
     Returns:
         The total number of records written
@@ -117,7 +120,7 @@ def from_dataset(
 
     # Open CSV file and use newline='' as recommended by
     # https://docs.python.org/3/library/csv.html#csv.writer
-    with open(export_file_path, "w", newline="") as csv_file:
+    with open(export_file_path, "w", newline="", encoding=encoding) as csv_file:
         csv_writer = csv.writer(
             csv_file, delimiter=csv_delimiter, quotechar=quote_character, quoting=quoting,
         )
@@ -184,6 +187,7 @@ def from_taxonomy(
     quote_character: str = '"',
     quoting: int = csv.QUOTE_MINIMAL,
     overwrite: bool = False,
+    encoding: str = "utf-8",
 ) -> int:
     """
     Export a Tamr taxonomy to a csv file. Records are streamed to disk and written according to a
@@ -200,6 +204,8 @@ def from_taxonomy(
             See https://docs.python.org/2/library/csv.html#csv.QUOTE_MINIMAL
         overwrite: if True and export_file_name already exists, overwrite the file.
             Otherwise throw an error
+        encoding: The encoding to use in the written file.
+            See https://docs.python.org/3/library/functions.html#open
 
     Returns:
         The total number of records written
@@ -263,7 +269,7 @@ def from_taxonomy(
     # https://docs.python.org/3/library/csv.html#csv.writer
 
     try:
-        f = open(export_file_path, "w", newline="", encoding="utf-8")
+        f = open(export_file_path, "w", newline="", encoding=encoding)
     except (FileNotFoundError, IOError, PermissionError):
         cannot_open_error = f"File path {export_file_path} could not be opened for writing."
         LOGGER.error(cannot_open_error)

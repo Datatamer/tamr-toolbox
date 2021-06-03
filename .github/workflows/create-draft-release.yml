@@ -10,10 +10,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.6
-      - name: Checkout main branch
+      - name: Checkout release branch
         uses: actions/checkout@v2
-        with:
-          ref: "main"
 
       - name: Export version
         run: echo ::set-output name=version::$(cat version.txt)

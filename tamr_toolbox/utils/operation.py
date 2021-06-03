@@ -33,8 +33,7 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
     Returns:
         A Tamr operation
     """
-    job_response = tamr.get(f"/api/versioned/v1/operations/{job_id}")
-    return Operation.from_response(tamr, job_response)
+    return Operation.from_resource_id(tamr, str(job_id))
 
 
 def get_latest(tamr: Client) -> Operation:
