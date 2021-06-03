@@ -13,7 +13,8 @@ project = tamr.projects.by_resource_id("my_project_id")
 path_export_dir = "/home/ubuntu/tamr/projectExports"
 
 # Make list of categorization artifacts to exclude.
-# You can spell out the artifact code if known, or list access via the CategorizationArtifacts dataclass
+# You can spell out the artifact code if known,
+# or list access via the CategorizationArtifacts dataclass
 exclude_list = [catfacts.CATEGORIZATION_VERIFIED_LABELS,
                 "CATEGORIZATION_TAXONOMIES",
                 catfacts.CATEGORIZATION_FEEDBACK]
