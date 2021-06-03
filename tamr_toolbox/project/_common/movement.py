@@ -32,6 +32,10 @@ def export_artifacts(
     Returns:
         operation for project export api call
     """
+    # initializing empty lists if any
+    if exclude_artifacts is None:
+        exclude_artifacts = []
+
     # check version compatibility for project movement
     utils.version.enforce_after_or_equal(client=project.client, compare_version="2021.005.0")
 
@@ -42,7 +46,7 @@ def export_artifacts(
         f"/api/versioned/v1/projects/{project.resource_id}:export", json=body
     )
     # Raise exception if export api call not successful
-    if response.status_code != 200:
+    if not response.ok:
         error_message = f"Error exporting project artifacts: {response.json()['message']}"
         LOGGER.error(error_message)
         raise ValueError(error_message)
@@ -69,9 +73,9 @@ def import_artifacts(
         target_project: Project = None,
         new_project_name: str = None,
         new_unified_dataset_name: Optional[str] = None,
-        exclude_artifacts: Optional[List[str]] = [],
-        include_additive_artifacts: Optional[List[str]] = [],
-        include_destructive_artifacts: Optional[List[str]] = [],
+        exclude_artifacts: Optional[List[str]] = None,
+        include_additive_artifacts: Optional[List[str]] = None,
+        include_destructive_artifacts: Optional[List[str]] = None,
         fail_if_not_present: bool = False,
         asynchronous: bool = False,
         overwrite_existing: bool = False,
@@ -97,6 +101,14 @@ def import_artifacts(
     Returns:
         operation for project import api call
     """
+    # initializing empty lists if any
+    if exclude_artifacts is None:
+        exclude_artifacts = []
+    if include_additive_artifacts is None:
+        include_additive_artifacts = []
+    if include_destructive_artifacts is None:
+        include_destructive_artifacts = []
+
     # check version compatibility for project movement
     utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
 
@@ -129,7 +141,7 @@ def import_artifacts(
         response = tamr_client.post("/api/versioned/v1/projects:import", json=body)
 
     # Raise exception if import was not successful
-    if response.status_code != 200:
+    if not response.ok:
         error_message = f"Error importing project artifacts: {response.json()['message']}"
         LOGGER.error(error_message)
         raise ValueError(error_message)

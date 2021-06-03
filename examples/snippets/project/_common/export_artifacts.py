@@ -16,8 +16,7 @@ path_export_dir = "/home/ubuntu/tamr/projectExports"
 # You can spell out the artifact code if known, or list access via the CategorizationArtifacts dataclass
 exclude_list = [catfacts.CATEGORIZATION_VERIFIED_LABELS,
                 "CATEGORIZATION_TAXONOMIES",
-                catfacts.CATEGORIZATION_FEEDBACK
-                ]
+                catfacts.CATEGORIZATION_FEEDBACK]
 
 # Export project artifacts
 op = categorization.export_artifacts(project=project,
