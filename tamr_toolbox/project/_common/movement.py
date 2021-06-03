@@ -15,7 +15,7 @@ def export_artifacts(
         *,
         project: Project,
         artifact_directory_path: str,
-        exclude_artifacts: Optional[List[str]] = [],
+        exclude_artifacts: Optional[List[str]] = None,
         asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
