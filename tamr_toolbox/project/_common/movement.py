@@ -45,7 +45,7 @@ def export_artifacts(
     response = project.client.post(
         f"/api/versioned/v1/projects/{project.resource_id}:export", json=body
     )
-    # Raise exception if export api call not successful
+    # Raise error if export api call not successful
     if not response.ok:
         error_message = f"Error exporting project artifacts: {response.json()['message']}"
         LOGGER.error(error_message)
@@ -115,8 +115,6 @@ def import_artifacts(
     # make project import api request
     body = {
         "projectArtifact": project_artifact_path,
-        "newProjectName": new_project_name,
-        "newUnifiedDatasetName": new_unified_dataset_name,
         "excludeArtifacts": exclude_artifacts,
         "includeAdditiveArtifacts": include_additive_artifacts,
         "includeDestructiveArtifacts": include_destructive_artifacts,
@@ -124,6 +122,11 @@ def import_artifacts(
     }
 
     if target_project:
+        if new_project_name or new_unified_dataset_name:
+            error_message = "Cannot import to existing project and simultaneously set" \
+                            "new_project_name or new_unified_dataset_name."
+            logging.error(error_message)
+            raise KeyError(error_message)
         if overwrite_existing:
             logging.info(
                 f"Starting to import artifacts into existing project {target_project.name} "
@@ -137,6 +140,8 @@ def import_artifacts(
             logging.error(error_message)
             raise KeyError(error_message)
     else:
+        body["newProjectName"] = new_project_name
+        body["newUnifiedDatasetName"] = new_unified_dataset_name
         logging.info(f"Starting to import artifacts into new project {new_project_name}.")
         response = tamr_client.post("/api/versioned/v1/projects:import", json=body)
 
