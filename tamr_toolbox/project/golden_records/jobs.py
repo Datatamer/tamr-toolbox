@@ -15,6 +15,7 @@ LOGGER = logging.getLogger(__name__)
 def _run_custom(
     project: Project,
     *,
+    run_profile_golden_records: bool = False,
     run_update_golden_records: bool = False,
     run_publish_golden_records: bool = False,
 ) -> List[Operation]:
@@ -22,6 +23,8 @@ def _run_custom(
 
     Args:
         project: The target golden records project
+        run_profile_golden_records: Whether reprofile should be called on the golden records
+        project
         run_update_golden_records: Whether refresh should be called on the draft golden records
             dataset
         run_publish_golden_records: Whether refresh should be called on the published golden
@@ -41,6 +44,18 @@ def _run_custom(
         raise TypeError(error_msg)
 
     completed_operations = []
+    if run_profile_golden_records:
+        LOGGER.info(
+            f"Updating all profiling information for golden records project {project.name} "
+            f"(id={project.resource_id})."
+        )
+        resp = project.client.post(
+            f"/api/versioned/v1/projects/{project.resource_id}/goldenRecordsProfile:refresh"
+        ).successful()
+        op = Operation.from_response(client=project.client, response=resp)
+        op = op.wait()
+        operation.enforce_success(op)
+        completed_operations.append(op)
     if run_update_golden_records:
         LOGGER.info(
             f"Updating the draft golden records for project {project.name} "
@@ -77,7 +92,29 @@ def run(project: Project) -> List[Operation]:
     Returns:
         The operations that were run
     """
-    return _run_custom(project, run_update_golden_records=True, run_publish_golden_records=True)
+    return _run_custom(
+        project,
+        run_profile_golden_records=True,
+        run_update_golden_records=True,
+        run_publish_golden_records=True,
+    )
+
+
+def update_input_dataset_profiling_information(project: Project) -> List[Operation]:
+    """Updating all profiling information for golden records project
+
+    Args:
+        project: Target golden records project
+
+    Returns:
+        The operations that were run
+    """
+    return _run_custom(
+        project,
+        run_profile_golden_records=True,
+        run_update_golden_records=False,
+        run_publish_golden_records=False,
+    )
 
 
 def update_golden_records(project: Project) -> List[Operation]:
@@ -89,7 +126,12 @@ def update_golden_records(project: Project) -> List[Operation]:
     Returns:
         The operations that were run
     """
-    return _run_custom(project, run_update_golden_records=True, run_publish_golden_records=False)
+    return _run_custom(
+        project,
+        run_profile_golden_records=False,
+        run_update_golden_records=True,
+        run_publish_golden_records=False,
+    )
 
 
 def publish_golden_records(project: Project) -> List[Operation]:
@@ -101,7 +143,12 @@ def publish_golden_records(project: Project) -> List[Operation]:
     Returns:
         The operations that were run
     """
-    return _run_custom(project, run_update_golden_records=False, run_publish_golden_records=True)
+    return _run_custom(
+        project,
+        run_profile_golden_records=False,
+        run_update_golden_records=False,
+        run_publish_golden_records=True,
+    )
 
 
 def update_and_publish(project: Project) -> List[Operation]:
@@ -113,4 +160,9 @@ def update_and_publish(project: Project) -> List[Operation]:
     Returns:
         The operations that were run
     """
-    return _run_custom(project, run_update_golden_records=True, run_publish_golden_records=True)
+    return _run_custom(
+        project,
+        run_profile_golden_records=False,
+        run_update_golden_records=True,
+        run_publish_golden_records=True,
+    )

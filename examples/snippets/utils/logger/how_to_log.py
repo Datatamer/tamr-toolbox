@@ -1,4 +1,4 @@
-"""Snippet showing how the logger module of Tamr-Toolbox works"""
+"""Snippet showing how the logger module of tamr_toolbox works"""
 import tamr_toolbox as tbox
 
 # Often I want to log things as my script progresses - to do this you need a logger object

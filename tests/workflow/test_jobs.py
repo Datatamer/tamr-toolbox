@@ -65,7 +65,7 @@ def test_run_many():
     for op in all_ops:
         assert op.succeeded()
 
-    assert len(all_ops) == 9
+    assert len(all_ops) == 10
 
     # Schema mapping
     assert (
@@ -85,8 +85,9 @@ def test_run_many():
     assert "Publish clusters" == all_ops[6].description
 
     # Golden records
-    assert "Updating Golden Records" == all_ops[7].description
-    assert "Updating published datasets for GoldenRecords module" == all_ops[8].description
+    assert "Updating all profiling information for Golden Records" == all_ops[7].description
+    assert "Updating Golden Records" == all_ops[8].description
+    assert "Updating published datasets for GoldenRecords module" == all_ops[9].description
 
 
 @mock_api()
@@ -102,7 +103,7 @@ def test_run_many_training():
     for op in all_ops:
         assert op.succeeded()
 
-    assert len(all_ops) == 11
+    assert len(all_ops) == 12
 
     # Schema mapping
     assert (
@@ -127,8 +128,9 @@ def test_run_many_training():
     assert "Publish clusters" == all_ops[8].description
 
     # Golden records
-    assert "Updating Golden Records" == all_ops[9].description
-    assert "Updating published datasets for GoldenRecords module" == all_ops[10].description
+    assert "Updating all profiling information for Golden Records" == all_ops[9].description
+    assert "Updating Golden Records" == all_ops[10].description
+    assert "Updating published datasets for GoldenRecords module" == all_ops[11].description
 
 
 @mock_api()

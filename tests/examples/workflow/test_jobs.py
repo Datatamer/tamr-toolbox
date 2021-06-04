@@ -29,7 +29,7 @@ def test_run_multiple_projects():
         assert op.succeeded()
 
     # Check that the number of operations run is exactly what we expect
-    assert len(all_ops) == (1 + 2 + 6 + 2)
+    assert len(all_ops) == (1 + 2 + 6 + 3)
 
     # Check that the descriptions of the operations run, match the tasks we wanted to complete
     tamr_client = utils.client.create(**CONFIG["my_tamr_instance"])
@@ -65,5 +65,6 @@ def test_run_multiple_projects():
     assert "Publish clusters" == all_ops[8].description
 
     # golden_records_project
-    assert "Updating Golden Records" == all_ops[9].description
-    assert "Updating published datasets for GoldenRecords module" == all_ops[10].description
+    assert "Updating all profiling information for Golden Records" == all_ops[9].description
+    assert "Updating Golden Records" == all_ops[10].description
+    assert "Updating published datasets for GoldenRecords module" == all_ops[11].description

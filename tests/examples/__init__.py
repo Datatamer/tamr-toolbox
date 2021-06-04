@@ -1,1 +1,1 @@
-"""Tests for Tamr-Toolbox example scripts"""
+"""Tests for Tamr Toolbox example scripts"""

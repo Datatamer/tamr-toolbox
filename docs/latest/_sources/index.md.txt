@@ -1,11 +1,11 @@
 # Tamr Toolbox
 
-Tamr-Toolbox is a python library created to provide a simple interface for common interactions with Tamr and common data workflows that include Tamr. The more specialized [Tamr-Client](https://github.com/Datatamer/tamr-client) python library is used for direct interactions with Tamr in both the development of the Tamr-Toolbox and in the recommended use of the Tamr-Toolbox.  
+The Tamr Toolbox is a Python library created to provide a simple interface for common interactions with Tamr and common data workflows that include Tamr. The more specialized [Tamr Python Client](https://github.com/Datatamer/tamr-client) library is used for direct interactions with Tamr in both the development of the Tamr Toolbox and in the recommended use of the Tamr Toolbox.  
 
 
 ## Basic Installation
 
-`pip install tamr-toolbox[all]`
+`pip install 'tamr-toolbox[all]'`
  
  [See more installation options](installation.md)
 
@@ -35,7 +35,7 @@ config = utils.config.from_yaml("/home/data/project/conf/project.config.yaml")
 # Make a logger for your script
 logger = utils.logger.create(__name__, log_directory=config["logging_dir"])
 
-# Optionally, configure Tamr-Toolbox to write to the same log file
+# Optionally, configure tamr_toolbox to write to the same log file
 utils.logger.enable_toolbox_logging(log_directory=config["logging_dir"])
 
 # Create a Tamr Client 
@@ -47,7 +47,7 @@ my_projects = [tamr_client.projects.by_resource_id(p_id) for p_id in config["my_
 # Write your own logging message
 logger.info(f"Running projects loaded from config: {[p.name for p in my_projects]}")
 
-# Use the Tamr-Toolbox workflow module to run a list of projects 
+# Use the tamr_toolbox.workflow module to run a list of projects 
 workflow.jobs.run(my_projects)
 
 ```

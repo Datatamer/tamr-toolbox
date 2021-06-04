@@ -96,6 +96,14 @@ def test_create_dataframe_force_flattened():
 
 
 @mock_api()
+def test_create_dataframe_force_flatten_no_delimiter():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    dataset = client.datasets.by_resource_id(GR_DATASET_ID)
+    with pytest.raises(ValueError):
+        dataframe.from_dataset(dataset, force_flatten=True)
+
+
+@mock_api()
 def test_create_dataframe_nrows():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset = client.datasets.by_resource_id(SM_DATASET_ID)
