@@ -15,15 +15,19 @@ path_export_dir = "/home/ubuntu/tamr/projectExports"
 # Make list of categorization artifacts to exclude.
 # You can spell out the artifact code if known,
 # or list access via the CategorizationArtifacts dataclass
-exclude_list = [catfacts.CATEGORIZATION_VERIFIED_LABELS,
-                "CATEGORIZATION_TAXONOMIES",
-                catfacts.CATEGORIZATION_FEEDBACK]
+exclude_list = [
+    catfacts.CATEGORIZATION_VERIFIED_LABELS,
+    "CATEGORIZATION_TAXONOMIES",
+    catfacts.CATEGORIZATION_FEEDBACK,
+]
 
 # Export project artifacts
-op = categorization.export_artifacts(project=project,
-                                     artifact_directory_path=path_export_dir,
-                                     exclude_artifacts=exclude_list,
-                                     asynchronous=False)
+op = categorization.export_artifacts(
+    project=project,
+    artifact_directory_path=path_export_dir,
+    exclude_artifacts=exclude_list,
+    asynchronous=False,
+)
 
 # Print operation
 print(op)

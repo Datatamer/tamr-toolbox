@@ -12,11 +12,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def export_artifacts(
-        *,
-        project: Project,
-        artifact_directory_path: str,
-        exclude_artifacts: Optional[List[str]] = None,
-        asynchronous: bool = False,
+    *,
+    project: Project,
+    artifact_directory_path: str,
+    exclude_artifacts: Optional[List[str]] = None,
+    asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
 
@@ -67,18 +67,18 @@ def export_artifacts(
 
 
 def import_artifacts(
-        *,
-        project_artifact_path: str,
-        tamr_client: Client,
-        target_project: Project = None,
-        new_project_name: str = None,
-        new_unified_dataset_name: Optional[str] = None,
-        exclude_artifacts: Optional[List[str]] = None,
-        include_additive_artifacts: Optional[List[str]] = None,
-        include_destructive_artifacts: Optional[List[str]] = None,
-        fail_if_not_present: bool = False,
-        asynchronous: bool = False,
-        overwrite_existing: bool = False,
+    *,
+    project_artifact_path: str,
+    tamr_client: Client,
+    target_project: Project = None,
+    new_project_name: str = None,
+    new_unified_dataset_name: Optional[str] = None,
+    exclude_artifacts: Optional[List[str]] = None,
+    include_additive_artifacts: Optional[List[str]] = None,
+    include_destructive_artifacts: Optional[List[str]] = None,
+    fail_if_not_present: bool = False,
+    asynchronous: bool = False,
+    overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
 
@@ -123,8 +123,10 @@ def import_artifacts(
 
     if target_project:
         if new_project_name or new_unified_dataset_name:
-            error_message = "Cannot import to existing project and simultaneously set " \
-                            "new_project_name or new_unified_dataset_name."
+            error_message = (
+                "Cannot import to existing project and simultaneously set "
+                "new_project_name or new_unified_dataset_name."
+            )
             logging.error(error_message)
             raise KeyError(error_message)
         if overwrite_existing:
