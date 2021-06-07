@@ -9,7 +9,7 @@ from typing import List
 from tamr_toolbox.utils.testing import mock_api
 
 CONFIG = utils.config.from_yaml(
-    get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test_temp.yaml"
+    get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
 )
 
 
