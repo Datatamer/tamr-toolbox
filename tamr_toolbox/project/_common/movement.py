@@ -48,7 +48,7 @@ def export_artifacts(
     # Raise error if export api call not successful
     if not response.ok:
         error_message = f"Error exporting project artifacts: {response.json()['message']}"
-        LOGGER.error(error_message)
+        logging.error(error_message)
         raise ValueError(error_message)
 
     # get operation
@@ -123,7 +123,7 @@ def import_artifacts(
 
     if target_project:
         if new_project_name or new_unified_dataset_name:
-            error_message = "Cannot import to existing project and simultaneously set" \
+            error_message = "Cannot import to existing project and simultaneously set " \
                             "new_project_name or new_unified_dataset_name."
             logging.error(error_message)
             raise KeyError(error_message)
@@ -140,6 +140,16 @@ def import_artifacts(
             logging.error(error_message)
             raise KeyError(error_message)
     else:
+        if new_project_name in [p.name for p in tamr_client.projects.stream()]:
+            error_message = f"New project name {new_project_name} already exists."
+            logging.error(error_message)
+            raise KeyError(error_message)
+        if new_unified_dataset_name in [ds.name for ds in tamr_client.datasets.stream()]:
+            # otherwise response will be ok, but operation 'state'='FAILED'
+            # and artifacts will be partially migrated : creates issues on re-run.
+            error_message = f"New unified dataset name {new_unified_dataset_name} already exists."
+            logging.error(error_message)
+            raise KeyError(error_message)
         body["newProjectName"] = new_project_name
         body["newUnifiedDatasetName"] = new_unified_dataset_name
         logging.info(f"Starting to import artifacts into new project {new_project_name}.")
@@ -148,7 +158,7 @@ def import_artifacts(
     # Raise exception if import was not successful
     if not response.ok:
         error_message = f"Error importing project artifacts: {response.json()['message']}"
-        LOGGER.error(error_message)
+        logging.error(error_message)
         raise ValueError(error_message)
 
     # get operation
