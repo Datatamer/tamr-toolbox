@@ -67,6 +67,12 @@ def create(
     Log file will be located under log_directory with file name
     <log_prefix>_<date>.log, quashing extra separating underscores. Defaults to <date>.log.
 
+    For use in scripts only. To log in module files, use the standard library `logging` module with
+    a module-level logger and enable package logging.  See
+    https://docs.python.org/3/howto/logging.html#advanced-logging-tutorial
+
+    >>> log = logging.getLogger(__name__)
+
     Args:
         name: This sets the name of your logger instance. It does not affect the file name.
             To change the filename use log_prefix
