@@ -3,10 +3,10 @@ import tamr_toolbox as tbox
 
 # Often I want to log things as my script progresses - to do this you need a logger object
 # Tamr-toolbox will help you put all of your logs in the same place by giving you simple methods
-# for creating and managing both your custom loggers, logging from the toolbox modules themselves,
-# and loggers from any python library that follow best practices. By default Tamr-toolbox logging
-# will stream all log messages to console, but it is easy enough to have them all go to a file
-# like so.
+# for creating and managing both your custom loggers, logging from your custom modules, logging
+# from the toolbox modules themselves, and loggers from any python libraries that follow best
+# practices. By default Tamr-toolbox logging will stream all log messages to console, but it is
+# easy enough to have them all go to a file like so.
 log = tbox.utils.logger.create("my_log", log_directory=".")
 
 # By default, the logger will still log to the console when a directory is specified, but
@@ -23,8 +23,9 @@ log.info("an info message")
 # written to the same log file by simply calling
 tbox.utils.logger.enable_toolbox_logging(log_directory=".")
 
-# you can extend to any module/library you use in your code via the helpful enable_package_
-# logging method. for example with the tamr unify client
+# you can extend to any module/library you use in your code, including any custom modules in the
+# same codebase as your script, via the helpful enable_package_logging method
+# for example with the tamr unify client
 tbox.utils.logger.enable_package_logging("tamr_unify_client")
 
 # if you need debug for any of your logs that is easy enough, just use the set_logging_level
