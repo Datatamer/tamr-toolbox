@@ -31,9 +31,9 @@ def _add_handler(logger: logging.Logger, log_directory: Optional[str] = None, **
     """Adds a handler to a logger, either a logging.StreamHandler if log_directory is None
     otherwise a logging.FileHandler piped to the directory specified.
 
-     Args:
-         logger: the logging.Logger class to which you would like to add a handler
-         log_directory: Optional log directory to pass. If not None a FileHandler is added,
+    Args:
+        logger: the logging.Logger class to which you would like to add a handler
+        log_directory: Optional log directory to pass. If not None a FileHandler is added,
             otherwise a StreamHandler
          **kwargs: Keyword arguments for the _get_log_filename
      """
@@ -49,7 +49,7 @@ def _add_handler(logger: logging.Logger, log_directory: Optional[str] = None, **
     logger.setLevel(logging.INFO)
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter(
-        "%(levelname)s <%(thread)d> [%(asctime)s] <%(name)s:%(lineno)d>  %(message)s"
+        "%(levelname)s <%(thread)d> [%(asctime)s] %(name)s <%(filename)s:%(lineno)d>  %(message)s"
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
