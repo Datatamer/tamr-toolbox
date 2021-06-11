@@ -41,14 +41,14 @@ def export_artifacts(
 
     # make project export api request
     body = {"artifactDirectory": artifact_directory_path, "excludeArtifacts": exclude_artifacts}
-    logging.info(f"Starting to export {project.name} or type {project.type}.")
+    LOGGER.info(f"Starting to export {project.name} or type {project.type}.")
     response = project.client.post(
         f"/api/versioned/v1/projects/{project.resource_id}:export", json=body
     )
     # Raise error if export api call not successful
     if not response.ok:
         error_message = f"Error exporting project artifacts: {response.json()['message']}"
-        logging.error(error_message)
+        LOGGER.error(error_message)
         raise ValueError(error_message)
 
     # get operation
@@ -56,12 +56,12 @@ def export_artifacts(
     operation = utils.operation.from_resource_id(tamr=project.client, job_id=job_id)
     if not asynchronous:
         # periodically check export job until completion
-        logging.info(f"Waiting for export to be created.")
+        LOGGER.info(f"Waiting for export to be created.")
         operation = operation.wait()
         utils.operation.enforce_success(operation)
-        logging.info(f"Export complete: {operation}.")
+        LOGGER.info(f"Export complete: {operation}.")
     else:
-        logging.info(f"Export called asynchronously: {operation}.")
+        LOGGER.info(f"Export called asynchronously: {operation}.")
 
     return operation
 
@@ -127,10 +127,10 @@ def import_artifacts(
                 "Cannot import to existing project and simultaneously set "
                 "new_project_name or new_unified_dataset_name."
             )
-            logging.error(error_message)
+            LOGGER.error(error_message)
             raise KeyError(error_message)
         if overwrite_existing:
-            logging.info(
+            LOGGER.info(
                 f"Starting to import artifacts into existing project {target_project.name} "
                 f"with id {target_project.resource_id}."
             )
@@ -139,28 +139,28 @@ def import_artifacts(
             )
         else:
             error_message = "Unable to overwrite existing project; overwrite flag is off."
-            logging.error(error_message)
+            LOGGER.error(error_message)
             raise KeyError(error_message)
     else:
         if new_project_name in [p.name for p in tamr_client.projects.stream()]:
             error_message = f"New project name {new_project_name} already exists."
-            logging.error(error_message)
+            LOGGER.error(error_message)
             raise KeyError(error_message)
         if new_unified_dataset_name in [ds.name for ds in tamr_client.datasets.stream()]:
             # otherwise response will be ok, but operation 'state'='FAILED'
             # and artifacts will be partially migrated : creates issues on re-run.
             error_message = f"New unified dataset name {new_unified_dataset_name} already exists."
-            logging.error(error_message)
+            LOGGER.error(error_message)
             raise KeyError(error_message)
         body["newProjectName"] = new_project_name
         body["newUnifiedDatasetName"] = new_unified_dataset_name
-        logging.info(f"Starting to import artifacts into new project {new_project_name}.")
+        LOGGER.info(f"Starting to import artifacts into new project {new_project_name}.")
         response = tamr_client.post("/api/versioned/v1/projects:import", json=body)
 
     # Raise exception if import was not successful
     if not response.ok:
         error_message = f"Error importing project artifacts: {response.json()['message']}"
-        logging.error(error_message)
+        LOGGER.error(error_message)
         raise ValueError(error_message)
 
     # get operation
@@ -168,11 +168,11 @@ def import_artifacts(
     operation = utils.operation.from_resource_id(tamr=tamr_client, job_id=job_id)
     if not asynchronous:
         # periodically check export job until completion
-        logging.info(f"Waiting for project to be imported.")
+        LOGGER.info(f"Waiting for project to be imported.")
         operation = operation.wait()
         utils.operation.enforce_success(operation)
-        logging.info(f"Import complete: {operation}.")
+        LOGGER.info(f"Import complete: {operation}.")
     else:
-        logging.info(f"Import called asynchronously: {operation}.")
+        LOGGER.info(f"Import called asynchronously: {operation}.")
 
     return operation
