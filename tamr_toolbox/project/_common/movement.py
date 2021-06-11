@@ -41,13 +41,13 @@ def export_artifacts(
 
     # make project export api request
     body = {"artifactDirectory": artifact_directory_path, "excludeArtifacts": exclude_artifacts}
-    LOGGER.info(f"Starting to export {project.name} or type {project.type}.")
+    LOGGER.info(f"Starting to export {project.name} of type {project.type}.")
     response = project.client.post(
         f"/api/versioned/v1/projects/{project.resource_id}:export", json=body
     )
     # Raise error if export api call not successful
     if not response.ok:
-        error_message = f"Error exporting project artifacts: {response.json()['message']}"
+        error_message = f"Error exporting project artifacts: {response.json()}"
         LOGGER.error(error_message)
         raise ValueError(error_message)
 
@@ -131,7 +131,8 @@ def import_artifacts(
             raise KeyError(error_message)
         if overwrite_existing:
             LOGGER.info(
-                f"Starting to import artifacts into existing project {target_project.name} "
+                f"Starting to import artifacts from {project_artifact_path} "
+                f"into existing project {target_project.name}"
                 f"with id {target_project.resource_id}."
             )
             response = tamr_client.post(
@@ -142,24 +143,27 @@ def import_artifacts(
             LOGGER.error(error_message)
             raise KeyError(error_message)
     else:
-        if new_project_name in [p.name for p in tamr_client.projects.stream()]:
+        if new_project_name in [p.name for p in tamr_client.projects]:
             error_message = f"New project name {new_project_name} already exists."
             LOGGER.error(error_message)
-            raise KeyError(error_message)
-        if new_unified_dataset_name in [ds.name for ds in tamr_client.datasets.stream()]:
+            raise ValueError(error_message)
+        if new_unified_dataset_name in [ds.name for ds in tamr_client.datasets]:
             # otherwise response will be ok, but operation 'state'='FAILED'
             # and artifacts will be partially migrated : creates issues on re-run.
             error_message = f"New unified dataset name {new_unified_dataset_name} already exists."
             LOGGER.error(error_message)
-            raise KeyError(error_message)
+            raise ValueError(error_message)
         body["newProjectName"] = new_project_name
         body["newUnifiedDatasetName"] = new_unified_dataset_name
-        LOGGER.info(f"Starting to import artifacts into new project {new_project_name}.")
+        LOGGER.info(
+            f"Starting to import artifacts from {project_artifact_path} "
+            f"into new project {new_project_name}."
+        )
         response = tamr_client.post("/api/versioned/v1/projects:import", json=body)
 
     # Raise exception if import was not successful
     if not response.ok:
-        error_message = f"Error importing project artifacts: {response.json()['message']}"
+        error_message = f"Error importing project artifacts: {response.json()}"
         LOGGER.error(error_message)
         raise ValueError(error_message)
 

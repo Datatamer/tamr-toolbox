@@ -177,14 +177,14 @@ def test_import_new_errors():
                 include_destructive_artifacts=["incorrect_artifact_name"],
             )
         # test trying to write an existing project name
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             categorization.import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name="minimal_incomplete_categorization",
             )
         # test trying to write an existing unified dataset name
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             categorization.import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
@@ -361,13 +361,6 @@ def test_import_new():
 
     # run new project
     project = client.projects.by_name(new_project_name)
-    # fix broken recipe
-    recipe_name = new_project_name + "-CATEGORIZATION"
-    recipes = client.get("/api/recipe/recipes/all").json()
-    for recipe in recipes:
-        if recipe["data"]["name"] == recipe_name:
-            recipe_id = recipe["documentId"]["id"]
-            client.post(f"/api/recipe/recipes/{recipe_id}/populate")
     # run jobs
     ops = workflow.jobs.run([project], run_apply_feedback=False)
     for op in ops:
@@ -424,13 +417,6 @@ def test_import_existing():
     # run target project
     project_name = existing_project.name
     unified_dataset_name = existing_project.unified_dataset().name
-    # fix broken recipe
-    recipe_name = project_name + "-CATEGORIZATION"
-    recipes = client.get("/api/recipe/recipes/all").json()
-    for recipe in recipes:
-        if recipe["data"]["name"] == recipe_name:
-            recipe_id = recipe["documentId"]["id"]
-            client.post(f"/api/recipe/recipes/{recipe_id}/populate")
     # run jobs
     ops = workflow.jobs.run([existing_project], run_apply_feedback=False)
     for op in ops:
