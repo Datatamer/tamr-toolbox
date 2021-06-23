@@ -2,8 +2,6 @@
 import tamr_toolbox as tbox
 from tamr_toolbox.project import categorization
 
-# from tamr_toolbox.models.project_artifacts import CategorizationArtifacts as catfacts
-
 # Read config, make Tamr Client
 tamr = tbox.utils.client.create(username="user", password="pw", host="localhost")
 

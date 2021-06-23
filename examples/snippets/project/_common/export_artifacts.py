@@ -1,7 +1,7 @@
 """Snippet for exporting project artifacts from a Tamr project"""
 import tamr_toolbox as tbox
 from tamr_toolbox.project import categorization
-from tamr_toolbox.models.project_artifacts import CategorizationArtifacts as catfacts
+from tamr_toolbox.models.project_artifacts import CategorizationArtifacts
 
 # Read config, make Tamr Client
 tamr = tbox.utils.client.create(username="user", password="pw", host="localhost")
@@ -16,9 +16,9 @@ path_export_dir = "/home/ubuntu/tamr/projectExports"
 # You can spell out the artifact code if known,
 # or list access via the CategorizationArtifacts dataclass
 exclude_list = [
-    catfacts.CATEGORIZATION_VERIFIED_LABELS,
+    CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS,
     "CATEGORIZATION_TAXONOMIES",
-    catfacts.CATEGORIZATION_FEEDBACK,
+    CategorizationArtifacts.CATEGORIZATION_FEEDBACK,
 ]
 
 # Export project artifacts

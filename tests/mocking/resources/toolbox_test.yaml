@@ -17,6 +17,7 @@ projects:
     minimal_golden_records: "2"
     minimal_categorization: "3"
     minimal_schema_mapping: "4"
+    minimal_schema_mapping_with_spaces_in_name: "21"
 
 datasets:
     minimal_golden_records_golden_records: "47"

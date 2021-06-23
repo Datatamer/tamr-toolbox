@@ -3,7 +3,7 @@ import pytest
 from tamr_toolbox import utils, workflow
 from tests._common import get_toolbox_root_dir
 from tamr_toolbox.project import categorization
-from tamr_toolbox.models.project_artifacts import CategorizationArtifacts as catfacts
+from tamr_toolbox.models.project_artifacts import CategorizationArtifacts
 from tamr_unify_client import Client
 from typing import List
 from tamr_toolbox.utils.testing import mock_api
@@ -93,8 +93,8 @@ def test_export_errors():
             project=project,
             artifact_directory_path="/home/ubuntu/tamr/projectExports",
             exclude_artifacts=[
-                catfacts.CATEGORIZATION_VERIFIED_LABELS,
-                catfacts.CATEGORIZATION_TAXONOMIES,
+                CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS,
+                CategorizationArtifacts.CATEGORIZATION_TAXONOMIES,
                 "INCORRECT_ARTIFACT_NAME",
             ],
             asynchronous=False,
@@ -106,8 +106,8 @@ def test_export_errors():
             project=project,
             artifact_directory_path="/an/incorrect/path",
             exclude_artifacts=[
-                catfacts.CATEGORIZATION_VERIFIED_LABELS,
-                catfacts.CATEGORIZATION_TAXONOMIES,
+                CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS,
+                CategorizationArtifacts.CATEGORIZATION_TAXONOMIES,
             ],
             asynchronous=False,
         )
@@ -137,7 +137,7 @@ def test_import_new_errors():
 
     # import new project if it doesn't exist already
     new_project_name = "new_categorization"
-    if new_project_name not in [p.name for p in client.projects.stream()]:
+    if new_project_name not in [p.name for p in client.projects]:
         # test incorrect path
         with pytest.raises(ValueError):
             categorization.import_artifacts(
@@ -151,7 +151,7 @@ def test_import_new_errors():
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name=new_project_name,
-                include_destructive_artifacts=[catfacts.UNIFIED_ATTRIBUTES],
+                include_destructive_artifacts=[CategorizationArtifacts.UNIFIED_ATTRIBUTES],
                 fail_if_not_present=True,
             )
         # testing incorrect artifact names
@@ -191,13 +191,13 @@ def test_import_new_errors():
                 new_project_name=new_project_name,
                 new_unified_dataset_name="minimal_categorization_unified_dataset",
             )
-        if new_project_name in [p.name for p in client.projects.stream()]:
+        if new_project_name in [p.name for p in client.projects]:
             raise RuntimeError(f"{new_project_name} is being unintentionally created during test.")
     else:
         raise AssertionError(f"{new_project_name} already exists in test instance.")
 
 
-@mock_api()
+@mock_api(enforce_online_test=True)
 def test_import_existing_errors():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
@@ -267,7 +267,7 @@ def test_import_existing_errors():
             project_artifact_path=artifact_path,
             tamr_client=client,
             target_project=existing_project,
-            include_destructive_artifacts=[catfacts.CATEGORIZATION_TAXONOMIES],
+            include_destructive_artifacts=[CategorizationArtifacts.CATEGORIZATION_TAXONOMIES],
             fail_if_not_present=True,
             overwrite_existing=True,
         )
@@ -298,6 +298,15 @@ def test_import_existing_errors():
             exclude_artifacts=["incorrect_artifact_name"],
             overwrite_existing=True,
         )
+    # trying to include a additive artifact that is not supported
+    with pytest.raises(ValueError):
+        categorization.import_artifacts(
+            tamr_client=existing_project.client,
+            project_artifact_path=artifact_path,
+            target_project=existing_project,
+            include_additive_artifacts=[CategorizationArtifacts.CATEGORIZATION_MODEL],
+            overwrite_existing=True,
+        )
 
 
 @mock_api()
@@ -307,9 +316,9 @@ def test_export():
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
     path_export_dir = "/home/ubuntu/tamr/projectExports"
     exclude_list = [
-        catfacts.CATEGORIZATION_VERIFIED_LABELS,
-        catfacts.CATEGORIZATION_FEEDBACK,
-        catfacts.CATEGORIZATION_TAXONOMIES,
+        CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS,
+        CategorizationArtifacts.CATEGORIZATION_FEEDBACK,
+        CategorizationArtifacts.CATEGORIZATION_TAXONOMIES,
     ]
 
     op = categorization.export_artifacts(
@@ -322,10 +331,20 @@ def test_export():
     assert op.succeeded()
 
 
-@mock_api()
-def test_import_new():
+@pytest.mark.parametrize(
+    "project_to_export",
+    [
+        (CONFIG["projects"]["minimal_categorization"], "new_categorization"),
+        (CONFIG["projects"]["minimal_mastering"], "new_mastering"),
+        (CONFIG["projects"]["minimal_golden_records"], "new_golden_records"),
+        (CONFIG["projects"]["minimal_schema_mapping"], "new_schema_mapping"),
+        (CONFIG["projects"]["minimal_schema_mapping_with_spaces_in_name"], "new_sm_with_spaces"),
+    ],
+)
+@mock_api(enforce_online_test=True)
+def test_import_new(project_to_export: str, new_project_name: str):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
-    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
+    project = client.projects.by_resource_id(project_to_export)
 
     # export a project
     op = categorization.export_artifacts(
@@ -345,9 +364,8 @@ def test_import_new():
     assert artifact_path[-4:] == ".zip"
 
     # import new project if it doesn't exist already
-    new_project_name = "new_categorization"
     new_unified_dataset_name = new_project_name + "_ud"
-    if new_project_name not in [p.name for p in client.projects.stream()]:
+    if new_project_name not in [p.name for p in client.projects]:
         op = categorization.import_artifacts(
             project_artifact_path=artifact_path,
             tamr_client=client,
@@ -424,7 +442,7 @@ def test_import_existing():
     # clean revert project to it's original state
     responses = _project_clean_up(client, project_name, unified_dataset_name)
     print(responses)
-    if existing_project.name not in [p.name for p in client.projects.stream()]:
+    if existing_project.name not in [p.name for p in client.projects]:
         op = categorization.import_artifacts(
             project_artifact_path=artifact_path_existing,
             tamr_client=client,

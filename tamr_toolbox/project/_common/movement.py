@@ -1,6 +1,7 @@
 """Tasks related to project movement as part of Tamr projects"""
 from typing import List, Optional
 import logging
+from urllib import request
 
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client import Client
@@ -114,7 +115,7 @@ def import_artifacts(
 
     # make project import api request
     body = {
-        "projectArtifact": project_artifact_path,
+        "projectArtifact": request.pathname2url(project_artifact_path),
         "excludeArtifacts": exclude_artifacts,
         "includeAdditiveArtifacts": include_additive_artifacts,
         "includeDestructiveArtifacts": include_destructive_artifacts,
