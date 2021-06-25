@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  CreateZip:
+  CreateDraftRelease:
     runs-on: ubuntu-20.04
     steps:
       - name: Install Python
@@ -12,6 +12,8 @@ jobs:
           python-version: 3.6
       - name: Checkout release branch
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Export version
         run: echo ::set-output name=version::$(cat version.txt)
@@ -39,6 +41,31 @@ jobs:
       - name: Create pdf
         run: python ./doc_src/generate_pdf.py
 
+      - name: Get commits since last release
+        id: new_commits
+        run: |
+          all_tags=$(git rev-list --tags --max-count=1)
+          last_tag=$(git describe --tags $all_tags)
+          prev_release_branch=$(git branch -a --contains tags/$last_tag)
+          base_commit=$(git merge-base $prev_release_branch remotes/origin/develop)
+          echo ::set-output name=commits::$(git log $base_commit..HEAD --format="   - %s;" --reverse)
+
+      - name: Construct release body
+        id: body
+        # this ensures that new-lines (encoded as ";") are generated correctly
+        run: |
+          RELEASE="Documentation: https://datatamer.github.io/tamr-toolbox/${{ steps.get_version_short.outputs.version }}/ ;; Highlights:;${{ steps.new_commits.outputs.commits }}"
+
+          IFS=';' read -a array <<< "$RELEASE"
+
+          echo 'release<<EOF' >> $GITHUB_ENV
+          for line in "${array[@]}"
+          do
+            echo "$line" >> $GITHUB_ENV
+          done
+          echo 'EOF' >> $GITHUB_ENV
+
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -49,7 +76,7 @@ jobs:
           release_name: ${{ steps.get_version.outputs.version }}
           draft: true
           prerelease: false
-          body: "Documentation: https://datatamer.github.io/tamr-toolbox/${{ steps.get_version_short.outputs.version }}/ \n\n Highlights:\n  * Highlight 1\n  * Highlight 2"
+          body: ${{ env.release }}
 
       - name: Upload pdf docs
         uses: actions/upload-release-asset@v1
