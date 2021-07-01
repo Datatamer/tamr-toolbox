@@ -1,16 +1,21 @@
 """Tests for tasks related to movement with Tamr projects"""
 import pytest
+import os
 from tamr_toolbox import utils, workflow
 from tests._common import get_toolbox_root_dir
 from tamr_toolbox.project import categorization
-from tamr_toolbox.models.project_artifacts import CategorizationArtifacts
+from tamr_toolbox.models.project_artifacts import SchemaMappingArtifacts, CategorizationArtifacts, \
+    MasteringArtifacts, GoldenRecordsArtifacts
 from tamr_unify_client import Client
-from typing import List
+from typing import List, Optional
 from tamr_toolbox.utils.testing import mock_api
+from datetime import datetime
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
 )
+
+now = datetime.now().strftime('%d-%m-%Y_%H:%M:%S')
 
 
 def _project_clean_up(client: Client, project_name: str, unified_dataset_name: str) -> List:
@@ -133,7 +138,7 @@ def test_import_new_errors():
     artifact_path = str(description).split(" ")[-1]
 
     assert artifact_path[0] == "/"
-    assert artifact_path[-4:] == ".zip"
+    assert os.path.splitext(artifact_path)[1] == ".zip"
 
     # import new project if it doesn't exist already
     new_project_name = "new_categorization"
@@ -218,7 +223,7 @@ def test_import_existing_errors():
     print(artifact_path)
 
     assert artifact_path[0] == "/"
-    assert artifact_path[-4:] == ".zip"
+    assert os.path.splitext(artifact_path)[1] == ".zip"
 
     # get existing project
     existing_project = client.projects.by_name("minimal_incomplete_categorization")
@@ -334,15 +339,31 @@ def test_export():
 @pytest.mark.parametrize(
     "project_to_export",
     [
-        (CONFIG["projects"]["minimal_categorization"], "new_categorization"),
-        (CONFIG["projects"]["minimal_mastering"], "new_mastering"),
-        (CONFIG["projects"]["minimal_golden_records"], "new_golden_records"),
-        (CONFIG["projects"]["minimal_schema_mapping"], "new_schema_mapping"),
-        (CONFIG["projects"]["minimal_schema_mapping_with_spaces_in_name"], "new_sm_with_spaces"),
+        (CONFIG["projects"]["minimal_categorization"], f"new_categorization_{now}", None, None),
+        (CONFIG["projects"]["minimal_mastering"], f"new_mastering_{now}", None, None),
+        (CONFIG["projects"]["minimal_golden_records"], f"new_golden_records_{now}", None, None),
+        (CONFIG["projects"]["minimal_schema_mapping"], f"new_schema_mapping_{now}", None, None),
+        (CONFIG["projects"]["minimal_schema_mapping_with_spaces_in_name"], f"new_sm_with_spaces_{now}", None, None),
+        (CONFIG["projects"]["minimal_categorization"], f"new_categorization_{now}",
+         [CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS],
+         [CategorizationArtifacts.CATEGORIZATION_MODEL, CategorizationArtifacts.CATEGORIZATION_TAXONOMIES]),
+        (CONFIG["projects"]["minimal_mastering"], f"new_mastering_{now}",
+         [MasteringArtifacts.RECORD_PAIR_VERIFIED_LABELS],
+         [MasteringArtifacts.CLUSTERING_MODEL, MasteringArtifacts.PUBLISHED_CLUSTERS]),
+        (CONFIG["projects"]["minimal_golden_records"], f"new_golden_records_{now}",
+         [GoldenRecordsArtifacts.GR_OVERRIDES],
+         [GoldenRecordsArtifacts.GR_RULES]),
+        (CONFIG["projects"]["minimal_schema_mapping"], f"new_schema_mapping_{now}",
+         [SchemaMappingArtifacts.UNIFIED_ATTRIBUTES],
+         [SchemaMappingArtifacts.TRANSFORMATIONS]),
     ],
 )
 @mock_api(enforce_online_test=True)
-def test_import_new(project_to_export: str, new_project_name: str):
+def test_import_new(project_to_export: str,
+                    new_project_name: str,
+                    include_additive_artifacts: Optional[List[str]],
+                    include_destructive_artifacts: Optional[List[str]],
+                    ):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(project_to_export)
 
@@ -361,7 +382,7 @@ def test_import_new(project_to_export: str, new_project_name: str):
     artifact_path = str(description).split(" ")[-1]
 
     assert artifact_path[0] == "/"
-    assert artifact_path[-4:] == ".zip"
+    assert os.path.splitext(artifact_path)[1] == ".zip"
 
     # import new project if it doesn't exist already
     new_unified_dataset_name = new_project_name + "_ud"
@@ -371,6 +392,8 @@ def test_import_new(project_to_export: str, new_project_name: str):
             tamr_client=client,
             new_project_name=new_project_name,
             new_unified_dataset_name=new_unified_dataset_name,
+            include_additive_artifacts=include_additive_artifacts,
+            include_destructive_artifacts=include_destructive_artifacts,
             asynchronous=False,
         )
         assert op.succeeded()
@@ -388,11 +411,36 @@ def test_import_new(project_to_export: str, new_project_name: str):
     print(responses)
 
 
-@mock_api()
-def test_import_existing():
+@pytest.mark.parametrize(
+    "project_to_export",
+    [
+        (CONFIG["projects"]["minimal_categorization"], "minimal_incomplete_categorization", None, None),
+        (CONFIG["projects"]["minimal_mastering"], "minimal_incomplete_mastering", None, None),
+        (CONFIG["projects"]["minimal_golden_records"], "minimal_incomplete_golden_records", None, None),
+        (CONFIG["projects"]["minimal_schema_mapping"], "minimal_incomplete_schema_mapping", None, None),
+        (CONFIG["projects"]["minimal_categorization"], "minimal_incomplete_categorization",
+         [CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS],
+         [CategorizationArtifacts.CATEGORIZATION_MODEL, CategorizationArtifacts.CATEGORIZATION_TAXONOMIES]),
+        (CONFIG["projects"]["minimal_mastering"], "minimal_incomplete_mastering",
+         [MasteringArtifacts.RECORD_PAIR_VERIFIED_LABELS],
+         [MasteringArtifacts.CLUSTERING_MODEL, MasteringArtifacts.PUBLISHED_CLUSTERS]),
+        (CONFIG["projects"]["minimal_golden_records"], "minimal_incomplete_golden_records",
+         [GoldenRecordsArtifacts.GR_OVERRIDES],
+         [GoldenRecordsArtifacts.GR_RULES]),
+        (CONFIG["projects"]["minimal_schema_mapping"], "minimal_incomplete_schema_mapping",
+         [SchemaMappingArtifacts.UNIFIED_ATTRIBUTES],
+         [SchemaMappingArtifacts.TRANSFORMATIONS]),
+    ],
+)
+@mock_api(enforce_online_test=True)
+def test_import_existing(project_to_export: str,
+                         existing_project_name: str,
+                         include_additive_artifacts: Optional[List[str]],
+                         include_destructive_artifacts: Optional[List[str]],
+                         ):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     # project to export
-    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
+    project = client.projects.by_resource_id(project_to_export)
     # export a project
     op = categorization.export_artifacts(
         project=project,
@@ -407,10 +455,10 @@ def test_import_existing():
     artifact_path = str(description).split(" ")[-1]
 
     assert artifact_path[0] == "/"
-    assert artifact_path[-4:] == ".zip"
+    assert os.path.splitext(artifact_path)[1] == ".zip"
 
     # get existing project
-    existing_project = client.projects.by_name("minimal_incomplete_categorization")
+    existing_project = client.projects.by_name(existing_project_name)
 
     # export existing project to regenerate after test
     op_existing = categorization.export_artifacts(
@@ -427,6 +475,8 @@ def test_import_existing():
         tamr_client=existing_project.client,
         project_artifact_path=artifact_path,
         target_project=existing_project,
+        include_additive_artifacts=include_additive_artifacts,
+        include_destructive_artifacts=include_destructive_artifacts,
         overwrite_existing=True,
         asynchronous=False,
     )
