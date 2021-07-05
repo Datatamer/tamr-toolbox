@@ -110,12 +110,16 @@ def import_artifacts(
     if include_destructive_artifacts is None:
         include_destructive_artifacts = []
 
+    # handle spaces in project artifact path
+    if " " in project_artifact_path:
+        project_artifact_path = request.pathname2url(project_artifact_path)
+
     # check version compatibility for project movement
     utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
 
     # make project import api request
     body = {
-        "projectArtifact": request.pathname2url(project_artifact_path),
+        "projectArtifact": project_artifact_path,
         "excludeArtifacts": exclude_artifacts,
         "includeAdditiveArtifacts": include_additive_artifacts,
         "includeDestructiveArtifacts": include_destructive_artifacts,

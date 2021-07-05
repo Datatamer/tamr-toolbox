@@ -19,7 +19,8 @@ CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
 )
 
-now = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+
+# now = datetime.now() #.strftime("%d-%m-%Y_%H:%M:%S")
 
 
 def _project_clean_up(client: Client, project_name: str, unified_dataset_name: str) -> List:
@@ -307,8 +308,9 @@ def test_import_existing_errors():
             exclude_artifacts=["incorrect_artifact_name"],
             overwrite_existing=True,
         )
-    # trying to include a additive artifact that is not supported
-    with pytest.raises(ValueError):
+    # trying to include an additive artifact that is not supported
+    # This is RuntimeError, not ValueError
+    with pytest.raises(RuntimeError):
         categorization.import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
@@ -341,21 +343,42 @@ def test_export():
 
 
 @pytest.mark.parametrize(
-    "project_to_export",
+    "project_to_export, new_project_name, "
+    "include_additive_artifacts, include_destructive_artifacts",
     [
-        (CONFIG["projects"]["minimal_categorization"], f"new_categorization_{now}", None, None),
-        (CONFIG["projects"]["minimal_mastering"], f"new_mastering_{now}", None, None),
-        (CONFIG["projects"]["minimal_golden_records"], f"new_golden_records_{now}", None, None),
-        (CONFIG["projects"]["minimal_schema_mapping"], f"new_schema_mapping_{now}", None, None),
         (
-            CONFIG["projects"]["minimal_schema_mapping_with_spaces_in_name"],
-            f"new_sm_with_spaces_{now}",
+            CONFIG["projects"]["minimal_categorization"],
+            f"new_categorization_{datetime.now().strftime('%s')}",
+            None,
+            None,
+        ),
+        (
+            CONFIG["projects"]["minimal_mastering"],
+            f"new_mastering_{datetime.now().strftime('%s')}",
+            None,
+            None,
+        ),
+        (
+            CONFIG["projects"]["minimal_golden_records"],
+            f"new_golden_records_{datetime.now().strftime('%s')}",
+            None,
+            None,
+        ),
+        (
+            CONFIG["projects"]["minimal_schema_mapping"],
+            f"new_schema_mapping_{datetime.now().strftime('%s')}",
+            None,
+            None,
+        ),
+        (
+            CONFIG["projects"]["schema_mapping_with_spaces_in_name"],
+            f"new_sm_with_spaces_{datetime.now().strftime('%s')}",
             None,
             None,
         ),
         (
             CONFIG["projects"]["minimal_categorization"],
-            f"new_categorization_{now}",
+            f"new_categorization_{datetime.now().strftime('%s')}",
             [CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS],
             [
                 CategorizationArtifacts.CATEGORIZATION_MODEL,
@@ -364,19 +387,19 @@ def test_export():
         ),
         (
             CONFIG["projects"]["minimal_mastering"],
-            f"new_mastering_{now}",
+            f"new_mastering_{datetime.now().strftime('%s')}",
             [MasteringArtifacts.RECORD_PAIR_VERIFIED_LABELS],
             [MasteringArtifacts.CLUSTERING_MODEL, MasteringArtifacts.PUBLISHED_CLUSTERS],
         ),
         (
             CONFIG["projects"]["minimal_golden_records"],
-            f"new_golden_records_{now}",
+            f"new_golden_records_{datetime.now().strftime('%s')}",
             [GoldenRecordsArtifacts.GR_OVERRIDES],
             [GoldenRecordsArtifacts.GR_RULES],
         ),
         (
             CONFIG["projects"]["minimal_schema_mapping"],
-            f"new_schema_mapping_{now}",
+            f"new_schema_mapping_{datetime.now().strftime('%s')}",
             [SchemaMappingArtifacts.UNIFIED_ATTRIBUTES],
             [SchemaMappingArtifacts.TRANSFORMATIONS],
         ),
@@ -410,7 +433,10 @@ def test_import_new(
     assert os.path.splitext(artifact_path)[1] == ".zip"
 
     # import new project if it doesn't exist already
-    new_unified_dataset_name = new_project_name + "_ud"
+    if project.type == "GOLDEN_RECORDS":
+        new_unified_dataset_name = None
+    else:
+        new_unified_dataset_name = new_project_name + "_ud"
     if new_project_name not in [p.name for p in client.projects]:
         op = categorization.import_artifacts(
             project_artifact_path=artifact_path,
@@ -437,7 +463,8 @@ def test_import_new(
 
 
 @pytest.mark.parametrize(
-    "project_to_export",
+    "project_to_export, existing_project_name, "
+    "include_additive_artifacts, include_destructive_artifacts",
     [
         (
             CONFIG["projects"]["minimal_categorization"],
@@ -476,7 +503,7 @@ def test_import_new(
         (
             CONFIG["projects"]["minimal_golden_records"],
             "minimal_incomplete_golden_records",
-            [GoldenRecordsArtifacts.GR_OVERRIDES],
+            None,
             [GoldenRecordsArtifacts.GR_RULES],
         ),
         (
@@ -539,13 +566,15 @@ def test_import_existing(
     assert op.succeeded()
 
     # run target project
-    project_name = existing_project.name
-    unified_dataset_name = existing_project.unified_dataset().name
-    # run jobs
     ops = workflow.jobs.run([existing_project], run_apply_feedback=False)
     for op in ops:
         assert op.succeeded()
     # clean revert project to it's original state
+    project_name = existing_project.name
+    if existing_project.type == "GOLDEN_RECORDS":
+        unified_dataset_name = None
+    else:
+        unified_dataset_name = existing_project.unified_dataset().name
     responses = _project_clean_up(client, project_name, unified_dataset_name)
     print(responses)
     if existing_project.name not in [p.name for p in client.projects]:
