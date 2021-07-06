@@ -13,14 +13,10 @@ from tamr_toolbox.models.project_artifacts import (
 from tamr_unify_client import Client
 from typing import List, Optional
 from tamr_toolbox.utils.testing import mock_api
-from datetime import datetime
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
 )
-
-
-# now = datetime.now() #.strftime("%d-%m-%Y_%H:%M:%S")
 
 
 def _project_clean_up(client: Client, project_name: str, unified_dataset_name: str) -> List:
@@ -207,7 +203,7 @@ def test_import_new_errors():
         raise AssertionError(f"{new_project_name} already exists in test instance.")
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_import_existing_errors():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
@@ -346,39 +342,19 @@ def test_export():
     "project_to_export, new_project_name, "
     "include_additive_artifacts, include_destructive_artifacts",
     [
-        (
-            CONFIG["projects"]["minimal_categorization"],
-            f"new_categorization_{datetime.now().strftime('%s')}",
-            None,
-            None,
-        ),
-        (
-            CONFIG["projects"]["minimal_mastering"],
-            f"new_mastering_{datetime.now().strftime('%s')}",
-            None,
-            None,
-        ),
-        (
-            CONFIG["projects"]["minimal_golden_records"],
-            f"new_golden_records_{datetime.now().strftime('%s')}",
-            None,
-            None,
-        ),
-        (
-            CONFIG["projects"]["minimal_schema_mapping"],
-            f"new_schema_mapping_{datetime.now().strftime('%s')}",
-            None,
-            None,
-        ),
+        (CONFIG["projects"]["minimal_categorization"], "new_categorization_1", None, None,),
+        (CONFIG["projects"]["minimal_mastering"], "new_mastering_1", None, None,),
+        (CONFIG["projects"]["minimal_golden_records"], "new_golden_records_1", None, None,),
+        (CONFIG["projects"]["minimal_schema_mapping"], "new_schema_mapping_1", None, None,),
         (
             CONFIG["projects"]["schema_mapping_with_spaces_in_name"],
-            f"new_sm_with_spaces_{datetime.now().strftime('%s')}",
+            "new_sm_with_spaces",
             None,
             None,
         ),
         (
             CONFIG["projects"]["minimal_categorization"],
-            f"new_categorization_{datetime.now().strftime('%s')}",
+            "new_categorization_2",
             [CategorizationArtifacts.CATEGORIZATION_VERIFIED_LABELS],
             [
                 CategorizationArtifacts.CATEGORIZATION_MODEL,
@@ -387,25 +363,25 @@ def test_export():
         ),
         (
             CONFIG["projects"]["minimal_mastering"],
-            f"new_mastering_{datetime.now().strftime('%s')}",
+            "new_mastering_2",
             [MasteringArtifacts.RECORD_PAIR_VERIFIED_LABELS],
             [MasteringArtifacts.CLUSTERING_MODEL, MasteringArtifacts.PUBLISHED_CLUSTERS],
         ),
         (
             CONFIG["projects"]["minimal_golden_records"],
-            f"new_golden_records_{datetime.now().strftime('%s')}",
-            [GoldenRecordsArtifacts.GR_OVERRIDES],
+            "new_golden_records_2",
+            None,
             [GoldenRecordsArtifacts.GR_RULES],
         ),
         (
             CONFIG["projects"]["minimal_schema_mapping"],
-            f"new_schema_mapping_{datetime.now().strftime('%s')}",
+            "new_schema_mapping_2",
             [SchemaMappingArtifacts.UNIFIED_ATTRIBUTES],
             [SchemaMappingArtifacts.TRANSFORMATIONS],
         ),
     ],
 )
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_import_new(
     project_to_export: str,
     new_project_name: str,
@@ -457,7 +433,9 @@ def test_import_new(
     ops = workflow.jobs.run([project], run_apply_feedback=False)
     for op in ops:
         assert op.succeeded()
+
     # clean up delete project and associated datasets
+    # delete is unstable and can leave orphaned unified datasets + downstream datasets
     responses = _project_clean_up(client, new_project_name, new_unified_dataset_name)
     print(responses)
 
@@ -472,7 +450,7 @@ def test_import_new(
             None,
             None,
         ),
-        (CONFIG["projects"]["minimal_mastering"], "minimal_incomplete_mastering", None, None),
+        (CONFIG["projects"]["minimal_mastering"], "minimal_incomplete_mastering", None, None,),
         (
             CONFIG["projects"]["minimal_golden_records"],
             "minimal_incomplete_golden_records",
@@ -514,7 +492,7 @@ def test_import_new(
         ),
     ],
 )
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_import_existing(
     project_to_export: str,
     existing_project_name: str,
@@ -543,16 +521,6 @@ def test_import_existing(
     # get existing project
     existing_project = client.projects.by_name(existing_project_name)
 
-    # export existing project to regenerate after test
-    op_existing = categorization.export_artifacts(
-        project=existing_project,
-        artifact_directory_path="/home/ubuntu/tamr/projectExports",
-        exclude_artifacts=None,
-        asynchronous=False,
-    )
-    description = op_existing.description
-    artifact_path_existing = str(description).split(" ")[-1]
-
     # test import into existing project
     op = categorization.import_artifacts(
         tamr_client=existing_project.client,
@@ -569,22 +537,3 @@ def test_import_existing(
     ops = workflow.jobs.run([existing_project], run_apply_feedback=False)
     for op in ops:
         assert op.succeeded()
-    # clean revert project to it's original state
-    project_name = existing_project.name
-    if existing_project.type == "GOLDEN_RECORDS":
-        unified_dataset_name = None
-    else:
-        unified_dataset_name = existing_project.unified_dataset().name
-    responses = _project_clean_up(client, project_name, unified_dataset_name)
-    print(responses)
-    if existing_project.name not in [p.name for p in client.projects]:
-        op = categorization.import_artifacts(
-            project_artifact_path=artifact_path_existing,
-            tamr_client=client,
-            new_project_name=project_name,
-            new_unified_dataset_name=unified_dataset_name,
-            asynchronous=False,
-        )
-        assert op.succeeded()
-    else:
-        raise AssertionError(f"{project_name} already exists in test instance.")
