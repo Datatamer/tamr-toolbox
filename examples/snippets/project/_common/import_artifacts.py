@@ -1,6 +1,6 @@
 """Snippet for importing project artifacts into a Tamr project"""
 import tamr_toolbox as tbox
-from tamr_toolbox.project import categorization
+from tamr_toolbox.project import import_artifacts
 
 # Read config, make Tamr Client
 tamr = tbox.utils.client.create(username="user", password="pw", host="localhost")
@@ -13,7 +13,7 @@ artifact_path = "/home/ubuntu/tamr/projectExports/minimal_categorization-1622067
 
 # Import project artifacts into existing project
 # (overwrite_existing flag is necessary for this operation)
-op_1 = categorization.import_artifacts(
+op_1 = import_artifacts(
     project_artifact_path=str(artifact_path),
     tamr_client=tamr,
     target_project=project,
@@ -24,7 +24,7 @@ op_1 = categorization.import_artifacts(
 print(op_1)
 
 # Import project artifacts into new project
-op_2 = categorization.import_artifacts(
+op_2 = import_artifacts(
     project_artifact_path=str(artifact_path),
     tamr_client=tamr,
     new_project_name="new_categorization",
