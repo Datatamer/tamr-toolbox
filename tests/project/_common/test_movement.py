@@ -3,7 +3,7 @@ import pytest
 import os
 from tamr_toolbox import utils, workflow
 from tests._common import get_toolbox_root_dir
-from tamr_toolbox.project import categorization
+from tamr_toolbox.project import import_artifacts, export_artifacts
 from tamr_toolbox.models.project_artifacts import (
     SchemaMappingArtifacts,
     CategorizationArtifacts,
@@ -95,7 +95,7 @@ def test_export_errors():
 
     # test incorrect artifact name
     with pytest.raises(ValueError):
-        categorization.export_artifacts(
+        export_artifacts(
             project=project,
             artifact_directory_path="/home/ubuntu/tamr/projectExports",
             exclude_artifacts=[
@@ -108,7 +108,7 @@ def test_export_errors():
 
     # test incorrect artifact directory path
     with pytest.raises(ValueError):
-        categorization.export_artifacts(
+        export_artifacts(
             project=project,
             artifact_directory_path="/an/incorrect/path",
             exclude_artifacts=[
@@ -125,7 +125,7 @@ def test_import_new_errors():
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
 
     # export a project
-    op = categorization.export_artifacts(
+    op = export_artifacts(
         project=project,
         artifact_directory_path="/home/ubuntu/tamr/projectExports",
         exclude_artifacts=None,
@@ -146,14 +146,14 @@ def test_import_new_errors():
     if new_project_name not in [p.name for p in client.projects]:
         # test incorrect path
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path="incorrect/artifact/path",
                 tamr_client=client,
                 new_project_name=new_project_name,
             )
         # fail if not present
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name=new_project_name,
@@ -162,21 +162,21 @@ def test_import_new_errors():
             )
         # testing incorrect artifact names
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name=new_project_name,
                 exclude_artifacts=["incorrect_artifact_name"],
             )
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name=new_project_name,
                 include_additive_artifacts=["incorrect_artifact_name"],
             )
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name=new_project_name,
@@ -184,14 +184,14 @@ def test_import_new_errors():
             )
         # test trying to write an existing project name
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name="minimal_incomplete_categorization",
             )
         # test trying to write an existing unified dataset name
         with pytest.raises(ValueError):
-            categorization.import_artifacts(
+            import_artifacts(
                 project_artifact_path=artifact_path,
                 tamr_client=client,
                 new_project_name=new_project_name,
@@ -209,7 +209,7 @@ def test_import_existing_errors():
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_categorization"])
 
     # export a project
-    op = categorization.export_artifacts(
+    op = export_artifacts(
         project=project,
         artifact_directory_path="/home/ubuntu/tamr/projectExports",
         exclude_artifacts=None,
@@ -231,7 +231,7 @@ def test_import_existing_errors():
 
     # test trying to set new_project name on existing project
     with pytest.raises(KeyError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
             target_project=existing_project,
@@ -241,7 +241,7 @@ def test_import_existing_errors():
 
     # test trying to set new_unified_dataset_name on existing project
     with pytest.raises(KeyError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
             target_project=existing_project,
@@ -251,7 +251,7 @@ def test_import_existing_errors():
 
     # test overwrite existing
     with pytest.raises(KeyError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path="incorrect/artifact/path",
             target_project=existing_project,
@@ -260,7 +260,7 @@ def test_import_existing_errors():
 
     # test incorrect artifact path
     with pytest.raises(ValueError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path="incorrect/artifact/path",
             target_project=existing_project,
@@ -269,7 +269,7 @@ def test_import_existing_errors():
 
     # fail if not present
     with pytest.raises(ValueError):
-        categorization.import_artifacts(
+        import_artifacts(
             project_artifact_path=artifact_path,
             tamr_client=client,
             target_project=existing_project,
@@ -280,7 +280,7 @@ def test_import_existing_errors():
 
     # test incorrect artifact name
     with pytest.raises(ValueError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
             target_project=existing_project,
@@ -288,7 +288,7 @@ def test_import_existing_errors():
             overwrite_existing=True,
         )
     with pytest.raises(ValueError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
             target_project=existing_project,
@@ -297,7 +297,7 @@ def test_import_existing_errors():
         )
     # Expected ValueError but got RuntimeError instead
     with pytest.raises(RuntimeError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
             target_project=existing_project,
@@ -307,7 +307,7 @@ def test_import_existing_errors():
     # trying to include an additive artifact that is not supported
     # This is RuntimeError, not ValueError
     with pytest.raises(RuntimeError):
-        categorization.import_artifacts(
+        import_artifacts(
             tamr_client=existing_project.client,
             project_artifact_path=artifact_path,
             target_project=existing_project,
@@ -328,7 +328,7 @@ def test_export():
         CategorizationArtifacts.CATEGORIZATION_TAXONOMIES,
     ]
 
-    op = categorization.export_artifacts(
+    op = export_artifacts(
         project=project,
         artifact_directory_path=path_export_dir,
         exclude_artifacts=exclude_list,
@@ -392,7 +392,7 @@ def test_import_new(
     project = client.projects.by_resource_id(project_to_export)
 
     # export a project
-    op = categorization.export_artifacts(
+    op = export_artifacts(
         project=project,
         artifact_directory_path="/home/ubuntu/tamr/projectExports",
         exclude_artifacts=None,
@@ -414,7 +414,7 @@ def test_import_new(
     else:
         new_unified_dataset_name = new_project_name + "_ud"
     if new_project_name not in [p.name for p in client.projects]:
-        op = categorization.import_artifacts(
+        op = import_artifacts(
             project_artifact_path=artifact_path,
             tamr_client=client,
             new_project_name=new_project_name,
@@ -503,7 +503,7 @@ def test_import_existing(
     # project to export
     project = client.projects.by_resource_id(project_to_export)
     # export a project
-    op = categorization.export_artifacts(
+    op = export_artifacts(
         project=project,
         artifact_directory_path="/home/ubuntu/tamr/projectExports",
         exclude_artifacts=None,
@@ -522,7 +522,7 @@ def test_import_existing(
     existing_project = client.projects.by_name(existing_project_name)
 
     # test import into existing project
-    op = categorization.import_artifacts(
+    op = import_artifacts(
         tamr_client=existing_project.client,
         project_artifact_path=artifact_path,
         target_project=existing_project,
