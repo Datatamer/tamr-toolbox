@@ -1,6 +1,6 @@
 """Snippet for exporting project artifacts from a Tamr project"""
 import tamr_toolbox as tbox
-from tamr_toolbox.project import categorization
+from tamr_toolbox.project import export_artifacts
 from tamr_toolbox.models.project_artifacts import CategorizationArtifacts
 
 # Read config, make Tamr Client
@@ -22,7 +22,7 @@ exclude_list = [
 ]
 
 # Export project artifacts
-op = categorization.export_artifacts(
+op = export_artifacts(
     project=project,
     artifact_directory_path=path_export_dir,
     exclude_artifacts=exclude_list,
