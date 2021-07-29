@@ -110,3 +110,49 @@ logger = tamr_toolbox.utils.logger.create(
     os.system(f"python {script_path}")
 
     assert "ZeroDivisionError" in open(log_file_path).read()
+
+
+def test_enable_toolbox_logging_with_stream_and_file_handler():
+    tamr_toolbox.utils.logger.create(
+        "test_toolbox_logging_stream_and_file",
+        log_to_terminal=True,
+        log_directory=tempfile.gettempdir(),
+    )
+    package_logger = logging.getLogger("tamr_toolbox")
+    package_logger.handlers.clear()
+    tamr_toolbox.utils.logger.enable_toolbox_logging(
+        log_to_terminal=True, log_directory=tempfile.gettempdir()
+    )
+
+    assert len(package_logger.handlers) == 2
+
+    found_file_handler = False
+    found_stream_handler = False
+    for handler in package_logger.handlers:
+        found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+        found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+
+    assert found_file_handler and found_stream_handler
+
+
+def test_enable_toolbox_logging_with_only_file_handler():
+    tamr_toolbox.utils.logger.create(
+        "test_toolbox_logging_stream_and_file",
+        log_to_terminal=True,
+        log_directory=tempfile.gettempdir(),
+    )
+    package_logger = logging.getLogger("tamr_toolbox")
+    package_logger.handlers.clear()
+    tamr_toolbox.utils.logger.enable_toolbox_logging(
+        log_to_terminal=False, log_directory=tempfile.gettempdir()
+    )
+
+    assert len(package_logger.handlers) == 1
+
+    found_file_handler = False
+    found_stream_handler = False
+    for handler in package_logger.handlers:
+        found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+        found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+
+    assert found_file_handler and not found_stream_handler
