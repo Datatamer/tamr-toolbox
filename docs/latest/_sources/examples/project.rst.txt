@@ -103,6 +103,21 @@ Edit Unified and Input Transformations
 .. literalinclude:: ../../examples/scripts/project/_common/edit_transformations.py
   :language: python
 
+Project Movement
+------------------------------------------------------------------------
+
+
+Import Artifacts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/project/_common/import_artifacts.py
+  :language: python
+
+Export Artifacts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/project/_common/export_artifacts.py
+  :language: python
+
+
 Related Examples
 ------------------------------------------------------------------------
 * :ref:`Run a list of projects <workflow-run-projects>`

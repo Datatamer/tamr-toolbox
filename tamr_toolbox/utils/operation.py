@@ -1,6 +1,7 @@
 """Tasks related to Tamr operations (or jobs)"""
 import logging
-from typing import Union, List
+from typing import Union, List, Optional
+from time import sleep, time as now
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
@@ -98,3 +99,32 @@ def get_active(tamr: Client) -> List[Operation]:
     active_ops = [op for op in ops if OperationState(op.state) in active_states]
 
     return active_ops
+
+
+def wait(
+    operation: Operation, *, poll_interval_seconds: int = 3, timeout_seconds: Optional[int] = None,
+) -> Operation:
+    """Continuously polls for this operation's server-side state.
+
+    Args:
+        operation: Operation to be polled.
+        poll_interval_seconds: Time interval (in seconds) between subsequent polls.
+        timeout_seconds: Time (in seconds) to wait for operation to resolve.
+
+    Raises:
+        TimeoutError: If operation takes longer than `timeout_seconds` to resolve.
+    """
+    started = now()
+    while timeout_seconds is None or now() - started < timeout_seconds:
+        if operation.status is None:
+            return operation
+        elif operation.status["state"] in [OperationState.PENDING, OperationState.RUNNING]:
+            sleep(poll_interval_seconds)
+        elif operation.status["state"] in [
+            OperationState.CANCELED,
+            OperationState.SUCCEEDED,
+            OperationState.FAILED,
+        ]:
+            return operation
+        operation = operation.poll()
+    raise TimeoutError(f"Waiting for operation took longer than {timeout_seconds} seconds.")

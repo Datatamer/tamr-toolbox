@@ -67,6 +67,8 @@ jobs:
       matrix:
         python_version: [3.6, 3.7, 3.8]
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
       - uses: actions/checkout@v2
       - name: Install Python
         uses: actions/setup-python@v2
