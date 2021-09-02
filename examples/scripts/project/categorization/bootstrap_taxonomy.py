@@ -22,7 +22,7 @@ COLUMN_NAMES = [FULL_PATH_STR_NAME, FULL_PATH_LIST_NAME]
 PK_NAME = "Primary Key"
 
 
-def main(*, instance_connection_info: Dict[str, Any], categorization_project_id: str) -> bool:
+def main(*, instance_connection_info: Dict[str, Any], categorization_project_id: str) -> None:
     """
     Bootstraps taxonomy in a categorization project
 
@@ -41,11 +41,10 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
     tamr_client = tbox.utils.client.create(**instance_connection_info)
 
     # Retrieve the project
-    project = tamr_client.projects.by_resource_id(categorization_project_id)
+    project = tamr_client.projects.by_resource_id(categorization_project_id).as_categorization()
     LOGGER.info(f"Retrieved project with name: {project.name}")
 
     # Get the project taxonomy
-    # NOTE: .taxonomy() function breaks on newer tamr instances SUP-5075
     try:
         project.taxonomy()
     except requests.exceptions.RequestException:
@@ -86,7 +85,7 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
 
     # Add category data and hash for tamr_id
     df[CATEGORY_ATTRIBUTE_NAME] = df[FULL_PATH_LIST_NAME].apply(lambda x: x[-1])
-    df[PK_NAME] = df[FULL_PATH_STR_NAME].apply(lambda x: hash(x))
+    df[PK_NAME] = df[FULL_PATH_STR_NAME]
     df.drop(FULL_PATH_LIST_NAME, axis=1, inplace=True)
 
     # Create a dataset in Tamr
