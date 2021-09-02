@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 
 from typing import Dict, Any
+from tamr_unify_client.project.attribute_mapping.resource import AttributeMappingSpec
 
 import tamr_toolbox as tbox
 from tamr_toolbox.project.schema_mapping import schema
@@ -113,26 +114,39 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
     )
     LOGGER.info(f"Created a unified attribute {unified_attribute_name}")
 
-    # Tamr_id management is needed for label insert
-    all_tx = tbox.project.schema_mapping.transformations.get_all(project)
-    new_input_tx = tbox.project.categorization.transformations.InputTransformation(
-        "SELECT *, to_string(origin_entity_id) AS tamr_id;", [taxonomy_dataset]
+    # Map category name attribute to new unified attribute
+    attr_mapping_spec = (
+        AttributeMappingSpec.new()
+        .with_input_dataset_name(dataset_name)
+        .with_input_attribute_name(CATEGORY_ATTRIBUTE_NAME)
+        .with_unified_dataset_name(project.unified_dataset().name)
+        .with_unified_attribute_name(unified_attribute_name)
     )
-    all_tx.input_scope.insert(0, new_input_tx)
-    tbox.project.schema_mapping.transformations.set_all(project, all_tx)
+    project.attribute_mappings().create(attr_mapping_spec.to_dict())
+    LOGGER.info(
+        f"Created mapping from source attribute {CATEGORY_ATTRIBUTE_NAME} to unified attribute "
+        f"{unified_attribute_name}"
+    )
 
     LOGGER.info("Updating the unified dataset...")
     tbox.project.categorization.jobs.update_unified_dataset(project)
 
+    # Get unified dataset records from bootstrap source dataset
+    unified_dataset_records = (
+        r for r in project.unified_dataset().records() if r["origin_source_name"] == dataset_name
+    )
+    tamr_id_map = {
+        record["origin_entity_id"]: record["tamr_id"] for record in unified_dataset_records
+    }
+
     # Prepare and post labels
-    category_dict = {", ".join(category): category for category in category_list}
     labels_to_bootstrap = [
         {
             "action": "CREATE",
-            "recordId": hash(key),
+            "recordId": tamr_id_map[key],
             "record": {"verified": {"category": {"path": path}, "reason": "Taxonomy bootstrap"}},
         }
-        for key, path in category_dict.items()
+        for key, path in taxonomy_dict.items()
     ]
     project.client.post(
         f"projects/{project.resource_id}/categorizations/labels:updateRecords",

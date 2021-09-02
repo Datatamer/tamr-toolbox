@@ -144,7 +144,7 @@ def set_unified_attribute_configurations(
     else:
         attr_conf_spec = (
             attr_conf_spec.with_similarity_function(similarity_function)
-            .with_tokenizer("tokenizer")
+            .with_tokenizer(tokenizer)
             .with_numeric_field_resolution([])
         )
     project.attribute_configurations().create(attr_conf_spec.to_dict())
