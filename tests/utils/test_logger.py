@@ -7,6 +7,7 @@ import tempfile
 import os
 
 import tamr_toolbox.utils.logger
+import importlib
 
 
 def test_logger_name():
@@ -113,12 +114,8 @@ logger = tamr_toolbox.utils.logger.create(
 
 
 def test_enable_toolbox_logging_with_stream_and_file_handler():
-    tamr_toolbox.utils.logger.create(
-        "test_toolbox_logging_stream_and_file",
-        log_to_terminal=True,
-        log_directory=tempfile.gettempdir(),
-    )
     package_logger = logging.getLogger("tamr_toolbox")
+    # Reset package logger to have no handlers
     package_logger.handlers.clear()
     tamr_toolbox.utils.logger.enable_toolbox_logging(
         log_to_terminal=True, log_directory=tempfile.gettempdir()
@@ -142,6 +139,7 @@ def test_enable_toolbox_logging_with_only_file_handler():
         log_directory=tempfile.gettempdir(),
     )
     package_logger = logging.getLogger("tamr_toolbox")
+    # Reset package logger to have no handlers
     package_logger.handlers.clear()
     tamr_toolbox.utils.logger.enable_toolbox_logging(
         log_to_terminal=False, log_directory=tempfile.gettempdir()
