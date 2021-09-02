@@ -101,10 +101,10 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
 
     # Create a unified attribute to map taxonomy categories
     unified_attribute_name = "Taxonomy Categories"
-    assert schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
+    schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
 
     # Set ML configuration for the newly created unified attribute
-    assert schema.set_unified_attribute_configurations(
+    schema.set_unified_attribute_configurations(
         project,
         unified_attribute_name=unified_attribute_name,
         similarity_function="COSINE",

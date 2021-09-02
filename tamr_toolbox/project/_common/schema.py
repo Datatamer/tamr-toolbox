@@ -5,6 +5,7 @@ from tamr_unify_client.project.attribute_mapping.resource import (
 )
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.dataset.resource import Dataset
+from tamr_unify_client.project.attribute_configuration.resource import AttributeConfigurationSpec
 from typing import List
 import logging
 from json import JSONDecodeError
@@ -43,7 +44,7 @@ def _get_mapping_spec_for_ud(
     return spec
 
 
-def create_unified_attribute(project: Project, *, unified_attribute_name: str) -> bool:
+def create_unified_attribute(project: Project, *, unified_attribute_name: str) -> None:
     """
     Adds a unified attribute to a project
 
@@ -57,11 +58,7 @@ def create_unified_attribute(project: Project, *, unified_attribute_name: str) -
     Raises:
         AttributeError if the unified attribute already exists
     """
-    try:
-        assert unified_attribute_name in [x.name for x in project.unified_dataset().attributes]
-    except AssertionError:
-        pass
-    else:
+    if unified_attribute_name in [x.name for x in project.unified_dataset().attributes]:
         error_message = (
             f"A unified attribute with name {unified_attribute_name} already exists in "
             f"{project.name}. Please try again using a new name for the attribute."
@@ -76,8 +73,6 @@ def create_unified_attribute(project: Project, *, unified_attribute_name: str) -
     }
     project.unified_dataset().attributes.create(attr_spec)
 
-    return True
-
 
 def set_unified_attribute_configurations(
     project: Project,
@@ -88,7 +83,7 @@ def set_unified_attribute_configurations(
     attribute_role: str = "",
     is_numeric: bool = False,
     override: bool = False,
-) -> bool:
+) -> None:
     """
     Enables machine learning on a new unified attribute according to the specified configuration
 
@@ -108,9 +103,7 @@ def set_unified_attribute_configurations(
         AttributeError if the attribute name is not found
 
     """
-    try:
-        assert unified_attribute_name in [x.name for x in project.unified_dataset().attributes]
-    except AssertionError:
+    if unified_attribute_name not in [x.name for x in project.unified_dataset().attributes]:
         error_msg = (
             f"Attribute {unified_attribute_name} not found in {project.unified_dataset().name}."
         )
@@ -118,16 +111,10 @@ def set_unified_attribute_configurations(
         raise AttributeError(error_msg)
 
     # Check if the attribute has an associated configuration already
-    response = project.client.get(f"projects/{project.resource_id}/attributeConfigurations")
-    attribute_configuration_list = response.json()
-    for configuration in attribute_configuration_list:
-        if configuration["attributeName"] == unified_attribute_name:
+    for attr_conf in project.attribute_configurations():
+        if attr_conf.attribute_name == unified_attribute_name:
             if override:
-                attribute_configuration_id = configuration["id"].split("/")[-1]
-                project.client.delete(
-                    f"projects/{project.resource_id}/attributeConfigurations/"
-                    f"{attribute_configuration_id}"
-                )
+                attr_conf.delete()
                 break
             else:
                 attribute_configuration_exists_error = (
@@ -137,39 +124,30 @@ def set_unified_attribute_configurations(
                 LOGGER.error(attribute_configuration_exists_error)
                 raise RuntimeError(attribute_configuration_exists_error)
 
+    attr_conf_spec = (
+        AttributeConfigurationSpec.new()
+        .with_attribute_role(attribute_role)
+        .with_attribute_name(unified_attribute_name)
+        .with_enabled_for_ml(True)
+    )
     # Check if the attribute is numeric
     if is_numeric and project.type == "CATEGORIZATION" and tokenizer != "":
         LOGGER.info(
             "Attribute is numeric for a categorization project. Similarity function will be set "
             "to COSINE and tokenizer value will be ignored."
         )
-        attr_conf = [
-            {
-                "attributeRole": attribute_role,
-                "similarityFunction": "COSINE",
-                "enabledForMl": True,
-                "tokenizer": "",
-                "numericFieldResolution": [10, 100],
-                "attributeName": unified_attribute_name,
-            }
-        ]
+        attr_conf_spec = (
+            attr_conf_spec.with_similarity_function("COSINE")
+            .with_tokenizer("")
+            .with_numeric_field_resolution([10, 100])
+        )
     else:
-        attr_conf = [
-            {
-                "attributeRole": attribute_role,
-                "similarityFunction": similarity_function,
-                "enabledForMl": True,
-                "tokenizer": tokenizer,
-                "numericFieldResolution": [],
-                "attributeName": unified_attribute_name,
-            }
-        ]
-
-    project.client.post(
-        f"projects/{project.resource_id}/attributeConfigurations", json=attr_conf
-    ).successful()
-
-    return True
+        attr_conf_spec = (
+            attr_conf_spec.with_similarity_function(similarity_function)
+            .with_tokenizer("tokenizer")
+            .with_numeric_field_resolution([])
+        )
+    project.attribute_configurations().create(attr_conf_spec.to_dict())
 
 
 def map_attribute(
@@ -219,9 +197,7 @@ def map_attribute(
         LOGGER.error(error_msg)
         raise ValueError(error_msg)
 
-    try:
-        assert source_attribute_name in [x.name for x in source_dataset.attributes]
-    except AssertionError:
+    if source_attribute_name not in [x.name for x in source_dataset.attributes]:
         error_msg = f"Attribute {source_attribute_name} not found in {source_dataset_name}!"
         LOGGER.error(error_msg)
         raise ValueError(error_msg)

@@ -198,7 +198,7 @@ def test_create_unified_attribute():
     project = client.projects.by_name("minimal_schema_mapping")
     unified_attribute_name = "New Unified Attribute"
 
-    assert schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
+    schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
 
 
 @mock_api()
@@ -223,7 +223,7 @@ def test_set_unified_attribute_configurations_text():
     unified_attribute_name = "attribute test"
 
     schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
-    assert schema.set_unified_attribute_configurations(
+    schema.set_unified_attribute_configurations(
         project,
         unified_attribute_name=unified_attribute_name,
         similarity_function="COSINE",
