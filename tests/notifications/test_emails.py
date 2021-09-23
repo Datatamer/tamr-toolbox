@@ -12,16 +12,6 @@ CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/notifications.config.yaml"
 )
 
-EMAIL_CONFIG = tbox.notifications.email_info.from_config(
-    config={
-        "sender_address": CONFIG["my_email_notification"]["sender_address"],
-        "sender_password": CONFIG["my_email_notification"]["sender_password"],
-        "recipient_addresses": CONFIG["my_email_notification"]["recipient_addresses"],
-        "smtp_server": CONFIG["my_email_notification"]["smtp_server"],
-        "smtp_port": CONFIG["my_email_notification"]["smtp_port"],
-    }
-)
-
 
 def test_build_message():
     test_message = "This is a test email."
@@ -37,8 +27,8 @@ def test_build_message():
     msg = tbox.notifications.emails._build_message(
         message=test_message,
         subject_line=subject_line,
-        sender=EMAIL_CONFIG.sender_address,
-        recipients=EMAIL_CONFIG.recipient_addresses,
+        sender=CONFIG["my_email_notification"]["sender_address"],
+        recipients=CONFIG["my_email_notification"]["recipient_addresses"],
     )
 
     assert msg == test_response
@@ -50,7 +40,13 @@ def test_send_email_succeed():
         subject_line = "Test"
 
         tbox.notifications.emails.send_email(
-            message=test_message, subject_line=subject_line, email_config=EMAIL_CONFIG,
+            message=test_message,
+            subject_line=subject_line,
+            sender_address=CONFIG["my_email_notification"]["sender_address"],
+            sender_password=CONFIG["my_email_notification"]["sender_password"],
+            recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+            smtp_server=CONFIG["my_email_notification"]["smtp_server"],
+            smtp_port=CONFIG["my_email_notification"]["smtp_port"],
         )
 
         # test smptp server was created
@@ -64,11 +60,13 @@ def test_send_email_succeed():
         msg = tbox.notifications.emails._build_message(
             message=test_message,
             subject_line=subject_line,
-            sender=EMAIL_CONFIG.sender_address,
-            recipients=EMAIL_CONFIG.recipient_addresses,
+            sender=CONFIG["my_email_notification"]["sender_address"],
+            recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         )
         context.sendmail.assert_called_with(
-            EMAIL_CONFIG.sender_address, EMAIL_CONFIG.recipient_addresses, msg
+            CONFIG["my_email_notification"]["sender_address"],
+            CONFIG["my_email_notification"]["recipient_addresses"],
+            msg,
         )
 
 
@@ -81,7 +79,14 @@ def test_monitor_job_succeed():
         op = project.unified_dataset().refresh(asynchronous=True)
 
         list_responses = tbox.notifications.emails.monitor_job(
-            tamr=client, email_config=EMAIL_CONFIG, operation=op, poll_interval_seconds=0.01,
+            tamr=client,
+            sender_address=CONFIG["my_email_notification"]["sender_address"],
+            sender_password=CONFIG["my_email_notification"]["sender_password"],
+            recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+            smtp_server=CONFIG["my_email_notification"]["smtp_server"],
+            smtp_port=CONFIG["my_email_notification"]["smtp_port"],
+            operation=op,
+            poll_interval_seconds=0.01,
         )
 
         # test smptp server was created
@@ -121,7 +126,11 @@ def test_monitor_job_timeout():
         timeout_seconds = 0.02
         list_responses = tbox.notifications.emails.monitor_job(
             tamr=client,
-            email_config=EMAIL_CONFIG,
+            sender_address=CONFIG["my_email_notification"]["sender_address"],
+            sender_password=CONFIG["my_email_notification"]["sender_password"],
+            recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+            smtp_server=CONFIG["my_email_notification"]["smtp_server"],
+            smtp_port=CONFIG["my_email_notification"]["smtp_port"],
             operation=op,
             poll_interval_seconds=0.01,
             timeout_seconds=timeout_seconds,

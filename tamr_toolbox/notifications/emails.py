@@ -6,7 +6,6 @@ import ssl
 
 from typing import Union, List, Optional
 from email.mime.text import MIMEText
-from tamr_toolbox.notifications.email_info import EmailInfo
 from smtplib import SMTPException
 
 from tamr_unify_client import Client
@@ -15,13 +14,13 @@ from tamr_unify_client.operation import Operation
 from tamr_toolbox.models.operation_state import OperationState
 from tamr_toolbox.utils.operation import get_details, from_resource_id
 
-LOGGER = logging.getLogger(__name__)  # To Do: does additional logging to be added?
+LOGGER = logging.getLogger(__name__)
 
 
 def _build_message(
     *, message: str, subject_line: str, sender: str, recipients: List[str]
 ) -> MIMEText:
-    """Builds email message in Multipurpose Internet Mail Extensions (MIME) format. MIME is an 
+    """Builds email message in Multipurpose Internet Mail Extensions (MIME) format. MIME is an
     Internet standard that extends the format of email messages
 
     Args:
@@ -43,14 +42,26 @@ def _build_message(
 
 
 def send_email(
-    *, message: str, subject_line: str, email_config: EmailInfo, raise_error: bool = True,
+    *,
+    message: str,
+    subject_line: str,
+    sender_address=str,
+    sender_password=str,
+    recipient_addresses=List[str],
+    smtp_server=str,
+    smtp_port=str,
+    raise_error: bool = True,
 ) -> dict:
     """Sends a message via email to list of recipients
 
     Args:
         message: Body of email message
         subject_line: subject of email
-        email_config: An object of type EmailInfo to pull email server information from
+        sender_address: email address to send message from ex: my_pipeline@gmail.com
+        sender_password: password to login to sender_email
+        recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]
+        smtp_server: smtp server address of sender_email ex: smtp.gmail.com
+        smtp_port: port to send email from, use 465 for SSL
         raise_error: A boolean value to opt out raising SMTP errors
 
     Returns:
@@ -65,21 +76,17 @@ def send_email(
     msg = _build_message(
         message=message,
         subject_line=subject_line,
-        sender=email_config.sender_address,
-        recipients=email_config.recipient_addresses,
+        sender=sender_address,
+        recipients=recipient_addresses,
     )
     response = None
 
     try:
         context = ssl.create_default_context()
         # send message
-        with smtplib.SMTP_SSL(
-            email_config.smtp_server, email_config.smtp_port, context=context
-        ) as server:
-            server.login(email_config.sender_address, email_config.sender_password)
-            response = server.sendmail(
-                email_config.sender_address, email_config.recipient_addresses, msg
-            )
+        with smtplib.SMTP_SSL(smtp_server, smtp_port, context=context) as server:
+            server.login(sender_address, sender_password)
+            response = server.sendmail(sender_address, recipient_addresses, msg)
     except SMTPException as e:
         LOGGER.error(f"Error: {e}")
 
@@ -96,13 +103,24 @@ def send_email(
 
 
 def _send_job_status_message(
-    *, email_config: EmailInfo, operation: Operation, notify_states: List[OperationState],
+    *,
+    sender_address=str,
+    sender_password=str,
+    recipient_addresses=List[str],
+    smtp_server=str,
+    smtp_port=str,
+    operation: Operation,
+    notify_states: List[OperationState],
 ) -> dict:
     """
     Checks operation state and if in `notify_states` sends the message.
 
     Args:
-        email_config: An object of type EmailInfo to pull email server information from
+        sender_address: email address to send message from ex: my_pipeline@gmail.com
+        sender_password: password to login to sender_email
+        recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]
+        smtp_server: smtp server address of sender_email ex: smtp.gmail.com
+        smtp_port: port to send email from, use 465 for SSL
         operation: A Tamr Operation
         notify_states: States for which notifications should be sent
 
@@ -118,7 +136,11 @@ def _send_job_status_message(
         resp = send_email(
             message=message,
             subject_line=f"Job {operation.resource_id}: {state}",
-            email_config=email_config,
+            sender_address=sender_address,
+            sender_password=sender_password,
+            recipient_addresses=recipient_addresses,
+            smtp_server=smtp_server,
+            smtp_port=smtp_port,
         )
     return (message, resp)
 
@@ -126,7 +148,11 @@ def _send_job_status_message(
 def monitor_job(
     tamr: Client,
     *,
-    email_config: EmailInfo,
+    sender_address=str,
+    sender_password=str,
+    recipient_addresses=List[str],
+    smtp_server=str,
+    smtp_port=str,
     operation: Union[int, str, Operation],
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
@@ -138,7 +164,11 @@ def monitor_job(
 
     Args:
         tamr: A Tamr client
-        email_config: An object of type EmailInfo to pull email server information from
+        sender_address: email address to send message from ex: my_pipeline@gmail.com
+        sender_password: password to login to sender_email
+        recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]
+        smtp_server: smtp server address of sender_email ex: smtp.gmail.com
+        smtp_port: port to send email from, use 465 for SSL
         operation: A job ID or a Tamr operation
         poll_interval_seconds: Time interval (in seconds) between subsequent polls
         timeout_seconds: Time (in seconds) to wait
@@ -180,7 +210,13 @@ def monitor_job(
         new_status = OperationState[op.state]
         if status != new_status:
             message, resp = _send_job_status_message(
-                email_config=email_config, operation=op, notify_states=notify_states,
+                sender_address=sender_address,
+                sender_password=sender_password,
+                recipient_addresses=recipient_addresses,
+                smtp_server=smtp_server,
+                smtp_port=smtp_port,
+                operation=op,
+                notify_states=notify_states,
             )
             list_responses.append((message, resp))
             status = new_status
@@ -199,7 +235,11 @@ def monitor_job(
         resp = send_email(
             message=timeout_message,
             subject_line=f"Job {op.resource_id}: Timeout",
-            email_config=email_config,
+            sender_address=sender_address,
+            sender_password=sender_password,
+            recipient_addresses=recipient_addresses,
+            smtp_server=smtp_server,
+            smtp_port=smtp_port,
         )
         list_responses.append((timeout_message, resp))
 
