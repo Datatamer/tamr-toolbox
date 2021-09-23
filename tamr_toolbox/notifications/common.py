@@ -1,20 +1,12 @@
 """Tasks related to creation of Email notifications"""
 import time
-import os
 
 from typing import Union, List, Optional
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
 
 from tamr_toolbox.models.operation_state import OperationState
-from tamr_toolbox.utils.operation import get_details, from_resource_id
-
-# Building our documentation requires access to all dependencies, including optional ones
-# This environments variable is set automatically when `invoke docs` is used
-BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
-if BUILDING_DOCS:
-    # Import relevant optional dependencies
-    import slack
+from tamr_toolbox.utils.operation import from_resource_id
 
 
 def monitor_job(
@@ -35,7 +27,8 @@ def monitor_job(
     Args:
         tamr: A Tamr client
         send_message: either send_email from emails or send_message function from slack
-        send_status_function: _send_job_status_message function from notifications.slack or notifications.email 
+        send_status_function: _send_job_status_message function from
+        notifications.slack or notifications.email
         operation: A job ID or a Tamr operation
         poll_interval_seconds: Time interval (in seconds) between subsequent polls
         timeout_seconds: Time (in seconds) to wait

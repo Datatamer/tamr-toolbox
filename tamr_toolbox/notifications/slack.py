@@ -1,6 +1,5 @@
 """Tasks related to creation of Slack notifications"""
 import logging
-import time
 import os
 from typing import Union, List, Optional
 
@@ -9,7 +8,7 @@ from tamr_unify_client.operation import Operation
 from tamr_toolbox.notifications.common import monitor_job as monitor_job_common
 
 from tamr_toolbox.models.operation_state import OperationState
-from tamr_toolbox.utils.operation import get_details, from_resource_id
+from tamr_toolbox.utils.operation import get_details
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +21,12 @@ if BUILDING_DOCS:
 
 
 def send_message(
-    *, slack_client: "slack.WebClient", channel: str, message: str, raise_error: bool = True, **kwargs
+    *,
+    slack_client: "slack.WebClient",
+    channel: str,
+    message: str,
+    raise_error: bool = True,
+    **kwargs,
 ) -> dict:
     """Sends a message to a pre-defined Slack channel
 
