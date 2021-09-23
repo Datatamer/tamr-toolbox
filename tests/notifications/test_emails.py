@@ -34,7 +34,7 @@ def test_build_message():
         + f"\nThis is a test email."
     )
 
-    msg = tbox.notifications.emails.build_message(
+    msg = tbox.notifications.emails._build_message(
         message=test_message,
         subject_line=subject_line,
         sender=EMAIL_CONFIG.sender_address,
@@ -61,7 +61,7 @@ def test_send_email_succeed():
         context.login.assert_called()
 
         # test smtplib sendmail function was called with correct parameters
-        msg = tbox.notifications.emails.build_message(
+        msg = tbox.notifications.emails._build_message(
             message=test_message,
             subject_line=subject_line,
             sender=EMAIL_CONFIG.sender_address,

@@ -18,10 +18,11 @@ from tamr_toolbox.utils.operation import get_details, from_resource_id
 LOGGER = logging.getLogger(__name__)  # To Do: does additional logging to be added?
 
 
-def build_message(
+def _build_message(
     *, message: str, subject_line: str, sender: str, recipients: List[str]
 ) -> MIMEText:
-    """Builds email message
+    """Builds email message in Multipurpose Internet Mail Extensions (MIME) format. MIME is an 
+    Internet standard that extends the format of email messages
 
     Args:
         message: Body of email message
@@ -61,7 +62,7 @@ def send_email(
         error code and the accompanying error message sent by the server.
     """
     # build email
-    msg = build_message(
+    msg = _build_message(
         message=message,
         subject_line=subject_line,
         sender=email_config.sender_address,
