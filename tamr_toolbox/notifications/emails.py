@@ -45,11 +45,11 @@ def send_email(
     *,
     message: str,
     subject_line: str,
-    sender_address=str,
-    sender_password=str,
-    recipient_addresses=List[str],
-    smtp_server=str,
-    smtp_port=str,
+    sender_address: str,
+    sender_password: str,
+    recipient_addresses: List[str],
+    smtp_server: str,
+    smtp_port: str,
     raise_error: bool = True,
 ) -> dict:
     """Sends a message via email to list of recipients
@@ -104,11 +104,11 @@ def send_email(
 
 def _send_job_status_message(
     *,
-    sender_address=str,
-    sender_password=str,
-    recipient_addresses=List[str],
-    smtp_server=str,
-    smtp_port=str,
+    sender_address: str,
+    sender_password: str,
+    recipient_addresses: List[str],
+    smtp_server: str,
+    smtp_port: str,
     operation: Operation,
     notify_states: List[OperationState],
 ) -> dict:
