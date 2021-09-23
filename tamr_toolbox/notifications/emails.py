@@ -7,6 +7,7 @@ import ssl
 from typing import Union, List, Optional
 from email.mime.text import MIMEText
 from smtplib import SMTPException
+from tamr_toolbox.notifications.common import monitor_job as monitor_job_common
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
@@ -99,7 +100,7 @@ def send_email(
         else:
             raise e
 
-    return response
+    return msg, response
 
 
 def _send_job_status_message(
@@ -148,11 +149,11 @@ def _send_job_status_message(
 def monitor_job(
     tamr: Client,
     *,
-    sender_address=str,
-    sender_password=str,
-    recipient_addresses=List[str],
-    smtp_server=str,
-    smtp_port=str,
+    sender_address: str,
+    sender_password: str,
+    recipient_addresses: List[str],
+    smtp_server: str,
+    smtp_port: str,
     operation: Union[int, str, Operation],
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
@@ -177,70 +178,19 @@ def monitor_job(
     Returns:
         A list of messages with their response codes
     """
-    if notify_states is None:
-        notify_states = [
-            OperationState.SUCCEEDED,
-            OperationState.FAILED,
-            OperationState.CANCELED,
-            OperationState.PENDING,
-            OperationState.RUNNING,
-        ]
-    started = time.time()
-    list_responses = []
-    status = None
-
-    if isinstance(operation, Operation):
-        op = operation
-    else:
-        op = from_resource_id(tamr=tamr, job_id=operation)
-
-    while (timeout_seconds is None or time.time() - started < timeout_seconds) and status not in [
-        OperationState.SUCCEEDED,
-        OperationState.FAILED,
-        OperationState.CANCELED,
-    ]:
-        # Check the status of the current operation.
-        # If the state is updated such that status!=new_status then send a message and
-        # update `status`.
-        # The loop exits if hits the timeout or if the jobs is in
-        # a final state (SUCCEEDED/FAILED/CANCELED).
-        # Note that it will always send a message about any status that has been
-        # updated before exiting
-        op = op.poll()
-        new_status = OperationState[op.state]
-        if status != new_status:
-            message, resp = _send_job_status_message(
-                sender_address=sender_address,
-                sender_password=sender_password,
-                recipient_addresses=recipient_addresses,
-                smtp_server=smtp_server,
-                smtp_port=smtp_port,
-                operation=op,
-                notify_states=notify_states,
-            )
-            list_responses.append((message, resp))
-            status = new_status
-        time.sleep(poll_interval_seconds)
-
-    if status not in [
-        OperationState.SUCCEEDED,
-        OperationState.FAILED,
-        OperationState.CANCELED,
-    ]:
-        # If the operation was not in a final state then assume it timed out
-        timeout_message = (
-            f"The job {op.resource_id}: {op.description} took longer "
-            f"than {timeout_seconds} seconds to resolve."
-        )
-        resp = send_email(
-            message=timeout_message,
-            subject_line=f"Job {op.resource_id}: Timeout",
-            sender_address=sender_address,
-            sender_password=sender_password,
-            recipient_addresses=recipient_addresses,
-            smtp_server=smtp_server,
-            smtp_port=smtp_port,
-        )
-        list_responses.append((timeout_message, resp))
+    list_responses = monitor_job_common(
+        tamr=tamr,
+        send_message=send_email,
+        send_status_function=_send_job_status_message,
+        sender_address=sender_address,
+        sender_password=sender_password,
+        recipient_addresses=recipient_addresses,
+        smtp_server=smtp_server,
+        smtp_port=smtp_port,
+        operation=operation,
+        poll_interval_seconds=poll_interval_seconds,
+        timeout_seconds=timeout_seconds,
+        notify_states=notify_states,
+    )
 
     return list_responses

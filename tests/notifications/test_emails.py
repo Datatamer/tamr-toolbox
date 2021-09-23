@@ -21,7 +21,7 @@ def test_build_message():
         + "1.0\nContent-Transfer-Encoding: 7bit\n"
         + f'Subject: Test 123\nFrom: {CONFIG["my_email_notification"]["sender_address"]}\n'
         + f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}\n'
-        + f"\nThis is a test email."
+        + "\nThis is a test email."
     )
 
     msg = tbox.notifications.emails._build_message(
@@ -146,8 +146,13 @@ def test_monitor_job_timeout():
                 f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
             ),
             (
-                f"The job {op.resource_id}: {op.description} took longer "
-                f"than {timeout_seconds} seconds to resolve."
+                f'Content-Type: text/plain; charset="us-ascii"\nMIME-Version: 1.0\n'
+                f"Content-Transfer-Encoding: 7bit\nSubject: Job {op.resource_id}: Timeout\n"
+                f'From: {CONFIG["my_email_notification"]["sender_address"]}\n'
+                f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}\n'
+                f"\nThe job {op.resource_id}: Materialize views "
+                f"[minimal_schema_mapping_unified_dataset]"
+                f" to Elastic took longer than {timeout_seconds} seconds to resolve."
             ),
         ]
 
