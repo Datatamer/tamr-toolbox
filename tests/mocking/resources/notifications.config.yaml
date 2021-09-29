@@ -20,3 +20,4 @@ my_email_notification:
     recipient_addresses: ["recipient@mail.com"]
     smtp_server: "smtp.mail.com"
     smtp_port: 465
+    tls_port: 587

@@ -53,7 +53,45 @@ def test_send_email_succeed():
         mock_smtp.assert_called()
 
         # test login function was called
-        context = mock_smtp.return_value.__enter__.return_value
+        context = mock_smtp.return_value
+        context.login.assert_called()
+
+        # test smtplib sendmail function was called with correct parameters
+        msg = tbox.notifications.emails._build_message(
+            message=test_message,
+            subject_line=subject_line,
+            sender=CONFIG["my_email_notification"]["sender_address"],
+            recipients=CONFIG["my_email_notification"]["recipient_addresses"],
+        )
+        context.sendmail.assert_called_with(
+            CONFIG["my_email_notification"]["sender_address"],
+            CONFIG["my_email_notification"]["recipient_addresses"],
+            msg,
+        )
+
+
+def test_send_email_tls():
+    with patch("smtplib.SMTP", autospec=True) as mock_smtp:
+        test_message = "This is a test email."
+        subject_line = "Test"
+
+        tbox.notifications.emails.send_email(
+            message=test_message,
+            subject_line=subject_line,
+            sender_address=CONFIG["my_email_notification"]["sender_address"],
+            sender_password=CONFIG["my_email_notification"]["sender_password"],
+            recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+            smtp_server=CONFIG["my_email_notification"]["smtp_server"],
+            smtp_port=CONFIG["my_email_notification"]["tls_port"],
+            use_tls=True,
+        )
+
+        # test smptp server was created
+        mock_smtp.assert_called()
+
+        # test login function was called
+        context = mock_smtp.return_value
+        context.starttls.assert_called()
         context.login.assert_called()
 
         # test smtplib sendmail function was called with correct parameters

@@ -51,6 +51,7 @@ def send_email(
     smtp_server: str,
     smtp_port: str,
     raise_error: bool = True,
+    use_tls: bool = False,
 ) -> dict:
     """Sends a message via email to list of recipients
 
@@ -63,6 +64,7 @@ def send_email(
         smtp_server: smtp server address of sender_email ex: smtp.gmail.com
         smtp_port: port to send email from, use 465 for SSL
         raise_error: A boolean value to opt out raising SMTP errors
+        use_tls: A boolean value to opt to use TLS protocol
 
     Returns:
         The response codes from the smtp server for each email if there are any errors
@@ -83,10 +85,18 @@ def send_email(
 
     try:
         context = ssl.create_default_context()
-        # send message
-        with smtplib.SMTP_SSL(smtp_server, smtp_port, context=context) as server:
-            server.login(sender_address, sender_password)
-            response = server.sendmail(sender_address, recipient_addresses, msg)
+        # select cryptographic protocol
+        if use_tls:
+            server = smtplib.SMTP(smtp_server, smtp_port)
+            server.starttls(context=context)
+        else:
+            server = smtplib.SMTP_SSL(smtp_server, smtp_port, context=context)
+
+        # login and send message
+        server.login(sender_address, sender_password)
+        response = server.sendmail(sender_address, recipient_addresses, msg)
+        server.quit()
+
     except SMTPException as e:
         LOGGER.error(f"Error: {e}")
 
