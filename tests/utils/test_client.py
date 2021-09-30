@@ -25,7 +25,6 @@ def test_client_create():
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
     assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
-    assert my_client.store_auth_cookie == False
 
 
 @mock_api()
@@ -42,8 +41,8 @@ def test_invalid_credentials():
 
 @mock_api()
 def test_store_auth_cookie():
-    my_client = utils.client.create(**CONFIG['my_instance_name'], store_auth_cookie=True)
-    assert my_client.store_auth_cookie == True
+    print(CONFIG)
+    utils.client.create(**CONFIG["my_instance_name"], store_auth_cookie=True)
 
 
 @mock_api()
