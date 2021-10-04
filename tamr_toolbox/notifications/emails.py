@@ -121,6 +121,7 @@ def _send_job_status_message(
     smtp_port: str,
     operation: Operation,
     notify_states: List[OperationState],
+    use_tls: bool = False,
 ) -> dict:
     """
     Checks operation state and if in `notify_states` sends the message.
@@ -133,6 +134,7 @@ def _send_job_status_message(
         smtp_port: port to send email from, use 465 for SSL
         operation: A Tamr Operation
         notify_states: States for which notifications should be sent
+        use_tls: A boolean value to opt to use TLS protocol
 
     Returns:
         A dictionary, with one entry for each
@@ -151,6 +153,7 @@ def _send_job_status_message(
             recipient_addresses=recipient_addresses,
             smtp_server=smtp_server,
             smtp_port=smtp_port,
+            use_tls=use_tls,
         )
     return (message, resp)
 
@@ -167,6 +170,7 @@ def monitor_job(
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
     notify_states: Optional[List[OperationState]] = None,
+    use_tls: bool = False,
 ) -> List[dict]:
     """
 
@@ -183,6 +187,7 @@ def monitor_job(
         poll_interval_seconds: Time interval (in seconds) between subsequent polls
         timeout_seconds: Time (in seconds) to wait
         notify_states : States for which notifications should be sent, use None for all states
+        use_tls: A boolean value to opt to use TLS protocol
 
     Returns:
         A list of messages with their response codes
@@ -200,6 +205,7 @@ def monitor_job(
         poll_interval_seconds=poll_interval_seconds,
         timeout_seconds=timeout_seconds,
         notify_states=notify_states,
+        use_tls=use_tls,
     )
 
     return list_responses
