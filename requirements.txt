@@ -1,4 +1,4 @@
 requests>=2.22
-tamr_unify_client>=0.13.0
+tamr_unify_client>=1.4.0
 PyYAML==5.3.1
 
