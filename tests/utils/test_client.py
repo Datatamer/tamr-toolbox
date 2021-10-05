@@ -42,6 +42,7 @@ def test_invalid_credentials():
 @mock_api()
 def test_store_auth_cookie():
     my_client = utils.client.create(**CONFIG["my_instance_name"], store_auth_cookie=True)
+    assert my_client.session.cookies is not None
     assert my_client.session.auth is None
 
 

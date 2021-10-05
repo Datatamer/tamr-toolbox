@@ -57,7 +57,7 @@ def create(
         host: The ip address of Tamr
         port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port
         protocol: https or http
-        store_auth_cookie: If True will allow Tamr authentication cookie to be stored and reused
+        store_auth_cookie: If true will allow Tamr authentication cookie to be stored and reused
         enforce_healthy: If true will enforce a healthy state upon creation
 
     Returns:
