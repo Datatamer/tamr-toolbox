@@ -53,7 +53,7 @@ def test_send_email_succeed():
         mock_smtp.assert_called()
 
         # test login function was called
-        context = mock_smtp.return_value
+        context = mock_smtp.return_value.__enter__.return_value
         context.login.assert_called()
 
         # test smtplib sendmail function was called with correct parameters
@@ -90,7 +90,7 @@ def test_send_email_tls():
         mock_smtp.assert_called()
 
         # test login function was called
-        context = mock_smtp.return_value
+        context = mock_smtp.return_value.__enter__.return_value
         context.starttls.assert_called()
         context.login.assert_called()
 

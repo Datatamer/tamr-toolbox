@@ -85,17 +85,15 @@ def send_email(
 
     try:
         context = ssl.create_default_context()
-        # select cryptographic protocol
-        if use_tls:
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls(context=context)
-        else:
-            server = smtplib.SMTP_SSL(smtp_server, smtp_port, context=context)
+        with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
+            smtp_server, smtp_port, context=context
+        ) as server:
+            if use_tls:
+                server.starttls(context=context)
 
-        # login and send message
-        server.login(sender_address, sender_password)
-        response = server.sendmail(sender_address, recipient_addresses, msg)
-        server.quit()
+            # login and send message
+            server.login(sender_address, sender_password)
+            response = server.sendmail(sender_address, recipient_addresses, msg)
 
     except SMTPException as e:
         LOGGER.error(f"Error: {e}")
