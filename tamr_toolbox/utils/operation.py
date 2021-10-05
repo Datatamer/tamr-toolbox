@@ -131,7 +131,7 @@ def wait(
 
 
 def monitor(
-    operation: Operation, *, poll_interval_seconds: int = 1, timeout_seconds: Optional[int] = 300,
+    operation: Operation, *, poll_interval_seconds: int = 1, timeout_seconds: int = 300,
 ) -> Operation:
     """Continuously polls for this operation's server-side state and returns operation
     when there is a state change
