@@ -19,9 +19,7 @@ def monitor_job(
     notify_states: Optional[List[OperationState]] = None,
     **kwargs,
 ) -> List[dict]:
-    """
-
-    Monitors a Tamr Operation and sends a message when the job status is updated
+    """Monitors a Tamr Operation and sends a message when the job status is updated
 
     Args:
         tamr: A Tamr client

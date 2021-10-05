@@ -37,7 +37,7 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
 
 
 def get_latest(tamr: Client) -> Operation:
-    """ Get the latest operation
+    """Get the latest operation
 
     Args:
         tamr: A Tamr client
@@ -65,8 +65,7 @@ def get_details(*, operation: Operation) -> str:
 
 
 def get_all(tamr: Client) -> List[Operation]:
-    """
-    Get a list of all jobs or operations.
+    """Get a list of all jobs or operations.
 
     Args:
         tamr: A Tamr client
@@ -84,8 +83,7 @@ def get_all(tamr: Client) -> List[Operation]:
 
 
 def get_active(tamr: Client) -> List[Operation]:
-    """
-    Get a list of pending and running jobs.
+    """Get a list of pending and running jobs.
 
     Args:
         tamr: A Tamr client

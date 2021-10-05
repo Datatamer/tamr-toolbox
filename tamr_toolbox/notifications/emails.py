@@ -121,8 +121,7 @@ def _send_job_status_message(
     notify_states: List[OperationState],
     use_tls: bool = False,
 ) -> dict:
-    """
-    Checks operation state and if in `notify_states` sends the message.
+    """Checks operation state and if in `notify_states` sends the message.
 
     Args:
         sender_address: email address to send message from ex: my_pipeline@gmail.com
@@ -170,9 +169,7 @@ def monitor_job(
     notify_states: Optional[List[OperationState]] = None,
     use_tls: bool = False,
 ) -> List[dict]:
-    """
-
-    Monitors a Tamr Operation and sends an email when the job status is updated
+    """Monitors a Tamr Operation and sends an email when the job status is updated
 
     Args:
         tamr: A Tamr client

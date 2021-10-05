@@ -15,7 +15,7 @@ op_update = tbox.utils.operation.monitor(operation=op)
 
 # Wait for the operation to finish
 # Will return the operation when it reaches one of the final states:
-# OperationState.CANCELED, OperationState.SUCCEEDED,cOperationState.FAILED
+# OperationState.CANCELED, OperationState.SUCCEEDED, OperationState.FAILED
 op_finished = tbox.utils.operation.wait(operation=op)
 
 # Get the most recent operation
