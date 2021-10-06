@@ -51,7 +51,7 @@ def send_email(
     smtp_server: str,
     smtp_port: str,
     raise_error: bool = True,
-    use_tls: bool = False,
+    use_tls: bool = True,
 ) -> dict:
     """Sends a message via email to list of recipients
 
@@ -62,9 +62,9 @@ def send_email(
         sender_password: password to login to sender_email
         recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]
         smtp_server: smtp server address of sender_email ex: smtp.gmail.com
-        smtp_port: port to send email from, use 465 for SSL
+        smtp_port: port to send email from, use 465 for SSL, use 587 for TLS
         raise_error: A boolean value to opt out raising SMTP errors
-        use_tls: A boolean value to opt to use TLS protocol
+        use_tls: A boolean value to turn on/off TLS protocol
 
     Returns:
         The response codes from the smtp server for each email if there are any errors
