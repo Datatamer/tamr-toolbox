@@ -40,6 +40,13 @@ def test_invalid_credentials():
 
 
 @mock_api()
+def test_store_auth_cookie():
+    my_client = utils.client.create(**CONFIG["my_instance_name"], store_auth_cookie=True)
+    assert "authToken" in my_client.session.cookies.keys()
+    assert my_client.session.auth is None
+
+
+@mock_api()
 def test_client_enforce_healthy():
     my_client = utils.client.create(**CONFIG["my_instance_name"], enforce_healthy=True)
     assert my_client.host == CONFIG["my_instance_name"]["host"]

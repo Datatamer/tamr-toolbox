@@ -1,0 +1,1 @@
+{"method": "POST", "url": "http://ip-00001:9100/api/versioned/v1/instance:login", "status": 200, "content_type": "application/json", "body": "{\"username\":\"admin\",\"token\":\"e2333238-cd88-4379-bb26-9ade6e12fce9\"}"}
