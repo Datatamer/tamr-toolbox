@@ -12,7 +12,7 @@ config = {
     "sender_password": "sender_email_password",
     "recipient_addresses": ["recipient@gmail.com"],
     "smtp_server": "smtp.gmail.com",
-    "smtp_port": 465,
+    "smtp_port": 587,
 }
 
 

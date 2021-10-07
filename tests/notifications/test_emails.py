@@ -47,6 +47,7 @@ def test_send_email_succeed():
             recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
             smtp_server=CONFIG["my_email_notification"]["smtp_server"],
             smtp_port=CONFIG["my_email_notification"]["smtp_port"],
+            use_tls=False,
         )
 
         # test smptp server was created

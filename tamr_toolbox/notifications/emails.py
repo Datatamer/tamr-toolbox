@@ -52,6 +52,8 @@ def send_email(
     smtp_port: str,
     raise_error: bool = True,
     use_tls: bool = True,
+    keyfile: Optional[str] = None,
+    certfile: Optional[str] = None,
 ) -> dict:
     """Sends a message via email to list of recipients
 
@@ -65,6 +67,8 @@ def send_email(
         smtp_port: port to send email from, use 465 for SSL, use 587 for TLS
         raise_error: A boolean value to opt out raising SMTP errors
         use_tls: A boolean value to turn on/off TLS protocol
+        keyfile: the private key to a TLS/SSL certificate, usually PEM format
+        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
         The response codes from the smtp server for each email if there are any errors
@@ -86,10 +90,10 @@ def send_email(
     try:
         context = ssl.create_default_context()
         with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
-            smtp_server, smtp_port, context=context
+            smtp_server, smtp_port, keyfile=keyfile, certfile=certfile, context=context
         ) as server:
             if use_tls:
-                server.starttls(context=context)
+                server.starttls(keyfile=keyfile, certfile=certfile, context=context)
 
             # login and send message
             server.login(sender_address, sender_password)
@@ -120,6 +124,8 @@ def _send_job_status_message(
     operation: Operation,
     notify_states: List[OperationState],
     use_tls: bool = False,
+    keyfile: Optional[str] = None,
+    certfile: Optional[str] = None,
 ) -> dict:
     """Checks operation state and if in `notify_states` sends the message.
 
@@ -132,6 +138,8 @@ def _send_job_status_message(
         operation: A Tamr Operation
         notify_states: States for which notifications should be sent
         use_tls: A boolean value to opt to use TLS protocol
+        keyfile: the private key to a TLS/SSL certificate, usually PEM format
+        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
         A dictionary, with one entry for each
@@ -151,6 +159,8 @@ def _send_job_status_message(
             smtp_server=smtp_server,
             smtp_port=smtp_port,
             use_tls=use_tls,
+            keyfile=keyfile,
+            certfile=certfile,
         )
     return (message, resp)
 
@@ -168,6 +178,8 @@ def monitor_job(
     timeout_seconds: Optional[float] = None,
     notify_states: Optional[List[OperationState]] = None,
     use_tls: bool = False,
+    keyfile: Optional[str] = None,
+    certfile: Optional[str] = None,
 ) -> List[dict]:
     """Monitors a Tamr Operation and sends an email when the job status is updated
 
@@ -183,6 +195,8 @@ def monitor_job(
         timeout_seconds: Time (in seconds) to wait
         notify_states : States for which notifications should be sent, use None for all states
         use_tls: A boolean value to opt to use TLS protocol
+        keyfile: the private key to a TLS/SSL certificate, usually PEM format
+        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
         A list of messages with their response codes
@@ -201,6 +215,8 @@ def monitor_job(
         timeout_seconds=timeout_seconds,
         notify_states=notify_states,
         use_tls=use_tls,
+        keyfile=keyfile,
+        certfile=certfile,
     )
 
     return list_responses
