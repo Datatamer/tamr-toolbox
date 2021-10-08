@@ -107,7 +107,7 @@ def send_email(
         else:
             raise e
 
-    return msg, response
+    return message, response
 
 
 def _send_job_status_message(
