@@ -3,7 +3,7 @@ import logging
 import smtplib
 import ssl
 
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict, Tuple
 from email.mime.text import MIMEText
 from smtplib import SMTPException
 from tamr_toolbox.notifications.common import monitor_job as monitor_job_common
@@ -17,9 +17,7 @@ from tamr_toolbox.utils.operation import get_details
 LOGGER = logging.getLogger(__name__)
 
 
-def _build_message(
-    *, message: str, subject_line: str, sender: str, recipients: List[str]
-) -> MIMEText:
+def _build_message(*, message: str, subject_line: str, sender: str, recipients: List[str]) -> str:
     """Builds email message in Multipurpose Internet Mail Extensions (MIME) format. MIME is an
     Internet standard that extends the format of email messages
 
@@ -54,7 +52,7 @@ def send_email(
     use_tls: bool = True,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> dict:
+) -> Tuple[str, Dict[str, Tuple[int, str]]]:
     """Sends a message via email to list of recipients
 
     Args:
@@ -71,11 +69,9 @@ def send_email(
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
-        The response codes from the smtp server for each email if there are any errors
-
-    Raises:
-        A dictionary, with one entry for each
-        recipient that was refused.  Each entry contains a tuple of the SMTP
+        A Tuple containing the message and a dict with the response codes from the smtp server
+        for the email if there are any errors. The dictionary will contain one entry for each
+        recipient that was refused. Each entry contains a tuple of the SMTP
         error code and the accompanying error message sent by the server.
     """
     # build email
@@ -126,7 +122,7 @@ def _send_job_status_message(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> dict:
+) -> Tuple[str, Dict[str, Tuple[int, str]]]:
     """Checks operation state and if in `notify_states` sends the message.
 
     Args:
@@ -142,8 +138,9 @@ def _send_job_status_message(
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
-        A dictionary, with one entry for each
-        recipient that was refused.  Each entry contains a tuple of the SMTP
+        A Tuple containing the message and a dict with the response codes from the smtp server
+        for the email if there are any errors. The dictionary will contain one entry for each
+        recipient that was refused. Each entry contains a tuple of the SMTP
         error code and the accompanying error message sent by the server.
     """
     state = OperationState[operation.state]
@@ -162,7 +159,7 @@ def _send_job_status_message(
             keyfile=keyfile,
             certfile=certfile,
         )
-    return (message, resp)
+    return resp
 
 
 def monitor_job(
@@ -180,7 +177,7 @@ def monitor_job(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> List[dict]:
+) -> List[Tuple[str, Dict[str, Tuple[int, str]]]]:
     """Monitors a Tamr Operation and sends an email when the job status is updated
 
     Args:

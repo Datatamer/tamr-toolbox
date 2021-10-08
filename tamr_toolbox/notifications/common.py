@@ -1,5 +1,5 @@
 """Tasks related to creation of Email notifications"""
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
 from tamr_toolbox.utils.operation import monitor
@@ -18,7 +18,7 @@ def monitor_job(
     timeout_seconds: Optional[float] = None,
     notify_states: Optional[List[OperationState]] = None,
     **kwargs,
-) -> List[dict]:
+) -> List[Dict[str, str]]:
     """Monitors a Tamr Operation and sends a message when the job status is updated
 
     Args:
