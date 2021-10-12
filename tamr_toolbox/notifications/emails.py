@@ -5,7 +5,7 @@ import ssl
 
 from typing import Union, List, Optional, Dict, Tuple
 from email.mime.text import MIMEText
-from tamr_toolbox.notifications.common import monitor_job as monitor_job_common
+from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation

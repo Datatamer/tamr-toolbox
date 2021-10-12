@@ -8,7 +8,7 @@ from tamr_toolbox.models.operation_state import OperationState
 from tamr_toolbox.utils.operation import from_resource_id
 
 
-def monitor_job(
+def _monitor_job(
     tamr: Client,
     *,
     send_message: Callable[..., Any],

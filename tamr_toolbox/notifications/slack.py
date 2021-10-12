@@ -5,7 +5,7 @@ from typing import Union, List, Optional, Dict
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
-from tamr_toolbox.notifications.common import monitor_job as monitor_job_common
+from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
 
 from tamr_toolbox.models.operation_state import OperationState
 from tamr_toolbox.utils.operation import get_details
