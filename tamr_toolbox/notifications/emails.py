@@ -71,8 +71,9 @@ def send_email(
     Returns:
         A Tuple containing the message and a dict with the response codes from the smtp server
         for the email if there are any errors. The dictionary will contain one entry for each
-        recipient that was refused. Each entry contains a tuple of the SMTP
-        error code and the accompanying error message sent by the server.
+        recipient that was refused. Each entry contains a tuple of the SMTP error code and
+        the accompanying error message sent by the server. A successful response will
+        contain an empty dict.
     """
     # build email
     msg = _build_message(
