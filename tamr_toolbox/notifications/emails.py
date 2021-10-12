@@ -5,7 +5,6 @@ import ssl
 
 from typing import Union, List, Optional, Dict, Tuple
 from email.mime.text import MIMEText
-from smtplib import SMTPException
 from tamr_toolbox.notifications.common import monitor_job as monitor_job_common
 
 from tamr_unify_client import Client
@@ -48,7 +47,6 @@ def send_email(
     recipient_addresses: List[str],
     smtp_server: str,
     smtp_port: str,
-    raise_error: bool = True,
     use_tls: bool = True,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
@@ -63,7 +61,6 @@ def send_email(
         recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]
         smtp_server: smtp server address of sender_email ex: smtp.gmail.com
         smtp_port: port to send email from, use 465 for SSL, use 587 for TLS
-        raise_error: A boolean value to opt out raising SMTP errors
         use_tls: A boolean value to turn on/off TLS protocol
         keyfile: the private key to a TLS/SSL certificate, usually PEM format
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
@@ -74,6 +71,9 @@ def send_email(
         recipient that was refused. Each entry contains a tuple of the SMTP error code and
         the accompanying error message sent by the server. A successful response will
         contain an empty dict.
+
+    Raises:
+        SMTPException. The base exception class used by the smtplib module
     """
     # build email
     msg = _build_message(
@@ -84,29 +84,16 @@ def send_email(
     )
     response = None
 
-    try:
-        context = ssl.create_default_context()
-        with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
-            smtp_server, smtp_port, keyfile=keyfile, certfile=certfile, context=context
-        ) as server:
-            if use_tls:
-                server.starttls(keyfile=keyfile, certfile=certfile, context=context)
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
+        smtp_server, smtp_port, keyfile=keyfile, certfile=certfile, context=context
+    ) as server:
+        if use_tls:
+            server.starttls(keyfile=keyfile, certfile=certfile, context=context)
 
-            # login and send message
-            server.login(sender_address, sender_password)
-            response = server.sendmail(sender_address, recipient_addresses, msg)
-
-    except SMTPException as e:
-        LOGGER.error(f"Error: {e}")
-
-        if not raise_error:
-            response = {
-                "type": "SMTPException",
-                "text": f'The email: "{message}" failed to send.',
-                "error": e,
-            }
-        else:
-            raise e
+        # login and send message
+        server.login(sender_address, sender_password)
+        response = server.sendmail(sender_address, recipient_addresses, msg)
 
     return message, response
 
