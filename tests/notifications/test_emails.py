@@ -70,7 +70,7 @@ def test_send_email_succeed():
             msg,
         )
 
-        assert response[0] == test_message
+        assert response["message"] == test_message
 
 
 def test_send_email_tls():
@@ -152,7 +152,7 @@ def test_monitor_job_succeed():
         ]
 
         # test that monitor job messages are expected
-        messages = [resp[0] for resp in list_responses]
+        messages = [resp["message"] for resp in list_responses]
         assert messages == expected_messages
 
 
@@ -194,5 +194,5 @@ def test_monitor_job_timeout():
         ]
 
         # test that monitor job messages are expected
-        messages = [resp[0] for resp in list_responses]
+        messages = [resp["message"] for resp in list_responses]
         assert messages == expected_messages

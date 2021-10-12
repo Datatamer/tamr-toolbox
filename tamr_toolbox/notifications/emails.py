@@ -51,7 +51,7 @@ def send_email(
     use_tls: bool = True,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> Tuple[str, JsonDict]:
+) -> JsonDict:
     """Sends a message via email to list of recipients
 
     Args:
@@ -67,11 +67,10 @@ def send_email(
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
-        A Tuple containing the message and a dict with the response codes from the smtp server
-        for the email if there are any errors. The dictionary will contain one entry for each
-        recipient that was refused. Each entry contains a tuple of the SMTP error code and
-        the accompanying error message sent by the server. A successful response will
-        contain an empty dict.
+        A dict with the message and response codes from the smtp server if there are any
+        errors. The dictionary will contain one entry for each recipient that was refused.
+        Each entry contains a tuple of the SMTP error code and the accompanying error
+        message sent by the server. A successful response will contain an empty dict.
 
     Raises:
         SMTPException. The base exception class used by the smtplib module
@@ -83,6 +82,8 @@ def send_email(
         sender=sender_address,
         recipients=recipient_addresses,
     )
+    response = dict()
+    response["message"] = message
 
     context = ssl.create_default_context()
     with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
@@ -93,9 +94,10 @@ def send_email(
 
         # login and send message
         server.login(sender_address, sender_password)
-        response = server.sendmail(sender_address, recipient_addresses, msg)
+        errors = server.sendmail(sender_address, recipient_addresses, msg)
+        response["errors"] = errors
 
-    return message, response
+    return response
 
 
 def _send_job_status_message(
@@ -110,7 +112,7 @@ def _send_job_status_message(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> Tuple[str, JsonDict]:
+) -> JsonDict:
     """Checks operation state and if in `notify_states` sends the message.
 
     Args:
@@ -126,10 +128,10 @@ def _send_job_status_message(
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
-        A Tuple containing the message and a dict with the response codes from the smtp server
-        for the email if there are any errors. The dictionary will contain one entry for each
-        recipient that was refused. Each entry contains a tuple of the SMTP
-        error code and the accompanying error message sent by the server.
+        A dict with the message and response codes from the smtp server if there are any
+        errors. The dictionary will contain one entry for each recipient that was refused.
+        Each entry contains a tuple of the SMTP error code and the accompanying error
+        message sent by the server. A successful response will contain an empty dict.
     """
     state = OperationState[operation.state]
     message, resp = None, None
@@ -184,7 +186,10 @@ def monitor_job(
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
 
     Returns:
-        A list of messages with their response codes
+        A list of dicts. Each dict comtains the message and error response codes from the smtp
+        server. The dictionary will contain one entry for each recipient that was refused.
+        Each entry contains a tuple of the SMTP error code and the accompanying error
+        message sent by the server. A successful response will contain an empty dict.
     """
     list_responses = monitor_job_common(
         tamr=tamr,

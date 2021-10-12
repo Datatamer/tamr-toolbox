@@ -1,5 +1,5 @@
 """Tasks related to creation of Email notifications"""
-from typing import Union, List, Optional, Callable, Any
+from typing import Union, List, Optional, Callable
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
@@ -12,8 +12,8 @@ from tamr_toolbox.utils.operation import from_resource_id
 def _monitor_job(
     tamr: Client,
     *,
-    send_message: Callable[..., Any],
-    send_status_function: Callable[..., Any],
+    send_message: Callable[..., JsonDict],
+    send_status_function: Callable[..., JsonDict],
     operation: Union[int, str, Operation],
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
