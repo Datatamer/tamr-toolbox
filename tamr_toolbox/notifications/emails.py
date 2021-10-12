@@ -3,7 +3,8 @@ import logging
 import smtplib
 import ssl
 
-from typing import Union, List, Optional, Dict, Tuple
+from typing import Union, List, Optional, Tuple
+from tamr_toolbox.models.data_type import JsonDict
 from email.mime.text import MIMEText
 from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
 
@@ -50,7 +51,7 @@ def send_email(
     use_tls: bool = True,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> Tuple[str, Dict[str, Tuple[int, str]]]:
+) -> Tuple[str, JsonDict]:
     """Sends a message via email to list of recipients
 
     Args:
@@ -82,7 +83,6 @@ def send_email(
         sender=sender_address,
         recipients=recipient_addresses,
     )
-    response = None
 
     context = ssl.create_default_context()
     with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
@@ -110,7 +110,7 @@ def _send_job_status_message(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> Tuple[str, Dict[str, Tuple[int, str]]]:
+) -> Tuple[str, JsonDict]:
     """Checks operation state and if in `notify_states` sends the message.
 
     Args:
@@ -165,7 +165,7 @@ def monitor_job(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
-) -> List[Tuple[str, Dict[str, Tuple[int, str]]]]:
+) -> List[Tuple[str, JsonDict]]:
     """Monitors a Tamr Operation and sends an email when the job status is updated
 
     Args:

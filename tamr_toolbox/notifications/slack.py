@@ -1,7 +1,8 @@
 """Tasks related to creation of Slack notifications"""
 import logging
 import os
-from typing import Union, List, Optional, Dict
+from typing import Union, List, Optional
+from tamr_toolbox.models.data_type import JsonDict
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
@@ -27,7 +28,7 @@ def send_message(
     message: str,
     raise_error: bool = True,
     **kwargs,
-) -> Dict[str, str]:
+) -> JsonDict:
     """Sends a message to a pre-defined Slack channel
 
     Args:
@@ -71,7 +72,7 @@ def _send_job_status_message(
     channel: str,
     operation: Operation,
     notify_states: List[OperationState],
-) -> Dict[str, str]:
+) -> JsonDict:
     """Checks operation state and if in `notify_states` sends the message.
 
     Args:
@@ -98,7 +99,7 @@ def monitor_job(
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
     notify_states: Optional[List[OperationState]] = None,
-) -> List[Dict[str, str]]:
+) -> List[JsonDict]:
     """Monitors a Tamr Operation and sends a Slack message to a channel when the job status is updated
 
     Args:
