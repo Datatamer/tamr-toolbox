@@ -32,7 +32,8 @@ def _run_custom(
             dataset
         run_publish_golden_records: Whether refresh should be called on the published golden
             records dataset
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -101,7 +102,8 @@ def run(project: Project, *, process_asynchronously: bool = True) -> List[Operat
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -122,7 +124,8 @@ def update_input_dataset_profiling_information(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -143,7 +146,8 @@ def update_golden_records(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -164,7 +168,8 @@ def publish_golden_records(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -185,7 +190,8 @@ def update_and_publish(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run

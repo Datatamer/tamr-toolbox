@@ -26,7 +26,8 @@ def _get_upstream_projects(project: Project) -> List[Project]:
     Returns:
         A list of project names upstream of the project
     """
-    # get all upstream datasets of the projects unified dataset then find which projects they are in
+    # get all upstream datasets of the projects unified dataset
+    # then find which projects they are in
     unified_dataset_id = project.unified_dataset().relative_id
     client = project.client
     unified_dataset = client.datasets.by_relative_id(unified_dataset_id)
@@ -67,7 +68,8 @@ def _build_edges(project: Project, client: Client, edges: set = None) -> Set[Tup
         # you know we've walked it if it shows up as the target in an edge (hence the [1] index)
         if any(upstream_project.name == x[1] for x in edges):
             LOGGER.debug(
-                f"skipping dataset {upstream_project.name} since it is already in edges as target: {[ x for x in edges if x[1] ==upstream_project.name]}"
+                f"skipping dataset {upstream_project.name} since it is already"
+                f" in edges as target: {[ x for x in edges if x[1] ==upstream_project.name]}"
             )
             continue
         else:
@@ -160,7 +162,8 @@ def get_projects_by_tier(graph: Graph) -> Dict[int, Any]:
 
     Returns:
         A json dict who's structure is {'tier': [paths_at_that_tier], ...}
-        e.g. {1: ['SM_project_1', 'Classification_project_1'], 2: ['Mastering_project'], 3: ['Golden_records_project']}
+        e.g. {1: ['SM_project_1', 'Classification_project_1'], 2: ['Mastering_project'],
+              3: ['Golden_records_project']}
     """
     source_nodes = get_source_nodes(graph)
 

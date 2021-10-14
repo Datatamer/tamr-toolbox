@@ -1,13 +1,10 @@
 """Tasks related to running jobs for groups of Tamr projects"""
 from typing import List, Optional
 import logging
-import time
 
 from tamr_unify_client.operation import Operation
 from tamr_unify_client.project.resource import Project
 from tamr_toolbox.models.project_type import ProjectType
-from tamr_toolbox.workflow.concurrent.PlanNode import PlanNode
-from tamr_toolbox.workflow.concurrent.PlanNodeStatus import PlanNodeStatus
 
 from tamr_toolbox.project import (
     mastering,
@@ -172,54 +169,3 @@ def get_upstream_projects(project: Project) -> List[Project]:
     upstream_projects = _find_upstream_projects(project)
 
     return upstream_projects
-
-
-def monitor(
-        jobs: List[PlanNode], *, timeout: int = 2, polling_interval: int = 30
-) -> List[PlanNode]:
-    """
-    Monitors the operations of a list of PlanNodes, when one on that list changes to either failed/succeeded/cancelled
-    it returns the list
-    Args:
-        jobs: list of dict with key, values of {name: <project_name>, op: <updated_operation>}
-        timeout: number of days to poll before timing out for change in job status, default is 2
-        polling_interval: the amount of time in seconds to wait between polling
-
-    Returns:
-        the same list of planNodes with updated statuses
-    """
-    # if empty then return immediate and log a warning
-    if not jobs:
-        LOGGER.warning("Jobs list is empty! Something is probably wrong.")
-        return []
-
-    start_time = time.time()
-    timeout_in_seconds = 3600 * 24 * timeout
-
-    # get initial statuses
-    initial_statuses = {x.name: x.operations.state for x in jobs}
-    # get descriptions
-    job_descriptions = "\n".join([x.operations.description for x in jobs])
-    LOGGER.info(f"starting to monitor jobs:\n {job_descriptions}\n with timeout of {timeout} days")
-    # poll only as long as we haven't gotten past timeout
-    while (time.time() - start_time) < timeout_in_seconds:
-
-        # sleep at beginning of loop for polling interval
-        time.sleep(polling_interval)
-
-        # poll the jobs and get updated operations
-        updated_jobs = {x.name: x.operations.poll() for x in jobs}
-        # generate updated statuses
-        updated_statuses = {k: v.state for k, v in updated_jobs.items()}
-
-        # if status has changed return list
-        if initial_statuses != updated_statuses:
-            return [
-                PlanNode(name=k, status=PlanNodeStatus.from_tamr_op(v), priority=0)
-                for k, v in updated_jobs.items()
-            ]
-
-    # if we got here it timed out and raise runtime error
-    error_message = f"Monitoring jobs:\n {job_descriptions}\n timed out after {timeout} days!"
-    LOGGER.error(error_message)
-    raise RuntimeError(error_message)

@@ -17,7 +17,6 @@ from tamr_toolbox.workflow.concurrent.Graph import (
     get_predecessors,
 )
 from tamr_toolbox.workflow.concurrent import PlanNodeStatus
-from tamr_toolbox.workflow.jobs import monitor
 from tamr_toolbox.workflow.concurrent.PlanStatus import PlanStatus, from_planner
 from tamr_toolbox.workflow.concurrent.PlanNode import PlanNode, run_next_step, monitor
 
@@ -32,7 +31,8 @@ class Planner:
     A dataclass to hold the plan, the starting tier, and the mode of execution.
     The plan is a json dict where each key is a project name and the value is a PlanNode object
 
-    The starting tier is the tier at which to start execution. All jobs at lower tiers are marked as skippable.
+    The starting tier is the tier at which to start execution. All jobs at lower tiers are
+     marked as skippable.
 
     The graph is the graph that contains the backing project dependencies.
     """
@@ -57,11 +57,14 @@ def from_graph(
 
     Args:
         graph: the dataset dependency graph to use to create the planner
-        tamr_client: the tamr client object associated with the instance for which to create the plan
-        starting_tier: the tier at which to start executing the plan, every job at lower tiers is skipped and marked
+        tamr_client: the tamr client object associated with the instance for which
+            to create the plan
+        starting_tier: the tier at which to start executing the plan, every job at lower
+            tiers is skipped and marked
         as skippable
         output_config: a dict for how to configure output jobs
-        train: global config for whether or not to 'apply feedback'/train the model in the workflows
+        train: global config for whether or not to 'apply feedback'/train the model in
+            the workflows
 
     Returns:
         Planner instance
@@ -113,7 +116,8 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     original_plan = planner.plan
     updated_plan = dict(original_plan)
     LOGGER.info(
-        f"Updating plan with changed project status: {plan_node.name} status changed to {plan_node.status}"
+        f"Updating plan with changed project status: {plan_node.name} "
+        f"status changed to {plan_node.status}"
     )
     plan_node_name = plan_node.name
     node_status = PlanNodeStatus.from_plan_node(plan_node)
@@ -133,7 +137,8 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     ):
         # first get immediate downstream nodes
         successor_nodes = get_successors(planner.graph, plan_node_name)
-        # for each of these get the predecessors and if all predecessors are now succeeded/skippable mark as runnable
+        # for each of these get the predecessors and if all predecessors are now
+        # succeeded/skippable mark as runnable
         for successor in successor_nodes:
             predecessor_nodes = get_predecessors(planner.graph, successor)
             if all(
@@ -181,7 +186,8 @@ def execute(
     plan_status = from_planner(planner)
     if plan_status == PlanStatus.PLANNED or plan_status == PlanStatus.RUNNING:
         LOGGER.info(
-            f"projects with currently running jobs: {','.join([x.name for x in running_nodes]) or 'None'}"
+            "projects with currently running jobs: "
+            f"{','.join([x.name for x in running_nodes]) or 'None'}"
         )
         # make sure there are fewer jobs running than concurrency specified
         num_to_submit = concurrency_level - len(running_nodes)
@@ -196,7 +202,8 @@ def execute(
             nodes_to_submit = [x for x in runnable_nodes]
 
         LOGGER.info(f"submitting jobs for projects: [{','.join(x.name for x in nodes_to_submit)}]")
-        # create the list of nodes to monitor - note that this returns a list of plan nodes AND triggers the job
+        # create the list of nodes to monitor
+        # note that this returns a list of plan nodes AND triggers the job
         nodes_to_monitor = [run_next_step(x) for x in nodes_to_submit]
         # extend jobs_to_monitor to include running jobs
         LOGGER.info(
@@ -218,7 +225,9 @@ def execute(
             ]
         )
 
-        # there are potentially jobs that were not submitted because the dataset is already streamable
+        # TODO: revisit this logic
+        # there are potentially jobs that were not submitted
+        # because the dataset is already streamable
         # for these simply filter out and update plan
         # first find them
         noop_jobs = [x for x in nodes_to_monitor if any(["No-op" in y for y in x.operations])]

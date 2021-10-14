@@ -19,17 +19,19 @@ WORKFLOW_MAP = {
     ProjectType.DEDUP: {
         mastering.Steps.UPDATE_UNIFIED_DATASET: mastering.jobs.update_unified_dataset,
         mastering.Steps.GENERATE_PAIRS: mastering.jobs.generate_pairs,
-        mastering.Steps.APPLY_FEEDBACK_AND_UPDATE_RESULTS: mastering.jobs.apply_feedback_and_update_results,  # TODO CAN I USE THIS ASYNCHRONOUSLY??
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS: mastering.jobs.update_results_only,  # TODO CAN I USE THIS ASYNCHRONOUSLY??
+        mastering.Steps.TRAIN_MASTERING_MODEL: mastering.jobs.apply_feedback,
+        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS: mastering.jobs.update_pair_predictions,
+        mastering.Steps.UPDATE_CLUSTERS: mastering.jobs.update_clusters,
         mastering.Steps.PUBLISH_CLUSTERS: mastering.jobs.publish_clusters,
     },
     ProjectType.CATEGORIZATION: {
         categorization.Steps.UPDATE_UNIFIED_DATASET: categorization.jobs.update_unified_dataset,
-        categorization.Steps.APPLY_FEEDBACK_AND_UPDATE_RESULTS: categorization.jobs.apply_feedback_and_update_results,  # TODO CAN I USE THIS ASYNCHRONOUSLY??
+        categorization.Steps.APPLY_FEEDBACK: categorization.jobs.apply_feedback,
         categorization.Steps.UPDATE_RESULTS_ONLY: categorization.jobs.update_results_only,
-    },  # TODO CAN I USE THIS ASYNCHRONOUSLY??
+    },
     ProjectType.GOLDEN_RECORDS: {
-        golden_records.Steps.PROFILE_GOLDEN_RECORDS: golden_records.jobs.update_input_dataset_profiling_information,
+        golden_records.Steps.PROFILE_GOLDEN_RECORDS:
+            golden_records.jobs.update_input_dataset_profiling_information,
         golden_records.Steps.UPDATE_GOLDEN_RECORDS: golden_records.jobs.update_golden_records,
         golden_records.Steps.PUBLISH_GOLDEN_RECORDS: golden_records.jobs.publish_golden_records,
     },
@@ -40,7 +42,8 @@ WORKFLOW_MAP = {
 @dataclass
 class PlanNode:
     """
-    Dataclass for the node of a Planner object - contains method for setting list of operations basd on project type
+    Dataclass for the node of a Planner object
+    - contains method for setting list of operations based on project type
     """
 
     name: str
@@ -81,14 +84,17 @@ class PlanNode:
                 self.project_steps = [
                     mastering.Steps.UPDATE_UNIFIED_DATASET,
                     mastering.Steps.GENERATE_PAIRS,
-                    mastering.Steps.APPLY_FEEDBACK_AND_UPDATE_RESULTS,
+                    mastering.Steps.TRAIN_MASTERING_MODEL,
+                    mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
+                    mastering.Steps.UPDATE_CLUSTERS,
                     mastering.Steps.PUBLISH_CLUSTERS,
                 ]
             else:
                 self.project_steps = [
                     mastering.Steps.UPDATE_UNIFIED_DATASET,
                     mastering.Steps.GENERATE_PAIRS,
-                    mastering.Steps.UPDATE_RESULTS_ONLY,
+                    mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
+                    mastering.Steps.UPDATE_CLUSTERS,
                     mastering.Steps.PUBLISH_CLUSTERS,
                 ]
         # now for categorization projects
@@ -96,7 +102,8 @@ class PlanNode:
             if self.train:
                 self.project_steps = [
                     categorization.Steps.UPDATE_UNIFIED_DATASET,
-                    categorization.Steps.APPLY_FEEDBACK_AND_UPDATE_RESULTS,
+                    categorization.Steps.APPLY_FEEDBACK,
+                    categorization.Steps.UPDATE_RESULTS_ONLY,
                 ]
             else:
                 self.project_steps = [
@@ -165,7 +172,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
 
     # We only call methods that return a list with one and only one operation
     current_op = WORKFLOW_MAP[plan_node.project_type][current_step](
-        plan_node.project, asynchronous=True
+        plan_node.project, process_asynchronously=True
     )[0]
     # handle case where operations is empty list (nothing has been run)
     if plan_node.operations is None:
@@ -189,12 +196,12 @@ def monitor(
     nodes: List[PlanNode], *, timeout: int = 2, polling_interval: int = 30
 ) -> List[PlanNode]:
     """
-    Monitors the status of a list of PlanNodes, when one on that list changes to either failed/succeeded/cancelled
-    it returns the list
-    
+    Monitors the status of a list of PlanNodes, when one on that list changes to
+        either failed/succeeded/cancelled it returns the list
+
     Args:
         nodes: list of nodes to monitor
-        timeout: number of days to poll before timing out for change in job status, default is 2
+        timeout: number of days to poll before timing out for change in job status
         polling_interval: the amount of time in seconds to wait between polling
 
     Returns:

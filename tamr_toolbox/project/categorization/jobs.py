@@ -26,7 +26,8 @@ def _run_custom(
         run_update_unified_dataset: Whether refresh should be called on the unified dataset
         run_apply_feedback: Whether train should be called on the pair matching model
         run_update_results: Whether predict should be called on the pair matching model
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         Operations that were run
@@ -87,7 +88,8 @@ def run(
     Args:
         project: The target categorization project
         run_apply_feedback: Whether train should be called on the categorization model
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -108,7 +110,8 @@ def update_unified_dataset(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -129,7 +132,8 @@ def apply_feedback(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -150,7 +154,8 @@ def apply_feedback_and_update_results(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
     Returns:
         The operations that were run
@@ -172,7 +177,8 @@ def update_results_only(
 
     Args:
         project: Target categorization project
-         process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+         process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+            for concurrent workflow
 
 
     Returns:
