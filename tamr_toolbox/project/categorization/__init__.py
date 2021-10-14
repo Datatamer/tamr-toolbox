@@ -15,5 +15,5 @@ class Steps(Enum):
     """
 
     UPDATE_UNIFIED_DATASET = "updated_unified_dataset"
-    APPLY_FEEDBACK_AND_UPDATE_RESULTS = "apply_feedback_and_update_results"
+    APPLY_FEEDBACK = "apply_feedback"
     UPDATE_RESULTS_ONLY = "update_results_only"

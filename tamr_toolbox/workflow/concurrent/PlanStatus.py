@@ -26,7 +26,8 @@ def from_planner(planner) -> PlanStatus:
 
     # check for failures first and make sure nothing can be run or is running
     if any(v.status == PlanNodeStatus.FAILED for k, v in plan.items()) and not any(
-            (v.status == PlanNodeStatus.RUNNABLE or v.status == PlanNodeStatus.RUNNING) for k, v in plan.items()
+        (v.status == PlanNodeStatus.RUNNABLE or v.status == PlanNodeStatus.RUNNING)
+        for k, v in plan.items()
     ):
         return PlanStatus.FAILED
     # then check to see if any job is running
@@ -34,7 +35,7 @@ def from_planner(planner) -> PlanStatus:
         return PlanStatus.RUNNING
     # if not failed or running check if successful
     elif all(
-            (v.status == PlanNodeStatus.SUCCEEDED) or (v.status == PlanNodeStatus.SKIPPABLE)
+        (v.status == PlanNodeStatus.SUCCEEDED) or (v.status == PlanNodeStatus.SKIPPABLE)
         for k, v in plan.items()
     ):
         return PlanStatus.SUCCEEDED

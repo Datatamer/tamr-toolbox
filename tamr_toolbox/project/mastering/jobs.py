@@ -10,6 +10,8 @@ from tamr_toolbox.utils import operation
 
 LOGGER = logging.getLogger(__name__)
 
+# TODO: add asynchronous param/usage
+
 
 def _run_custom(
     project: MasteringProject,
@@ -22,6 +24,7 @@ def _run_custom(
     run_update_high_impact_pairs: bool = False,
     run_update_cluster_results: bool = False,
     run_publish_clusters: bool = False,
+    process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Executes specified steps of a mastering project.
 
@@ -37,6 +40,7 @@ def _run_custom(
         run_update_cluster_results: Whether refresh should be called on the record clusters dataset
         run_publish_clusters: Whether refresh should be called on the published record clusters
             dataset
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -114,6 +118,7 @@ def run(
     *,
     run_estimate_pair_counts: bool = False,
     run_apply_feedback: bool = False,
+    process_asynchronously: bool = True,
 ) -> List[Operation]:
     """Run the existing pipeline without training
 
@@ -121,6 +126,7 @@ def run(
         project: Target mastering project
         run_estimate_pair_counts: Whether an estimate pairs job should be run
         run_apply_feedback: Whether train should be called on the pair matching model
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -135,14 +141,18 @@ def run(
         run_update_high_impact_pairs=True,
         run_update_cluster_results=True,
         run_publish_clusters=True,
+        process_asynchronously=process_asynchronously,
     )
 
 
-def update_unified_dataset(project: MasteringProject) -> List[Operation]:
+def update_unified_dataset(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
     """Updates the unified dataset for a mastering project
 
     Args:
         project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -156,14 +166,18 @@ def update_unified_dataset(project: MasteringProject) -> List[Operation]:
         run_update_pair_results=False,
         run_update_cluster_results=False,
         run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
     )
 
 
-def estimate_pair_counts(project: MasteringProject) -> List[Operation]:
+def estimate_pair_counts(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
     """Estimates the number of pairs for a mastering project
 
     Args:
         project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -177,14 +191,18 @@ def estimate_pair_counts(project: MasteringProject) -> List[Operation]:
         run_update_pair_results=False,
         run_update_cluster_results=False,
         run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
     )
 
 
-def generate_pairs(project: MasteringProject) -> List[Operation]:
+def generate_pairs(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
     """Generates the pairs for a mastering project
 
     Args:
         project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -198,15 +216,97 @@ def generate_pairs(project: MasteringProject) -> List[Operation]:
         run_update_pair_results=False,
         run_update_cluster_results=False,
         run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
     )
 
 
-def apply_feedback_and_update_results(project: MasteringProject) -> List[Operation]:
+def apply_feedback(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
+    """
+    Applies feedback to update the model for a mastering project
+
+    Args:
+        project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+
+    Returns:
+        The operations that were run
+    """
+    return _run_custom(
+        project,
+        run_update_unified_dataset=False,
+        run_estimate_pair_counts=False,
+        run_generate_pairs=False,
+        run_apply_feedback=True,
+        run_update_pair_results=False,
+        run_update_cluster_results=False,
+        run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
+    )
+
+
+def update_pair_predictions(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
+    """
+    Updates pair predictions only.
+
+    Args:
+        project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+
+    Returns:
+        The operations that were run
+    """
+    return _run_custom(
+        project,
+        run_update_unified_dataset=False,
+        run_estimate_pair_counts=False,
+        run_generate_pairs=False,
+        run_apply_feedback=False,
+        run_update_pair_results=True,
+        run_update_cluster_results=False,
+        run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
+    )
+
+
+def update_clusters(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
+    """
+    Re-runs clustering only.
+
+    Args:
+        project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
+
+    Returns:
+        The operations that were run
+    """
+    return _run_custom(
+        project,
+        run_update_unified_dataset=False,
+        run_estimate_pair_counts=False,
+        run_generate_pairs=False,
+        run_apply_feedback=False,
+        run_update_pair_results=False,
+        run_update_cluster_results=True,
+        run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
+    )
+
+
+def apply_feedback_and_update_results(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
     """Trains the model, predicts the pair labels, and updates the draft clusters of
     a mastering project
 
     Args:
         project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -221,15 +321,19 @@ def apply_feedback_and_update_results(project: MasteringProject) -> List[Operati
         run_update_high_impact_pairs=True,
         run_update_cluster_results=True,
         run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
     )
 
 
-def update_results_only(project: MasteringProject) -> List[Operation]:
+def update_results_only(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
     """Predicts the pair labels based on the existing pair model and updates the draft clusters
     of a mastering project
 
     Args:
         project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -244,14 +348,18 @@ def update_results_only(project: MasteringProject) -> List[Operation]:
         run_update_high_impact_pairs=True,
         run_update_cluster_results=True,
         run_publish_clusters=False,
+        process_asynchronously=process_asynchronously,
     )
 
 
-def publish_clusters(project: MasteringProject) -> List[Operation]:
+def publish_clusters(
+    project: MasteringProject, *, process_asynchronously: bool = True
+) -> List[Operation]:
     """Publishes the clusters of a mastering project
 
     Args:
         project: Target mastering project
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
@@ -265,4 +373,5 @@ def publish_clusters(project: MasteringProject) -> List[Operation]:
         run_update_pair_results=False,
         run_update_cluster_results=False,
         run_publish_clusters=True,
+        process_asynchronously=process_asynchronously,
     )

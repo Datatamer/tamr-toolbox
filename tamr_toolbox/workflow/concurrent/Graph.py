@@ -36,15 +36,15 @@ def _get_upstream_projects(project: Project) -> List[Project]:
         # get the upstream object as a dataset
         upstream_dataset = client.datasets.by_resource_id(upstream_result.resource_id)
         # see if it is the output of a project and if so add to the list
-        upstream_dataset_projects = set(x.project_name for x in upstream_dataset.usage().usage.output_from_project_steps)
+        upstream_dataset_projects = set(
+            x.project_name for x in upstream_dataset.usage().usage.output_from_project_steps
+        )
         upstream_project_names.extend([x for x in upstream_dataset_projects])
 
     return [client.projects.by_name(x) for x in upstream_project_names]
 
 
-def _build_edges(
-    project: Project, client: Client, edges: set = None
-) -> Set[Tuple[str, str]]:
+def _build_edges(project: Project, client: Client, edges: set = None) -> Set[Tuple[str, str]]:
     """
     builds a set of tuples of all edges of format (source, target)
     Args:
