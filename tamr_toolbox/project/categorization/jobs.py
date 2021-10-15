@@ -48,7 +48,7 @@ def _run_custom(
             f"Updating the unified dataset for project {project.name} (id={project.resource_id})."
         )
 
-        op = project.unified_dataset().refresh()
+        op = project.unified_dataset().refresh(asynchronous=process_asynchronously)
 
         if not process_asynchronously:
             operation.enforce_success(op)
@@ -59,7 +59,7 @@ def _run_custom(
             f"Applying feedback to the categorization model for project {project.name} "
             f"(id={project.resource_id})."
         )
-        op = project.model().train()
+        op = project.model().train(asynchronous=process_asynchronously)
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)
@@ -69,7 +69,7 @@ def _run_custom(
             f"Updating categorization results for project {project.name} "
             f"(id={project.resource_id})."
         )
-        op = project.model().predict()
+        op = project.model().predict(asynchronous=process_asynchronously)
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)

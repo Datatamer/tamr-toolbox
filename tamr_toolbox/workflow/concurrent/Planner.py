@@ -1,13 +1,10 @@
-from datetime import datetime
 import json
-import os
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from typing import Dict, List
 import logging
 
 from tamr_unify_client import Client
-from tamr_toolbox.models.data_type import JsonDict
 
 from tamr_toolbox.workflow.concurrent.Graph import (
     Graph,
@@ -40,16 +37,10 @@ class Planner:
     plan: Dict[str, PlanNode]
     starting_tier: int
     graph: Graph
-    output_config: JsonDict
 
 
 def from_graph(
-    graph: Graph,
-    *,
-    tamr_client: Client,
-    starting_tier: int = 0,
-    output_config: JsonDict = None,
-    train=False,
+    graph: Graph, *, tamr_client: Client, starting_tier: int = 0, train=False,
 ) -> Planner:
     """
     Creates a Planner class from a Graph. The plan object is a json dict specifying how
@@ -62,7 +53,6 @@ def from_graph(
         starting_tier: the tier at which to start executing the plan, every job at lower
             tiers is skipped and marked
         as skippable
-        output_config: a dict for how to configure output jobs
         train: global config for whether or not to 'apply feedback'/train the model in
             the workflows
 
@@ -97,9 +87,7 @@ def from_graph(
                 train=train,
             )
 
-    return Planner(
-        plan=plan, starting_tier=starting_tier, graph=graph, output_config=output_config
-    )
+    return Planner(plan=plan, starting_tier=starting_tier, graph=graph)
 
 
 def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
@@ -151,12 +139,22 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     # no other status should change things
     # so do nothing else
 
-    return Planner(
-        plan=updated_plan,
-        graph=planner.graph,
-        starting_tier=planner.starting_tier,
-        output_config=planner.output_config,
-    )
+    return Planner(plan=updated_plan, graph=planner.graph, starting_tier=planner.starting_tier)
+
+
+def to_json(planner: Planner) -> List[Dict]:
+    """
+    Convert planner to a json dict
+    Args:
+        planner: the planner to convert
+
+    Returns:
+        representation of a planner in json format
+    """
+    return [
+        {"name": v.name, "status": v.status, "priority": v.priority}
+        for k, v in planner.plan.items()
+    ]
 
 
 def execute(
@@ -178,9 +176,10 @@ def execute(
     # get the plan and sort by priority
     plan = planner.plan
     sorted_jobs = [v for k, v in sorted(plan.items(), key=lambda x: x[1].priority)]
-    # assume you could be given a partially executed plan so create both running and runnable
+    # assume you could be given a partially executed plan so create runnable, pending, and running queues
     runnable_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNABLE]
     running_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNING]
+    pending_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.PENDING]
 
     # check status and run if runnable or planned
     plan_status = from_planner(planner)
@@ -196,10 +195,13 @@ def execute(
         # slice runnable jobs to get the ones to submit
         # this line is for type hinting
         nodes_to_submit: List[PlanNode] = []
-        if len(runnable_nodes) >= num_to_submit:
-            nodes_to_submit = [x for x in runnable_nodes[0:num_to_submit]]
-        else:
-            nodes_to_submit = [x for x in runnable_nodes]
+
+        # all pending nodes need their next step to be triggered so there is only room
+        # in the queue for new nodes depending on how many pending nodes there are
+        num_to_add = num_to_submit - len(pending_nodes)
+        nodes_to_submit = [x for x in pending_nodes]
+        if num_to_add > 0:
+            nodes_to_submit.extend([x for x in runnable_nodes[0:num_to_add]])
 
         LOGGER.info(f"submitting jobs for projects: [{','.join(x.name for x in nodes_to_submit)}]")
         # create the list of nodes to monitor
@@ -225,18 +227,6 @@ def execute(
             ]
         )
 
-        # TODO: revisit this logic
-        # there are potentially jobs that were not submitted
-        # because the dataset is already streamable
-        # for these simply filter out and update plan
-        # first find them
-        noop_jobs = [x for x in nodes_to_monitor if any(["No-op" in y for y in x.operations])]
-        # then filter these out
-        nodes_to_monitor = [x for x in nodes_to_monitor if x not in noop_jobs]
-        # now update the plan for the no-ops
-        for noop_job in noop_jobs:
-            planner = update_plan(planner, plan_node=noop_job)
-
         # now monitor the ones that really submit a job
         # this function returns when there is any change in state
         nodes_to_monitor = monitor(nodes_to_monitor)
@@ -248,21 +238,10 @@ def execute(
         LOGGER.info(f"after recent update plan status is {from_planner(planner)}")
 
         # if save state then save a copy of the plan:
-        # todo: refactor save state to its own function
         if save_state:
-            now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-            basedir = os.path.dirname(os.path.abspath(__file__))
-            with open(f"{basedir}/../../logs/planner_{now}.json", "w") as outfile:
-                outfile.write(
-                    json.dumps(
-                        [
-                            {"name": v.name, "status": v.status, "priority": v.priority}
-                            for k, v in planner.plan.items()
-                        ]
-                    )
-                )
+            LOGGER.info(f"current Planner state: {json.dumps(to_json(planner))}")
         # planner is updated so now try to execute it again
-        planner = execute(planner, tamr=tamr, concurrency_level=concurrency_level)
+        planner = execute(planner, tamr=tamr, concurrency_level=concurrency_level, save_state=save_state)
         return planner
 
     # if planner isn't runnable and there were no export processes then exit

@@ -6,7 +6,7 @@ import logging
 
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.operation import Operation
-from tamr_toolbox.workflow.concurrent.PlanNodeStatus import PlanNodeStatus, from_tamr_op
+from tamr_toolbox.workflow.concurrent.PlanNodeStatus import PlanNodeStatus, from_tamr_op, from_plan_node
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.project import categorization, mastering, schema_mapping, golden_records
 
@@ -19,7 +19,7 @@ WORKFLOW_MAP = {
     ProjectType.DEDUP: {
         mastering.Steps.UPDATE_UNIFIED_DATASET: mastering.jobs.update_unified_dataset,
         mastering.Steps.GENERATE_PAIRS: mastering.jobs.generate_pairs,
-        mastering.Steps.TRAIN_MASTERING_MODEL: mastering.jobs.apply_feedback,
+        mastering.Steps.APPLY_FEEDBACK: mastering.jobs.apply_feedback,
         mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS: mastering.jobs.update_pair_predictions,
         mastering.Steps.UPDATE_CLUSTERS: mastering.jobs.update_clusters,
         mastering.Steps.PUBLISH_CLUSTERS: mastering.jobs.publish_clusters,
@@ -30,8 +30,7 @@ WORKFLOW_MAP = {
         categorization.Steps.UPDATE_RESULTS_ONLY: categorization.jobs.update_results_only,
     },
     ProjectType.GOLDEN_RECORDS: {
-        golden_records.Steps.PROFILE_GOLDEN_RECORDS:
-            golden_records.jobs.update_input_dataset_profiling_information,
+        golden_records.Steps.PROFILE_GOLDEN_RECORDS: golden_records.jobs.update_input_dataset_profiling_information,
         golden_records.Steps.UPDATE_GOLDEN_RECORDS: golden_records.jobs.update_golden_records,
         golden_records.Steps.PUBLISH_GOLDEN_RECORDS: golden_records.jobs.publish_golden_records,
     },
@@ -84,7 +83,7 @@ class PlanNode:
                 self.project_steps = [
                     mastering.Steps.UPDATE_UNIFIED_DATASET,
                     mastering.Steps.GENERATE_PAIRS,
-                    mastering.Steps.TRAIN_MASTERING_MODEL,
+                    mastering.Steps.APPLY_FEEDBACK,
                     mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
                     mastering.Steps.UPDATE_CLUSTERS,
                     mastering.Steps.PUBLISH_CLUSTERS,
@@ -134,11 +133,35 @@ def poll(plan_node: PlanNode) -> PlanNode:
     Returns:
         Copy of the original plan node with status updated based on the status of the current_op
     """
-    updated_op = plan_node.current_op.poll()
-    updated_plan_node_status = from_tamr_op(updated_op)
+    # get current op and see if it is None (i.e. if plannode hasn't been triggered)
+    current_op = plan_node.current_op
+    updated_operations = [x for x in plan_node.operations] if plan_node.operations is not None else None
+    if current_op is None:
+        # if this node hasn't been triggered just return the current status in case
+        # it has been updated by upstream actions
+        updated_plan_node_status = plan_node.status
+        updated_op = None
+    else:
+        updated_op = plan_node.current_op.poll()
+        print(f"polled op and get new status {updated_op.status} compared to {current_op.status}")
+        # if the op status changed set the plan node's current op to the updated one and use from_plan_node
+        # to capture logic around in progress
+        if updated_op.state!= current_op.state:
+            # update the current op
+            plan_node.current_op = updated_op
+            # update the list of all ops
+            if current_op in plan_node.operations:
+                updated_operations = [x for x in plan_node.operations if x != current_op]
+                updated_operations.append(updated_op)
+            plan_node.operations = updated_operations
+            updated_plan_node_status = from_plan_node(plan_node)
+        # if the op didn't change status neither will the node so just pass through
+        else:
+            updated_plan_node_status = plan_node.status
+
     return PlanNode(
         name=plan_node.name,
-        operations=plan_node.operations,
+        operations=updated_operations,
         project=plan_node.project,
         priority=plan_node.priority,
         current_op=updated_op,
@@ -158,7 +181,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
     Returns:
         updated plan node
     """
-
+    start_time = time.time()
     # if current_step is None this node has never been run, so set it and the steps_to_run
     current_step = plan_node.current_step
     if current_step is None:
@@ -169,7 +192,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
     else:
         current_step = plan_node.steps_to_run[0]
         steps_to_run = plan_node.steps_to_run[1:]
-
+    print(f"running step {current_step.value}")
     # We only call methods that return a list with one and only one operation
     current_op = WORKFLOW_MAP[plan_node.project_type][current_step](
         plan_node.project, process_asynchronously=True
@@ -178,9 +201,16 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
     if plan_node.operations is None:
         operations_list = [current_op]
     else:
-        operations_list = plan_node.operations.append(current_op)
-    # don't forget to update the status
-    status = from_tamr_op(current_op)
+        operations_list = [x for x in plan_node.operations]
+        if current_op not in operations_list:
+            operations_list.append(current_op)
+    # don't forget to update the status - and first update the current op and operations list
+    set_ops_time = time.time()
+    plan_node.current_op = current_op
+    plan_node.operations = operations_list
+    status = from_plan_node(plan_node)
+    update_status_time = time.time()
+    print(f"updating status took: {update_status_time-set_ops_time}")
     return PlanNode(
         name=plan_node.name,
         operations=operations_list,
@@ -189,6 +219,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
         project=plan_node.project,
         steps_to_run=steps_to_run,
         status=status,
+        current_step=current_step,
     )
 
 
@@ -216,7 +247,7 @@ def monitor(
     timeout_in_seconds = 3600 * 24 * timeout
 
     # get initial statuses
-    initial_statuses = {x.resource_id: x.state for x in nodes}
+    initial_statuses = {x.name: x.status for x in nodes}
 
     # get project names for logging
     running_projects = "\n".join([x.name for x in nodes])

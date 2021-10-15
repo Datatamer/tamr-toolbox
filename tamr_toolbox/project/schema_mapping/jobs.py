@@ -40,7 +40,7 @@ def _run_custom(
         LOGGER.info(
             f"Updating the unified dataset for project {project.name} (id={project.resource_id})."
         )
-        op = project.unified_dataset().refresh()
+        op = project.unified_dataset().refresh(asynchronous=process_asynchronously)
 
         if not process_asynchronously:
             operation.enforce_success(op)

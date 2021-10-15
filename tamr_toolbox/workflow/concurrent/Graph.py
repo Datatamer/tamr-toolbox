@@ -6,7 +6,7 @@ import networkx as nx
 
 from tamr_unify_client import Client
 from tamr_unify_client.project.resource import Project
-
+from tamr_toolbox.models.project_type import ProjectType
 from typing import Dict, Any
 
 LOGGER = logging.getLogger(__name__)
@@ -26,14 +26,19 @@ def _get_upstream_projects(project: Project) -> List[Project]:
     Returns:
         A list of project names upstream of the project
     """
-    # get all upstream datasets of the projects unified dataset
-    # then find which projects they are in
-    unified_dataset_id = project.unified_dataset().relative_id
     client = project.client
-    unified_dataset = client.datasets.by_relative_id(unified_dataset_id)
+    # find upstream datasets - if GR project just get input datasets
+    if ProjectType[project.type] == ProjectType.GOLDEN_RECORDS:
+        upstream_datasets = [x for x in project.input_datasets().stream()]
+    # else find the upstream datasets of the UD (not input datasets to capture datasets used in Tx)
+    else:
+        unified_dataset_id = project.unified_dataset().relative_id
+        unified_dataset = client.datasets.by_relative_id(unified_dataset_id)
+        upstream_datasets = unified_dataset.upstream_datasets()
+
     upstream_project_names = []
     # walk through upstream datasets
-    for upstream_result in unified_dataset.upstream_datasets():
+    for upstream_result in upstream_datasets:
         # get the upstream object as a dataset
         upstream_dataset = client.datasets.by_resource_id(upstream_result.resource_id)
         # see if it is the output of a project and if so add to the list
@@ -208,7 +213,6 @@ def get_all_downstream_nodes(graph: Graph, node: str) -> Set[str]:
     Returns:
         A list of downstream node names
     """
-    downstream_nodes = []
     downstream_paths = []
     diGraph = graph.directed_graph
     for n in diGraph.nodes():

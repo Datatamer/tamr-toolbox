@@ -10,8 +10,6 @@ from tamr_toolbox.utils import operation
 
 LOGGER = logging.getLogger(__name__)
 
-# TODO: add asynchronous param/usage
-
 
 def _run_custom(
     project: MasteringProject,
@@ -61,54 +59,62 @@ def _run_custom(
         LOGGER.info(
             f"Updating the unified dataset for project {project.name} (id={project.resource_id})."
         )
-        op = project.unified_dataset().refresh()
-        operation.enforce_success(op)
+        op = project.unified_dataset().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_estimate_pair_counts:
         LOGGER.info(f"Estimate pair counts for project {project.name} (id={project.resource_id}).")
-        op = project.estimate_pairs().refresh()
-        operation.enforce_success(op)
+        op = project.estimate_pairs().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_generate_pairs:
         LOGGER.info(f"Generating pairs for project {project.name} (id={project.resource_id}).")
-        op = project.pairs().refresh()
-        operation.enforce_success(op)
+        op = project.pairs().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_apply_feedback:
         LOGGER.info(
             f"Applying feedback to the pairs model for project {project.name} "
             f"(id={project.resource_id})."
         )
-        op = project.pair_matching_model().train()
-        operation.enforce_success(op)
+        op = project.pair_matching_model().train(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_update_pair_results:
         LOGGER.info(
             f"Updating pair prediction results for project {project.name} "
             f"(id={project.resource_id})."
         )
-        op = project.pair_matching_model().predict()
-        operation.enforce_success(op)
+        op = project.pair_matching_model().predict(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_update_high_impact_pairs:
         LOGGER.info(
             f"Refreshing high impact pairs for project {project.name} (id={project.resource_id})."
         )
-        op = project.high_impact_pairs().refresh()
-        operation.enforce_success(op)
+        op = project.high_impact_pairs().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_update_cluster_results:
         LOGGER.info(
             f"Updating cluster prediction results for project {project.name} "
             f"(id={project.resource_id})."
         )
-        op = project.record_clusters().refresh()
-        operation.enforce_success(op)
+        op = project.record_clusters().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
     if run_publish_clusters:
         LOGGER.info(f"Publishing clusters for project {project.name} (id={project.resource_id}).")
-        op = project.published_clusters().refresh()
-        operation.enforce_success(op)
+        op = project.published_clusters().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
         completed_operations.append(op)
 
     return completed_operations
@@ -148,7 +154,7 @@ def run(
 
 
 def update_unified_dataset(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Updates the unified dataset for a mastering project
 
@@ -174,7 +180,7 @@ def update_unified_dataset(
 
 
 def estimate_pair_counts(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Estimates the number of pairs for a mastering project
 
@@ -200,7 +206,7 @@ def estimate_pair_counts(
 
 
 def generate_pairs(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Generates the pairs for a mastering project
 
@@ -226,7 +232,7 @@ def generate_pairs(
 
 
 def apply_feedback(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """
     Applies feedback to update the model for a mastering project
@@ -253,7 +259,7 @@ def apply_feedback(
 
 
 def update_pair_predictions(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """
     Updates pair predictions only.
@@ -280,7 +286,7 @@ def update_pair_predictions(
 
 
 def update_clusters(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """
     Re-runs clustering only.
@@ -307,7 +313,7 @@ def update_clusters(
 
 
 def apply_feedback_and_update_results(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Trains the model, predicts the pair labels, and updates the draft clusters of
     a mastering project
@@ -335,7 +341,7 @@ def apply_feedback_and_update_results(
 
 
 def update_results_only(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Predicts the pair labels based on the existing pair model and updates the draft clusters
     of a mastering project
@@ -363,7 +369,7 @@ def update_results_only(
 
 
 def publish_clusters(
-    project: MasteringProject, *, process_asynchronously: bool = True
+    project: MasteringProject, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Publishes the clusters of a mastering project
 

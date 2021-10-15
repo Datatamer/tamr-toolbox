@@ -78,7 +78,7 @@ def _collect_operation_calls(
     *, response: Response, poll_interval_seconds: int = 3
 ) -> List[Response]:
     """If the provided response is an Operation, wait for the operation to complete and
-    return responses related to that operation.
+    return responses related to that operation for cases where we are running synchronously.
 
     Args:
         response: A previous Response generated from the same Tamr client
@@ -88,11 +88,10 @@ def _collect_operation_calls(
         Responses related to polling the operation
 
     """
-
     client = utils.client._from_response(response)
     op = Operation.from_response(client, response)
-
     LOGGER.info(f"Waiting for operation to complete: {op}")
+
     request_while_pending = client.get(endpoint=f"/api/versioned/v1/operations/{op.resource_id}")
 
     while op.state == "PENDING":
@@ -106,14 +105,16 @@ def _collect_operation_calls(
     return [request_while_pending, request_while_running, request_when_complete]
 
 
-def _log_response(*, log_path: Path, ip_dict: Dict[str, int], response: Response) -> None:
+def _log_response(*, log_path: Path, ip_dict: Dict[str, int], response: Response, asynchronous: bool = False) -> None:
     """Appends a response to a file. If the response returned is
-     a Tamr Operation, poll the operation until complete and log those responses as well
+     a Tamr Operation, poll the operation until complete and log those responses as well unless asynchronous
+     is set to True.
 
     Args:
         log_path: File to write the response to
         ip_dict: Mapping of previously encountered IP addresses to their anonymization number
         response: The response to log
+        asynchoronous: Whether or not to `wait` for Operations called during the running of tests
 
     """
     LOGGER.info(f"logged request: {response.url}")
@@ -127,7 +128,7 @@ def _log_response(*, log_path: Path, ip_dict: Dict[str, int], response: Response
         is_get_request = response.request.method == "GET"
         is_not_error = response.ok
 
-        if is_get_request and is_operation_request and is_not_error:
+        if is_get_request and is_operation_request and is_not_error and not asynchronous:
             wait_resp = _collect_operation_calls(response=response)
             all_responses.extend(wait_resp)
 
@@ -168,7 +169,7 @@ def _build_response_log_path(
 
 
 def mock_api(
-    *, response_logs_dir: Optional[Union[str, Path]] = None, enforce_online_test=False
+    *, response_logs_dir: Optional[Union[str, Path]] = None, enforce_online_test: bool = False, asynchronous: bool = False
 ) -> Callable:
     """Decorator for `pytest` tests that mocks API requests by reading a file of
     pre-generated responses. Will generate responses file based on a real connection
@@ -178,6 +179,7 @@ def mock_api(
         response_logs_dir: Directory to read/write response logs
         enforce_online_test: Whether an online test should be run, even if a response log
             already exists
+        asynchronous: Whether or not to `wait` for Operations called during the running of tests
 
     Returns:
         Decorated function
@@ -213,7 +215,7 @@ def mock_api(
                     raise ConnectionError(e)
             else:
                 _run_online_test(
-                    response_log_path=response_log_path, test_function=test_function, **kwargs
+                    response_log_path=response_log_path, test_function=test_function, asynchronous=asynchronous, **kwargs
                 )
 
         return wrapped
@@ -260,12 +262,13 @@ try:
             test_function(**kwargs)
 
     @responses.activate
-    def _run_online_test(response_log_path: Path, test_function: Callable, **kwargs) -> None:
+    def _run_online_test(response_log_path: Path, test_function: Callable, asynchronous: bool = True, **kwargs) -> None:
         """Runs a test function against a Tamr instance and saves the API responses to a file
 
         Args:
             response_log_path: Location to save API responses
             test_function: The function to test
+            asynchoronous: Whether or not to `wait` for Operations called during the running of tests
             **kwargs: Keyword arguments for the test function
 
         """
@@ -297,7 +300,7 @@ try:
 
             # Prevent recursion
             with mock.patch("responses._real_send", new=_BASE_SEND_REAL):
-                _log_response(log_path=response_log_path, response=response, ip_dict=ip_lookup)
+                _log_response(log_path=response_log_path, response=response, ip_dict=ip_lookup, asynchronous=asynchronous)
             return response
 
         with mock.patch("responses._real_send", new=_send_real_with_log):
