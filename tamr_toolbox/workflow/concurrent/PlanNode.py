@@ -50,7 +50,7 @@ class PlanNode:
     project: Project
     priority: int
     current_op: Operation
-    status: PlanNodeStatus = PlanNodeStatus.RUNNABLE
+    status: PlanNodeStatus = PlanNodeStatus.PLANNED
     train: bool = False
     project_type: ProjectType = field(init=False)
     project_steps: Union[
@@ -143,10 +143,9 @@ def poll(plan_node: PlanNode) -> PlanNode:
         updated_op = None
     else:
         updated_op = plan_node.current_op.poll()
-        print(f"polled op and get new status {updated_op.status} compared to {current_op.status}")
         # if the op status changed set the plan node's current op to the updated one and use from_plan_node
         # to capture logic around in progress
-        if updated_op.state!= current_op.state:
+        if updated_op.state != current_op.state:
             # update the current op
             plan_node.current_op = updated_op
             # update the list of all ops
@@ -181,20 +180,20 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
     Returns:
         updated plan node
     """
-    start_time = time.time()
-    # if current_step is None this node has never been run, so set it and the steps_to_run
+    # if current_step is None this node has never been run, so set it and the steps_to_run from project_steps
     current_step = plan_node.current_step
     if current_step is None:
-        current_step = plan_node.project_steps[0]
         steps_to_run = plan_node.project_steps[1:]
-    # else we are on step 2+ and so current_step needs to be set to steps_to_run[0]
-    # and steps_to_run needs to have the zeroth step removed
+        next_step = plan_node.project_steps[0]
+    # else we are on step 2+ so user and trim list of steps_to_run
     else:
-        current_step = plan_node.steps_to_run[0]
+        LOGGER.debug(f"plan node in trigger next step: {plan_node}")
+        next_step = plan_node.steps_to_run[0]
         steps_to_run = plan_node.steps_to_run[1:]
-    print(f"running step {current_step.value}")
+
+    LOGGER.info(f"running step {next_step.value} for project {plan_node.name}")
     # We only call methods that return a list with one and only one operation
-    current_op = WORKFLOW_MAP[plan_node.project_type][current_step](
+    current_op = WORKFLOW_MAP[plan_node.project_type][next_step](
         plan_node.project, process_asynchronously=True
     )[0]
     # handle case where operations is empty list (nothing has been run)
@@ -205,12 +204,10 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
         if current_op not in operations_list:
             operations_list.append(current_op)
     # don't forget to update the status - and first update the current op and operations list
-    set_ops_time = time.time()
     plan_node.current_op = current_op
     plan_node.operations = operations_list
+    plan_node.current_step = next_step
     status = from_plan_node(plan_node)
-    update_status_time = time.time()
-    print(f"updating status took: {update_status_time-set_ops_time}")
     return PlanNode(
         name=plan_node.name,
         operations=operations_list,
@@ -219,7 +216,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
         project=plan_node.project,
         steps_to_run=steps_to_run,
         status=status,
-        current_step=current_step,
+        current_step=next_step,
     )
 
 

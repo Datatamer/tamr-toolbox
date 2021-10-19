@@ -92,7 +92,7 @@ def from_graph(
 
 def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     """
-    Create an new planner object with updated status from a set of plan nodes
+    Create an new planner object with updated status from an updated PlanNode object
     Args:
         planner: the original planner
         plan_node: an updated set of plan nodes
@@ -100,7 +100,7 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     Returns:
         a copy of the original planner object with an updated status
     """
-    # first just update the status of that node
+    # first update the planner to have the new node contents
     original_plan = planner.plan
     updated_plan = dict(original_plan)
     LOGGER.info(
@@ -108,17 +108,17 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
         f"status changed to {plan_node.status}"
     )
     plan_node_name = plan_node.name
-    node_status = PlanNodeStatus.from_plan_node(plan_node)
-    updated_plan[plan_node_name].status = node_status
-    updated_plan[plan_node_name].operations = plan_node.operations
+    updated_plan[plan_node_name] = plan_node
 
+    # now get the status of the updated node
+    node_status = plan_node.status
     # now find downstream affects
     downstream_nodes = get_all_downstream_nodes(planner.graph, plan_node_name)
     # if status == failed then easy to update them all to blocked
-    if node_status == PlanNodeStatus.PlanNodeStatus.FAILED:
+    if node_status == PlanNodeStatus.PlanNodeStatus.FAILED or node_status == PlanNodeStatus.PlanNodeStatus.CANCELLED:
         for node in downstream_nodes:
             updated_plan[node].status = PlanNodeStatus.PlanNodeStatus.BLOCKED
-    # else if update is skippable or successful then need to see if we can mark them as runnable
+    # else if update is skippable or successful then need to see if we can mark successor nodes as runnable
     elif (
         node_status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
         or node_status == PlanNodeStatus.PlanNodeStatus.SKIPPABLE
@@ -172,7 +172,6 @@ def execute(
     Returns:
         the planner object after execution
     """
-
     # get the plan and sort by priority
     plan = planner.plan
     sorted_jobs = [v for k, v in sorted(plan.items(), key=lambda x: x[1].priority)]
@@ -227,13 +226,13 @@ def execute(
             ]
         )
 
-        # now monitor the ones that really submit a job
+        # now monitor the nodes
         # this function returns when there is any change in state
         nodes_to_monitor = monitor(nodes_to_monitor)
         LOGGER.info(f"Got updated set of jobs: {nodes_to_monitor}")
         # now update the plan - only monitored jobs should have a change in status
-        for job in nodes_to_monitor:
-            planner = update_plan(planner, plan_node=job)
+        for node in nodes_to_monitor:
+            planner = update_plan(planner, plan_node=node)
 
         LOGGER.info(f"after recent update plan status is {from_planner(planner)}")
 

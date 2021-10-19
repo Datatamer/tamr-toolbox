@@ -28,7 +28,9 @@ def test_from_op():
 def test_from_plan_node():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
-    test_plan_node = PlanNode.PlanNode(name=project.name, project=project, priority=0, current_op=None, operations=None)
+    test_plan_node = PlanNode.PlanNode(
+        name=project.name, project=project, priority=0, current_op=None, operations=None
+    )
     # check status - should be planned
     assert PlanNodeStatus.from_plan_node(test_plan_node) == PlanNodeStatus.PlanNodeStatus.PLANNED
 
@@ -40,4 +42,3 @@ def test_from_plan_node():
     test_op = test_plan_node.current_op
     test_op.wait()
     assert PlanNodeStatus.from_plan_node(test_plan_node) == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
-

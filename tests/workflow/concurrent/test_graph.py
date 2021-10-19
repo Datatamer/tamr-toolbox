@@ -19,6 +19,7 @@ CONFIG = utils.config.from_yaml(
 #                              minimal_categorization -----------/
 #
 
+
 @mock_api()
 def test_get_upstream_projects():
     tamr = utils.client.create(**CONFIG["toolbox_test_instance"])
@@ -27,7 +28,7 @@ def test_get_upstream_projects():
     upstream_projects = Graph._get_upstream_projects(test_project)
     assert {x.name for x in upstream_projects} == {
         "chained_minimal_schema_mapping",
-        "minimal_categorization"
+        "minimal_categorization",
     }
 
 
@@ -40,7 +41,7 @@ def test_get_edges():
     expected_edges = {
         ("chained_minimal_schema_mapping", "chained_minimal_mastering"),
         ("minimal_categorization", "chained_minimal_mastering"),
-        ("minimal_schema_mapping", "chained_minimal_schema_mapping")
+        ("minimal_schema_mapping", "chained_minimal_schema_mapping"),
     }
     assert expected_edges == edges
 
@@ -49,14 +50,19 @@ def test_from_edges():
     test_edges = {
         ("chained_minimal_schema_mapping", "chained_minimal_mastering"),
         ("minimal_categorization", "chained_minimal_mastering"),
-        ("minimal_schema_mapping", "chained_minimal_schema_mapping")
+        ("minimal_schema_mapping", "chained_minimal_schema_mapping"),
     }
     test_graph = Graph.from_edges(test_edges)
     # check nothing got mutated
     assert test_graph.edges == test_edges
 
     # check we have the right set of nodes
-    expected_nodes = {"chained_minimal_mastering", "minimal_schema_mapping", "chained_minimal_schema_mapping", "minimal_categorization"}
+    expected_nodes = {
+        "chained_minimal_mastering",
+        "minimal_schema_mapping",
+        "chained_minimal_schema_mapping",
+        "minimal_categorization",
+    }
     assert expected_nodes == {x for x in test_graph.directed_graph.nodes}
 
 
@@ -73,7 +79,12 @@ def test_from_project_list():
     test_graph = Graph.from_project_list([test_middle_project, test_output_project], tamr)
 
     # now make sure we have the right set of nodes
-    expected_nodes = {"chained_minimal_mastering", "minimal_schema_mapping", "chained_minimal_schema_mapping", "minimal_categorization"}
+    expected_nodes = {
+        "chained_minimal_mastering",
+        "minimal_schema_mapping",
+        "chained_minimal_schema_mapping",
+        "minimal_categorization",
+    }
     assert expected_nodes == {x for x in test_graph.directed_graph.nodes}
     # and the right number (since set dedups for us)
     assert len(expected_nodes) == len([x for x in test_graph.directed_graph.nodes])
@@ -97,7 +108,9 @@ def test_downstream_nodes():
     assert expected_downstream_nodes == test_downstream_nodes
 
     # test output project has no downstream nodes
-    test_output_downstream_nodes = Graph.get_all_downstream_nodes(test_graph, "chained_minimal_mastering")
+    test_output_downstream_nodes = Graph.get_all_downstream_nodes(
+        test_graph, "chained_minimal_mastering"
+    )
     assert test_output_downstream_nodes == set()
 
 
@@ -113,7 +126,9 @@ def test_successors():
     # make sure that chained_minimal_schema_mapping only has one successor
     # (i.e. doesn't get confused about existence of minimal_categorization
     expected_successors = {"chained_minimal_mastering"}
-    assert expected_successors == Graph.get_successors(test_graph, "chained_minimal_schema_mapping")
+    assert expected_successors == Graph.get_successors(
+        test_graph, "chained_minimal_schema_mapping"
+    )
 
 
 @mock_api()
@@ -126,7 +141,10 @@ def test_predecessors():
     test_graph = Graph.from_project_list([test_output_project], tamr)
 
     # make sure chained_minimal_mastering gets both predecessors
-    assert Graph.get_predecessors(test_graph, "chained_minimal_mastering") == {"chained_minimal_schema_mapping", "minimal_categorization"}
+    assert Graph.get_predecessors(test_graph, "chained_minimal_mastering") == {
+        "chained_minimal_schema_mapping",
+        "minimal_categorization",
+    }
 
     # make sure source projects don't have any predecessors
     assert Graph.get_predecessors(test_graph, "minimal_schema_mapping") == set()
@@ -145,9 +163,11 @@ def test_get_projects_by_tier():
     # even though there is a shorter path to it via 'minimal_categorization'
     # however it being at tier 3 is the graph realizing that all upstream projects
     # need to be run so it cannot actually start until tier 2 is done
-    expected_tier_json = {0: {"minimal_schema_mapping", "minimal_categorization"},
-                          1: {"chained_minimal_schema_mapping"},
-                          2: {"chained_minimal_mastering"}}
+    expected_tier_json = {
+        0: {"minimal_schema_mapping", "minimal_categorization"},
+        1: {"chained_minimal_schema_mapping"},
+        2: {"chained_minimal_mastering"},
+    }
     test_tier_json = Graph.get_projects_by_tier(test_graph)
     assert expected_tier_json == test_tier_json
 

@@ -1,8 +1,10 @@
 """Enum representing job status"""
 from enum import IntEnum
+import logging
 from tamr_unify_client.operation import Operation
 
-import time
+LOGGER = logging.getLogger(__name__)
+
 
 class PlanNodeStatus(IntEnum):
     """
@@ -11,9 +13,9 @@ class PlanNodeStatus(IntEnum):
 
     FAILED = -2
     CANCELLED = -1
-    PLANNED = 0
-    SKIPPABLE = 1
-    BLOCKED = 2
+    BLOCKED = 0
+    PLANNED = 1
+    SKIPPABLE = 2
     RUNNABLE = 3
     PENDING = 4
     RUNNING = 5
@@ -21,7 +23,7 @@ class PlanNodeStatus(IntEnum):
 
 
 def from_tamr_op(op: Operation) -> PlanNodeStatus:
-    print(f"checking state of operation {op}")
+    LOGGER.debug(f"checking state of operation {op}")
     # check each operation
     if op.state == "PENDING" or op.state == "RUNNING":
         return PlanNodeStatus.RUNNING
@@ -38,19 +40,25 @@ def from_tamr_op(op: Operation) -> PlanNodeStatus:
 def from_plan_node(
     plan_node: "tamr_toolbox.workflow.concurrent.PlanNode.PlanNode",
 ) -> PlanNodeStatus:
+    """
+    Return a PlanNode Status from a PlanNode object.
+
+    Args:
+        plan_node: the plan node object to get the status of
+
+    Returns:
+        Latest view of the status of the PlanNode passed in
+    """
     # get the status of all operations for this node and convert to status
-    # if there are none then and it hasn't been updated by other nodes set to PLANNED
-    # TODO: update logic for above comment about it being being updated from other nodes failing
+    # if there are none then and there is nothing to check - just return the status
     if plan_node.operations is None:
-        return PlanNodeStatus.PLANNED
-    print(f"polling plan node at step {plan_node.current_step}")
-    print(f"plan node is {plan_node}")
-    # otherwise check the operations
-    pre_poll_time = time.time()
+        return plan_node.status
+
+    # if there are operations check the operations poll them and see the latest state
+    LOGGER.debug(f"getting plan node status at plan node at step {plan_node.current_step}")
     operations_to_poll = [x for x in plan_node.operations]
-    print(f"operations to poll {operations_to_poll}")
-    all_statuses = [from_tamr_op(x.my_poll()) for x in operations_to_poll]
-    print(f"polling ops took {time.time() - pre_poll_time}")
+    all_statuses = [from_tamr_op(x.poll()) for x in operations_to_poll]
+
     # since the enum is ordered just send the minimum status of all operations back
     # this means any failures/cancellations result in failure/cancelled
     # and then any operations that are less than succeeded represent the overall
