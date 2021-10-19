@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def _run_custom(
-    project: Project, *, run_update_unified_dataset=False, process_asynchronously: bool = True
+    project: Project, *, run_update_unified_dataset=False, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Executes specified steps of a schema mapping project.
 
@@ -49,7 +49,7 @@ def _run_custom(
     return completed_operations
 
 
-def run(project: Project, *, process_asynchronously: bool = True) -> List[Operation]:
+def run(project: Project, *, process_asynchronously: bool = False) -> List[Operation]:
     """Run the project
 
     Args:
@@ -66,7 +66,7 @@ def run(project: Project, *, process_asynchronously: bool = True) -> List[Operat
 
 
 def update_unified_dataset(
-    project: Project, *, process_asynchronously: bool = True
+    project: Project, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Updates the unified dataset for a schema mapping project
 

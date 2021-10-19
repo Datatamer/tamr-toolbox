@@ -125,7 +125,7 @@ def run(
     *,
     run_estimate_pair_counts: bool = False,
     run_apply_feedback: bool = False,
-    process_asynchronously: bool = True,
+    process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Run the existing pipeline without training
 

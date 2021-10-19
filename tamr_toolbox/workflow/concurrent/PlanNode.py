@@ -228,7 +228,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
 
 
 def monitor(
-    nodes: List[PlanNode], *, timeout: int = 2, polling_interval: int = 30
+    nodes: List[PlanNode], *, timeout: int = 1, polling_interval: int = 30
 ) -> List[PlanNode]:
     """
     Monitors the status of a list of PlanNodes, when one on that list changes to
@@ -236,7 +236,7 @@ def monitor(
 
     Args:
         nodes: list of nodes to monitor
-        timeout: number of days to poll before timing out for change in job status
+        timeout: number of hours to poll before timing out for change in job status
         polling_interval: the amount of time in seconds to wait between polling
 
     Returns:
@@ -248,7 +248,7 @@ def monitor(
         return []
 
     start_time = time.time()
-    timeout_in_seconds = 3600 * 24 * timeout
+    timeout_in_seconds = 3600 * timeout
 
     # get initial statuses
     initial_statuses = {x.name: x.status for x in nodes}
@@ -256,7 +256,7 @@ def monitor(
     # get project names for logging
     running_projects = "\n".join([x.name for x in nodes])
     LOGGER.info(
-        f"starting to monitor projects:\n {running_projects}\n with timeout of {timeout} days"
+        f"starting to monitor projects:\n {running_projects}\n with timeout of {timeout} hours"
     )
     # poll only as long as we haven't gotten past timeout
     while (time.time() - start_time) < timeout_in_seconds:
@@ -274,6 +274,6 @@ def monitor(
             return updated_nodes
 
     # if we got here it timed out and raise runtime error
-    error_message = f"Monitoring jobs:\n {running_projects}\n timed out after {timeout} days!"
+    error_message = f"Monitoring jobs:\n {running_projects}\n timed out after {timeout} hours!"
     LOGGER.error(error_message)
     raise RuntimeError(error_message)

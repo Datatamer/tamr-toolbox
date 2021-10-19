@@ -130,6 +130,7 @@ def _log_response(
         is_get_request = response.request.method == "GET"
         is_not_error = response.ok
 
+
         if is_get_request and is_operation_request and is_not_error and not asynchronous:
             wait_resp = _collect_operation_calls(response=response)
             all_responses.extend(wait_resp)
@@ -271,15 +272,14 @@ try:
 
     @responses.activate
     def _run_online_test(
-        response_log_path: Path, test_function: Callable, asynchronous: bool = True, **kwargs
+        response_log_path: Path, test_function: Callable, asynchronous: bool = False, **kwargs
     ) -> None:
         """Runs a test function against a Tamr instance and saves the API responses to a file
 
         Args:
             response_log_path: Location to save API responses
             test_function: The function to test
-            asynchoronous: Whether or not to `wait` for Operations called during
-                the running of tests
+            asynchoronous: Whether or not to run asynchronously (i.e. don't `wait` for operations to finish)
             **kwargs: Keyword arguments for the test function
 
         """

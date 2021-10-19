@@ -20,7 +20,7 @@ def _run_custom(
     run_profile_golden_records: bool = False,
     run_update_golden_records: bool = False,
     run_publish_golden_records: bool = False,
-    process_asynchronously: bool = True,
+    process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Executes specified steps of a golden records project.
 
@@ -97,7 +97,7 @@ def _run_custom(
     return completed_operations
 
 
-def run(project: Project, *, process_asynchronously: bool = True) -> List[Operation]:
+def run(project: Project, *, process_asynchronously: bool = False) -> List[Operation]:
     """Run the project
 
     Args:
@@ -118,7 +118,7 @@ def run(project: Project, *, process_asynchronously: bool = True) -> List[Operat
 
 
 def update_input_dataset_profiling_information(
-    project: Project, *, process_asynchronously: bool = True
+    project: Project, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Updating all profiling information for golden records project
 
@@ -140,7 +140,7 @@ def update_input_dataset_profiling_information(
 
 
 def update_golden_records(
-    project: Project, *, process_asynchronously: bool = True
+    project: Project, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Update the draft golden records of a project
 
@@ -162,7 +162,7 @@ def update_golden_records(
 
 
 def publish_golden_records(
-    project: Project, *, process_asynchronously: bool = True
+    project: Project, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Publish the  golden records of a project
 
@@ -184,7 +184,7 @@ def publish_golden_records(
 
 
 def update_and_publish(
-    project: Project, *, process_asynchronously: bool = True
+    project: Project, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Update the draft golden records and publish the golden records
 
