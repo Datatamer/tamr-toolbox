@@ -105,7 +105,9 @@ def _collect_operation_calls(
     return [request_while_pending, request_while_running, request_when_complete]
 
 
-def _log_response(*, log_path: Path, ip_dict: Dict[str, int], response: Response, asynchronous: bool = False) -> None:
+def _log_response(
+    *, log_path: Path, ip_dict: Dict[str, int], response: Response, asynchronous: bool = False
+) -> None:
     """Appends a response to a file. If the response returned is
      a Tamr Operation, poll the operation until complete and log those responses as well unless asynchronous
      is set to True.
@@ -169,7 +171,10 @@ def _build_response_log_path(
 
 
 def mock_api(
-    *, response_logs_dir: Optional[Union[str, Path]] = None, enforce_online_test: bool = False, asynchronous: bool = False
+    *,
+    response_logs_dir: Optional[Union[str, Path]] = None,
+    enforce_online_test: bool = False,
+    asynchronous: bool = False,
 ) -> Callable:
     """Decorator for `pytest` tests that mocks API requests by reading a file of
     pre-generated responses. Will generate responses file based on a real connection
@@ -215,7 +220,10 @@ def mock_api(
                     raise ConnectionError(e)
             else:
                 _run_online_test(
-                    response_log_path=response_log_path, test_function=test_function, asynchronous=asynchronous, **kwargs
+                    response_log_path=response_log_path,
+                    test_function=test_function,
+                    asynchronous=asynchronous,
+                    **kwargs,
                 )
 
         return wrapped
@@ -262,7 +270,9 @@ try:
             test_function(**kwargs)
 
     @responses.activate
-    def _run_online_test(response_log_path: Path, test_function: Callable, asynchronous: bool = True, **kwargs) -> None:
+    def _run_online_test(
+        response_log_path: Path, test_function: Callable, asynchronous: bool = True, **kwargs
+    ) -> None:
         """Runs a test function against a Tamr instance and saves the API responses to a file
 
         Args:
@@ -300,7 +310,12 @@ try:
 
             # Prevent recursion
             with mock.patch("responses._real_send", new=_BASE_SEND_REAL):
-                _log_response(log_path=response_log_path, response=response, ip_dict=ip_lookup, asynchronous=asynchronous)
+                _log_response(
+                    log_path=response_log_path,
+                    response=response,
+                    ip_dict=ip_lookup,
+                    asynchronous=asynchronous,
+                )
             return response
 
         with mock.patch("responses._real_send", new=_send_real_with_log):

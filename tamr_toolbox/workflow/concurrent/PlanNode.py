@@ -6,7 +6,11 @@ import logging
 
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.operation import Operation
-from tamr_toolbox.workflow.concurrent.PlanNodeStatus import PlanNodeStatus, from_tamr_op, from_plan_node
+from tamr_toolbox.workflow.concurrent.PlanNodeStatus import (
+    PlanNodeStatus,
+    from_tamr_op,
+    from_plan_node,
+)
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.project import categorization, mastering, schema_mapping, golden_records
 
@@ -135,7 +139,9 @@ def poll(plan_node: PlanNode) -> PlanNode:
     """
     # get current op and see if it is None (i.e. if plannode hasn't been triggered)
     current_op = plan_node.current_op
-    updated_operations = [x for x in plan_node.operations] if plan_node.operations is not None else None
+    updated_operations = (
+        [x for x in plan_node.operations] if plan_node.operations is not None else None
+    )
     if current_op is None:
         # if this node hasn't been triggered just return the current status in case
         # it has been updated by upstream actions

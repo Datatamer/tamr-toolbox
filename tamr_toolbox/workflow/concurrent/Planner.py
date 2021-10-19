@@ -115,7 +115,10 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     # now find downstream affects
     downstream_nodes = get_all_downstream_nodes(planner.graph, plan_node_name)
     # if status == failed then easy to update them all to blocked
-    if node_status == PlanNodeStatus.PlanNodeStatus.FAILED or node_status == PlanNodeStatus.PlanNodeStatus.CANCELLED:
+    if (
+        node_status == PlanNodeStatus.PlanNodeStatus.FAILED
+        or node_status == PlanNodeStatus.PlanNodeStatus.CANCELLED
+    ):
         for node in downstream_nodes:
             updated_plan[node].status = PlanNodeStatus.PlanNodeStatus.BLOCKED
     # else if update is skippable or successful then need to see if we can mark successor nodes as runnable
@@ -240,7 +243,9 @@ def execute(
         if save_state:
             LOGGER.info(f"current Planner state: {json.dumps(to_json(planner))}")
         # planner is updated so now try to execute it again
-        planner = execute(planner, tamr=tamr, concurrency_level=concurrency_level, save_state=save_state)
+        planner = execute(
+            planner, tamr=tamr, concurrency_level=concurrency_level, save_state=save_state
+        )
         return planner
 
     # if planner isn't runnable and there were no export processes then exit
