@@ -130,7 +130,6 @@ def _log_response(
         is_get_request = response.request.method == "GET"
         is_not_error = response.ok
 
-
         if is_get_request and is_operation_request and is_not_error and not asynchronous:
             wait_resp = _collect_operation_calls(response=response)
             all_responses.extend(wait_resp)
@@ -279,7 +278,8 @@ try:
         Args:
             response_log_path: Location to save API responses
             test_function: The function to test
-            asynchoronous: Whether or not to run asynchronously (i.e. don't `wait` for operations to finish)
+            asynchoronous: Whether or not to run asynchronously
+                (i.e. don't `wait` for operations to finish)
             **kwargs: Keyword arguments for the test function
 
         """
