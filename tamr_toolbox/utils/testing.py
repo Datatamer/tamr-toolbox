@@ -109,8 +109,8 @@ def _log_response(
     *, log_path: Path, ip_dict: Dict[str, int], response: Response, asynchronous: bool = False
 ) -> None:
     """Appends a response to a file. If the response returned is
-     a Tamr Operation, poll the operation until complete and log those responses as well unless asynchronous
-     is set to True.
+     a Tamr Operation, poll the operation until complete and log those responses as well
+     unless asynchronous is set to True.
 
     Args:
         log_path: File to write the response to
@@ -278,7 +278,8 @@ try:
         Args:
             response_log_path: Location to save API responses
             test_function: The function to test
-            asynchoronous: Whether or not to `wait` for Operations called during the running of tests
+            asynchoronous: Whether or not to `wait` for Operations called during
+                the running of tests
             **kwargs: Keyword arguments for the test function
 
         """

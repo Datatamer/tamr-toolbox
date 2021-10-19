@@ -8,7 +8,6 @@ from tamr_unify_client.project.resource import Project
 from tamr_unify_client.operation import Operation
 from tamr_toolbox.workflow.concurrent.PlanNodeStatus import (
     PlanNodeStatus,
-    from_tamr_op,
     from_plan_node,
 )
 from tamr_toolbox.models.project_type import ProjectType
@@ -34,7 +33,8 @@ WORKFLOW_MAP = {
         categorization.Steps.UPDATE_RESULTS_ONLY: categorization.jobs.update_results_only,
     },
     ProjectType.GOLDEN_RECORDS: {
-        golden_records.Steps.PROFILE_GOLDEN_RECORDS: golden_records.jobs.update_input_dataset_profiling_information,
+        golden_records.Steps.PROFILE_GOLDEN_RECORDS:
+            golden_records.jobs.update_input_dataset_profiling_information,
         golden_records.Steps.UPDATE_GOLDEN_RECORDS: golden_records.jobs.update_golden_records,
         golden_records.Steps.PUBLISH_GOLDEN_RECORDS: golden_records.jobs.publish_golden_records,
     },
@@ -149,8 +149,8 @@ def poll(plan_node: PlanNode) -> PlanNode:
         updated_op = None
     else:
         updated_op = plan_node.current_op.poll()
-        # if the op status changed set the plan node's current op to the updated one and use from_plan_node
-        # to capture logic around in progress
+        # if the op status changed set the plan node's current op to the updated one
+        # and use from_plan_node to capture logic around in progress
         if updated_op.state != current_op.state:
             # update the current op
             plan_node.current_op = updated_op
@@ -186,7 +186,8 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
     Returns:
         updated plan node
     """
-    # if current_step is None this node has never been run, so set it and the steps_to_run from project_steps
+    # if current_step is None this node has never been run,
+    # so set it and the steps_to_run from project_steps
     current_step = plan_node.current_step
     if current_step is None:
         steps_to_run = plan_node.project_steps[1:]

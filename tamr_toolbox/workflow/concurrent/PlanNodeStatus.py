@@ -3,6 +3,8 @@ from enum import IntEnum
 import logging
 from tamr_unify_client.operation import Operation
 
+import tamr_toolbox
+
 LOGGER = logging.getLogger(__name__)
 
 

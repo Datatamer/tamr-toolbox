@@ -121,7 +121,8 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     ):
         for node in downstream_nodes:
             updated_plan[node].status = PlanNodeStatus.PlanNodeStatus.BLOCKED
-    # else if update is skippable or successful then need to see if we can mark successor nodes as runnable
+    # else if update is skippable or successful
+    # then need to see if we can mark successor nodes as runnable
     elif (
         node_status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
         or node_status == PlanNodeStatus.PlanNodeStatus.SKIPPABLE
@@ -178,7 +179,8 @@ def execute(
     # get the plan and sort by priority
     plan = planner.plan
     sorted_jobs = [v for k, v in sorted(plan.items(), key=lambda x: x[1].priority)]
-    # assume you could be given a partially executed plan so create runnable, pending, and running queues
+    # assume you could be given a partially executed plan
+    # so create runnable, pending, and running queues
     runnable_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNABLE]
     running_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNING]
     pending_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.PENDING]
