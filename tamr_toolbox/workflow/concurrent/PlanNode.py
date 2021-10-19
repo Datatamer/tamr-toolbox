@@ -33,8 +33,7 @@ WORKFLOW_MAP = {
         categorization.Steps.UPDATE_RESULTS_ONLY: categorization.jobs.update_results_only,
     },
     ProjectType.GOLDEN_RECORDS: {
-        golden_records.Steps.PROFILE_GOLDEN_RECORDS:
-            golden_records.jobs.update_input_dataset_profiling_information,
+        golden_records.Steps.PROFILE_GOLDEN_RECORDS: golden_records.jobs.update_profiling_info,
         golden_records.Steps.UPDATE_GOLDEN_RECORDS: golden_records.jobs.update_golden_records,
         golden_records.Steps.PUBLISH_GOLDEN_RECORDS: golden_records.jobs.publish_golden_records,
     },

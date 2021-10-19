@@ -13,9 +13,9 @@ CONFIG = utils.config.from_yaml(
 
 # Note the pipeline under test is chained like so:
 #
-# minimimal_schema_mapping --> chained_minimal_schema_mapping ---\
-#                                                                 ----> chained_minimal_mastering --> chained_GR
-#                              minimal_categorization -----------/
+# minimimal_schema_mapping --> chained_minimal_SM ---\
+#                                                     ---> chained_minimal_mastering --> chained_GR
+#                  minimal_categorization -----------/
 #
 
 
@@ -42,7 +42,8 @@ def test_from_graph():
 def test_execute():
     """
     This is basically *the* test - try executing a pipeline.
-    I haven't figured out a good way to any testing of what is going on in the guts other than testing
+    I haven't figured out a good way to any testing of what is going on
+    in the guts other than testing
     the individual pieces (e.g. in the tests for PlanNode).
     """
     tamr = utils.client.create(**CONFIG["toolbox_test_instance"])

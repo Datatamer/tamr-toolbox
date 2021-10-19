@@ -117,7 +117,7 @@ def run(project: Project, *, process_asynchronously: bool = False) -> List[Opera
     )
 
 
-def update_input_dataset_profiling_information(
+def update_profiling_info(
     project: Project, *, process_asynchronously: bool = False
 ) -> List[Operation]:
     """Updating all profiling information for golden records project

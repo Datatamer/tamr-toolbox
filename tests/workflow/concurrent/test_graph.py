@@ -180,8 +180,8 @@ def test_get_source_nodes():
     test_output_project = tamr.projects.by_name(test_output_project_name)
     # build graph
     test_graph = Graph.from_project_list([test_output_project], tamr)
-    # turn to set since order of the returned list isn't deterministic but check length to make sure
-    # we aren't getting dupes
+    # turn to set since order of the returned list isn't deterministic
+    # but check length to make sure we aren't getting dupes
     expected_source_nodes = {"minimal_schema_mapping", "minimal_categorization"}
     test_source_nodes = Graph.get_source_nodes(test_graph)
     assert len(test_source_nodes) == 2

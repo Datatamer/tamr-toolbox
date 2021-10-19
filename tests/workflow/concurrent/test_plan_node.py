@@ -465,7 +465,8 @@ def test_run_schema_mapping_with_monitor():
     test_node = PlanNode.run_next_step(test_node)
     test_node = PlanNode.monitor([test_node])
     test_node = test_node[0]
-    # there is only one step for schema mapping so make sure after the state change it was successful
+    # there is only one step for schema mapping
+    # so make sure after the state change it was successful
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
 
 
