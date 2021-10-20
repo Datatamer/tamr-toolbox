@@ -214,7 +214,7 @@ def test_add_edges():
     # create a graph from the resulting slices
     # then add the sliced out edge and ensure the project_tier_jsons from the graphs are the same
     original_edges = test_graph.edges
-    test_edges = set(random.sample(original_edges, len(original_edges) - 1))
+    test_edges = set(random.sample([x for x in original_edges], len(original_edges) - 1))
     sliced_edge = {x for x in original_edges if x not in test_edges}
 
     # build test graph
