@@ -7,6 +7,7 @@ from . import utils
 from . import workflow
 from . import notifications
 from . import enrichment
+from . import sysadmin
 
 import logging
 
@@ -21,4 +22,5 @@ __all__ = [
     "workflow",
     "notifications",
     "enrichment",
+    "sysadmin",
 ]
