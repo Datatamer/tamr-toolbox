@@ -51,8 +51,7 @@ def from_graph(
         tamr_client: the tamr client object associated with the instance for which
             to create the plan
         starting_tier: the tier at which to start executing the plan, every job at lower
-            tiers is skipped and marked
-        as skippable
+            tiers is skipped and marked as skippable
         train: global config for whether or not to 'apply feedback'/train the model in
             the workflows
 
@@ -250,7 +249,7 @@ def execute(
         )
         return planner
 
-    # if planner isn't runnable and there were no export processes then exit
+    # if planner isn't runnable then exit
     else:
         LOGGER.info(f"plan status is {plan_status} so returning")
         return planner

@@ -10,8 +10,6 @@ from tamr_toolbox.utils import operation
 
 LOGGER = logging.getLogger(__name__)
 
-# TODO: add asynchronous param/usage
-
 
 def _run_custom(
     project: Project, *, run_update_unified_dataset=False, process_asynchronously: bool = False

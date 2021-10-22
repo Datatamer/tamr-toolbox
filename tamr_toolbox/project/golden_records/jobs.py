@@ -11,8 +11,6 @@ from tamr_toolbox.utils import version
 
 LOGGER = logging.getLogger(__name__)
 
-# TODO: add asynchronous param/usage
-
 
 def _run_custom(
     project: Project,

@@ -2,12 +2,10 @@
 import argparse
 from typing import List, Dict
 
-from tamr_unify_client.operation import Operation
-
 import tamr_toolbox as tbox
 
 
-def main(*, instance_connection_info: Dict[str, str], project_ids: List[str]) -> List[Operation]:
+def main(*, instance_connection_info: Dict[str, str], project_ids: List[str]) -> None:
     """Runs the continuous steps of a multiple projects of any type
 
     Args:
@@ -30,9 +28,14 @@ def main(*, instance_connection_info: Dict[str, str], project_ids: List[str]) ->
     my_planner = tbox.workflow.concurrent.Planner.from_graph(my_graph, tamr_client=tamr_client)
 
     LOGGER.info(f"Executing concurrent workflow with 3 concurrent jobs")
-    my_planner = tbox.workflow.concurrent.Planner.execute(my_planner, tamr_client, concurrency_level=3)
+    my_planner = tbox.workflow.concurrent.Planner.execute(
+        my_planner, tamr_client, concurrency_level=3
+    )
 
-    LOGGER.info(f"Status after running plan {tbox.workflow.concurrent.PlanStatus.from_planner(my_planner)} complete")
+    plan_status = tbox.workflow.concurrent.PlanStatus.from_planner(my_planner)
+    LOGGER.info(
+        f"Status after running plan {plan_status} complete"
+    )
 
 
 if __name__ == "__main__":
