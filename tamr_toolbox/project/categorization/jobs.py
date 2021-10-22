@@ -177,7 +177,7 @@ def update_results_only(
 
     Args:
         project: Target categorization project
-         process_asynchronously: Whether ot not to 'enforce_success' must be set to True
+        process_asynchronously: Whether ot not to 'enforce_success' must be set to True
             for concurrent workflow
 
 

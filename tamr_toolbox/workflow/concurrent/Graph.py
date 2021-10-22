@@ -168,7 +168,7 @@ def get_projects_by_tier(graph: Graph) -> Dict[int, Any]:
     Returns:
         A json dict who's structure is {'tier': [paths_at_that_tier], ...}
         e.g. {1: ['SM_project_1', 'Classification_project_1'], 2: ['Mastering_project'],
-              3: ['Golden_records_project']}
+        3: ['Golden_records_project']}
     """
     source_nodes = get_source_nodes(graph)
 
