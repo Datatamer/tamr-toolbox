@@ -1,14 +1,15 @@
 """Tasks related to creation of Slack notifications"""
 import logging
-import time
 import os
 from typing import Union, List, Optional
+from tamr_toolbox.models.data_type import JsonDict
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
+from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
 
 from tamr_toolbox.models.operation_state import OperationState
-from tamr_toolbox.utils.operation import get_details, from_resource_id
+from tamr_toolbox.utils.operation import get_details
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,8 +22,13 @@ if BUILDING_DOCS:
 
 
 def send_message(
-    *, slack_client: "slack.WebClient", channel: str, message: str, raise_error: bool = True,
-) -> dict:
+    *,
+    slack_client: "slack.WebClient",
+    channel: str,
+    message: str,
+    raise_error: bool = True,
+    **kwargs,
+) -> JsonDict:
     """Sends a message to a pre-defined Slack channel
 
     Args:
@@ -66,9 +72,8 @@ def _send_job_status_message(
     channel: str,
     operation: Operation,
     notify_states: List[OperationState],
-) -> dict:
-    """
-    Checks operation state and if in `notify_states` sends the message.
+) -> JsonDict:
+    """Checks operation state and if in `notify_states` sends the message.
 
     Args:
         slack_client: A Slack WebClient
@@ -94,10 +99,8 @@ def monitor_job(
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
     notify_states: Optional[List[OperationState]] = None,
-) -> List[dict]:
-    """
-
-    Monitors a Tamr Operation and sends a Slack message to a channel when the job status is updated
+) -> List[JsonDict]:
+    """Monitors a Tamr Operation and sends a Slack message to a channel when the job status is updated
 
     Args:
         tamr: A Tamr client
@@ -111,62 +114,16 @@ def monitor_job(
     Returns:
         A list of messages with their config sent via the Slack WebClient object
     """
-    if notify_states is None:
-        notify_states = [
-            OperationState.SUCCEEDED,
-            OperationState.FAILED,
-            OperationState.CANCELED,
-            OperationState.PENDING,
-            OperationState.RUNNING,
-        ]
-    started = time.time()
-    list_responses = []
-    status = None
-
-    if isinstance(operation, Operation):
-        op = operation
-    else:
-        op = from_resource_id(tamr=tamr, job_id=operation)
-
-    while (timeout_seconds is None or time.time() - started < timeout_seconds) and status not in [
-        OperationState.SUCCEEDED,
-        OperationState.FAILED,
-        OperationState.CANCELED,
-    ]:
-        # Check the status of the current operation.
-        # If the state is updated such that status!=new_status then send a message and
-        # update `status`.
-        # The loop exits if hits the timeout or if the jobs is in
-        # a final state (SUCCEEDED/FAILED/CANCELED).
-        # Note that it will always send a message about any status that has been
-        # updated before exiting
-        op = op.poll()
-        new_status = OperationState[op.state]
-        if status != new_status:
-            message = _send_job_status_message(
-                slack_client=slack_client,
-                channel=channel,
-                operation=op,
-                notify_states=notify_states,
-            )
-            list_responses.append(message)
-            status = new_status
-        time.sleep(poll_interval_seconds)
-
-    if status not in [
-        OperationState.SUCCEEDED,
-        OperationState.FAILED,
-        OperationState.CANCELED,
-    ]:
-        # If the operation was not in a final state then assume it timed out
-        message = send_message(
-            slack_client=slack_client,
-            channel=channel,
-            message=(
-                f"The job {op.resource_id}: {op.description} took longer "
-                f"than {timeout_seconds} seconds to resolve."
-            ),
-        )
-        list_responses.append(message)
+    list_responses = monitor_job_common(
+        tamr=tamr,
+        send_message=send_message,
+        send_status_function=_send_job_status_message,
+        slack_client=slack_client,
+        channel=channel,
+        operation=operation,
+        poll_interval_seconds=poll_interval_seconds,
+        timeout_seconds=timeout_seconds,
+        notify_states=notify_states,
+    )
 
     return list_responses

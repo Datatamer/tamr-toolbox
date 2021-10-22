@@ -1,13 +1,22 @@
 """Snippet for interacting with Tamr operations (or jobs)"""
 import tamr_toolbox as tbox
 
-
 # Make Tamr Client
 tamr = tbox.utils.client.create(username="user", password="pw", host="localhost")
 
-# Create a unresolved operation, i.e., PENDING or RUNNING
+# Create an unresolved operation, i.e., PENDING or RUNNING
 project = tamr.projects.by_name("my_project_id")
 op = project.unified_dataset().refresh(asynchronous=True)
+
+# Monitor the operation
+# Returns the updated operation on any OperationState change
+# Ex: Change from OperationState.PENDING -> OperationState.RUNNING
+op_update = tbox.utils.operation.monitor(operation=op)
+
+# Wait for the operation to finish
+# Will return the operation when it reaches one of the final states:
+# OperationState.CANCELED, OperationState.SUCCEEDED, OperationState.FAILED
+op_finished = tbox.utils.operation.wait(operation=op)
 
 # Get the most recent operation
 latest_op = tbox.utils.operation.get_latest(tamr=tamr)
