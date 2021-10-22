@@ -33,9 +33,7 @@ def main(*, instance_connection_info: Dict[str, str], project_ids: List[str]) ->
     )
 
     plan_status = tbox.workflow.concurrent.PlanStatus.from_planner(my_planner)
-    LOGGER.info(
-        f"Status after running plan {plan_status} complete"
-    )
+    LOGGER.info(f"Status after running plan {plan_status} complete")
 
 
 if __name__ == "__main__":
