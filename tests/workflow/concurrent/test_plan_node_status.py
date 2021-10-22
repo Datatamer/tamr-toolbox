@@ -28,18 +28,13 @@ def test_from_op():
 def test_from_op_failure():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     op_json = {
-    "id": "-1",
-    "type": "NOOP",
-    "description": "test",
-    "status": {
-        "state": "FAILED",
-        "startTime": "early",
-        "endTime": "late",
-        "message": "",
-    },
-    "created": {"username": "", "time": "early", "version": "-1"},
-    "lastModified": {"username": "", "time": "late", "version": "-1"},
-    "relativeId": "operations/-1",
+        "id": "-1",
+        "type": "NOOP",
+        "description": "test",
+        "status": {"state": "FAILED", "startTime": "early", "endTime": "late", "message": ""},
+        "created": {"username": "", "time": "early", "version": "-1"},
+        "lastModified": {"username": "", "time": "late", "version": "-1"},
+        "relativeId": "operations/-1",
     }
     op = Operation.from_json(client, op_json)
     assert PlanNodeStatus.from_tamr_op(op) == PlanNodeStatus.PlanNodeStatus.FAILED
