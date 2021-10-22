@@ -13,15 +13,15 @@ class PlanNodeStatus(IntEnum):
     A class representing job status for executing a concurrent pipeline
     """
 
-    FAILED = -2
-    CANCELLED = -1
-    BLOCKED = 0
-    PLANNED = 1
-    SKIPPABLE = 2
-    RUNNABLE = 3
-    PENDING = 4
-    RUNNING = 5
-    SUCCEEDED = 6
+    FAILED = -2  # one or more of the jobs for the project failed
+    CANCELLED = -1  # one or more of the jobs for the project was cancelled
+    BLOCKED = 0  # running this project is blocked by upstream dependencies failing
+    PLANNED = 1  # default state - planned but not yet runnable due to upstream dependencies
+    SKIPPABLE = 2  # used when, for example, starting later in the plan
+    RUNNABLE = 3  # all dependencies met (e.g. starting tier project) - the project can be run
+    PENDING_NEXT_STEP = 4  # project has run some steps and has more steps to go
+    RUNNING = 5  # a job for the project is currently running
+    SUCCEEDED = 6  # all project steps completed successfully
 
 
 def from_tamr_op(op: Operation) -> PlanNodeStatus:
@@ -70,6 +70,6 @@ def from_plan_node(
     # if the plan node has next steps and its min is succeeded then mark as pending
     min_status = min(all_statuses)
     if plan_node.steps_to_run and min_status == PlanNodeStatus.SUCCEEDED:
-        return PlanNodeStatus.PENDING
+        return PlanNodeStatus.PENDING_NEXT_STEP
     else:
         return min_status

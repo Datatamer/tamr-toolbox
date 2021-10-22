@@ -195,10 +195,10 @@ def test_run_categorization():
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
     # wait for the op finish
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # then run apply feedback
     test_node = PlanNode.run_next_step(test_node)
@@ -207,16 +207,16 @@ def test_run_categorization():
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # and now run update results
     test_node = PlanNode.run_next_step(test_node)
     assert test_node.current_step == categorization.Steps.UPDATE_RESULTS_ONLY
     assert test_node.steps_to_run == []
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
@@ -257,7 +257,7 @@ def test_run_schema_mapping():
     assert test_node.current_step == schema_mapping.Steps.UPDATE_UNIFIED_DATASET
     assert test_node.steps_to_run == []
     # wait for the op finish and check for success
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
 
@@ -300,10 +300,10 @@ def test_run_mastering():
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
     # wait for the op finish
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # then run generate pairs
     test_node = PlanNode.run_next_step(test_node)
@@ -317,10 +317,10 @@ def test_run_mastering():
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # run apply feedback
     print("running apply feedback")
@@ -337,10 +337,10 @@ def test_run_mastering():
     test_node = PlanNode.poll(test_node)
     print(f"status after polling: {test_node.status}")
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # run update high impact pairs
     test_node = PlanNode.run_next_step(test_node)
@@ -352,10 +352,10 @@ def test_run_mastering():
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # run update clusters
     test_node = PlanNode.run_next_step(test_node)
@@ -364,16 +364,16 @@ def test_run_mastering():
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # run publish clusters
     test_node = PlanNode.run_next_step(test_node)
     assert test_node.current_step == mastering.Steps.PUBLISH_CLUSTERS
     assert test_node.steps_to_run == []
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
@@ -404,7 +404,6 @@ def test_run_golden_records():
     # first make sure the current op got filled in
     assert test_node.current_op is not None
     # now check current step and steps to run
-    print(test_node)
     assert test_node.current_step == golden_records.Steps.PROFILE_GOLDEN_RECORDS
     assert test_node.steps_to_run == [
         golden_records.Steps.UPDATE_GOLDEN_RECORDS,
@@ -414,10 +413,10 @@ def test_run_golden_records():
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
     # wait for the op finish
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # now run update golden records
     test_node = PlanNode.run_next_step(test_node)
@@ -427,10 +426,10 @@ def test_run_golden_records():
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
     # wait for the op finish
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     # check that the node went back to pending
     test_node = PlanNode.poll(test_node)
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # now run publish golden records
     test_node = PlanNode.run_next_step(test_node)
@@ -439,7 +438,7 @@ def test_run_golden_records():
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node.current_op.wait()
+    test_node.current_op.wait(poll_interval_seconds=1)
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED
 
@@ -463,7 +462,7 @@ def test_run_schema_mapping_with_monitor():
     )
     # run the next step and monitor it
     test_node = PlanNode.run_next_step(test_node)
-    test_node = PlanNode.monitor([test_node])
+    test_node = PlanNode.monitor([test_node], polling_interval=1)
     test_node = test_node[0]
     # there is only one step for schema mapping
     # so make sure after the state change it was successful
@@ -487,16 +486,16 @@ def test_run_categorization_with_monitor():
     )
     # run the next step and monitor it
     test_node = PlanNode.run_next_step(test_node)
-    test_node = PlanNode.monitor([test_node])
+    test_node = PlanNode.monitor([test_node], polling_interval=1)
     test_node = test_node[0]
     # make sure that after monitoring the job it goes back to pending state
-    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING
+    assert test_node.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
 
     # run the next step and monitor it
     test_node = PlanNode.run_next_step(test_node)
     assert test_node.current_step == categorization.Steps.UPDATE_RESULTS_ONLY
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
-    test_node = PlanNode.monitor([test_node])
+    test_node = PlanNode.monitor([test_node], polling_interval=1)
     test_node = test_node[0]
     # make sure that after monitoring the job it goes back to pending state
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.SUCCEEDED

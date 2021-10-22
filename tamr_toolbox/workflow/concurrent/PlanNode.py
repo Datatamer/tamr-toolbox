@@ -227,7 +227,7 @@ def run_next_step(plan_node: PlanNode) -> PlanNode:
 
 
 def monitor(
-    nodes: List[PlanNode], *, timeout: int = 1, polling_interval: int = 30
+    nodes: List[PlanNode], *, timeout: int = 12, polling_interval: int = 30
 ) -> List[PlanNode]:
     """
     Monitors the status of a list of PlanNodes, when one on that list changes to

@@ -161,7 +161,12 @@ def to_json(planner: Planner) -> List[Dict]:
 
 
 def execute(
-    planner: Planner, tamr: Client, *, concurrency_level: int = 2, save_state: bool = False
+    planner: Planner,
+    tamr: Client,
+    *,
+    concurrency_level: int = 2,
+    save_state: bool = False,
+    polling_interval: int = 30,
 ) -> Planner:
     """
     Executes the plan
@@ -171,6 +176,7 @@ def execute(
         tamr: the tamr client to use
         concurrency_level: the number of concurrent jobs to run at once
         save_state: whether or not to save the plan state to json after each update
+        polling_interval: the amount of time in seconds to wait between polling
 
     Returns:
         the planner object after execution
@@ -182,7 +188,7 @@ def execute(
     # so create runnable, pending, and running queues
     runnable_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNABLE]
     running_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNING]
-    pending_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.PENDING]
+    pending_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP]
 
     # check status and run if runnable or planned
     plan_status = from_planner(planner)
@@ -232,7 +238,7 @@ def execute(
 
         # now monitor the nodes
         # this function returns when there is any change in state
-        nodes_to_monitor = monitor(nodes_to_monitor)
+        nodes_to_monitor = monitor(nodes_to_monitor, polling_interval=polling_interval)
         LOGGER.info(f"Got updated set of jobs: {nodes_to_monitor}")
         # now update the plan - only monitored jobs should have a change in status
         for node in nodes_to_monitor:
@@ -245,7 +251,11 @@ def execute(
             LOGGER.info(f"current Planner state: {json.dumps(to_json(planner))}")
         # planner is updated so now try to execute it again
         planner = execute(
-            planner, tamr=tamr, concurrency_level=concurrency_level, save_state=save_state
+            planner,
+            tamr=tamr,
+            concurrency_level=concurrency_level,
+            save_state=save_state,
+            polling_interval=polling_interval,
         )
         return planner
 
