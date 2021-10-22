@@ -188,7 +188,9 @@ def execute(
     # so create runnable, pending, and running queues
     runnable_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNABLE]
     running_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.RUNNING]
-    pending_nodes = [x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP]
+    pending_nodes = [
+        x for x in sorted_jobs if x.status == PlanNodeStatus.PlanNodeStatus.PENDING_NEXT_STEP
+    ]
 
     # check status and run if runnable or planned
     plan_status = from_planner(planner)
