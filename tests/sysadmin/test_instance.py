@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, call
 
 import paramiko
 import pytest
+import platform
 
 import tamr_toolbox as tbox
 
@@ -22,8 +23,13 @@ def test__run_local_command():
     assert "not found" in stderr or "not recognized" in stderr
 
     # Test command with input
+    if platform.system() == "Windows":
+        input_command = 'set /p uservar="" && echo "Hello %uservar%"'
+    else:
+        input_command = 'read uservar && echo "Hello $uservar"'
+
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
-        'read uservar && echo "Hello $uservar"', command_input=b"my_name\n"
+        input_command, command_input=b"my_name\n"
     )
     print(exit_code, stdout, stderr)
     assert exit_code == 0
