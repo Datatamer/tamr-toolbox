@@ -12,14 +12,14 @@ def test__run_local_command():
     # Test successful command
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command('echo "Hello World"')
     assert exit_code == 0
-    assert stdout == "Hello World\n"
+    assert "Hello World" in stdout
     assert len(stderr) == 0
 
     # Test unsuccessful command
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command("thisIsNotACommand")
     assert exit_code == 127
     assert len(stdout) == 0
-    assert "command not found" in stderr
+    assert "not found" in stderr
 
     # Test command with input
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
@@ -27,7 +27,7 @@ def test__run_local_command():
     )
     print(exit_code, stdout, stderr)
     assert exit_code == 0
-    assert stdout == "Hello my_name\n"
+    assert "Hello my_name" in stdout
     assert len(stderr) == 0
 
 
