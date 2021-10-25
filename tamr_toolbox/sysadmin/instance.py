@@ -23,6 +23,11 @@ def _run_remote_command(
             (exit code of command, stdout of command, stderr of command)
 
         """
+    LOGGER.debug(
+        f"Running command [{command}] on "
+        f"remote machine ({remote_client.get_transport().getpeername()[0]}) "
+        f"as user '{remote_client.get_transport().get_username()}'."
+    )
 
     # Initiate command
     stdin_file, stdout_file, stderr_file = remote_client.exec_command(command)
@@ -46,6 +51,12 @@ def _run_remote_command(
     stdout_file.close()
     stderr_file.close()
 
+    LOGGER.debug(
+        f"Command ended with exit code {command_channel.exit_status}.\n"
+        f"STDOUT: {stdout}\n"
+        f"STDERR: {stderr}\n"
+    )
+
     return command_channel.exit_status, stdout, stderr
 
 
@@ -60,6 +71,7 @@ def _run_local_command(command: str, *, command_input: Optional[bytes] = None) -
         (exit code of command, stdout of command, stderr of command)
 
     """
+    LOGGER.debug(f"Running command [{command}] on local machine.")
 
     # Initiate command
     process = subprocess.Popen(
@@ -81,6 +93,12 @@ def _run_local_command(command: str, *, command_input: Optional[bytes] = None) -
     # We use peek instead to avoid this issue
     stdout = process.stdout.peek().decode("utf-8")
     stderr = process.stderr.peek().decode("utf-8")
+
+    LOGGER.debug(
+        f"Command ended with exit code {process.returncode}.\n"
+        f"STDOUT: {stdout}\n"
+        f"STDERR: {stderr}\n"
+    )
 
     return process.returncode, stdout, stderr
 
@@ -141,7 +159,7 @@ def _run_command(
         if remote_client is None:
             task_description = f"local command. "
         else:
-            remote_ip = remote_client.get_transport().getpeername[0]
+            remote_ip = remote_client.get_transport().getpeername()[0]
             remote_username = remote_client.get_transport().get_username()
             task_description = f"Failed to run remote command on {remote_ip} as {remote_username}."
         raise RuntimeError(
@@ -184,6 +202,7 @@ def start_tamr(
 
     """
     if include_dependencies:
+        LOGGER.info(f"Starting Tamr dependencies.")
         _run_command(
             command=f"{tamr_install_dir}/tamr/start-dependencies.sh",
             remote_client=remote_client,
@@ -191,6 +210,7 @@ def start_tamr(
             impersonation_password=impersonation_password,
             enforce_success=True,
         )
+    LOGGER.info(f"Starting Tamr software.")
     _run_command(
         command=f"{tamr_install_dir}/tamr/start-unify.sh",
         remote_client=remote_client,
@@ -230,6 +250,7 @@ def stop_tamr(
         RuntimeError: Raised if Tamr stop script(s) fail
 
     """
+    LOGGER.info(f"Stopping Tamr software.")
     _run_command(
         command=f"{tamr_install_dir}/tamr/stop-unify.sh",
         remote_client=remote_client,
@@ -238,6 +259,7 @@ def stop_tamr(
         enforce_success=True,
     )
     if include_dependencies:
+        LOGGER.info(f"Stopping Tamr dependencies.")
         _run_command(
             command=f"{tamr_install_dir}/tamr/stop-dependencies.sh",
             remote_client=remote_client,

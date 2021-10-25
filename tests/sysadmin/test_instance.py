@@ -35,11 +35,15 @@ def test__run_remote_command():
     # Mock out a remote client, ensure that the the right arguments are passed to the remote client
     remote_client = paramiko.SSHClient()
     channel = paramiko.channel.Channel(0)
+    transport = paramiko.transport.Transport
     stdin_file = channel.makefile("stdin")
     stdin_file.write = MagicMock()
     stdout_file = channel.makefile("stdout")
     stderr_file = channel.makefile("stderr")
     remote_client.exec_command = MagicMock(return_value=(stdin_file, stdout_file, stderr_file))
+    remote_client.get_transport = MagicMock(return_value=transport)
+    transport.getpeername = MagicMock(return_value=["0.0.0.0"])
+    transport.get_username = MagicMock(return_value="my_username")
     channel.exit_status_ready = MagicMock(return_value=True)
     basic_command = 'echo "Hello World"'
 
