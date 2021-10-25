@@ -30,11 +30,9 @@ def test__run_local_command():
             'set /p uservar=""', command_input=b"my_name\n"
         )
         assert exit_code == 0
-        assert len(stdout) == 0
-        assert len(stderr) == 0
 
         exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
-            "echo Hello %uservar%", command_input=b"my_name\n"
+            "echo Hello %uservar%"
         )
         assert exit_code == 0
         assert "Hello my_name" in stdout
