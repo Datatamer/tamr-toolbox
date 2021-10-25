@@ -24,7 +24,7 @@ def test__run_local_command():
 
     # Test command with input
     if platform.system() == "Windows":
-        input_command = 'set /p uservar="" && echo "Hello %uservar%"'
+        input_command = 'set /p uservar="" && echo Hello %uservar%'
     else:
         input_command = 'read uservar && echo "Hello $uservar"'
 
