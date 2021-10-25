@@ -27,7 +27,7 @@ def test__run_local_command():
         # Environment variables cannot be set and read in a single line on windows
         # So we complete the input test with two commands
         exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
-            'set /p uservar=""', command_input=b"my_name\n"
+            'set /p uservar=""', command_input=b"my_name\r\n"
         )
         assert exit_code == 0
 
