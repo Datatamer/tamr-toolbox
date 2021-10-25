@@ -45,8 +45,8 @@ def from_dataset(
         csv_delimiter: Delimiter of the csv file
         columns: Optional, Ordered list of columns to write. If None, write all columns in
             arbitrary order.
-        column_name_dict: Optional, Dictionary in the format {<Tamr dataset column name> : <new csv 
-            column name>}, used to rename some or all columns in the output file.    
+        column_name_dict: Optional, Dictionary in the format {<Tamr dataset column name> : <new csv
+            column name>}, used to rename some or all columns in the output file.
         flatten_delimiter: Flatten list types to strings by concatenating with this delimiter
         quote_character: Character used to escape value for csv delimiter when it appears in the
             value.
@@ -72,7 +72,7 @@ def from_dataset(
             and `overwrite` is False
         RuntimeError: if `dataset` is not streamable and `allow_dataset_refresh` is False
         ValueError: if `columns` or `flatten_columns` contain columns that are not
-            present in `dataset`, or if column renaming would yield duplicate column names in output
+            present in `dataset`, or if column renaming would yield duplicate column names
     """
     LOGGER.info(
         f"Streaming records to csv file {export_file_path} from dataset {dataset.name} "
@@ -121,35 +121,11 @@ def from_dataset(
 
     func = partial(common._flatten_list, delimiter=flatten_delimiter, force=True)
 
-
-    if column_name_dict is not None:
-        # Warn if the supplied column mapping has keys which don't appear in the dataset
-        column_dict_is_subset = common._check_columns_subset(
-            input_list=column_name_dict.keys(), reference_list=attribute_names, raise_error=False
-        )
-        if not column_dict_is_subset:
-            message = (
-                f'Some key columns in the column mapping {column_name_dict}'
-                'do not appear in specified Tamr dataset.' 
-            )
-            LOGGER.warn(message)
-            
-
-
-        # Make dict mapping all attributes to themselves, update with any renaming dict entries
-        if columns is None:
-            column_name_dict = {k:v for k, v in column_name_dict if k in attribute_names}
-            mapping_dict = {**dict(zip(attribute_names, attribute_names)), **column_name_dict}
-        else:
-            column_name_dict = {k:v for k, v in column_name_dict if k in columns}
-            mapping_dict = {**dict(zip(columns, columns)), **column_name_dict}
-
-        if len(set(mapping_dict.values())) < len(mapping_dict): # check for duplicate values in dict
-            message = "Column renaming would generate duplicate column names in output."
-            LOGGER.error(message)
-            raise ValueError(message)
-        
-
+    full_column_name_dict = common._get_column_mapping_dict(
+        dataset_attribute_names=attribute_names,
+        column_name_dict=column_name_dict,
+        columns=columns,
+    )
 
     # Open CSV file and use newline='' as recommended by
     # https://docs.python.org/3/library/csv.html#csv.writer
@@ -167,16 +143,14 @@ def from_dataset(
         ):
             # Obtain and write the header information only on the first pass
             if header is None:
-                if columns is None:
-                    header = [mapping_dict[k] for k in record.keys()]
-                else:
-                    header = [mapping_dict[k] for k in columns]
-                    
+                header = full_column_name_dict.values()
                 csv_writer.writerow(header)
 
             # Replace empty values with a specific null value
             # This also allows nulls to be treated differently from empty strings
-            record = [na_value if record[k] is None else record[k] for k in header]
+            record = [
+                na_value if record[k] is None else record[k] for k in full_column_name_dict.keys()
+            ]
             buffer.append(record)
 
             at_max_buffer = buffer_size is not None and (len(buffer) >= buffer_size)

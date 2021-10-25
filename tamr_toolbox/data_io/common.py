@@ -1,5 +1,5 @@
 """Tasks common to moving data in and out of Tamr"""
-from typing import Optional, List, Any, Iterable, Callable
+from typing import Optional, List, Any, Iterable, Callable, Dict
 import logging
 
 from tamr_unify_client.dataset.resource import Dataset
@@ -127,3 +127,57 @@ def _check_columns_subset(
         else:
             return False
     return True
+
+
+def _get_column_mapping_dict(
+    *,
+    dataset_attribute_names: Iterable[str],
+    column_name_dict: Dict[str, str] = None,
+    columns: List[str] = None,
+) -> Dict[str, str]:
+    """
+    Generate a dictionary to support column re-naming in CSV output.
+
+    Args:
+        dataset_attribute_names: Names of Tamr Dataset columns
+        column_name_dict: Optional, Dictionary containing renaming information in the form
+            {<Tamr dataset attribute name>: <new name>}. If None, preserve original names
+        columns: Optional, List of columns to include in output. If None, use all columns
+    Returns:
+        Dictionary mapping Tamr Dataset attribute names to new column names
+    Raises:
+        ValueError: if column renaming would yield duplicate column names
+    """
+
+    if columns is None:
+        columns = dataset_attribute_names
+
+    if column_name_dict is not None:
+        # Warn if the supplied column mapping has keys which don't appear in the dataset
+        is_subset = _check_columns_subset(
+            input_list=column_name_dict.keys(),
+            reference_list=dataset_attribute_names,
+            raise_error=False,
+        )
+
+        if not is_subset:
+            message = (
+                f"Some key columns in the column mapping {column_name_dict}"
+                "do not appear in specified Tamr dataset."
+            )
+            LOGGER.warning(message)
+
+        # Make dict mapping all attributes to themselves, and update with any renaming dict entries
+        column_name_dict = {k: v for k, v in column_name_dict.items() if k in columns}
+        full_column_name_dict = {**dict(zip(columns, columns)), **column_name_dict}
+
+        # check that renaming won't generate duplicate columns in the output
+        if len(set(full_column_name_dict.values())) < len(full_column_name_dict):
+            message = "Column renaming would generate duplicate column names in output."
+            LOGGER.error(message)
+            raise ValueError(message)
+
+    else:  # if there's no column renaming dictionary supplied, just map columns to themselves
+        full_column_name_dict = dict(zip(columns, columns))
+
+    return full_column_name_dict
