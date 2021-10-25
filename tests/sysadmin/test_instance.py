@@ -24,17 +24,29 @@ def test__run_local_command():
 
     # Test command with input
     if platform.system() == "Windows":
-        input_command = 'set /p uservar="" && echo Hello %uservar%'
-    else:
-        input_command = 'read uservar && echo "Hello $uservar"'
+        # Environment variables cannot be set and read in a single line on windows
+        # So we complete the input test with two commands
+        exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
+            'set /p uservar=""', command_input=b"my_name\n"
+        )
+        assert exit_code == 0
+        assert len(stdout) == 0
+        assert len(stderr) == 0
 
-    exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
-        input_command, command_input=b"my_name\n"
-    )
-    print(exit_code, stdout, stderr)
-    assert exit_code == 0
-    assert "Hello my_name" in stdout
-    assert len(stderr) == 0
+        exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
+            "echo Hello %uservar%", command_input=b"my_name\n"
+        )
+        assert exit_code == 0
+        assert "Hello my_name" in stdout
+        assert len(stderr) == 0
+
+    else:
+        exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command(
+            'read uservar && echo "Hello $uservar"', command_input=b"my_name\n"
+        )
+        assert exit_code == 0
+        assert "Hello my_name" in stdout
+        assert len(stderr) == 0
 
 
 def test__run_remote_command():
