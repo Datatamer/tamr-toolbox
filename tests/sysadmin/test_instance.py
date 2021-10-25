@@ -17,7 +17,7 @@ def test__run_local_command():
 
     # Test unsuccessful command
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_local_command("thisIsNotACommand")
-    assert exit_code == 127
+    assert exit_code != 0
     assert len(stdout) == 0
     assert "not found" in stderr
 
