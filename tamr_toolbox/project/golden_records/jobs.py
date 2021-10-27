@@ -30,7 +30,7 @@ def _run_custom(
             dataset
         run_publish_golden_records: Whether refresh should be called on the published golden
             records dataset
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -100,7 +100,7 @@ def run(project: Project, *, process_asynchronously: bool = False) -> List[Opera
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -122,7 +122,7 @@ def update_profiling_info(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -144,7 +144,7 @@ def update_golden_records(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -166,7 +166,7 @@ def publish_golden_records(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -188,7 +188,7 @@ def update_and_publish(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning 
             - must be set to True for concurrent workflow
 
     Returns:

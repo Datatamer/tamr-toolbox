@@ -26,7 +26,7 @@ def _run_custom(
         run_update_unified_dataset: Whether refresh should be called on the unified dataset
         run_apply_feedback: Whether train should be called on the pair matching model
         run_update_results: Whether predict should be called on the pair matching model
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -88,7 +88,7 @@ def run(
     Args:
         project: The target categorization project
         run_apply_feedback: Whether train should be called on the categorization model
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -110,7 +110,7 @@ def update_unified_dataset(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -132,7 +132,7 @@ def apply_feedback(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -154,7 +154,7 @@ def apply_feedback_and_update_results(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -177,7 +177,7 @@ def update_results_only(
 
     Args:
         project: Target categorization project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
 

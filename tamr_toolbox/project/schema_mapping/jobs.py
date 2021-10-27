@@ -19,14 +19,14 @@ def _run_custom(
     Args:
         project: Target schema mapping project
         run_update_unified_dataset: Whether refresh should be called on the unified dataset
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
         The operations that were run
 
     Raises:
-        TypeError: if the `project` is not a Schema Mapping project
+        TypeError: if the `project` is not a Schema Mapping projectgit
     """
     if ProjectType[project.type] != ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS:
         error_msg = f"Cannot use as a schema mapping project. Project type: {project.type}"
@@ -52,7 +52,7 @@ def run(project: Project, *, process_asynchronously: bool = False) -> List[Opera
 
     Args:
         project: Target schema mapping project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -70,7 +70,7 @@ def update_unified_dataset(
 
     Args:
         project: Target schema mapping project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:

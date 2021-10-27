@@ -38,7 +38,7 @@ def _run_custom(
         run_update_cluster_results: Whether refresh should be called on the record clusters dataset
         run_publish_clusters: Whether refresh should be called on the published record clusters
             dataset
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -133,7 +133,7 @@ def run(
         project: Target mastering project
         run_estimate_pair_counts: Whether an estimate pairs job should be run
         run_apply_feedback: Whether train should be called on the pair matching model
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -160,7 +160,7 @@ def update_unified_dataset(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -186,7 +186,7 @@ def estimate_pair_counts(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -212,7 +212,7 @@ def generate_pairs(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -239,7 +239,7 @@ def apply_feedback(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -266,7 +266,7 @@ def update_pair_predictions(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -293,7 +293,7 @@ def update_clusters(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -320,7 +320,7 @@ def apply_feedback_and_update_results(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -348,7 +348,7 @@ def update_results_only(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
@@ -375,7 +375,7 @@ def publish_clusters(
 
     Args:
         project: Target mastering project
-        process_asynchronously: Whether or not to 'enforce_success' while running the job(s)
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
