@@ -188,7 +188,7 @@ def update_and_publish(
 
     Args:
         project: Target golden records project
-        process_asynchronously: Whether or not to wait for the job to finish before returning 
+        process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
     Returns:
