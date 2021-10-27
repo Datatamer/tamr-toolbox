@@ -11,31 +11,37 @@ from tamr_toolbox.workflow.concurrent.PlanNodeStatus import (
     from_plan_node,
 )
 from tamr_toolbox.models.project_type import ProjectType
-from tamr_toolbox.project import categorization, mastering, schema_mapping, golden_records
+from tamr_toolbox.models.project_steps import (
+    SchemaMappingSteps,
+    CategorizationSteps,
+    MasteringSteps,
+    GoldenRecordsSteps,
+)
+from tamr_toolbox.project import schema_mapping, categorization, mastering, golden_records
 
 LOGGER = logging.getLogger(__name__)
 
 WORKFLOW_MAP = {
     ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS: {
-        schema_mapping.Steps.UPDATE_UNIFIED_DATASET: schema_mapping.jobs.update_unified_dataset
+        SchemaMappingSteps.UPDATE_UNIFIED_DATASET: schema_mapping.jobs.update_unified_dataset
     },
     ProjectType.DEDUP: {
-        mastering.Steps.UPDATE_UNIFIED_DATASET: mastering.jobs.update_unified_dataset,
-        mastering.Steps.GENERATE_PAIRS: mastering.jobs.generate_pairs,
-        mastering.Steps.APPLY_FEEDBACK: mastering.jobs.apply_feedback,
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS: mastering.jobs.update_pair_predictions,
-        mastering.Steps.UPDATE_CLUSTERS: mastering.jobs.update_clusters,
-        mastering.Steps.PUBLISH_CLUSTERS: mastering.jobs.publish_clusters,
+        MasteringSteps.UPDATE_UNIFIED_DATASET: mastering.jobs.update_unified_dataset,
+        MasteringSteps.GENERATE_PAIRS: mastering.jobs.generate_pairs,
+        MasteringSteps.APPLY_FEEDBACK: mastering.jobs.apply_feedback,
+        MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS: mastering.jobs.update_pair_predictions,
+        MasteringSteps.UPDATE_CLUSTERS: mastering.jobs.update_clusters,
+        MasteringSteps.PUBLISH_CLUSTERS: mastering.jobs.publish_clusters,
     },
     ProjectType.CATEGORIZATION: {
-        categorization.Steps.UPDATE_UNIFIED_DATASET: categorization.jobs.update_unified_dataset,
-        categorization.Steps.APPLY_FEEDBACK: categorization.jobs.apply_feedback,
-        categorization.Steps.UPDATE_RESULTS_ONLY: categorization.jobs.update_results_only,
+        CategorizationSteps.UPDATE_UNIFIED_DATASET: categorization.jobs.update_unified_dataset,
+        CategorizationSteps.APPLY_FEEDBACK: categorization.jobs.apply_feedback,
+        CategorizationSteps.UPDATE_RESULTS_ONLY: categorization.jobs.update_results_only,
     },
     ProjectType.GOLDEN_RECORDS: {
-        golden_records.Steps.PROFILE_GOLDEN_RECORDS: golden_records.jobs.update_profiling_info,
-        golden_records.Steps.UPDATE_GOLDEN_RECORDS: golden_records.jobs.update_golden_records,
-        golden_records.Steps.PUBLISH_GOLDEN_RECORDS: golden_records.jobs.publish_golden_records,
+        GoldenRecordsSteps.PROFILE_GOLDEN_RECORDS: golden_records.jobs.update_profiling_info,
+        GoldenRecordsSteps.UPDATE_GOLDEN_RECORDS: golden_records.jobs.update_golden_records,
+        GoldenRecordsSteps.PUBLISH_GOLDEN_RECORDS: golden_records.jobs.publish_golden_records,
     },
 }
 
@@ -57,19 +63,19 @@ class PlanNode:
     train: bool = False
     project_type: ProjectType = field(init=False)
     project_steps: Union[
-        List[schema_mapping.Steps],
-        List[mastering.Steps],
-        List[golden_records.Steps],
-        List[categorization.Steps],
+        List[SchemaMappingSteps],
+        List[MasteringSteps],
+        List[GoldenRecordsSteps],
+        List[CategorizationSteps],
     ] = field(init=False)
     current_step: Union[
-        schema_mapping.Steps, mastering.Steps, categorization.Steps, golden_records.Steps
+        SchemaMappingSteps, MasteringSteps, CategorizationSteps, GoldenRecordsSteps
     ] = None
     steps_to_run: Union[
-        List[schema_mapping.Steps],
-        List[mastering.Steps],
-        List[golden_records.Steps],
-        List[categorization.Steps],
+        List[SchemaMappingSteps],
+        List[MasteringSteps],
+        List[GoldenRecordsSteps],
+        List[CategorizationSteps],
     ] = None
 
     def __post_init__(self):
@@ -79,45 +85,45 @@ class PlanNode:
         # then set project steps based on project type
         # first for schema mapping projects
         if self.project_type == ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS:
-            self.project_steps = [schema_mapping.Steps.UPDATE_UNIFIED_DATASET]
+            self.project_steps = [SchemaMappingSteps.UPDATE_UNIFIED_DATASET]
         # now for mastering projects
         elif self.project_type == ProjectType.DEDUP:
             if self.train:
                 self.project_steps = [
-                    mastering.Steps.UPDATE_UNIFIED_DATASET,
-                    mastering.Steps.GENERATE_PAIRS,
-                    mastering.Steps.APPLY_FEEDBACK,
-                    mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-                    mastering.Steps.UPDATE_CLUSTERS,
-                    mastering.Steps.PUBLISH_CLUSTERS,
+                    MasteringSteps.UPDATE_UNIFIED_DATASET,
+                    MasteringSteps.GENERATE_PAIRS,
+                    MasteringSteps.APPLY_FEEDBACK,
+                    MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+                    MasteringSteps.UPDATE_CLUSTERS,
+                    MasteringSteps.PUBLISH_CLUSTERS,
                 ]
             else:
                 self.project_steps = [
-                    mastering.Steps.UPDATE_UNIFIED_DATASET,
-                    mastering.Steps.GENERATE_PAIRS,
-                    mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-                    mastering.Steps.UPDATE_CLUSTERS,
-                    mastering.Steps.PUBLISH_CLUSTERS,
+                    MasteringSteps.UPDATE_UNIFIED_DATASET,
+                    MasteringSteps.GENERATE_PAIRS,
+                    MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+                    MasteringSteps.UPDATE_CLUSTERS,
+                    MasteringSteps.PUBLISH_CLUSTERS,
                 ]
         # now for categorization projects
         elif self.project_type == ProjectType.CATEGORIZATION:
             if self.train:
                 self.project_steps = [
-                    categorization.Steps.UPDATE_UNIFIED_DATASET,
-                    categorization.Steps.APPLY_FEEDBACK,
-                    categorization.Steps.UPDATE_RESULTS_ONLY,
+                    CategorizationSteps.UPDATE_UNIFIED_DATASET,
+                    CategorizationSteps.APPLY_FEEDBACK,
+                    CategorizationSteps.UPDATE_RESULTS_ONLY,
                 ]
             else:
                 self.project_steps = [
-                    categorization.Steps.UPDATE_UNIFIED_DATASET,
-                    categorization.Steps.UPDATE_RESULTS_ONLY,
+                    CategorizationSteps.UPDATE_UNIFIED_DATASET,
+                    CategorizationSteps.UPDATE_RESULTS_ONLY,
                 ]
         # finally for golden record projects
         elif self.project_type == ProjectType.GOLDEN_RECORDS:
             self.project_steps = [
-                golden_records.Steps.PROFILE_GOLDEN_RECORDS,
-                golden_records.Steps.UPDATE_GOLDEN_RECORDS,
-                golden_records.Steps.PUBLISH_GOLDEN_RECORDS,
+                GoldenRecordsSteps.PROFILE_GOLDEN_RECORDS,
+                GoldenRecordsSteps.UPDATE_GOLDEN_RECORDS,
+                GoldenRecordsSteps.PUBLISH_GOLDEN_RECORDS,
             ]
 
         else:

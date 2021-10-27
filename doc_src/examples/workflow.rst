@@ -9,7 +9,7 @@ Run Backup Restore
 
 .. _workflow-run-projects:
 
-Run Multiple Projects Linearly
+Run Multiple Projects Sequentially
 ------------------------------------------------------
 .. literalinclude:: ../../examples/resources/conf/project.config.yaml
   :language: yaml

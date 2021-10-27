@@ -19,7 +19,7 @@ class PlanNodeStatus(IntEnum):
     PLANNED = 1  # default state - planned but not yet runnable due to upstream dependencies
     SKIPPABLE = 2  # used when, for example, starting later in the plan
     RUNNABLE = 3  # all dependencies met (e.g. starting tier project) - the project can be run
-    PENDING_NEXT_STEP = 4  # project has run some steps and has more steps to go
+    PENDING_NEXT_STEP = 4  # project has run some steps successfully and has more steps remaining
     RUNNING = 5  # a job for the project is currently running
     SUCCEEDED = 6  # all project steps completed successfully
 

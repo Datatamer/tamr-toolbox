@@ -1,4 +1,5 @@
 import json
+import copy
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from typing import Dict, List
@@ -101,7 +102,7 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     """
     # first update the planner to have the new node contents
     original_plan = planner.plan
-    updated_plan = dict(original_plan)
+    updated_plan = copy.deepcopy(original_plan)
     LOGGER.info(
         f"Updating plan with changed project status: {plan_node.name} "
         f"status changed to {plan_node.status}"

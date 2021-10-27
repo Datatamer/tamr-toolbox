@@ -14,6 +14,11 @@ LOGGER = logging.getLogger(__name__)
 
 @dataclass()
 class Graph:
+    """
+    A dataclass for holding a set of Tamr project dependencies (edges),
+    and the generated graph from them.
+    """
+
     edges: set
     directed_graph: nx.DiGraph
 

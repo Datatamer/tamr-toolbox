@@ -8,7 +8,7 @@ from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
 from tamr_toolbox.models.project_type import ProjectType
-from tamr_toolbox.project import schema_mapping, mastering, categorization, golden_records
+from tamr_toolbox.models.project_steps import SchemaMappingSteps, CategorizationSteps, MasteringSteps, GoldenRecordsSteps
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
@@ -31,7 +31,7 @@ def test_post_init_schema_mapping():
     # make sure the project type and steps get set correct in the post_init function
     assert test_node.project_type == ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS
     # make sure the project steps are correct
-    assert test_node.project_steps == [schema_mapping.Steps.UPDATE_UNIFIED_DATASET]
+    assert test_node.project_steps == [SchemaMappingSteps.UPDATE_UNIFIED_DATASET]
 
 
 @mock_api()
@@ -51,8 +51,8 @@ def test_post_init_categorization():
     assert test_node.project_type == ProjectType.CATEGORIZATION
     # make sure the steps are correct and don't include training the model
     assert test_node.project_steps == [
-        categorization.Steps.UPDATE_UNIFIED_DATASET,
-        categorization.Steps.UPDATE_RESULTS_ONLY,
+        CategorizationSteps.UPDATE_UNIFIED_DATASET,
+        CategorizationSteps.UPDATE_RESULTS_ONLY,
     ]
 
 
@@ -74,9 +74,9 @@ def test_post_init_categorization_with_training():
     assert test_node.project_type == ProjectType.CATEGORIZATION
     # make sure the steps are correct and don't include training the model
     assert test_node.project_steps == [
-        categorization.Steps.UPDATE_UNIFIED_DATASET,
-        categorization.Steps.APPLY_FEEDBACK,
-        categorization.Steps.UPDATE_RESULTS_ONLY,
+        CategorizationSteps.UPDATE_UNIFIED_DATASET,
+        CategorizationSteps.APPLY_FEEDBACK,
+        CategorizationSteps.UPDATE_RESULTS_ONLY,
     ]
 
 
@@ -98,11 +98,11 @@ def test_post_init_mastering():
     assert test_node.project_type == ProjectType.DEDUP
     # make sure the steps are correct and don't include training the model
     assert test_node.project_steps == [
-        mastering.Steps.UPDATE_UNIFIED_DATASET,
-        mastering.Steps.GENERATE_PAIRS,
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-        mastering.Steps.UPDATE_CLUSTERS,
-        mastering.Steps.PUBLISH_CLUSTERS,
+        MasteringSteps.UPDATE_UNIFIED_DATASET,
+        MasteringSteps.GENERATE_PAIRS,
+        MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+        MasteringSteps.UPDATE_CLUSTERS,
+        MasteringSteps.PUBLISH_CLUSTERS,
     ]
 
 
@@ -125,12 +125,12 @@ def test_post_init_mastering_with_training():
     assert test_node.project_type == ProjectType.DEDUP
     # make sure the steps are correct and don't include training the model
     assert test_node.project_steps == [
-        mastering.Steps.UPDATE_UNIFIED_DATASET,
-        mastering.Steps.GENERATE_PAIRS,
-        mastering.Steps.APPLY_FEEDBACK,
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-        mastering.Steps.UPDATE_CLUSTERS,
-        mastering.Steps.PUBLISH_CLUSTERS,
+        MasteringSteps.UPDATE_UNIFIED_DATASET,
+        MasteringSteps.GENERATE_PAIRS,
+        MasteringSteps.APPLY_FEEDBACK,
+        MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+        MasteringSteps.UPDATE_CLUSTERS,
+        MasteringSteps.PUBLISH_CLUSTERS,
     ]
 
 
@@ -153,9 +153,9 @@ def test_post_init_golden_records():
     assert test_node.project_type == ProjectType.GOLDEN_RECORDS
     # make sure the steps are correct and don't include training the model
     assert test_node.project_steps == [
-        golden_records.Steps.PROFILE_GOLDEN_RECORDS,
-        golden_records.Steps.UPDATE_GOLDEN_RECORDS,
-        golden_records.Steps.PUBLISH_GOLDEN_RECORDS,
+        GoldenRecordsSteps.PROFILE_GOLDEN_RECORDS,
+        GoldenRecordsSteps.UPDATE_GOLDEN_RECORDS,
+        GoldenRecordsSteps.PUBLISH_GOLDEN_RECORDS,
     ]
 
 
@@ -185,10 +185,10 @@ def test_run_categorization():
     # first make sure the current op got filled in
     assert test_node.current_op is not None
     # now check current step and steps to run
-    assert test_node.current_step == categorization.Steps.UPDATE_UNIFIED_DATASET
+    assert test_node.current_step == CategorizationSteps.UPDATE_UNIFIED_DATASET
     assert test_node.steps_to_run == [
-        categorization.Steps.APPLY_FEEDBACK,
-        categorization.Steps.UPDATE_RESULTS_ONLY,
+        CategorizationSteps.APPLY_FEEDBACK,
+        CategorizationSteps.UPDATE_RESULTS_ONLY,
     ]
 
     # check status
@@ -202,8 +202,8 @@ def test_run_categorization():
 
     # then run apply feedback
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == categorization.Steps.APPLY_FEEDBACK
-    assert test_node.steps_to_run == [categorization.Steps.UPDATE_RESULTS_ONLY]
+    assert test_node.current_step == CategorizationSteps.APPLY_FEEDBACK
+    assert test_node.steps_to_run == [CategorizationSteps.UPDATE_RESULTS_ONLY]
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
@@ -214,7 +214,7 @@ def test_run_categorization():
 
     # and now run update results
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == categorization.Steps.UPDATE_RESULTS_ONLY
+    assert test_node.current_step == CategorizationSteps.UPDATE_RESULTS_ONLY
     assert test_node.steps_to_run == []
     test_node.current_op.wait(poll_interval_seconds=1)
     # check status
@@ -254,7 +254,7 @@ def test_run_schema_mapping():
     # first make sure the current op got filled in
     assert test_node.current_op is not None
     # now check current step and steps to run
-    assert test_node.current_step == schema_mapping.Steps.UPDATE_UNIFIED_DATASET
+    assert test_node.current_step == SchemaMappingSteps.UPDATE_UNIFIED_DATASET
     assert test_node.steps_to_run == []
     # wait for the op finish and check for success
     test_node.current_op.wait(poll_interval_seconds=1)
@@ -288,13 +288,13 @@ def test_run_mastering():
     # first make sure the current op got filled in
     assert test_node.current_op is not None
     # now check current step and steps to run
-    assert test_node.current_step == mastering.Steps.UPDATE_UNIFIED_DATASET
+    assert test_node.current_step == MasteringSteps.UPDATE_UNIFIED_DATASET
     assert test_node.steps_to_run == [
-        mastering.Steps.GENERATE_PAIRS,
-        mastering.Steps.APPLY_FEEDBACK,
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-        mastering.Steps.UPDATE_CLUSTERS,
-        mastering.Steps.PUBLISH_CLUSTERS,
+        MasteringSteps.GENERATE_PAIRS,
+        MasteringSteps.APPLY_FEEDBACK,
+        MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+        MasteringSteps.UPDATE_CLUSTERS,
+        MasteringSteps.PUBLISH_CLUSTERS,
     ]
     # check status
     test_node = PlanNode.poll(test_node)
@@ -307,12 +307,12 @@ def test_run_mastering():
 
     # then run generate pairs
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == mastering.Steps.GENERATE_PAIRS
+    assert test_node.current_step == MasteringSteps.GENERATE_PAIRS
     assert test_node.steps_to_run == [
-        mastering.Steps.APPLY_FEEDBACK,
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-        mastering.Steps.UPDATE_CLUSTERS,
-        mastering.Steps.PUBLISH_CLUSTERS,
+        MasteringSteps.APPLY_FEEDBACK,
+        MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+        MasteringSteps.UPDATE_CLUSTERS,
+        MasteringSteps.PUBLISH_CLUSTERS,
     ]
     # check status
     test_node = PlanNode.poll(test_node)
@@ -326,11 +326,11 @@ def test_run_mastering():
     print("running apply feedback")
     test_node = PlanNode.run_next_step(test_node)
     print(f"status after triggering run next step {test_node.status}")
-    assert test_node.current_step == mastering.Steps.APPLY_FEEDBACK
+    assert test_node.current_step == MasteringSteps.APPLY_FEEDBACK
     assert test_node.steps_to_run == [
-        mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS,
-        mastering.Steps.UPDATE_CLUSTERS,
-        mastering.Steps.PUBLISH_CLUSTERS,
+        MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS,
+        MasteringSteps.UPDATE_CLUSTERS,
+        MasteringSteps.PUBLISH_CLUSTERS,
     ]
     # check status
     print(f"current status before polling: {test_node.status}")
@@ -344,10 +344,10 @@ def test_run_mastering():
 
     # run update high impact pairs
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == mastering.Steps.UPDATE_HIGH_IMPACT_PAIRS
+    assert test_node.current_step == MasteringSteps.UPDATE_HIGH_IMPACT_PAIRS
     assert test_node.steps_to_run == [
-        mastering.Steps.UPDATE_CLUSTERS,
-        mastering.Steps.PUBLISH_CLUSTERS,
+        MasteringSteps.UPDATE_CLUSTERS,
+        MasteringSteps.PUBLISH_CLUSTERS,
     ]
     # check status
     test_node = PlanNode.poll(test_node)
@@ -359,8 +359,8 @@ def test_run_mastering():
 
     # run update clusters
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == mastering.Steps.UPDATE_CLUSTERS
-    assert test_node.steps_to_run == [mastering.Steps.PUBLISH_CLUSTERS]
+    assert test_node.current_step == MasteringSteps.UPDATE_CLUSTERS
+    assert test_node.steps_to_run == [MasteringSteps.PUBLISH_CLUSTERS]
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
@@ -371,7 +371,7 @@ def test_run_mastering():
 
     # run publish clusters
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == mastering.Steps.PUBLISH_CLUSTERS
+    assert test_node.current_step == MasteringSteps.PUBLISH_CLUSTERS
     assert test_node.steps_to_run == []
     test_node.current_op.wait(poll_interval_seconds=1)
     # check status
@@ -404,10 +404,10 @@ def test_run_golden_records():
     # first make sure the current op got filled in
     assert test_node.current_op is not None
     # now check current step and steps to run
-    assert test_node.current_step == golden_records.Steps.PROFILE_GOLDEN_RECORDS
+    assert test_node.current_step == GoldenRecordsSteps.PROFILE_GOLDEN_RECORDS
     assert test_node.steps_to_run == [
-        golden_records.Steps.UPDATE_GOLDEN_RECORDS,
-        golden_records.Steps.PUBLISH_GOLDEN_RECORDS,
+        GoldenRecordsSteps.UPDATE_GOLDEN_RECORDS,
+        GoldenRecordsSteps.PUBLISH_GOLDEN_RECORDS,
     ]
     # check status
     test_node = PlanNode.poll(test_node)
@@ -420,8 +420,8 @@ def test_run_golden_records():
 
     # now run update golden records
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == golden_records.Steps.UPDATE_GOLDEN_RECORDS
-    assert test_node.steps_to_run == [golden_records.Steps.PUBLISH_GOLDEN_RECORDS]
+    assert test_node.current_step == GoldenRecordsSteps.UPDATE_GOLDEN_RECORDS
+    assert test_node.steps_to_run == [GoldenRecordsSteps.PUBLISH_GOLDEN_RECORDS]
     # check status
     test_node = PlanNode.poll(test_node)
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
@@ -433,7 +433,7 @@ def test_run_golden_records():
 
     # now run publish golden records
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == golden_records.Steps.PUBLISH_GOLDEN_RECORDS
+    assert test_node.current_step == GoldenRecordsSteps.PUBLISH_GOLDEN_RECORDS
     assert test_node.steps_to_run == []
     # check status
     test_node = PlanNode.poll(test_node)
@@ -493,7 +493,7 @@ def test_run_categorization_with_monitor():
 
     # run the next step and monitor it
     test_node = PlanNode.run_next_step(test_node)
-    assert test_node.current_step == categorization.Steps.UPDATE_RESULTS_ONLY
+    assert test_node.current_step == CategorizationSteps.UPDATE_RESULTS_ONLY
     assert test_node.status == PlanNodeStatus.PlanNodeStatus.RUNNING
     test_node = PlanNode.monitor([test_node], polling_interval=1)
     test_node = test_node[0]
