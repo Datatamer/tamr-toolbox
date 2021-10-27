@@ -8,7 +8,12 @@ from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
 from tamr_toolbox.models.project_type import ProjectType
-from tamr_toolbox.models.project_steps import SchemaMappingSteps, CategorizationSteps, MasteringSteps, GoldenRecordsSteps
+from tamr_toolbox.models.project_steps import (
+    SchemaMappingSteps,
+    CategorizationSteps,
+    MasteringSteps,
+    GoldenRecordsSteps,
+)
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
