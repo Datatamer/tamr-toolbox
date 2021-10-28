@@ -1,16 +1,24 @@
 """Tasks related to a Tamr instance"""
 
 from typing import Optional
-import paramiko
+
 import subprocess
 import logging
 import time
+import os
 
 LOGGER = logging.getLogger(__name__)
 
+# Building our documentation requires access to all dependencies, including optional ones
+# This environments variable is set automatically when `invoke docs` is used
+BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
+if BUILDING_DOCS:
+    # Import relevant optional dependencies
+    import paramiko
+
 
 def _run_remote_command(
-    command: str, *, remote_client: paramiko.SSHClient, command_input: Optional[bytes] = None
+    command: str, *, remote_client: "paramiko.SSHClient", command_input: Optional[bytes] = None
 ) -> (int, str, str):
     """Runs the provided command in a remote environment using the provided ssh client
 
@@ -106,7 +114,7 @@ def _run_local_command(command: str, *, command_input: Optional[bytes] = None) -
 def _run_command(
     command: str,
     *,
-    remote_client: Optional[paramiko.SSHClient] = None,
+    remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
     enforce_success: bool = True,
@@ -175,7 +183,7 @@ def start_tamr(
     *,
     tamr_install_dir: str,
     include_dependencies: bool = True,
-    remote_client: Optional[paramiko.SSHClient] = None,
+    remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
 ) -> None:
@@ -224,7 +232,7 @@ def stop_tamr(
     *,
     tamr_install_dir: str,
     include_dependencies: bool = True,
-    remote_client: Optional[paramiko.SSHClient] = None,
+    remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
 ) -> None:
@@ -273,7 +281,7 @@ def restart_tamr(
     *,
     tamr_install_dir: str,
     include_dependencies: bool = True,
-    remote_client: Optional[paramiko.SSHClient] = None,
+    remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
 ) -> None:

@@ -30,11 +30,13 @@ setup(
             "slackclient>=2.7.2",
             "responses==0.10.14",
             "google-cloud-translate==2.0.1",
+            "paramiko>=2.8.0",
         ],
         # Individual sets of dependencies
         "pandas": ["pandas>=0.21.0"],
         "slack": ["slackclient>=2.7.2"],
         "testing": ["responses==0.10.14"],
         "translation": ["google-cloud-translate==2.0.1"],
+        "ssh": ["paramiko>=2.8.0"],
     },
 )
