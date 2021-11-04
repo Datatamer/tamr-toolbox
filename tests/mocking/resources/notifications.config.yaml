@@ -13,3 +13,11 @@ projects:
 
 my_slack_notification:
     slack_api_token: "dummy_token"
+
+my_email_notification:
+    sender_address: "sender@mail.com"
+    sender_password: "sender_password"
+    recipient_addresses: ["recipient@mail.com"]
+    smtp_server: "smtp.mail.com"
+    smtp_port: 465
+    tls_port: 587
