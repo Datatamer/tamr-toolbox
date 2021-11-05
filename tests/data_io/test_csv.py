@@ -337,10 +337,6 @@ def test_renaming_csv_columns(
     test_df["all_names"] = test_df["all_names"].str.split("|")
 
     assert records_written == len(compare_to_df)
-    print(test_df.columns)
-    print(compare_to_df.columns)
-    print(test_df.iloc[0])
-    print(compare_to_df.iloc[0])
     assert test_df.fillna("").isin(compare_to_df.fillna("")).all(axis=0).all()
 
 
@@ -355,6 +351,7 @@ def test_invalid_renaming_map(
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     filename = Path(tempfile.gettempdir()) / f"test_export_csv_{timestamp}.csv"
 
+    # ValueError raised by renaming that would yield duplicate columns
     with pytest.raises(ValueError):
         csv.from_dataset(
             dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict,
