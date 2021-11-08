@@ -168,8 +168,7 @@ def _get_column_mapping_dict(
             LOGGER.warning(message)
 
         # Make dict mapping all attributes to themselves, and update with any renaming dict entries
-        column_name_dict = {k: v for k, v in column_name_dict.items() if k in columns}
-        full_column_name_dict = {**dict(zip(columns, columns)), **column_name_dict}
+        full_column_name_dict = {column: column_name_dict.get(column, column) for k in columns}
 
         # check that renaming won't generate duplicate columns in the output
         if len(set(full_column_name_dict.values())) < len(full_column_name_dict):
