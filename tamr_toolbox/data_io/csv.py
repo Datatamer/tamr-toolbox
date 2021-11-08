@@ -1,5 +1,5 @@
 """Tasks related to moving data in or out of Tamr using delimited files"""
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Dict
 from functools import partial
 from pathlib import Path
 

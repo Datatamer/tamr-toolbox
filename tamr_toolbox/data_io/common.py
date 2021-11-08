@@ -162,13 +162,13 @@ def _get_column_mapping_dict(
 
         if not is_subset:
             message = (
-                f"Some key columns in the column mapping {column_name_dict}"
+                f"Some key column(s) in the column mapping {column_name_dict}"
                 "do not appear in specified Tamr dataset."
             )
             LOGGER.warning(message)
 
         # Make dict mapping all attributes to themselves, and update with any renaming dict entries
-        full_column_name_dict = {column: column_name_dict.get(column, column) for k in columns}
+        full_column_name_dict = {col: column_name_dict.get(col, col) for col in columns}
 
         # check that renaming won't generate duplicate columns in the output
         if len(set(full_column_name_dict.values())) < len(full_column_name_dict):
