@@ -23,7 +23,7 @@ def from_dataset(
     *,
     csv_delimiter: str = ",",
     columns: Optional[List[str]] = None,
-    column_name_dict: Optional[dict] = None,
+    column_name_dict: Optional[Dict[str, str]] = None,
     flatten_delimiter: str = "|",
     quote_character: str = '"',
     quoting: int = csv.QUOTE_MINIMAL,
