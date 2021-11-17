@@ -117,7 +117,7 @@ def update_plan(planner: Planner, *, plan_node: PlanNode) -> Planner:
     # if status == failed then easy to update them all to blocked
     if (
         node_status == PlanNodeStatus.PlanNodeStatus.FAILED
-        or node_status == PlanNodeStatus.PlanNodeStatus.CANCELLED
+        or node_status == PlanNodeStatus.PlanNodeStatus.CANCELED
     ):
         for node in downstream_nodes:
             updated_plan[node].status = PlanNodeStatus.PlanNodeStatus.BLOCKED

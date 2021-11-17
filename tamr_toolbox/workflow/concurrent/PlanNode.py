@@ -144,25 +144,26 @@ def poll(plan_node: PlanNode) -> PlanNode:
     """
     # get current op and see if it is None (i.e. if plannode hasn't been triggered)
     current_op = plan_node.current_op
-    updated_operations = (
-        [x for x in plan_node.operations] if plan_node.operations is not None else None
-    )
+
     if current_op is None:
         # if this node hasn't been triggered just return the current status in case
         # it has been updated by upstream actions
         updated_plan_node_status = plan_node.status
-        updated_op = None
+        updated_current_op = None
+        updated_operations = None
     else:
-        updated_op = plan_node.current_op.poll()
+        # current op exists so update it
+        updated_current_op = plan_node.current_op.poll()
+        # also update the list of all ops - rigamarole is to avoid updating current op twice
+        # since it already exists in plan_node.operations list
+        updated_operations = [x.poll() for x in plan_node.operations if x != current_op]
+        updated_operations.append(updated_current_op)
+
         # if the op status changed set the plan node's current op to the updated one
         # and use from_plan_node to capture logic around in progress
-        if updated_op.state != current_op.state:
+        if updated_current_op.state != current_op.state:
             # update the current op
-            plan_node.current_op = updated_op
-            # update the list of all ops
-            if current_op in plan_node.operations:
-                updated_operations = [x for x in plan_node.operations if x != current_op]
-                updated_operations.append(updated_op)
+            plan_node.current_op = updated_current_op
             plan_node.operations = updated_operations
             updated_plan_node_status = from_plan_node(plan_node)
         # if the op didn't change status neither will the node so just pass through
@@ -174,7 +175,7 @@ def poll(plan_node: PlanNode) -> PlanNode:
         operations=updated_operations,
         project=plan_node.project,
         priority=plan_node.priority,
-        current_op=updated_op,
+        current_op=updated_current_op,
         status=updated_plan_node_status,
         current_step=plan_node.current_step,
         steps_to_run=plan_node.steps_to_run,

@@ -14,7 +14,7 @@ class PlanNodeStatus(IntEnum):
     """
 
     FAILED = -2  # one or more of the jobs for the project failed
-    CANCELLED = -1  # one or more of the jobs for the project was cancelled
+    CANCELED = -1  # one or more of the jobs for the project was cancelled
     BLOCKED = 0  # running this project is blocked by upstream dependencies failing
     PLANNED = 1  # default state - planned but not yet runnable due to upstream dependencies
     SKIPPABLE = 2  # used when, for example, starting later in the plan
@@ -33,8 +33,8 @@ def from_tamr_op(op: Operation) -> PlanNodeStatus:
         return PlanNodeStatus.SUCCEEDED
     elif op.state == "FAILED":
         return PlanNodeStatus.FAILED
-    elif op.state == "CANCELED":
-        return PlanNodeStatus.CANCELLED
+    elif op.state == "CANCELED" or op.state == "CANCELING":
+        return PlanNodeStatus.CANCELED
     else:
         raise ValueError(f"{op.state} can't be translated to a PlanNodeStatus object")
 
