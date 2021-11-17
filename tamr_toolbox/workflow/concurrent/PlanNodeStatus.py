@@ -33,7 +33,7 @@ def from_tamr_op(op: Operation) -> PlanNodeStatus:
         return PlanNodeStatus.SUCCEEDED
     elif op.state == "FAILED":
         return PlanNodeStatus.FAILED
-    elif op.state == "CANCELLED":
+    elif op.state == "CANCELED":
         return PlanNodeStatus.CANCELLED
     else:
         raise ValueError(f"{op.state} can't be translated to a PlanNodeStatus object")
