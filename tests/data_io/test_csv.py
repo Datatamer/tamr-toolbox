@@ -59,17 +59,17 @@ EMPTY_TEST_DATA = """
 "id","first_name","nickname","last_name","ssn"
 """
 
-IN_MEM_TAXONOMY_CSV = io.StringIO(
-    "Dairy\n"
-    "Dairy,Cheese\n"
-    "Dairy,Milk\n"
-    "Meat\n"
-    "Meat,Beef\n"
-    "Meat,Chicken\n"
-    "Meat,Chicken,bone-in\n"
-    "Meat,Chicken,boneless\n"
-    "Vegetables\n"
-)
+TAXONOMY_DATA = [
+    "Dairy\n",
+    "Dairy,Cheese\n",
+    "Dairy,Milk\n",
+    "Meat\n",
+    "Meat,Beef\n",
+    "Meat,Chicken\n",
+    "Meat,Chicken,bone-in\n",
+    "Meat,Chicken,boneless\n",
+    "Vegetables\n",
+]
 
 
 @pytest.mark.parametrize(
@@ -196,7 +196,7 @@ def test_export_to_csv():
     filepath = os.path.join(get_toolbox_root_dir(), "tests/data_io/temp_taxonomy.csv")
     records_written = csv.from_taxonomy(project, filepath, csv_delimiter=",")
     list_written = list(io.open(filepath))
-    list_ref = list(IN_MEM_TAXONOMY_CSV)
+    list_ref = TAXONOMY_DATA
 
     assert len(list_ref) == len(list_written)
     assert len(list_ref) == records_written
@@ -222,7 +222,7 @@ def test_existing_file():
 
 
 @mock_api()
-def text_overwrite_file():
+def test_overwrite_file():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
@@ -233,7 +233,7 @@ def text_overwrite_file():
     f.close()
 
     records_written = csv.from_taxonomy(project, filepath, overwrite=True)
-    list_ref = list(IN_MEM_TAXONOMY_CSV)
+    list_ref = TAXONOMY_DATA
     list_written = list(io.open(filepath))
 
     assert records_written == len(list_ref)
