@@ -95,7 +95,7 @@ TAXONOMY_DATA = [
     ],
 )
 @mock_api()
-def test_export_csv(
+def test_dataset_export_csv(
     buffer_size: Optional[int],
     nrows: Optional[int],
     csv_delimiter: str,
@@ -157,7 +157,7 @@ def test_export_csv(
     "buffer_size, nrows, csv_delimiter, flatten_delimiter", [(None, None, ",", "|")],
 )
 @mock_api()
-def test_export_csv_empty_dataset(
+def test_dataset_export_csv_empty_dataset(
     buffer_size: Optional[int], nrows: Optional[int], csv_delimiter: str, flatten_delimiter: str,
 ):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
@@ -189,7 +189,7 @@ def test_export_csv_empty_dataset(
 
 
 @mock_api()
-def test_export_to_csv():
+def test_taxonomy_export_csv():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
@@ -207,7 +207,7 @@ def test_export_to_csv():
 
 
 @mock_api()
-def test_existing_file():
+def test_taxonomy_existing_file():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
@@ -222,7 +222,7 @@ def test_existing_file():
 
 
 @mock_api()
-def test_overwrite_file():
+def test_taxonomy_overwrite_file():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
@@ -243,7 +243,7 @@ def test_overwrite_file():
 
 
 @mock_api()
-def test_check_invalid_file_path():
+def test_taxonomy_check_invalid_file_path():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
@@ -254,7 +254,7 @@ def test_check_invalid_file_path():
 
 
 @mock_api()
-def test_check_invalid_project_type():
+def test_taxonomy_check_invalid_project_type():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     master_project_id = CONFIG["projects"]["minimal_mastering"]
     project = client.projects.by_resource_id(master_project_id)
@@ -265,7 +265,7 @@ def test_check_invalid_project_type():
 
 
 @mock_api()
-def test_invalid_delimiters():
+def test_taxonomy_invalid_delimiters():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
@@ -276,7 +276,7 @@ def test_invalid_delimiters():
 
 
 @mock_api()
-def test_bad_encoding():
+def test_dataset_bad_encoding():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     bad_encoding_dataset_id = CONFIG["datasets"]["bad_encoding"]
     dataset = client.datasets.by_resource_id(bad_encoding_dataset_id)
@@ -304,7 +304,7 @@ def test_bad_encoding():
     ],
 )
 @mock_api()
-def test_renaming_csv_columns(
+def test_dataset_renaming_csv_columns(
     columns: List[str], column_name_dict: Dict[str, str],
 ):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
@@ -341,7 +341,7 @@ def test_renaming_csv_columns(
 
 
 @mock_api()
-def test_invalid_renaming_map(
+def test_dataset_invalid_renaming_map(
     columns=["tamr_id", "all_names", "ssn", "last_name", "first_name"],
     column_name_dict={"all_names": "last_name"},
 ):
