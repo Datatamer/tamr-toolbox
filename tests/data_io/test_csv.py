@@ -299,8 +299,8 @@ def test_bad_encoding():
         ),  # test with column name not present in the data
         (
             ["tamr_id", "all_names", "ssn", "last_name", "first_name"],
-            {"last_name": "family_name"},
-        ),  # test with columns subset specified
+            {"last_name": "family_name", "ssn": "SS", "first_name": "given_name"},
+        ),  # test with columns list -- columns order is preserved regardless of mapping dict order
     ],
 )
 @mock_api()
