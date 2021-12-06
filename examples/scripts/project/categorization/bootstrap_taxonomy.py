@@ -25,7 +25,8 @@ PK_NAME = "Primary Key"
 
 def main(*, instance_connection_info: Dict[str, Any], categorization_project_id: str) -> None:
     """
-    Bootstraps taxonomy in a categorization project
+    Bootstraps the model for a categorization projcets by adding the taxonomy as a separate source
+    with training labels
 
     Args:
         instance_connection_info: Information for connecting to Tamr (host, port, username etc)
