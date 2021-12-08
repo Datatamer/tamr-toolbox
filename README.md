@@ -13,7 +13,7 @@ __Examples:__ https://datatamer.github.io/tamr-toolbox/latest/examples.html
 
 ## Community Contributions
 Contributions to the Tamr Toolbox are currently limited to Tamr employees only. 
-Tamr does not currently routinely review or merge community submitted pull requests.
+Tamr does not routinely review or merge community submitted pull requests.
 
 If you are a community member that would like to report a bug or a feature request, you may 
-file a Github issue in the tamr-toolbox repository
+file a Github issue in the tamr-toolbox repository.
