@@ -54,3 +54,13 @@ def test_client_enforce_healthy():
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
     assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
+
+
+@mock_api()
+def test_get_with_connection_retry():
+    # To ensure timeout error is raised to test correct ConnectionError is caught
+    my_client = utils.client.create(**CONFIG["my_other_instance"])
+    with pytest.raises(TimeoutError):
+        utils.client.get_with_connection_retry(
+            my_client, "/api/service/health", timeout_seconds=10, sleep_seconds=1
+        )
