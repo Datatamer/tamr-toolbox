@@ -30,20 +30,28 @@ def test_filename():
 
 
 def test_create_logger_with_stream_and_file_handler():
-    with tempfile.TemporaryDirectory() as tempdir:
-        logger = tamr_toolbox.utils.logger.create(
-            "test_logging_stream_and_file", log_to_terminal=True, log_directory=tempdir
-        )
+    # Create temp directory. Remember to cleanup!
+    tempdir = tempfile.TemporaryDirectory()
+    logger = tamr_toolbox.utils.logger.create(
+        "test_logging_stream_and_file", log_to_terminal=True, log_directory=tempdir.name
+    )
 
-        assert len(logger.handlers) == 2
+    assert len(logger.handlers) == 2
 
-        found_file_handler = False
-        found_stream_handler = False
-        for handler in logger.handlers:
-            found_file_handler = found_file_handler or type(handler) == logging.FileHandler
-            found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+    found_file_handler = False
+    found_stream_handler = False
+    for handler in logger.handlers:
+        found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+        found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
 
-        assert found_file_handler and found_stream_handler
+    assert found_file_handler and found_stream_handler
+
+    # Cleanup temp directory
+    try:
+        tempdir.cleanup()
+    except (PermissionError, NotADirectoryError):
+        # Windows sometimes fails so try one more time
+        tempdir.cleanup()
 
 
 def test_create_logger_with_only_stream_handler():
@@ -63,20 +71,28 @@ def test_create_logger_with_only_stream_handler():
 
 
 def test_create_logger_with_only_file_handler():
-    with tempfile.TemporaryDirectory() as tempdir:
-        logger = tamr_toolbox.utils.logger.create(
-            "test_logging_file_only", log_to_terminal=False, log_directory=tempdir
-        )
+    # Create temp directory. Remember to cleanup!
+    tempdir = tempfile.TemporaryDirectory()
+    logger = tamr_toolbox.utils.logger.create(
+        "test_logging_file_only", log_to_terminal=False, log_directory=tempdir.name
+    )
 
-        assert len(logger.handlers) == 1
+    assert len(logger.handlers) == 1
 
-        found_file_handler = False
-        found_stream_handler = False
-        for handler in logger.handlers:
-            found_file_handler = found_file_handler or type(handler) == logging.FileHandler
-            found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+    found_file_handler = False
+    found_stream_handler = False
+    for handler in logger.handlers:
+        found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+        found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
 
-        assert found_file_handler and not found_stream_handler
+    assert found_file_handler and not found_stream_handler
+
+    # Cleanup temp directory
+    try:
+        tempdir.cleanup()
+    except (PermissionError, NotADirectoryError):
+        # Windows sometimes fails so try one more time
+        tempdir.cleanup()
 
 
 def test_log_uncaught_exception():
@@ -116,40 +132,56 @@ logger = tamr_toolbox.utils.logger.create(
 
 
 def test_enable_toolbox_logging_with_stream_and_file_handler():
-    with tempfile.TemporaryDirectory() as tempdir:
-        package_logger = logging.getLogger("tamr_toolbox")
-        # Reset package logger to have no handlers
-        package_logger.handlers.clear()
-        tamr_toolbox.utils.logger.enable_toolbox_logging(
-            log_to_terminal=True, log_directory=tempdir
-        )
+    # Create temp directory. Remember to cleanup!
+    tempdir = tempfile.TemporaryDirectory()
+    package_logger = logging.getLogger("tamr_toolbox")
+    # Reset package logger to have no handlers
+    package_logger.handlers.clear()
+    tamr_toolbox.utils.logger.enable_toolbox_logging(
+        log_to_terminal=True, log_directory=tempdir.name
+    )
 
-        assert len(package_logger.handlers) == 2
+    assert len(package_logger.handlers) == 2
 
-        found_file_handler = False
-        found_stream_handler = False
-        for handler in package_logger.handlers:
-            found_file_handler = found_file_handler or type(handler) == logging.FileHandler
-            found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+    found_file_handler = False
+    found_stream_handler = False
+    for handler in package_logger.handlers:
+        found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+        found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
 
-        assert found_file_handler and found_stream_handler
+    assert found_file_handler and found_stream_handler
+
+    # Cleanup temp directory
+    try:
+        tempdir.cleanup()
+    except (PermissionError, NotADirectoryError):
+        # Windows sometimes fails so try one more time
+        tempdir.cleanup()
 
 
 def test_enable_toolbox_logging_with_only_file_handler():
-    with tempfile.TemporaryDirectory() as tempdir:
-        package_logger = logging.getLogger("tamr_toolbox")
-        # Reset package logger to have no handlers
-        package_logger.handlers.clear()
-        tamr_toolbox.utils.logger.enable_toolbox_logging(
-            log_to_terminal=False, log_directory=tempdir
-        )
+    # Create temp directory. Remember to cleanup!
+    tempdir = tempfile.TemporaryDirectory()
+    package_logger = logging.getLogger("tamr_toolbox")
+    # Reset package logger to have no handlers
+    package_logger.handlers.clear()
+    tamr_toolbox.utils.logger.enable_toolbox_logging(
+        log_to_terminal=False, log_directory=tempdir.name
+    )
 
-        assert len(package_logger.handlers) == 1
+    assert len(package_logger.handlers) == 1
 
-        found_file_handler = False
-        found_stream_handler = False
-        for handler in package_logger.handlers:
-            found_file_handler = found_file_handler or type(handler) == logging.FileHandler
-            found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+    found_file_handler = False
+    found_stream_handler = False
+    for handler in package_logger.handlers:
+        found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+        found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
 
-        assert found_file_handler and not found_stream_handler
+    assert found_file_handler and not found_stream_handler
+
+    # Cleanup temp directory
+    try:
+        tempdir.cleanup()
+    except (PermissionError, NotADirectoryError):
+        # Windows sometimes fails so try one more time
+        tempdir.cleanup()
