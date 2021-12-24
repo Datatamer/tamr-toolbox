@@ -68,20 +68,17 @@ def test_get_with_connection_retry():
     # To ensure timeout error is raised to test correct ConnectionError is caught
 
     log_prefix = "caught_connection_error"
-    # creates temporary file directory & fetches file inside dir
+
     with tempfile.TemporaryDirectory() as tempdir:
         log_file_path = os.path.join(
             tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}"
-        )
-        log_file_path_extended = os.path.join(
-            log_file_path, utils.logger._get_log_filename()
         )
 
     # clears old dir
     if os.path.exists(log_file_path):
         os.remove(log_file_path)
-    if os.path.exists(log_file_path_extended):
-        os.remove(log_file_path_extended)
+    if os.path.exists(log_file_path):
+        os.remove(log_file_path)
 
     my_client = utils.client.create(**CONFIG["my_other_instance"])
     utils.logger.enable_toolbox_logging(
@@ -93,6 +90,6 @@ def test_get_with_connection_retry():
             my_client, "/api/service/health", timeout_seconds=10, sleep_seconds=1
         )
 
-    with open(log_file_path_extended, "r") as f:
+    with open(log_file_path, "r") as f:
         # confirm that the intended warning was written to the log
         assert "Caught exception in connect" in f.read()
