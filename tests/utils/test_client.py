@@ -74,16 +74,20 @@ def test_get_with_connection_retry():
             tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}"
         )
 
-        my_client = utils.client.create(**CONFIG["my_other_instance"])
-        utils.logger.enable_toolbox_logging(
-            log_to_terminal=False, log_directory=tempdir, log_prefix=log_prefix
+    # clears old dir
+    if os.path.exists(log_file_path):
+        os.remove(log_file_path)
+
+    my_client = utils.client.create(**CONFIG["my_other_instance"])
+    utils.logger.enable_toolbox_logging(
+        log_to_terminal=False, log_directory=tempdir, log_prefix=log_prefix
+    )
+
+    with pytest.raises(TimeoutError):
+        utils.client.get_with_connection_retry(
+            my_client, "/api/service/health", timeout_seconds=10, sleep_seconds=1
         )
 
-        with pytest.raises(TimeoutError):
-            utils.client.get_with_connection_retry(
-                my_client, "/api/service/health", timeout_seconds=10, sleep_seconds=1
-            )
-
-        with open(log_file_path, "r") as f:
-            # confirm that the intended warning was written to the log
-            assert "Caught exception in connect" in f.read()
+    with open(log_file_path, "r") as f:
+        # confirm that the intended warning was written to the log
+        assert "Caught exception in connect" in f.read()
