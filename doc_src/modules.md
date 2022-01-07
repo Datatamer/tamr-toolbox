@@ -6,4 +6,4 @@
 * [Notifications](modules/notifications.md)
 * [Project](modules/project.md)
 * [Utilities](modules/utils.rst)
-* [Workflow](modules/workflow.rst)
+* [Workflow](modules/workflow.md)
