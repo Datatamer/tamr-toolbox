@@ -25,9 +25,7 @@ def test_client_create():
     assert my_client.port == int(CONFIG["my_instance_name"]["port"])
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
-    assert my_client.auth == UsernamePasswordAuth(
-        "admin", os.environ["TAMR_TOOLBOX_PASSWORD"],
-    )
+    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
 
 
 @mock_api()
@@ -44,9 +42,7 @@ def test_invalid_credentials():
 
 @mock_api()
 def test_store_auth_cookie():
-    my_client = utils.client.create(
-        **CONFIG["my_instance_name"], store_auth_cookie=True
-    )
+    my_client = utils.client.create(**CONFIG["my_instance_name"], store_auth_cookie=True)
     assert "authToken" in my_client.session.cookies.keys()
     assert my_client.session.auth is None
 
@@ -58,9 +54,7 @@ def test_client_enforce_healthy():
     assert my_client.port == int(CONFIG["my_instance_name"]["port"])
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
-    assert my_client.auth == UsernamePasswordAuth(
-        "admin", os.environ["TAMR_TOOLBOX_PASSWORD"],
-    )
+    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
 
 
 @mock_api()
@@ -70,9 +64,7 @@ def test_get_with_connection_retry():
     log_prefix = "caught_connection_error"
 
     with tempfile.TemporaryDirectory() as tempdir:
-        log_file_path = os.path.join(
-            tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}"
-        )
+        log_file_path = os.path.join(tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}")
 
         my_client = utils.client.create(**CONFIG["my_other_instance"])
         utils.logger.enable_toolbox_logging(
