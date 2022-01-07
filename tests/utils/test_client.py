@@ -77,12 +77,10 @@ def test_get_with_connection_retry():
     # clears old dir
     if os.path.exists(log_file_path):
         os.remove(log_file_path)
-    if os.path.exists(log_file_path):
-        os.remove(log_file_path)
 
     my_client = utils.client.create(**CONFIG["my_other_instance"])
     utils.logger.enable_toolbox_logging(
-        log_to_terminal=False, log_directory=log_file_path
+        log_to_terminal=False, log_directory=tempdir, log_prefix=log_prefix
     )
 
     with pytest.raises(TimeoutError):
