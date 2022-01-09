@@ -66,6 +66,9 @@ def test_get_with_connection_retry():
     with tempfile.TemporaryDirectory() as tempdir:
         log_file_path = os.path.join(tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}")
 
+        if os.path.exists(log_file_path):
+            os.remove(log_file_path)
+
         my_client = utils.client.create(**CONFIG["my_other_instance"])
         utils.logger.enable_toolbox_logging(
             log_to_terminal=False, log_directory=tempdir, log_prefix=log_prefix
