@@ -163,14 +163,34 @@ def test_dataset_export_csv_delim_error():
         filepath = Path(tempdir) / "tests/data_io/test_taxonomy_invalid_delim.csv"
 
         with pytest.raises(ValueError):
-            csv.from_dataset(dataset, filepath, csv_delimiter='|', flatten_delimiter='|')
+            csv.from_dataset(dataset, filepath, csv_delimiter="|", flatten_delimiter="|")
+
+
+@pytest.mark.parametrize("overwrite", [False])
+@mock_api()
+def test_dataset_overwrite_file(overwrite: bool):
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
+    dataset = client.datasets.by_resource_id(sm_dataset_id)
+
+    filepath = os.path.join(
+        get_toolbox_root_dir(), f"tests/data_io/test_dataset_overwrite_{overwrite}.csv"
+    )
+
+    f = open(filepath, "w")
+    f.write("Temporary file")
+    f.close()
+
+    with pytest.raises(FileExistsError):
+        csv.from_dataset(
+            dataset, filepath, csv_delimiter=",", flatten_delimiter="|", overwrite=overwrite
+        )
+
+    os.remove(filepath)
 
 
 @pytest.mark.parametrize(
-    "buffer_size, nrows, columns", [
-        (None, None, None), 
-        (None, None, ["id", "ssn", "last_name"])
-    ],
+    "buffer_size, nrows, columns", [(None, None, None), (None, None, ["id", "ssn", "last_name"])],
 )
 @mock_api()
 def test_dataset_export_csv_empty_dataset(
@@ -182,15 +202,10 @@ def test_dataset_export_csv_empty_dataset(
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     filename = Path(tempfile.gettempdir()) / f"test_export_csv_{timestamp}.csv"
     records_written = csv.from_dataset(
-        dataset,
-        filename,
-        overwrite=True,
-        buffer_size=buffer_size,
-        nrows=nrows,
-        columns=columns
+        dataset, filename, overwrite=True, buffer_size=buffer_size, nrows=nrows, columns=columns
     )
 
-    header_string = EMPTY_TEST_DATA if columns is None else ','.join(f'"{col}"' for col in columns)
+    header_string = EMPTY_TEST_DATA if columns is None else ",".join(f'"{col}"' for col in columns)
 
     # Load raw export data and sort for comparison.
     compare_to_df = pd.read_csv(
@@ -198,7 +213,7 @@ def test_dataset_export_csv_empty_dataset(
     ).sort_index()
 
     test_df = pd.read_csv(
-        filename, dtype="object", delimiter=',', index_col="id", quotechar='"'
+        filename, dtype="object", delimiter=",", index_col="id", quotechar='"'
     ).sort_index()
 
     assert test_df.equals(compare_to_df)
@@ -388,3 +403,18 @@ def test_dataset_invalid_renaming_map(
         csv.from_dataset(
             dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict,
         )
+
+
+@mock_api()
+def test_dataset_not_streamable():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    sm_dataset_id = CONFIG["datasets"]["broken_schema_mapping_unified_dataset"]
+    dataset = client.datasets.by_resource_id(sm_dataset_id)
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        filepath = Path(tempdir) / f"test_dataset_not_streamable_{timestamp}.csv"
+
+        # ValueError raised by renaming that would yield duplicate columns
+        with pytest.raises(RuntimeError):
+            csv.from_dataset(dataset, filepath, allow_dataset_refresh=False)
