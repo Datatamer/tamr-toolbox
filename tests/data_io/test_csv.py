@@ -153,6 +153,19 @@ def test_dataset_export_csv(
         assert test_df.fillna("").isin(compare_to_df.fillna("")).all(axis=0).all()
 
 
+@mock_api()
+def test_dataset_export_csv_delim_error():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
+    dataset = client.datasets.by_resource_id(sm_dataset_id)
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        filepath = Path(tempdir) / "tests/data_io/test_taxonomy_invalid_delim.csv"
+
+        with pytest.raises(ValueError):
+            csv.from_dataset(dataset, filepath, csv_delimiter='|', flatten_delimiter='|')
+
+
 @pytest.mark.parametrize(
     "buffer_size, nrows, columns", [
         (None, None, None), 
@@ -273,10 +286,25 @@ def test_taxonomy_invalid_delimiters():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     categorization_project_id = CONFIG["projects"]["minimal_categorization"]
     project = client.projects.by_resource_id(categorization_project_id)
-    filepath = os.path.join(get_toolbox_root_dir(), "tests/data_io/temp_taxonomy.csv")
 
-    with pytest.raises(ValueError):
-        csv.from_taxonomy(project, filepath, csv_delimiter=",", flatten_delimiter=",")
+    with tempfile.TemporaryDirectory() as tempdir:
+        filepath = Path(tempdir) / "tests/data_io/temp_taxonomy_invalid_delim.csv"
+
+        with pytest.raises(ValueError):
+            csv.from_taxonomy(project, filepath, csv_delimiter=",", flatten_delimiter=",")
+
+
+@mock_api()
+def test_taxonomy_missing():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    categorization_project_id = CONFIG["projects"]["categorization_no_taxonomy"]
+    project = client.projects.by_resource_id(categorization_project_id)
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        filepath = Path(tempdir) / "tests/data_io/temp_taxonomy_missing.csv"
+
+        with pytest.raises(RuntimeError):
+            csv.from_taxonomy(project, filepath, csv_delimiter=",", flatten_delimiter="|")
 
 
 @mock_api()
