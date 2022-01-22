@@ -114,20 +114,6 @@ def set_unified_attribute_configuration(
         LOGGER.error(error_msg)
         raise AttributeError(error_msg)
 
-    # Check if the attribute has an associated configuration already
-    for attr_conf in project.attribute_configurations():
-        if attr_conf.attribute_name == unified_attribute_name:
-            if override:
-                attr_conf.delete()
-                break
-            else:
-                attribute_configuration_exists_error = (
-                    f"Attribute Configuration exists for {unified_attribute_name}. "
-                    "Try override=True to update the current configuration with the new one."
-                )
-                LOGGER.error(attribute_configuration_exists_error)
-                raise RuntimeError(attribute_configuration_exists_error)
-
     attr_conf_spec = (
         AttributeConfigurationSpec.new()
         .with_attribute_role(attribute_role)
@@ -151,6 +137,21 @@ def set_unified_attribute_configuration(
             .with_tokenizer(tokenizer)
             .with_numeric_field_resolution([])
         )
+
+    # Check if the attribute has an associated configuration already
+    for attr_conf in project.attribute_configurations():
+        if attr_conf.attribute_name == unified_attribute_name:
+            if override:
+                attr_conf.delete()
+                break
+            else:
+                attribute_configuration_exists_error = (
+                    f"Attribute Configuration exists for {unified_attribute_name}. "
+                    "Try override=True to update the current configuration with the new one."
+                )
+                LOGGER.error(attribute_configuration_exists_error)
+                raise RuntimeError(attribute_configuration_exists_error)
+
     return project.attribute_configurations().create(attr_conf_spec.to_dict())
 
 
