@@ -98,7 +98,7 @@ def get_with_connection_retry(
         try:
             response = client.get(api_endpoint)
             return response
-        except ConnectionError as e:
+        except requests.exceptions.ConnectionError as e:
             # If we got for example a connection refused exception, try again later
             LOGGER.warning(f"Caught exception in connect {e}")
             sleep(sleep_seconds)
