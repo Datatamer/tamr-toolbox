@@ -5,7 +5,11 @@ from tamr_unify_client.project.attribute_mapping.resource import (
 )
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.dataset.resource import Dataset
-from tamr_unify_client.project.attribute_configuration.resource import AttributeConfigurationSpec
+from tamr_unify_client.attribute.resource import Attribute
+from tamr_unify_client.project.attribute_configuration.resource import (
+    AttributeConfiguration,
+    AttributeConfigurationSpec,
+)
 from typing import List
 import logging
 from json import JSONDecodeError
@@ -44,7 +48,7 @@ def _get_mapping_spec_for_ud(
     return spec
 
 
-def create_unified_attribute(project: Project, *, unified_attribute_name: str) -> None:
+def create_unified_attribute(project: Project, *, unified_attribute_name: str) -> Attribute:
     """
     Adds a unified attribute to a project
 
@@ -58,7 +62,7 @@ def create_unified_attribute(project: Project, *, unified_attribute_name: str) -
     Raises:
         AttributeError if the unified attribute already exists
     """
-    if unified_attribute_name in [x.name for x in project.unified_dataset().attributes]:
+    if unified_attribute_name in [x.name for x in project.attributes]:
         error_message = (
             f"A unified attribute with name {unified_attribute_name} already exists in "
             f"{project.name}. Please try again using a new name for the attribute."
@@ -71,10 +75,10 @@ def create_unified_attribute(project: Project, *, unified_attribute_name: str) -
         "name": unified_attribute_name,
         "type": {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
     }
-    project.unified_dataset().attributes.create(attr_spec)
+    return project.attributes.create(attr_spec)
 
 
-def set_unified_attribute_configurations(
+def set_unified_attribute_configuration(
     project: Project,
     *,
     unified_attribute_name: str,
@@ -83,7 +87,7 @@ def set_unified_attribute_configurations(
     attribute_role: str = "",
     is_numeric: bool = False,
     override: bool = False,
-) -> None:
+) -> AttributeConfiguration:
     """
     Enables machine learning on a new unified attribute according to the specified configuration
 
@@ -147,7 +151,7 @@ def set_unified_attribute_configurations(
             .with_tokenizer(tokenizer)
             .with_numeric_field_resolution([])
         )
-    project.attribute_configurations().create(attr_conf_spec.to_dict())
+    return project.attribute_configurations().create(attr_conf_spec.to_dict())
 
 
 def map_attribute(
