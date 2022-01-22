@@ -4,39 +4,41 @@ import logging
 import pandas as pd
 import requests
 
-from typing import Dict, Any
+from typing import Any, Dict, Optional
 from tamr_unify_client.project.attribute_mapping.resource import AttributeMappingSpec
 
 import tamr_toolbox as tbox
-from tamr_toolbox.project.schema_mapping import schema
-
-# Uncomment for bootstrapping categories at a specific taxonomy tier
-# from tamr_toolbox.project.categorization import metrics
-
+from tamr_toolbox.project.categorization import metrics
 
 LOGGER = logging.getLogger(__name__)
 
-CATEGORY_ATTRIBUTE_NAME = "Category Name"
-FULL_PATH_LIST_NAME = "Full Path List"
-FULL_PATH_STR_NAME = "Full Path"
-COLUMN_NAMES = [FULL_PATH_STR_NAME, FULL_PATH_LIST_NAME]
-PK_NAME = "Primary Key"
+# name of existing unified attribute to be compared against category names
+UNIFIED_ATTRIBUTE_NAME = "description"
 
 
-def main(*, instance_connection_info: Dict[str, Any], categorization_project_id: str) -> None:
-    """
-    Bootstraps the model for a categorization projcets by adding the taxonomy as a separate source
-    with training labels
+def main(
+    *,
+    instance_connection_info: Dict[str, Any],
+    categorization_project_id: str,
+    unified_attribute_name: str,
+    category_tier: Optional[int] = None,
+) -> None:
+    """Bootstraps the model for a categorization projcets by adding the taxonomy as a separate
+    source with training labels
 
     Args:
         instance_connection_info: Information for connecting to Tamr (host, port, username etc)
         categorization_project_id: The id of the target categorization project
+        unified_attribute_name: The unified attribute to map the category names onto
+        category_tier: Which tier of the taxonomy to confine labels to. Use -1 for leaf nodes.
+            If not passed, all categories at all tiers will be used.
 
-    Returns: Boolean indicating whether boostrap was successful or not
+    Returns:
+        Boolean indicating whether boostrap was successful or not
 
     Raises:
         TypeError: retrieved project is not a categorization project
-
+        ValueError: retrieved project does not have an attribute of the specified name
     """
 
     # Create the tamr client
@@ -46,23 +48,12 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
     project = tamr_client.projects.by_resource_id(categorization_project_id).as_categorization()
     LOGGER.info(f"Retrieved project with name: {project.name}")
 
-    # Get the project taxonomy
+    # Validate dataset and attribute names
+    # Confirm the target unified attribute exists
     try:
-        project.taxonomy()
-    except requests.exceptions.RequestException:
-        no_taxonomy_error = f"Project {project.name} is not associated with any taxonomy yet."
-        raise RuntimeError(no_taxonomy_error)
-    LOGGER.info(f"Retrieved project taxonomy with name: {project.taxonomy().name}")
-
-    # Bootstrap all available categories
-    categories = project.taxonomy().categories()
-    category_list = []
-    for category in categories:
-        category_list.append(category.path)
-    # For bootstrapping at a specific tier = -1 (leaf), 1, 2, ... use the existing function
-    # category_set = metrics._get_categories_at_tier(project=project, tier=1)
-    # category_list = [category.split("|") for category in category_set]
-    category_list.sort()
+        project.attributes.by_name(unified_attribute_name)
+    except requests.exceptions.HTTPError:
+        raise RuntimeError(f"Project {project.name} has no attribute {unified_attribute_name}.")
 
     # Create a dataset with taxonomy categories
     dataset_name = f"{project.unified_dataset().name}_taxonomy_bootstrap_dataset"
@@ -79,20 +70,36 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
         LOGGER.error(dataset_exists_error)
         raise RuntimeError(dataset_exists_error)
 
+    # Proceed with dataset creation
+    # Get the project taxonomy
+    try:
+        project.taxonomy()
+    except requests.exceptions.RequestException:
+        raise RuntimeError(f"Project {project.name} is not associated with any taxonomy yet.")
+    LOGGER.info(f"Retrieved project taxonomy with name: {project.taxonomy().name}")
+
+    # Bootstrap all available categories
+    categories = project.taxonomy().categories()
+    if category_tier is None:
+        category_list = [category.path for category in categories]
+    else:
+        category_set = metrics._get_categories_at_tier(project=project, tier=category_tier)
+        category_list = [category.split("|") for category in category_set]
+        category_list.sort()
+
     # Create a dictionary of full path between string and list (used as label path)
     taxonomy_dict = {", ".join(category): category for category in category_list}
 
     # Create a dataframe
-    df = pd.DataFrame(list(taxonomy_dict.items()), columns=COLUMN_NAMES)
+    df = pd.DataFrame(list(taxonomy_dict.items()), columns=["Category Path", "Category Path List"])
 
-    # Add category data and hash for tamr_id
-    df[CATEGORY_ATTRIBUTE_NAME] = df[FULL_PATH_LIST_NAME].apply(lambda x: x[-1])
-    df[PK_NAME] = df[FULL_PATH_STR_NAME]
-    df.drop(FULL_PATH_LIST_NAME, axis=1, inplace=True)
+    # Add category data
+    df["Category Name"] = df["Category Path List"].apply(lambda x: x[-1])
+    df.drop("Category Path List", axis=1, inplace=True)
 
     # Create a dataset in Tamr
     taxonomy_dataset = project.client.datasets.create_from_dataframe(
-        df, primary_key_name=PK_NAME, dataset_name=dataset_name
+        df, primary_key_name="Category Path", dataset_name=dataset_name
     )
     LOGGER.info(f"Created a dataset in Tamr with name: {taxonomy_dataset.name}")
 
@@ -100,51 +107,38 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
     project.add_input_dataset(taxonomy_dataset)
     LOGGER.info(f"Added {taxonomy_dataset.name} to project {project.name}")
 
-    # Create a unified attribute to map taxonomy categories
-    unified_attribute_name = "Taxonomy Categories"
-    schema.create_unified_attribute(project, unified_attribute_name=unified_attribute_name)
-
-    # Set ML configuration for the newly created unified attribute
-    schema.set_unified_attribute_configurations(
-        project,
-        unified_attribute_name=unified_attribute_name,
-        similarity_function="COSINE",
-        tokenizer="DEFAULT",
-        attribute_role="",
-        is_numeric=False,
-    )
-    LOGGER.info(f"Created a unified attribute {unified_attribute_name}")
-
     # Map category name attribute to new unified attribute
     attr_mapping_spec = (
         AttributeMappingSpec.new()
         .with_input_dataset_name(dataset_name)
-        .with_input_attribute_name(CATEGORY_ATTRIBUTE_NAME)
+        .with_input_attribute_name("Category Name")
         .with_unified_dataset_name(project.unified_dataset().name)
         .with_unified_attribute_name(unified_attribute_name)
     )
     project.attribute_mappings().create(attr_mapping_spec.to_dict())
     LOGGER.info(
-        f"Created mapping from source attribute {CATEGORY_ATTRIBUTE_NAME} to unified attribute "
+        f"Created mapping from source attribute 'Category Name' to unified attribute "
         f"{unified_attribute_name}"
     )
 
+    # Create transformation ensuring dataset tamr_id values match categorization path
+    all_tx = tbox.project.schema_mapping.transformations.get_all(project)
+    new_tx = (
+        f"SELECT *, CASE WHEN origin_source_name = '{dataset_name}' THEN "
+        f"concat(origin_source_name, '_', origin_entity_id) ELSE tamr_id END AS tamr_id;"
+    )
+    # Append so that it is applied after any other possibly conflicting transformations
+    all_tx.unified_scope.append(new_tx)
+    tbox.project.schema_mapping.transformations.set_all(project, all_tx)
+
     LOGGER.info("Updating the unified dataset...")
     tbox.project.categorization.jobs.update_unified_dataset(project)
-
-    # Get unified dataset records from bootstrap source dataset
-    unified_dataset_records = (
-        r for r in project.unified_dataset().records() if r["origin_source_name"] == dataset_name
-    )
-    tamr_id_map = {
-        record["origin_entity_id"]: record["tamr_id"] for record in unified_dataset_records
-    }
 
     # Prepare and post labels
     labels_to_bootstrap = [
         {
             "action": "CREATE",
-            "recordId": tamr_id_map[key],
+            "recordId": f"{dataset_name}_{key}",
             "record": {"verified": {"category": {"path": path}, "reason": "Taxonomy bootstrap"}},
         }
         for key, path in taxonomy_dict.items()
@@ -175,9 +169,11 @@ if __name__ == "__main__":
 
     # Use the configuration to create a global logger
     LOGGER = tbox.utils.logger.create(__name__, log_directory=CONFIG["logging_dir"])
+    tbox.utils.logger.enable_toolbox_logging(log_directory=CONFIG["logging_dir"])
 
     # Run the main function
     main(
         instance_connection_info=CONFIG["my_tamr_instance"],
         categorization_project_id=CONFIG["projects"]["my_categorization_project"],
+        unified_attribute_name=UNIFIED_ATTRIBUTE_NAME,
     )
