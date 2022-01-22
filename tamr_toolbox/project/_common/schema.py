@@ -57,7 +57,7 @@ def create_unified_attribute(project: Project, *, unified_attribute_name: str) -
         unified_attribute_name: Name of the unified attribute
 
     Returns:
-        True if the attribute is created successfully
+        The created Attribute
 
     Raises:
         AttributeError if the unified attribute already exists
@@ -98,10 +98,10 @@ def set_unified_attribute_configuration(
         project: Project containing the unified attribute
         unified_attribute_name: Name of the attribute on which to enable machine learning
         attribute_role: Optional string to describe the role of the attribute
-        override: deletes existing configuration and updates if set to True
+        override: Deletes existing configuration and updates if set to True
 
     Returns:
-        True if attribute is successfully enabled for ML
+        The created AttributeConfiguration
 
     Raises:
         AttributeError if the attribute name is not found
@@ -173,7 +173,7 @@ def map_attribute(
         project: The project in which to perform the mapping
 
     Returns:
-        AttributeMapping that was created
+        The created AttributeMapping
 
     Raises:
         ValueError: if input variables `source_attribute_name` or `source_dataset_name` or
