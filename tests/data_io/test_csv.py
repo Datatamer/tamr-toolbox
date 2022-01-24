@@ -160,7 +160,7 @@ def test_dataset_export_csv_delim_error():
     dataset = client.datasets.by_resource_id(sm_dataset_id)
 
     with tempfile.TemporaryDirectory() as tempdir:
-        filepath = Path(tempdir) / "tests/data_io/test_taxonomy_invalid_delim.csv"
+        filepath = Path(tempdir) / "test_taxonomy_invalid_delim.csv"
 
         with pytest.raises(ValueError):
             csv.from_dataset(dataset, filepath, csv_delimiter="|", flatten_delimiter="|")
@@ -173,20 +173,17 @@ def test_dataset_overwrite_file(overwrite: bool):
     sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
     dataset = client.datasets.by_resource_id(sm_dataset_id)
 
-    filepath = os.path.join(
-        get_toolbox_root_dir(), f"tests/data_io/test_dataset_overwrite_{overwrite}.csv"
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        filepath = Path(tempdir) / "test_dataset_overwrite_{overwrite}.csv"
 
-    f = open(filepath, "w")
-    f.write("Temporary file")
-    f.close()
+        f = open(filepath, "w")
+        f.write("Temporary file")
+        f.close()
 
-    with pytest.raises(FileExistsError):
-        csv.from_dataset(
-            dataset, filepath, csv_delimiter=",", flatten_delimiter="|", overwrite=overwrite
-        )
-
-    os.remove(filepath)
+        with pytest.raises(FileExistsError):
+            csv.from_dataset(
+                dataset, filepath, csv_delimiter=",", flatten_delimiter="|", overwrite=overwrite
+            )
 
 
 @pytest.mark.parametrize(
