@@ -5,11 +5,7 @@ from tamr_unify_client.project.attribute_mapping.resource import (
 )
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.dataset.resource import Dataset
-from tamr_unify_client.attribute.resource import Attribute
-from tamr_unify_client.project.attribute_configuration.resource import (
-    AttributeConfiguration,
-    AttributeConfigurationSpec,
-)
+
 from typing import List
 import logging
 from json import JSONDecodeError
@@ -46,113 +42,6 @@ def _get_mapping_spec_for_ud(
         .with_relative_unified_attribute_id("")
     )
     return spec
-
-
-def create_unified_attribute(project: Project, *, unified_attribute_name: str) -> Attribute:
-    """
-    Adds a unified attribute to a project
-
-    Args:
-        project: Tamr project in which to create a unified attribute
-        unified_attribute_name: Name of the unified attribute
-
-    Returns:
-        The created Attribute
-
-    Raises:
-        AttributeError if the unified attribute already exists
-    """
-    if unified_attribute_name in [x.name for x in project.attributes]:
-        error_message = (
-            f"A unified attribute with name {unified_attribute_name} already exists in "
-            f"{project.name}. Please try again using a new name for the attribute."
-        )
-        LOGGER.error(error_message)
-        raise AttributeError(error_message)
-
-    # Create a new attribute in the project unified dataset
-    attr_spec = {
-        "name": unified_attribute_name,
-        "type": {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-    }
-    return project.attributes.create(attr_spec)
-
-
-def set_unified_attribute_configuration(
-    project: Project,
-    *,
-    unified_attribute_name: str,
-    similarity_function: str = "COSINE",
-    tokenizer: str = "DEFAULT",
-    attribute_role: str = "",
-    is_numeric: bool = False,
-    override: bool = False,
-) -> AttributeConfiguration:
-    """
-    Enables machine learning on a new unified attribute according to the specified configuration
-
-    Args:
-        is_numeric: Boolean indicating whether the attribute is numeric (True) or not (False)
-        similarity_function: Similarity function for the unified attribute
-        tokenizer: Tokenizer for the unified attribute
-        project: Project containing the unified attribute
-        unified_attribute_name: Name of the attribute on which to enable machine learning
-        attribute_role: Optional string to describe the role of the attribute
-        override: Deletes existing configuration and updates if set to True
-
-    Returns:
-        The created AttributeConfiguration
-
-    Raises:
-        AttributeError if the attribute name is not found
-
-    """
-    if unified_attribute_name not in [x.name for x in project.unified_dataset().attributes]:
-        error_msg = (
-            f"Attribute {unified_attribute_name} not found in {project.unified_dataset().name}."
-        )
-        LOGGER.error(error_msg)
-        raise AttributeError(error_msg)
-
-    attr_conf_spec = (
-        AttributeConfigurationSpec.new()
-        .with_attribute_role(attribute_role)
-        .with_attribute_name(unified_attribute_name)
-        .with_enabled_for_ml(True)
-    )
-    # Check if the attribute is numeric
-    if is_numeric and project.type == "CATEGORIZATION" and tokenizer != "":
-        LOGGER.info(
-            "Attribute is numeric for a categorization project. Similarity function will be set "
-            "to COSINE and tokenizer value will be ignored."
-        )
-        attr_conf_spec = (
-            attr_conf_spec.with_similarity_function("COSINE")
-            .with_tokenizer("")
-            .with_numeric_field_resolution([10, 100])
-        )
-    else:
-        attr_conf_spec = (
-            attr_conf_spec.with_similarity_function(similarity_function)
-            .with_tokenizer(tokenizer)
-            .with_numeric_field_resolution([])
-        )
-
-    # Check if the attribute has an associated configuration already
-    for attr_conf in project.attribute_configurations():
-        if attr_conf.attribute_name == unified_attribute_name:
-            if override:
-                attr_conf.delete()
-                break
-            else:
-                attribute_configuration_exists_error = (
-                    f"Attribute Configuration exists for {unified_attribute_name}. "
-                    "Try override=True to update the current configuration with the new one."
-                )
-                LOGGER.error(attribute_configuration_exists_error)
-                raise RuntimeError(attribute_configuration_exists_error)
-
-    return project.attribute_configurations().create(attr_conf_spec.to_dict())
 
 
 def map_attribute(
