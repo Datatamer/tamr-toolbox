@@ -82,19 +82,18 @@ def poll_llm_status(match_client: Client, *, project_name: str, num_tries: int =
     return queryable
 
 
-
 def llm_query(
     match_client: Client,
     *,
     project_name: str,
     records: List[JsonDict],
-    type: Literal['records', 'clusters'],
-    batch_size: int = 1000, 
+    type: Literal["records", "clusters"],
+    batch_size: int = 1000,
     min_match_prob: Optional[float] = None,
     max_num_matches: Optional[int] = None,
 ) -> Dict[int, List[JsonDict]]:
     """
-    Find the best matching clusters or records for each supplied record. Returns empty list if 
+    Find the best matching clusters or records for each supplied record. Returns empty list if
     response is null.
 
     Args:
@@ -104,9 +103,9 @@ def llm_query(
         type: whether to pull record or cluster matches
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
             timeouts), Default 1000
-        min_match_prob: if set, only matches with probability above minimum will be returned, 
+        min_match_prob: if set, only matches with probability above minimum will be returned,
             Default None
-        max_num_matches: if set, at most max_num_matches will be returned for each input record in 
+        max_num_matches: if set, at most max_num_matches will be returned for each input record in
             records, Default None
     Returns:
         Dict keyed by integers (the indices of the records), with value a list containing closest
@@ -119,13 +118,13 @@ def llm_query(
 
     url = f"/api/v1/projects/{project_name}:match?type={type}"
 
-    if type == 'records' :
-        record_key = 'queryRecordId'
-    elif type == 'clusters':
-        record_key = 'entityId'
-        prob_key = 'avgMatchProb'
+    if type == "records":
+        record_key = "queryRecordId"
+    elif type == "clusters":
+        record_key = "entityId"
+        prob_key = "avgMatchProb"
     else:
-        raise ValueError(f'Unsupported match type {type}.')
+        raise ValueError(f"Unsupported match type {type}.")
 
     for j in range(len(records) // batch_size + 1):  # split into batches
         json_records = [
@@ -138,7 +137,7 @@ def llm_query(
             if response.content == b"":  # handle null response
                 continue
 
-            # If data was found, decode, identify source record, and add match to corresponding 
+            # If data was found, decode, identify source record, and add match to corresponding
             # index in the list of lists of results
             for resp_block in response.content.decode("utf-8").split("\n"):
                 if resp_block:
@@ -148,9 +147,9 @@ def llm_query(
                     if max_num_matches and len(result_dict[index]) >= max_num_matches:
                         continue
                     if min_match_prob:
-                        prob = result[prob_key] if type == 'clusters' else get_record_prob(result)
+                        prob = result[prob_key] if type == "clusters" else get_record_prob(result)
                         if prob < min_match_prob:
-                            continue 
+                            continue
 
                     result_dict[index].append(result)
 
@@ -163,19 +162,18 @@ def llm_query(
 
 
 def get_record_prob(input: JsonDict) -> float:
-  """Parses dictionary returned from a LLM records query. If match, returns confidence of match. If
-  non-match, returns 1 - confidence.
-  
-  Args:
-      input: Dictionary which contains keys 'suggestedLabel' and 'suggestedLabelConfidence'
-  Returns:
-      confidence that input _is_ a match
-  
-  """
-    
-  prob = input['suggestedLabelConfidence']
+    """Parses dictionary returned from a LLM records query. If match, returns confidence of match.
+    If non-match, returns 1 - confidence.
 
-  if input['suggestedLabel'] == 'MATCH':
-      return prob
-  else:
-      return 1 - prob
+    Args:
+        input: Dictionary which contains keys 'suggestedLabel' and 'suggestedLabelConfidence'
+    Returns:
+        confidence that input _is_ a match
+    """
+
+    prob = input["suggestedLabelConfidence"]
+
+    if input["suggestedLabel"] == "MATCH":
+        return prob
+    else:
+        return 1 - prob
