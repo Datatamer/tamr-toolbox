@@ -78,3 +78,28 @@ def test_failure_dict_return():
     result = dataframe.validate(df, raise_error=False, require_present_columns=["produce"])
     assert not result.passed
     assert "produce" in result.details["failed_present_columns"]
+
+
+def test_check_custom():
+    # check custom entry for dataframe validation function
+
+    #   checks percentage failed -> to-do: [100%, 50%, 0%] pass df
+    #   checking for non values -- (check each value  + transform value)
+    # checks passed value
+
+    def check_for_none_values(value):
+            if value is None:
+                return False
+            else:
+                return True
+
+    df_full = _get_test_dataframe()
+    df_semi = pd.DataFrame({"primary_key": ["1", "A", None],
+                            "letter": ["2", None, None],
+                            "produce": [None, None, None]})
+    df_fail = pd.DataFrame({"primary_key": [None, None, None],
+                            "letter": [None, None, None],
+                            "produce": [None, None, None]})
+
+    failed = dataframe.validate(df_full, custom_check_columns=[check_for_none_values, ["primary_key"]])
+

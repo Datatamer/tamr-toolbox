@@ -6,6 +6,7 @@ from typing import Optional, List
 from collections import OrderedDict, defaultdict
 from functools import partial
 
+import pandas as pd
 from tamr_unify_client.dataset.resource import Dataset
 
 from tamr_toolbox.data_io import common
@@ -317,6 +318,34 @@ def _check_nonnull_columns(
     return ValidationCheck(passed, failed_checks_dict)
 
 
+def _check_custom(df: pd.DataFrame, column_to_check: str, check_function) -> ValidationCheck:
+    """
+
+    Args:
+        df:
+        column_to_check:
+        check_function:
+
+    Returns:
+
+    """
+    # to do: run df.apply on the column and return
+    # assume if all values are True then pass, else fail
+    # dictionary to include is {f"percent_failed {check_function.__name__} check": percent false}
+
+    failed_checks_dict = defaultdict(list)
+
+    df[column_to_check].apply(check_function, axis=1)
+
+    num_passed, num_failed = df[column_to_check].value_counts()
+    if num_failed > 0:
+        LOGGER.warning(f"column {column_to_check} failed custom check {check_function.__name__}")
+        failed_checks_dict[f"failed custom check {check_function.__name__}"].append(column_to_check)
+
+    passed = len(failed_checks_dict) == 0
+    return ValidationCheck(passed, failed_checks_dict)
+
+
 def validate(
     df: "pandas.DataFrame",
     *,
@@ -324,6 +353,8 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
+    custom_check_columns = None,
+
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
@@ -372,7 +403,18 @@ def validate(
         _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
     )
 
-    # convert to dict for printing/return
+    failed_checks_dict.update(
+        _check_custom(df_profile, check_function=custom_check_columns[0], column_to_check=custom_check_columns[1]).details
+    )
+
+# ------------------------------------------------------------------------------------------------------------------- #
+# | failed_checks_dict -> runs _check_custom w/ parameters given || parameters split from initial entry into validate
+# |
+# | to-do :     add percentage to failed ~ JSON failed_dict class
+# |             create test
+# |             add cols and rows
+# -------------------------------------------------------------------------------------------------------------------- #
+
     failed_checks_dict = dict(failed_checks_dict)
     passed = len(failed_checks_dict) == 0
     if not passed and raise_error:
