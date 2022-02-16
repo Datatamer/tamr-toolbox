@@ -18,10 +18,8 @@ LOGGER = logging.getLogger(__name__)
 def health_check(client: Client) -> bool:
     """
     Query the health check API and check if each service is healthy (returns True)
-
     Args:
         client: the tamr client
-
     Returns:
         True if all services are healthy, False if unhealthy
     """
@@ -50,7 +48,6 @@ def create(
     enforce_healthy: bool = False,
 ) -> Client:
     """Creates a Tamr client from the provided configuration values
-
     Args:
         username: The username to log access Tamr as
         password: the password for the user
@@ -59,7 +56,6 @@ def create(
         protocol: https or http
         store_auth_cookie: If true will allow Tamr authentication cookie to be stored and reused
         enforce_healthy: If true will enforce a healthy state upon creation
-
     Returns:
         Tamr client
     """
@@ -84,13 +80,11 @@ def get_with_connection_retry(
 ) -> requests.Response:
     """Will handle exceptions when attempting to connect to the Tamr API.
         This is used to handle connection issues when Tamr restarts due to a restore.
-
     Args:
         client: A Tamr client object
         api_endpoint: Tamr API endpoint
         timeout_seconds: Amount of time before a timeout error is thrown. Default is 600 seconds
         sleep_seconds: Amount of time in between attempts to connect to Tamr.
-
     Returns:
         A response object from API request."""
     started = now()
@@ -114,7 +108,6 @@ def poll_endpoint(
     connection_retry_timeout_seconds: int = 600,
 ) -> requests.Response:
     """Waits until job has a state of Canceled, Succeeded, or Failed.
-
     Args:
         client: A Tamr client object
         api_endpoint: Tamr API endpoint
@@ -122,7 +115,6 @@ def poll_endpoint(
         polling_timeout_seconds: Amount of time before a timeout error is thrown.
         connection_retry_timeout_seconds: Amount of time before timeout error is thrown
             during connection retry.
-
     Returns:
         A response object from API request.
         """
@@ -152,13 +144,10 @@ def poll_endpoint(
 
 def _from_response(response: Response) -> Client:
     """Creates a Tamr Client based on a previous api response
-
     Args:
         response: The response to base the Client on
-
     Returns:
         New Tamr Client based on the previous response
-
     """
     request = response.request
     url_matcher = re.match(r"(https?)://(.*):(\d{4})(.*)", request.url)
