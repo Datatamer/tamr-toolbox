@@ -71,7 +71,6 @@ def test_nonnull_column_failure():
     with pytest.raises(ValueError):
         dataframe.validate(df, require_nonnull_columns=["produce"])
 
-
 def test_failure_dict_return():
     df = _get_test_dataframe()
     df = df[["primary_key", "letter"]]
@@ -88,18 +87,15 @@ def test_check_custom():
     # checks passed value
 
     def check_for_none_values(value):
-            if value is None:
+            if value == 2:
                 return False
             else:
                 return True
 
-    df_full = _get_test_dataframe()
-    df_semi = pd.DataFrame({"primary_key": ["1", "A", None],
-                            "letter": ["2", None, None],
-                            "produce": [None, None, None]})
-    df_fail = pd.DataFrame({"primary_key": [None, None, None],
-                            "letter": [None, None, None],
-                            "produce": [None, None, None]})
+    df_check = pd.DataFrame({"a": [1, 1, 2],
+                             "b": [1, 1, 1],
+                             "c": [2, 2, 2]})
 
-    failed = dataframe.validate(df_full, custom_check_columns=[check_for_none_values, ["primary_key"]])
+    with pytest.raises(ValueError):
+        dataframe.validate(df_check, custom_check_columns=[check_for_none_values, "a"])
 

@@ -75,7 +75,9 @@ def flatten(
         flattened DataFrame
     """
     # apply a series-wise function that can operate on specific columns of the dataframe
-    series_func = partial(_flatten_list_series, delimiter=delimiter, force=force, columns=columns)
+    series_func = partial(
+        _flatten_list_series, delimiter=delimiter, force=force, columns=columns
+    )
     return df.apply(series_func)
 
 
@@ -113,7 +115,9 @@ def from_dataset(
     """
     # Validate arguments
     if force_flatten and flatten_delimiter is None:
-        raise ValueError("`force_flatten` is True but no `flatten_delimiter` is specified.")
+        raise ValueError(
+            "`force_flatten` is True but no `flatten_delimiter` is specified."
+        )
 
     # This function requires pandas, an optional dependency
     import pandas
@@ -142,7 +146,10 @@ def from_dataset(
             if attr.name not in flatten_columns:
                 continue
             attr_type = attr.spec().to_dict()["type"]
-            if attr_type["baseType"] == "ARRAY" and attr_type["innerType"]["baseType"] != "STRING":
+            if (
+                attr_type["baseType"] == "ARRAY"
+                and attr_type["innerType"]["baseType"] != "STRING"
+            ):
                 if force_flatten:
                     LOGGER.info(
                         f"Will force attribute to string: {attr.name}, with type: {attr_type}"
@@ -170,7 +177,9 @@ def from_dataset(
     # otherwise set as _identity
     func = None
     if flatten_delimiter is not None:
-        func = partial(common._flatten_list, delimiter=flatten_delimiter, force=force_flatten)
+        func = partial(
+            common._flatten_list, delimiter=flatten_delimiter, force=force_flatten
+        )
     df = pandas.DataFrame.from_records(
         common._yield_records(
             dataset, func=func, columns=columns, flatten_columns=flatten_columns
@@ -257,7 +266,9 @@ def _check_present_columns(
 
 
 def _check_unique_columns(
-    df_profile: "pandas.DataFrame", *, require_unique_columns: Optional[List[str]] = None
+    df_profile: "pandas.DataFrame",
+    *,
+    require_unique_columns: Optional[List[str]] = None,
 ) -> ValidationCheck:
     """
     Checks that a specified list of columns in a DataFrame have all unique values
@@ -290,7 +301,9 @@ def _check_unique_columns(
 
 
 def _check_nonnull_columns(
-    df_profile: "pandas.DataFrame", *, require_nonnull_columns: Optional[List[str]] = None
+    df_profile: "pandas.DataFrame",
+    *,
+    require_nonnull_columns: Optional[List[str]] = None,
 ) -> ValidationCheck:
     """
     Checks that a specified list of columns in a DataFrame have all non-null values
@@ -318,7 +331,9 @@ def _check_nonnull_columns(
     return ValidationCheck(passed, failed_checks_dict)
 
 
-def _check_custom(df: pd.DataFrame, column_to_check: str, check_function) -> ValidationCheck:
+def _check_custom(
+    df: pd.DataFrame, column_to_check: str, check_function
+) -> ValidationCheck:
     """
 
     Args:
@@ -335,12 +350,16 @@ def _check_custom(df: pd.DataFrame, column_to_check: str, check_function) -> Val
 
     failed_checks_dict = defaultdict(list)
 
-    df[column_to_check].apply(check_function, axis=1)
+    df[column_to_check].apply(check_function)
 
     num_passed, num_failed = df[column_to_check].value_counts()
     if num_failed > 0:
-        LOGGER.warning(f"column {column_to_check} failed custom check {check_function.__name__}")
-        failed_checks_dict[f"failed custom check {check_function.__name__}"].append(column_to_check)
+        LOGGER.warning(
+            f"column {column_to_check} failed custom check {check_function.__name__}"
+        )
+        failed_checks_dict[f"failed custom check {check_function.__name__}"].append(
+            column_to_check
+        )
 
     passed = len(failed_checks_dict) == 0
     return ValidationCheck(passed, failed_checks_dict)
@@ -353,8 +372,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_check_columns = None,
-
+    custom_check_columns=None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
@@ -390,30 +408,41 @@ def validate(
 
     # check for present columns
     failed_checks_dict.update(
-        _check_present_columns(df, require_present_columns=require_present_columns).details
+        _check_present_columns(
+            df, require_present_columns=require_present_columns
+        ).details
     )
 
     # check for unique columns
     failed_checks_dict.update(
-        _check_unique_columns(df_profile, require_unique_columns=require_unique_columns).details
+        _check_unique_columns(
+            df_profile, require_unique_columns=require_unique_columns
+        ).details
     )
 
     # check for nonnull columns
     failed_checks_dict.update(
-        _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
+        _check_nonnull_columns(
+            df_profile, require_nonnull_columns=require_nonnull_columns
+        ).details
     )
 
-    failed_checks_dict.update(
-        _check_custom(df_profile, check_function=custom_check_columns[0], column_to_check=custom_check_columns[1]).details
-    )
+    if custom_check_columns is not None:
+        failed_checks_dict.update(
+            _check_custom(
+                df,
+                check_function=custom_check_columns[0],
+                column_to_check=custom_check_columns[1],
+            ).details
+        )
 
-# ------------------------------------------------------------------------------------------------------------------- #
-# | failed_checks_dict -> runs _check_custom w/ parameters given || parameters split from initial entry into validate
-# |
-# | to-do :     add percentage to failed ~ JSON failed_dict class
-# |             create test
-# |             add cols and rows
-# -------------------------------------------------------------------------------------------------------------------- #
+    # -----------------------------------------------------------------------------------------------------------------
+    #| failed_checks_dict -> runs _check_custom w/ parameters given || parameters split from initial entry into validate
+    #|
+    #| to-do :     add percentage to failed ~ JSON failed_dict class
+    #|             create test
+    #|             add cols and rows
+    # ------------------------------------------------------------------------------------------------------------------
 
     failed_checks_dict = dict(failed_checks_dict)
     passed = len(failed_checks_dict) == 0
