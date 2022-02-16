@@ -69,3 +69,12 @@ jobs:
           path: tamr_toolbox_all_dependencies.zip
           name: ${{ steps.get_name.outputs.file_name }}_all_dependencies.zip
 
+      - name: Create wheel dir - pip
+        run: pip wheel --wheel-dir ./pip "pip==$(pip --version | cut -d ' ' -f 2)"
+      - name: Zip wheel dir - pip
+        run: zip -r pip.zip pip
+      - name: Upload wheel dir - pip
+        uses: actions/upload-artifact@v2
+        with:
+          path: pip.zip
+          name: ${{ steps.get_name.outputs.file_name }}_pip.zip
