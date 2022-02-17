@@ -53,7 +53,9 @@ def test_required_column_failure():
     # drop a column
     df = df[["primary_key", "letter"]]
     with pytest.raises(ValueError):
-        dataframe.validate(df, require_present_columns=["primary_key", "letter", "produce"])
+        dataframe.validate(
+            df, require_present_columns=["primary_key", "letter", "produce"]
+        )
 
 
 def test_unique_column_failure():
@@ -71,31 +73,28 @@ def test_nonnull_column_failure():
     with pytest.raises(ValueError):
         dataframe.validate(df, require_nonnull_columns=["produce"])
 
+
 def test_failure_dict_return():
     df = _get_test_dataframe()
     df = df[["primary_key", "letter"]]
-    result = dataframe.validate(df, raise_error=False, require_present_columns=["produce"])
+    result = dataframe.validate(
+        df, raise_error=False, require_present_columns=["produce"]
+    )
     assert not result.passed
     assert "produce" in result.details["failed_present_columns"]
 
 
 def test_check_custom():
-    # check custom entry for dataframe validation function
+    def check_for_value(value):
+        if value == 2:
+            return False
+        else:
+            return True
 
-    #   checks percentage failed -> to-do: [100%, 50%, 0%] pass df
-    #   checking for non values -- (check each value  + transform value)
-    # checks passed value
-
-    def check_for_none_values(value):
-            if value == 2:
-                return False
-            else:
-                return True
-
-    df_check = pd.DataFrame({"a": [1, 1, 2],
-                             "b": [1, 1, 1],
-                             "c": [2, 2, 2]})
-
+    df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [1, 1, 2, 2], "c": [2, 2, 2, 2]})
+    test_return = dataframe.validate(
+        df_check, custom_check_columns=[check_for_value, ["a"]]
+    )
+    print(test_return)
     with pytest.raises(ValueError):
-        dataframe.validate(df_check, custom_check_columns=[check_for_none_values, "a"])
-
+        dataframe.validate(df_check, custom_check_columns=[check_for_value, ["b", "c"]])
