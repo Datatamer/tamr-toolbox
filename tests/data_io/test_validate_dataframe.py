@@ -53,9 +53,7 @@ def test_required_column_failure():
     # drop a column
     df = df[["primary_key", "letter"]]
     with pytest.raises(ValueError):
-        dataframe.validate(
-            df, require_present_columns=["primary_key", "letter", "produce"]
-        )
+        dataframe.validate(df, require_present_columns=["primary_key", "letter", "produce"])
 
 
 def test_unique_column_failure():
@@ -77,9 +75,7 @@ def test_nonnull_column_failure():
 def test_failure_dict_return():
     df = _get_test_dataframe()
     df = df[["primary_key", "letter"]]
-    result = dataframe.validate(
-        df, raise_error=False, require_present_columns=["produce"]
-    )
+    result = dataframe.validate(df, raise_error=False, require_present_columns=["produce"])
     assert not result.passed
     assert "produce" in result.details["failed_present_columns"]
 
@@ -92,9 +88,7 @@ def test_check_custom():
             return True
 
     df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [1, 1, 2, 2], "c": [2, 2, 2, 2]})
-    test_return = dataframe.validate(
-        df_check, custom_check_columns=[check_for_value, ["a"]]
-    )
+    test_return = dataframe.validate(df_check, custom_check_columns=[check_for_value, ["a"]])
     print(test_return)
     with pytest.raises(ValueError):
         dataframe.validate(df_check, custom_check_columns=[check_for_value, ["b", "c"]])

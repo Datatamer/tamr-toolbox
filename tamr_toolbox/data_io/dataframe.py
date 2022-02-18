@@ -1,4 +1,5 @@
 """Tasks related to moving data in or out of Tamr using pandas.DataFrames"""
+import builtins
 import os
 import logging
 
@@ -75,9 +76,7 @@ def flatten(
         flattened DataFrame
     """
     # apply a series-wise function that can operate on specific columns of the dataframe
-    series_func = partial(
-        _flatten_list_series, delimiter=delimiter, force=force, columns=columns
-    )
+    series_func = partial(_flatten_list_series, delimiter=delimiter, force=force, columns=columns)
     return df.apply(series_func)
 
 
@@ -115,9 +114,7 @@ def from_dataset(
     """
     # Validate arguments
     if force_flatten and flatten_delimiter is None:
-        raise ValueError(
-            "`force_flatten` is True but no `flatten_delimiter` is specified."
-        )
+        raise ValueError("`force_flatten` is True but no `flatten_delimiter` is specified.")
 
     # This function requires pandas, an optional dependency
     import pandas
@@ -146,10 +143,7 @@ def from_dataset(
             if attr.name not in flatten_columns:
                 continue
             attr_type = attr.spec().to_dict()["type"]
-            if (
-                attr_type["baseType"] == "ARRAY"
-                and attr_type["innerType"]["baseType"] != "STRING"
-            ):
+            if attr_type["baseType"] == "ARRAY" and attr_type["innerType"]["baseType"] != "STRING":
                 if force_flatten:
                     LOGGER.info(
                         f"Will force attribute to string: {attr.name}, with type: {attr_type}"
@@ -177,9 +171,7 @@ def from_dataset(
     # otherwise set as _identity
     func = None
     if flatten_delimiter is not None:
-        func = partial(
-            common._flatten_list, delimiter=flatten_delimiter, force=force_flatten
-        )
+        func = partial(common._flatten_list, delimiter=flatten_delimiter, force=force_flatten)
     df = pandas.DataFrame.from_records(
         common._yield_records(
             dataset, func=func, columns=columns, flatten_columns=flatten_columns
@@ -266,9 +258,7 @@ def _check_present_columns(
 
 
 def _check_unique_columns(
-    df_profile: "pandas.DataFrame",
-    *,
-    require_unique_columns: Optional[List[str]] = None,
+    df_profile: "pandas.DataFrame", *, require_unique_columns: Optional[List[str]] = None,
 ) -> ValidationCheck:
     """
     Checks that a specified list of columns in a DataFrame have all unique values
@@ -301,9 +291,7 @@ def _check_unique_columns(
 
 
 def _check_nonnull_columns(
-    df_profile: "pandas.DataFrame",
-    *,
-    require_nonnull_columns: Optional[List[str]] = None,
+    df_profile: "pandas.DataFrame", *, require_nonnull_columns: Optional[List[str]] = None,
 ) -> ValidationCheck:
     """
     Checks that a specified list of columns in a DataFrame have all non-null values
@@ -335,27 +323,21 @@ def _check_custom(
     df: pd.DataFrame, columns_to_check: Optional[List[str]], check_function
 ) -> ValidationCheck:
     """
-
     Args:
-        df:
-        column_to_check:
-        check_function:
+        df: Dataframe
+        columns_to_check: columns on which check_function will be applied
+        check_function: function applied on columns_to_check
 
     Returns:
-
+        ValidationCheck object, with bool for whether all checks passed and dict of failing columns
     """
-
     failed_checks_dict = defaultdict(list)
 
     df1 = df[columns_to_check].applymap(check_function)
     for col in columns_to_check:
         if not df1[col].all():
-            LOGGER.warning(
-                f"column {col} failed custom check {check_function.__name__}"
-            )
-            failed_checks_dict[f"failed custom check {check_function.__name__}"].append(
-                col
-            )
+            LOGGER.warning(f"column {col} failed custom check {check_function.__name__}")
+            failed_checks_dict[f"failed custom check {check_function.__name__}"].append(col)
 
     passed = len(failed_checks_dict) == 0
     return ValidationCheck(passed, failed_checks_dict)
@@ -368,8 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    # custom_check_columns: list[function,Optional[list[str]]]= None,
-    custom_check_columns=None,
+    custom_check_columns: list[builtins.function,Optional[list[str]]]= None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
@@ -405,23 +386,17 @@ def validate(
 
     # check for present columns
     failed_checks_dict.update(
-        _check_present_columns(
-            df, require_present_columns=require_present_columns
-        ).details
+        _check_present_columns(df, require_present_columns=require_present_columns).details
     )
 
     # check for unique columns
     failed_checks_dict.update(
-        _check_unique_columns(
-            df_profile, require_unique_columns=require_unique_columns
-        ).details
+        _check_unique_columns(df_profile, require_unique_columns=require_unique_columns).details
     )
 
     # check for nonnull columns
     failed_checks_dict.update(
-        _check_nonnull_columns(
-            df_profile, require_nonnull_columns=require_nonnull_columns
-        ).details
+        _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
     )
 
     if custom_check_columns is not None:
