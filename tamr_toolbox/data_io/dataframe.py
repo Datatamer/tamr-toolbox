@@ -332,7 +332,7 @@ def _check_nonnull_columns(
 
 
 def _check_custom(
-    df: pd.DataFrame, columns_to_check: Optional[list[str]], check_function
+    df: pd.DataFrame, columns_to_check: Optional[List[str]], check_function
 ) -> ValidationCheck:
     """
 
