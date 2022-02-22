@@ -2,7 +2,6 @@
 An example script to migrate changes to a dataset from one instance of Tamr to another
 """
 import tamr_toolbox as tbox
-from tamr_toolbox.data_io import manage_dataset
 
 # load example multi config
 my_config = tbox.utils.config.from_yaml("examples/resources/conf/migrate_dataset.config.yaml")
@@ -31,7 +30,7 @@ for ds in datasets:
     tags = source_dataset.tags
 
     # Migrate dataset updates from source to target instance
-    manage_dataset.modify_dataset(
+    tbox.data_io.manage_dataset.modify_dataset(
         client=target_client,
         dataset_name=dataset_name,
         attributes=attributes,

@@ -3,7 +3,6 @@ import argparse
 from typing import Dict, Any, List
 
 import tamr_toolbox as tbox
-from tamr_toolbox.data_io import manage_dataset
 
 
 def main(
@@ -28,7 +27,7 @@ def main(
 
     LOGGER.info(f"Creating dataset: {dataset_name}")
 
-    manage_dataset.create_dataset(
+    tbox.data_io.manage_dataset.create_dataset(
         tamr=tamr_client,
         dataset_name=dataset_name,
         attributes=attributes,
