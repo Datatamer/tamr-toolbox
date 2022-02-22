@@ -88,3 +88,18 @@ Export CSV from taxonomy to a designated filepath
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/data_io/csv/export_from_taxonomy.py
   :language: python
+
+
+
+Manage Dataset
+------------------------------------------------------------------------
+
+Migrate dataset definition changes from a source to target instance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/snippets/data_io/manage_dataset/migrate_dataset_changes.py
+ :language: python
+
+Create a dataset
+~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/scripts/data_io/manage_dataset/create_dataset.py
+ :language: python
