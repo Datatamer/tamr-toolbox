@@ -4,8 +4,6 @@ from typing import List, Optional, Union
 from tamr_unify_client.attribute.resource import Attribute
 from tamr_unify_client.attribute.type import AttributeType
 
-# To Do: Add str as option for pk
-
 DEFAULT_TYPE = AttributeType({"baseType": "ARRAY", "innerType": {"baseType": "STRING"}})
 
 
