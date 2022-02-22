@@ -31,7 +31,7 @@ def create_dataset(
 
     Returns:
         Dataset created in Tamr
-    
+
     Raises:
         requests.HTTPError: If any HTTP error is encountered
         ValueError: trying to alter a unified dataset
@@ -117,7 +117,7 @@ def modify_dataset(
 
     Returns:
         Dataset created in Tamr
-    
+
     Raises:
         requests.HTTPError: If any HTTP error is encountered
         ValueError: trying to alter a unified dataset
@@ -208,11 +208,11 @@ def modify_dataset(
 
 def _same_attribute_type_check(attribute_one: Attribute, attribute_two: Attribute) -> bool:
     """Check if the two Attribute Types match
-    
+
     Args:
         attribute_one: first type
         attribute_two: second type
-    
+
     Return:
         True or False for if the types match
     """
@@ -229,11 +229,11 @@ def _same_attribute_type_check(attribute_one: Attribute, attribute_two: Attribut
 
 def _check_dataset_exists(*, target_instance: Client, dataset: str) -> bool:
     """Check if the dataset exists on target instance
-    
+
     Args:
         target_instance: Tamr python client object for the target instance
         dataset: The dataset name
-    
+
     Return:
         True or False for if the dataset exists in target instance
     """
