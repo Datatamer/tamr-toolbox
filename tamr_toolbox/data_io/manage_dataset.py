@@ -19,22 +19,25 @@ def create_dataset(
     tags: Optional[List[str]] = None,
 ) -> Dataset:
     """Flexibly create a source dataset in Tamr.
-        Args:
-            tamr: Tamr instance
-            dataset_name: Dataset name
-            attributes: List of all attribute names
-            primary_keys: Dataset primary key attribute names
-            description: Dataset description
-            external_id: External ID of the dataset
-            tags: tags for dataset
-        Returns:
-            Dataset created in Tamr
-        Raises:
-            requests.HTTPError: If any HTTP error is encountered
-            ValueError: trying to alter a unified dataset
-            ValueError: attributes must be defined
-            ValueError: primary key is not in attributes
-            ValueError: A dataset with name '{dataset_name}' already exists
+
+    Args:
+        tamr: Tamr instance
+        dataset_name: Dataset name
+        attributes: List of all attribute names
+        primary_keys: Dataset primary key attribute names
+        description: Dataset description
+        external_id: External ID of the dataset
+        tags: tags for dataset
+
+    Returns:
+        Dataset created in Tamr
+    
+    Raises:
+        requests.HTTPError: If any HTTP error is encountered
+        ValueError: trying to alter a unified dataset
+        ValueError: attributes must be defined
+        ValueError: primary key is not in attributes
+        ValueError: A dataset with name '{dataset_name}' already exists
     """
 
     if not attributes:
@@ -103,21 +106,24 @@ def modify_dataset(
     tags: Optional[List[str]] = None,
 ) -> Dataset:
     """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input
-        Args:
-            tamr: Tamr instance
-            dataset_name: Dataset name
-            attributes: List of all attribute names
-            primary_keys: Dataset primary key attribute names
-            description: Dataset description
-            tags: tags for dataset
-        Returns:
-            Dataset created in Tamr
-        Raises:
-            requests.HTTPError: If any HTTP error is encountered
-            ValueError: trying to alter a unified dataset
-            ValueError: attributes must be defined
-            ValueError: primary key is not in attributes
-            ValueError: A dataset with name '{dataset_name}' does not exist
+
+    Args:
+        tamr: Tamr instance
+        dataset_name: Dataset name
+        attributes: List of all attribute names
+        primary_keys: Dataset primary key attribute names
+        description: Dataset description
+        tags: tags for dataset
+
+    Returns:
+        Dataset created in Tamr
+    
+    Raises:
+        requests.HTTPError: If any HTTP error is encountered
+        ValueError: trying to alter a unified dataset
+        ValueError: attributes must be defined
+        ValueError: primary key is not in attributes
+        ValueError: A dataset with name '{dataset_name}' does not exist
     """
 
     if not attributes:
@@ -201,10 +207,12 @@ def modify_dataset(
 
 
 def _same_attribute_type_check(attribute_one: Attribute, attribute_two: Attribute) -> bool:
-    """ Check if the two Attribute Types match
+    """Check if the two Attribute Types match
+    
     Args:
         attribute_one: first type
         attribute_two: second type
+    
     Return:
         True or False for if the types match
     """
@@ -220,10 +228,12 @@ def _same_attribute_type_check(attribute_one: Attribute, attribute_two: Attribut
 
 
 def _check_dataset_exists(*, target_instance: Client, dataset: str) -> bool:
-    """ Check if the dataset exists on target instance
+    """Check if the dataset exists on target instance
+    
     Args:
         target_instance: Tamr python client object for the target instance
         dataset: The dataset name
+    
     Return:
         True or False for if the dataset exists in target instance
     """
