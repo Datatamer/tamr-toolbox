@@ -18,7 +18,11 @@ if BUILDING_DOCS:
 
 
 def _run_remote_command(
-    command: str, *, remote_client: "paramiko.SSHClient", command_input: Optional[bytes] = None
+    command: str,
+    *,
+    remote_client: "paramiko.SSHClient",
+    command_input: Optional[bytes] = None,
+    verbose=False,
 ) -> (int, str, str):
     """Runs the provided command in a remote environment using the provided ssh client
 
@@ -26,16 +30,22 @@ def _run_remote_command(
             command: The command to run
             remote_client: An ssh client providing a remote connection
             command_input: Content to send to stdin after command is started
+            verbose: Whether the full command, stdout, and stderr should be logged at INFO level
 
         Returns:
             (exit code of command, stdout of command, stderr of command)
 
         """
-    LOGGER.debug(
+
+    command_details_message = (
         f"Running command [{command}] on "
         f"remote machine ({remote_client.get_transport().getpeername()[0]}) "
         f"as user '{remote_client.get_transport().get_username()}'."
     )
+    if verbose:
+        LOGGER.info(command_details_message)
+    else:
+        LOGGER.debug(command_details_message)
 
     # Initiate command
     stdin_file, stdout_file, stderr_file = remote_client.exec_command(command)
@@ -46,40 +56,62 @@ def _run_remote_command(
         stdin_file.write(command_input)
     stdin_file.close()
 
-    # Wait for command to complete
-    while not command_channel.exit_status_ready():
-        time.sleep(1)
-
+    # While waiting for command to complete,
     # Collect command output
     # Some bash scripts do not close their stderr and stdout even after the exit status is ready
     # This leads to calls like stdout_file.readlines() to hang indefinitely
     # We empty the buffer instead to avoid this issue
-    stderr = command_channel.in_stderr_buffer.empty().decode("utf-8")
-    stdout = command_channel.in_buffer.empty().decode("utf-8")
-    stdout_file.close()
-    stderr_file.close()
+    full_stdout = ""
+    full_stderr = ""
+    while True:
+        time.sleep(1)
+        stderr = command_channel.in_stderr_buffer.empty().decode("utf-8")
+        stdout = command_channel.in_buffer.empty().decode("utf-8")
+        if len(stdout) > 0:
+            full_stdout += stdout
+            if verbose:
+                LOGGER.info(f"STDOUT: {stdout}")
+            else:
+                LOGGER.debug(f"STDOUT: {stdout}")
+        if len(stderr) > 0:
+            full_stderr += stderr
+            if verbose:
+                LOGGER.info(f"STDERR: {stderr}")
+            else:
+                LOGGER.debug(f"STDERR: {stderr}")
 
-    LOGGER.debug(
-        f"Command ended with exit code {command_channel.exit_status}.\n"
-        f"STDOUT: {stdout}\n"
-        f"STDERR: {stderr}\n"
-    )
+        if command_channel.exit_status_ready():
+            stdout_file.close()
+            stderr_file.close()
+            break
 
-    return command_channel.exit_status, stdout, stderr
+    command_output_message = f"Command ended with exit code {command_channel.exit_status}."
+    if verbose:
+        LOGGER.info(command_output_message)
+    else:
+        LOGGER.debug(command_output_message)
+
+    return command_channel.exit_status, full_stdout, full_stderr
 
 
-def _run_local_command(command: str, *, command_input: Optional[bytes] = None) -> (int, str, str):
+def _run_local_command(
+    command: str, *, command_input: Optional[bytes] = None, verbose=False
+) -> (int, str, str):
     """Runs the provided command in the local shell
 
     Args:
         command: The command to run
         command_input: Content to send to stdin after command is started
-
+        verbose: Whether the full command, stdout, and stderr should be logged at INFO level
     Returns:
         (exit code of command, stdout of command, stderr of command)
 
     """
-    LOGGER.debug(f"Running command [{command}] on local machine.")
+    command_details_message = f"Running command [{command}] on local machine."
+    if verbose:
+        LOGGER.info(command_details_message)
+    else:
+        LOGGER.debug(command_details_message)
 
     # Initiate command
     process = subprocess.Popen(
@@ -92,23 +124,39 @@ def _run_local_command(command: str, *, command_input: Optional[bytes] = None) -
     process.stdin.close()
 
     # Wait for command to complete
-    while process.poll() is None:
-        time.sleep(1)
-
     # Collect command output
     # Some bash scripts do not close their stderr and stdout even after the exit status is ready
     # This leads to calls like stdout.readlines() to hang indefinitely
     # We use peek instead to avoid this issue
-    stdout = process.stdout.peek().decode("utf-8")
-    stderr = process.stderr.peek().decode("utf-8")
+    full_stdout = ""
+    full_stderr = ""
+    while True:
+        time.sleep(1)
+        stdout = process.stdout.peek().decode("utf-8")
+        stderr = process.stderr.peek().decode("utf-8")
+        if len(stdout) > 0:
+            full_stdout += stdout
+            if verbose:
+                LOGGER.info(f"STDOUT: {stdout}")
+            else:
+                LOGGER.debug(f"STDOUT: {stdout}")
+        if len(stderr) > 0:
+            full_stderr += stderr
+            if verbose:
+                LOGGER.info(f"STDERR: {stderr}")
+            else:
+                LOGGER.debug(f"STDERR: {stderr}")
 
-    LOGGER.debug(
-        f"Command ended with exit code {process.returncode}.\n"
-        f"STDOUT: {stdout}\n"
-        f"STDERR: {stderr}\n"
-    )
+        if process.poll() is not None:
+            break
 
-    return process.returncode, stdout, stderr
+    command_output_message = f"Command ended with exit code {process.returncode}."
+    if verbose:
+        LOGGER.info(command_output_message)
+    else:
+        LOGGER.debug(command_output_message)
+
+    return process.returncode, full_stdout, full_stderr
 
 
 def _run_command(
@@ -118,6 +166,7 @@ def _run_command(
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
     enforce_success: bool = True,
+    verbose=False,
 ) -> (int, str, str):
     """Runs the provided command in a remote environment if an ssh client is specified otherwise
     run the provided command in the local shell
@@ -132,6 +181,7 @@ def _run_command(
         impersonation_username: A bash user to run the command as
         impersonation_password: The password for the impersonation_username
         enforce_success: Whether to throw an error if the command fails
+        verbose: Whether the full command, stdout, and stderr should be logged at INFO level
 
     Returns:
         (exit code of command, stdout of command, stderr of command)
@@ -156,22 +206,24 @@ def _run_command(
 
     # Run the command on the local or remote system
     if remote_client is None:
-        exit_code, stdout, stderr = _run_local_command(command, command_input=password_input)
+        exit_code, stdout, stderr = _run_local_command(
+            command, command_input=password_input, verbose=verbose
+        )
     else:
         exit_code, stdout, stderr = _run_remote_command(
-            command, remote_client=remote_client, command_input=password_input
+            command, remote_client=remote_client, command_input=password_input, verbose=verbose
         )
 
     # When enforce_success is True, raise an error for non-zero exit codes
     if enforce_success and exit_code != 0:
         if remote_client is None:
-            task_description = f"local command. "
+            task_description = f"local command."
         else:
             remote_ip = remote_client.get_transport().getpeername()[0]
             remote_username = remote_client.get_transport().get_username()
             task_description = f"Failed to run remote command on {remote_ip} as {remote_username}."
         raise RuntimeError(
-            f"{task_description}"
+            f"{task_description} "
             f"Command: [{command}] exited with code {exit_code}.\n"
             f"STDOUT: [{stdout.strip()}]\n"
             f"STDERR: [{stderr.strip()}]"
@@ -186,6 +238,7 @@ def start_tamr(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
+    verbose=False,
 ) -> None:
     """Starts the Tamr software and the Tamr dependencies if include_dependencies is true.
 
@@ -201,6 +254,7 @@ def start_tamr(
         impersonation_username: A bash user to run the command as,
             this should be the tamr install user
         impersonation_password: The password for the impersonation_username
+        verbose: Whether the full command, stdout, and stderr should be logged at INFO level
 
     Returns:
         None
@@ -217,6 +271,7 @@ def start_tamr(
             impersonation_username=impersonation_username,
             impersonation_password=impersonation_password,
             enforce_success=True,
+            verbose=verbose,
         )
     LOGGER.info(f"Starting Tamr software.")
     _run_command(
@@ -225,6 +280,7 @@ def start_tamr(
         impersonation_username=impersonation_username,
         impersonation_password=impersonation_password,
         enforce_success=True,
+        verbose=verbose,
     )
 
 
@@ -235,6 +291,7 @@ def stop_tamr(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
+    verbose=False,
 ) -> None:
     """Stops the Tamr software and the Tamr dependencies if include_dependencies is true.
 
@@ -250,6 +307,7 @@ def stop_tamr(
         impersonation_username: A bash user to run the command as,
             this should be the tamr install user
         impersonation_password: The password for the impersonation_username
+        verbose: Whether the full command, stdout, and stderr should be logged at INFO level
 
     Returns:
         None
@@ -265,6 +323,7 @@ def stop_tamr(
         impersonation_username=impersonation_username,
         impersonation_password=impersonation_password,
         enforce_success=True,
+        verbose=verbose,
     )
     if include_dependencies:
         LOGGER.info(f"Stopping Tamr dependencies.")
@@ -274,6 +333,7 @@ def stop_tamr(
             impersonation_username=impersonation_username,
             impersonation_password=impersonation_password,
             enforce_success=True,
+            verbose=verbose,
         )
 
 
@@ -284,6 +344,7 @@ def restart_tamr(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
+    verbose=False,
 ) -> None:
     """Restarts the Tamr software and the Tamr dependencies if include_dependencies is true.
 
@@ -299,6 +360,7 @@ def restart_tamr(
         impersonation_username: A bash user to run the command as,
             this should be the tamr install user
         impersonation_password: The password for the impersonation_username
+        verbose: Whether the full command, stdout, and stderr should be logged at INFO level
 
     Returns:
         None
@@ -313,6 +375,7 @@ def restart_tamr(
         remote_client=remote_client,
         impersonation_username=impersonation_username,
         impersonation_password=impersonation_password,
+        verbose=verbose,
     )
     start_tamr(
         tamr_install_dir=tamr_install_dir,
@@ -320,4 +383,5 @@ def restart_tamr(
         remote_client=remote_client,
         impersonation_username=impersonation_username,
         impersonation_password=impersonation_password,
+        verbose=verbose,
     )

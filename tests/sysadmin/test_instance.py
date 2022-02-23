@@ -79,7 +79,7 @@ def test__run_command(run_remote, run_local):
     assert exit_code == 0
     assert stdout == "out"
     assert stderr == "err"
-    run_local.assert_called_with(basic_command, command_input=None)
+    run_local.assert_called_with(basic_command, command_input=None, verbose=False)
 
     # Test that including a remote client leads to sending the command as remote
     remote_client = paramiko.SSHClient()
@@ -87,21 +87,27 @@ def test__run_command(run_remote, run_local):
         basic_command, remote_client=remote_client
     )
     assert exit_code == 0
-    run_remote.assert_called_with(basic_command, remote_client=remote_client, command_input=None)
+    run_remote.assert_called_with(
+        basic_command, remote_client=remote_client, command_input=None, verbose=False
+    )
 
     # Test impersonation without password
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_command(
         basic_command, impersonation_username="my_user"
     )
     assert exit_code == 0
-    run_local.assert_called_with(f"sudo su - my_user -c '{basic_command}'", command_input=None)
+    run_local.assert_called_with(
+        f"sudo su - my_user -c '{basic_command}'", command_input=None, verbose=False
+    )
 
     # Test impersonation with password
     exit_code, stdout, stderr = tbox.sysadmin.instance._run_command(
         basic_command, impersonation_username="my_user", impersonation_password="my_pass"
     )
     assert exit_code == 0
-    run_local.assert_called_with(f"su - my_user -c '{basic_command}'", command_input=b"my_pass")
+    run_local.assert_called_with(
+        f"su - my_user -c '{basic_command}'", command_input=b"my_pass", verbose=False
+    )
 
 
 @mock.patch("tamr_toolbox.sysadmin.instance._run_local_command", return_value=(1, "", ""))
@@ -131,6 +137,7 @@ def test_start_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
             call(
                 command=f"{tamr_dir}/tamr/start-unify.sh",
@@ -138,6 +145,7 @@ def test_start_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
         ]
     )
@@ -151,6 +159,7 @@ def test_start_tamr(run_command):
         impersonation_username=None,
         impersonation_password=None,
         enforce_success=True,
+        verbose=False,
     )
 
 
@@ -168,6 +177,7 @@ def test_stop_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
             call(
                 command=f"{tamr_dir}/tamr/stop-dependencies.sh",
@@ -175,6 +185,7 @@ def test_stop_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
         ]
     )
@@ -188,6 +199,7 @@ def test_stop_tamr(run_command):
         impersonation_username=None,
         impersonation_password=None,
         enforce_success=True,
+        verbose=False,
     )
 
 

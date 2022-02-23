@@ -14,9 +14,12 @@ remote_client.connect(
     hostname="10.9.999.999", username="ubuntu", key_filename="/full/path/to/my-key.pem"
 )
 
-# Restart a remote instance, using sudo for impersonation
+# Restart a remote instance, using sudo for impersonation, with verbose logging
 tbox.sysadmin.instance.restart_tamr(
-    tamr_install_dir="/data/tamr-home/", remote_client=remote_client, impersonation_username="tamr"
+    tamr_install_dir="/data/tamr-home",
+    remote_client=remote_client,
+    impersonation_username="tamr",
+    verbose=True,
 )
 
 # Stop a local instance as the current user
