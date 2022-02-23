@@ -37,7 +37,7 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
 
 
 def get_latest(tamr: Client) -> Operation:
-    """ Get the latest operation
+    """Get the latest operation
 
     Args:
         tamr: A Tamr client
@@ -65,8 +65,7 @@ def get_details(*, operation: Operation) -> str:
 
 
 def get_all(tamr: Client) -> List[Operation]:
-    """
-    Get a list of all jobs or operations.
+    """Get a list of all jobs or operations.
 
     Args:
         tamr: A Tamr client
@@ -84,8 +83,7 @@ def get_all(tamr: Client) -> List[Operation]:
 
 
 def get_active(tamr: Client) -> List[Operation]:
-    """
-    Get a list of pending and running jobs.
+    """Get a list of pending and running jobs.
 
     Args:
         tamr: A Tamr client
@@ -127,4 +125,32 @@ def wait(
         ]:
             return operation
         operation = operation.poll()
+    raise TimeoutError(f"Waiting for operation took longer than {timeout_seconds} seconds.")
+
+
+def monitor(
+    operation: Operation, *, poll_interval_seconds: float = 1, timeout_seconds: float = 300,
+) -> Operation:
+    """Continuously polls for this operation's server-side state and returns operation
+    when there is a state change
+
+    Args:
+        operation: Operation to be monitored.
+        poll_interval_seconds: Time interval (in seconds) between subsequent polls.
+        timeout_seconds: Time (in seconds) to wait for operation to resolve.
+
+    Raises:
+        TimeoutError: If operation takes longer than `timeout_seconds` to resolve.
+    """
+    status = OperationState[operation.state]
+    started = now()
+    while timeout_seconds is None or now() - started < timeout_seconds:
+        operation = operation.poll()
+        new_status = OperationState[operation.state]
+        if operation.status is None:
+            return operation
+        elif new_status == status:
+            sleep(poll_interval_seconds)
+        else:
+            return operation
     raise TimeoutError(f"Waiting for operation took longer than {timeout_seconds} seconds.")

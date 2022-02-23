@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.4.0 - Hammer
+                1.5.0 - Icepick
               </div>
             
           
@@ -253,13 +253,22 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for interacting with Tamr operations (or jobs)&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 
-
 <span class="c1"># Make Tamr Client</span>
 <span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
 
-<span class="c1"># Create a unresolved operation, i.e., PENDING or RUNNING</span>
+<span class="c1"># Create an unresolved operation, i.e., PENDING or RUNNING</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s2">&quot;my_project_id&quot;</span><span class="p">)</span>
 <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Monitor the operation</span>
+<span class="c1"># Returns the updated operation on any OperationState change</span>
+<span class="c1"># Ex: Change from OperationState.PENDING -&gt; OperationState.RUNNING</span>
+<span class="n">op_update</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">)</span>
+
+<span class="c1"># Wait for the operation to finish</span>
+<span class="c1"># Will return the operation when it reaches one of the final states:</span>
+<span class="c1"># OperationState.CANCELED, OperationState.SUCCEEDED, OperationState.FAILED</span>
+<span class="n">op_finished</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">)</span>
 
 <span class="c1"># Get the most recent operation</span>
 <span class="n">latest_op</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">get_latest</span><span class="p">(</span><span class="n">tamr</span><span class="o">=</span><span class="n">tamr</span><span class="p">)</span>

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.4.0 - Hammer
+                1.5.0 - Icepick
               </div>
             
           
@@ -197,7 +197,7 @@
 <span class="sd">        logger: the logging.Logger class to which you would like to add a handler</span>
 <span class="sd">        log_directory: Optional log directory to pass. If not None a FileHandler is added,</span>
 <span class="sd">            otherwise a StreamHandler</span>
-<span class="sd">         **kwargs: Keyword arguments for the _get_log_filename</span>
+<span class="sd">        **kwargs: Keyword arguments for the _get_log_filename</span>
 <span class="sd">     &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">log_directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
@@ -211,7 +211,7 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> &lt;</span><span class="si">%(thread)d</span><span class="s2">&gt; [</span><span class="si">%(asctime)s</span><span class="s2">] </span><span class="si">%(name)s</span><span class="s2"> &lt;</span><span class="si">%(filename)s</span><span class="s2">:</span><span class="si">%(lineno)d</span><span class="s2">&gt;  </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> &lt;</span><span class="si">%(thread)d</span><span class="s2">&gt; [</span><span class="si">%(asctime)s</span><span class="s2">] </span><span class="si">%(name)s</span><span class="s2"> &lt;</span><span class="si">%(filename)s</span><span class="s2">:</span><span class="si">%(lineno)d</span><span class="s2">&gt; </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
     <span class="p">)</span>
     <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
@@ -285,6 +285,7 @@
 <div class="viewcode-block" id="enable_package_logging"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.logger.enable_package_logging">[docs]</a><span class="k">def</span> <span class="nf">enable_package_logging</span><span class="p">(</span>
     <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">log_to_terminal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">log_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">log_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -295,6 +296,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        package_name: the name of the package for which to enable logging</span>
+<span class="sd">        log_to_terminal: Boolean indicating whether or not to log messages to the terminal</span>
 <span class="sd">        log_directory: optional log directory which the package will write logs</span>
 <span class="sd">        level: optional level to specify, default is WARNING (inherited from base logging package)</span>
 <span class="sd">        log_prefix: Optional prefix for log files, if None will be blank string</span>
@@ -303,6 +305,8 @@
 
     <span class="n">package_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
     <span class="n">_add_handler</span><span class="p">(</span><span class="n">package_logger</span><span class="p">,</span> <span class="n">log_directory</span><span class="p">,</span> <span class="n">log_prefix</span><span class="o">=</span><span class="n">log_prefix</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="n">date_format</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">log_to_terminal</span><span class="p">:</span>
+        <span class="n">_add_handler</span><span class="p">(</span><span class="n">package_logger</span><span class="p">,</span> <span class="n">log_prefix</span><span class="o">=</span><span class="n">log_prefix</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="n">date_format</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">set_logging_level</span><span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span></div>
@@ -310,6 +314,7 @@
 
 <div class="viewcode-block" id="enable_toolbox_logging"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.logger.enable_toolbox_logging">[docs]</a><span class="k">def</span> <span class="nf">enable_toolbox_logging</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
+    <span class="n">log_to_terminal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">log_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">log_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -318,6 +323,7 @@
     <span class="sd">&quot;&quot;&quot;A simple wrapper to enable_package_logging to give friendly call for users.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        log_to_terminal: Boolean indicating whether or not to log messages to the terminal</span>
 <span class="sd">        log_directory: optional directory to which to write tamr_toolbox logs</span>
 <span class="sd">        level: Optional logging level to specify, default is WARNING</span>
 <span class="sd">            (inherited from base logging package)</span>
@@ -327,6 +333,7 @@
 
     <span class="n">enable_package_logging</span><span class="p">(</span>
         <span class="s2">&quot;tamr_toolbox&quot;</span><span class="p">,</span>
+        <span class="n">log_to_terminal</span><span class="o">=</span><span class="n">log_to_terminal</span><span class="p">,</span>
         <span class="n">log_directory</span><span class="o">=</span><span class="n">log_directory</span><span class="p">,</span>
         <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
         <span class="n">log_prefix</span><span class="o">=</span><span class="n">log_prefix</span><span class="p">,</span>

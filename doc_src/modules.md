@@ -7,4 +7,4 @@
 * [Project](modules/project.md)
 * [Sysadmin](modules/sysadmin.rst)
 * [Utilities](modules/utils.rst)
-* [Workflow](modules/workflow.rst)
+* [Workflow](modules/workflow.md)

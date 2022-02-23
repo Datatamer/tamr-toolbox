@@ -26,8 +26,8 @@ def main(
 
     # Export after adjusting some of the default parameters including csv delimiter,
     # flattening delimiter for recording multi-values, limiting and ordering the columns, limiting
-    # the number of rows, and adjusting the buffer size that determines at what interval records
-    # are written to disk
+    # the number of rows, adjusting the buffer size that determines at what interval records are
+    # written to disk, and renaming the "last_name" column to "family_name"
     tbox.data_io.csv.from_dataset(
         dataset,
         export_file_path,
@@ -36,6 +36,7 @@ def main(
         columns=["tamr_id", "last_name", "first_name"],
         nrows=1000,
         buffer_size=100,
+        column_name_dict={"last_name": "family_name"},
     )
 
     LOGGER.info("Writing CSV is complete")

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.4.0 - Hammer
+                1.5.0 - Icepick
               </div>
             
           
@@ -199,7 +199,7 @@
 
 
 <div class="viewcode-block" id="get_latest"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_latest">[docs]</a><span class="k">def</span> <span class="nf">get_latest</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Get the latest operation</span>
+    <span class="sd">&quot;&quot;&quot;Get the latest operation</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tamr: A Tamr client</span>
@@ -227,8 +227,7 @@
 
 
 <div class="viewcode-block" id="get_all"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_all">[docs]</a><span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get a list of all jobs or operations.</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of all jobs or operations.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tamr: A Tamr client</span>
@@ -246,8 +245,7 @@
 
 
 <div class="viewcode-block" id="get_active"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_active">[docs]</a><span class="k">def</span> <span class="nf">get_active</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get a list of pending and running jobs.</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of pending and running jobs.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tamr: A Tamr client</span>
@@ -289,6 +287,34 @@
         <span class="p">]:</span>
             <span class="k">return</span> <span class="n">operation</span>
         <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+    <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation took longer than </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="monitor"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.monitor">[docs]</a><span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Continuously polls for this operation&#39;s server-side state and returns operation</span>
+<span class="sd">    when there is a state change</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operation: Operation to be monitored.</span>
+<span class="sd">        poll_interval_seconds: Time interval (in seconds) between subsequent polls.</span>
+<span class="sd">        timeout_seconds: Time (in seconds) to wait for operation to resolve.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TimeoutError: If operation takes longer than `timeout_seconds` to resolve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">OperationState</span><span class="p">[</span><span class="n">operation</span><span class="o">.</span><span class="n">state</span><span class="p">]</span>
+    <span class="n">started</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">timeout_seconds</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">started</span> <span class="o">&lt;</span> <span class="n">timeout_seconds</span><span class="p">:</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+        <span class="n">new_status</span> <span class="o">=</span> <span class="n">OperationState</span><span class="p">[</span><span class="n">operation</span><span class="o">.</span><span class="n">state</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">operation</span><span class="o">.</span><span class="n">status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operation</span>
+        <span class="k">elif</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">status</span><span class="p">:</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval_seconds</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operation</span>
     <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation took longer than </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span></div>
 </pre></div>
 

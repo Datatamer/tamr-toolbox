@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.4.0 - Hammer
+                1.5.0 - Icepick
               </div>
             
           
@@ -208,6 +208,7 @@
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">9100</span><span class="p">,</span>
     <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+    <span class="n">store_auth_cookie</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">enforce_healthy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Creates a Tamr client from the provided configuration values</span>
@@ -218,6 +219,7 @@
 <span class="sd">        host: The ip address of Tamr</span>
 <span class="sd">        port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port</span>
 <span class="sd">        protocol: https or http</span>
+<span class="sd">        store_auth_cookie: If true will allow Tamr authentication cookie to be stored and reused</span>
 <span class="sd">        enforce_healthy: If true will enforce a healthy state upon creation</span>
 
 <span class="sd">    Returns:</span>
@@ -230,6 +232,7 @@
         <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
         <span class="n">port</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">protocol</span><span class="o">=</span><span class="n">protocol</span><span class="p">,</span>
+        <span class="n">store_auth_cookie</span><span class="o">=</span><span class="n">store_auth_cookie</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">enforce_healthy</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">health_check</span><span class="p">(</span><span class="n">client</span><span class="p">):</span>
