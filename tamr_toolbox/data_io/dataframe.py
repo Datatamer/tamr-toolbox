@@ -1,5 +1,4 @@
 """Tasks related to moving data in or out of Tamr using pandas.DataFrames"""
-import builtins
 import os
 import logging
 
