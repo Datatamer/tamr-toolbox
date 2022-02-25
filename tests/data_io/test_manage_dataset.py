@@ -1,7 +1,7 @@
 """Tests for tasks related creating and updating datasets in Tamr"""
 import pytest
 
-from tamr_toolbox.data_io import manage_dataset
+import tamr_toolbox as tbox
 from tamr_unify_client.attribute.resource import Attribute
 
 # from tamr_unify_client.attribute.type import AttributeType
@@ -24,7 +24,7 @@ def test_create_new_dataset():
     attributes = ["unique_id", "name", "address"]
     description = "My test dataset"
 
-    _ = manage_dataset.create_dataset(
+    _ = tbox.data_io.manage_dataset.create_dataset(
         tamr=client,
         dataset_name=DATSET_NAME,
         attributes=attributes,
@@ -65,7 +65,7 @@ def test_dataset_already_exists():
     attributes = ["name", "address", "user_id", "account_number"]
 
     with pytest.raises(ValueError):
-        _ = manage_dataset.create_dataset(
+        _ = tbox.data_io.manage_dataset.create_dataset(
             tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
         )
 
@@ -78,7 +78,7 @@ def test_create_multiple_pk():
     pks = ["id", "source"]
     dataset_name = DATSET_NAME + "_multikey"
 
-    _ = manage_dataset.create_dataset(
+    _ = tbox.data_io.manage_dataset.create_dataset(
         tamr=client,
         dataset_name=dataset_name,
         attributes=attributes,
@@ -119,7 +119,7 @@ def test_add_attribute():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     attributes = ["unique_id", "name", "address", "phone"]
 
-    _ = manage_dataset.modify_dataset(
+    _ = tbox.data_io.manage_dataset.modify_dataset(
         tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
     )
 
@@ -138,7 +138,7 @@ def test_update_description():
     attributes = ["unique_id", "name", "address", "phone"]
     description = "My test dataset with phone"
 
-    _ = manage_dataset.modify_dataset(
+    _ = tbox.data_io.manage_dataset.modify_dataset(
         tamr=client,
         dataset_name=DATSET_NAME,
         attributes=attributes,
@@ -157,7 +157,7 @@ def test_remove_attribute():
     attributes = ["unique_id", "name", "address"]
     description = "My test dataset without phone"
 
-    _ = manage_dataset.modify_dataset(
+    _ = tbox.data_io.manage_dataset.modify_dataset(
         tamr=client,
         dataset_name=DATSET_NAME,
         attributes=attributes,
@@ -181,39 +181,6 @@ def test_add_non_default_attribute():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     attribute_names = ["unique_id", "name", "address", "user_id"]
     attribute_types = [
-        {"baseType": "STRING"},
-        {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-        {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-        {"baseType": "ARRAY", "innerType": {"baseType": "INT"}},
-    ]
-
-    attributes = [
-        Attribute(client=client, data={"name": attribute_names[idx], "type": attribute_types[idx]})
-        for idx in range(len(attribute_names))
-    ]
-
-    description = "My test dataset with user int ids"
-
-    dataset = manage_dataset.modify_dataset(
-        tamr=client,
-        dataset_name=DATSET_NAME,
-        attributes=attributes,
-        primary_keys=PK,
-        description=description,
-    )
-
-    dataset = client.datasets.by_name(DATSET_NAME)
-
-    assert dataset.description == description
-
-    dataset_attributes = dataset.attributes
-    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
-    attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
-
-    assert len(attribute_list) == len(attributes)
-    assert attribute_list == [a.name for a in attributes]
-
-    expected_attribute_types = [
         {"baseType": "STRING", "attributes": []},
         {
             "baseType": "ARRAY",
@@ -231,8 +198,35 @@ def test_add_non_default_attribute():
             "attributes": [],
         },
     ]
-    for idx in range(len(expected_attribute_types)):
-        assert attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
+
+    attributes = [
+        Attribute(client=client, data={"name": attribute_names[idx], "type": attribute_types[idx]})
+        for idx in range(len(attribute_names))
+    ]
+
+    description = "My test dataset with user int ids"
+
+    dataset = tbox.data_io.manage_dataset.modify_dataset(
+        tamr=client,
+        dataset_name=DATSET_NAME,
+        attributes=attributes,
+        primary_keys=PK,
+        description=description,
+    )
+
+    dataset = client.datasets.by_name(DATSET_NAME)
+
+    assert dataset.description == description
+
+    dataset_attributes = dataset.attributes
+    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
+    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+
+    assert len(attribute_list) == len(attributes)
+    assert attribute_list == [a.name for a in attributes]
+
+    for idx in range(len(attribute_types)):
+        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
 
 
 @mock_api()
@@ -240,31 +234,6 @@ def test_add_primitive_attribute():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
     attribute_types = [
-        {"baseType": "STRING"},
-        {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-        {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-        {"baseType": "ARRAY", "innerType": {"baseType": "INT"}},
-        {"baseType": "INT"},
-    ]
-
-    attributes = [
-        Attribute(client=client, data={"name": attribute_names[idx], "type": attribute_types[idx]})
-        for idx in range(len(attribute_names))
-    ]
-
-    dataset = manage_dataset.modify_dataset(
-        tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
-    )
-
-    dataset = client.datasets.by_name(DATSET_NAME)
-    dataset_attributes = dataset.attributes
-    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
-    attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
-
-    assert len(attribute_list) == len(attributes)
-    assert attribute_list == [a.name for a in attributes]
-
-    expected_attribute_types = [
         {"baseType": "STRING", "attributes": []},
         {
             "baseType": "ARRAY",
@@ -283,8 +252,26 @@ def test_add_primitive_attribute():
         },
         {"baseType": "INT", "attributes": []},
     ]
-    for idx in range(len(expected_attribute_types)):
-        assert attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
+
+    attributes = [
+        Attribute(client=client, data={"name": attribute_names[idx], "type": attribute_types[idx]})
+        for idx in range(len(attribute_names))
+    ]
+
+    dataset = tbox.data_io.manage_dataset.modify_dataset(
+        tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
+    )
+
+    dataset = client.datasets.by_name(DATSET_NAME)
+    dataset_attributes = dataset.attributes
+    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
+    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+
+    assert len(attribute_list) == len(attributes)
+    assert attribute_list == [a.name for a in attributes]
+
+    for idx in range(len(attribute_types)):
+        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
 
 
 @mock_api()
@@ -293,12 +280,12 @@ def test_missing_primary_key():
     attributes = ["name", "address", "user_id", "account_number"]
 
     with pytest.raises(ValueError):
-        _ = manage_dataset.create_dataset(
+        _ = tbox.data_io.manage_dataset.create_dataset(
             tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
         )
 
     with pytest.raises(ValueError):
-        _ = manage_dataset.modify_dataset(
+        _ = tbox.data_io.manage_dataset.modify_dataset(
             tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
         )
 
@@ -309,7 +296,7 @@ def test_modify_ud():
     attributes = ["name", "address", "user_id", "account_number"]
 
     with pytest.raises(ValueError):
-        _ = manage_dataset.create_dataset(
+        _ = tbox.data_io.manage_dataset.create_dataset(
             tamr=client,
             dataset_name="minimal_mastering_unified_dataset",
             attributes=attributes,
@@ -323,7 +310,7 @@ def test_add_tags():
     attributes = ["unique_id", "name", "address"]
     tags = ["testing"]
 
-    _ = manage_dataset.modify_dataset(
+    _ = tbox.data_io.manage_dataset.modify_dataset(
         tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK, tags=tags,
     )
 
@@ -332,55 +319,46 @@ def test_add_tags():
     assert dataset.tags == tags
 
 
-# To Do: Updating attributes is not working with Attribute Spec
-# @mock_api(enforce_online_test=True)
-# def test_change_attribute_type():
-#     client = utils.client.create(**CONFIG["toolbox_test_instance"])
-#     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
-#     attribute_types = [
-#         {"baseType": "STRING"},
-#         {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-#         {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-#         {"baseType": "ARRAY", "innerType": {"baseType": "INT"}},
-#         {"baseType": "DOUBLE"},
-#     ]
+@mock_api()
+def test_change_attribute_type():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
+    attribute_types = [
+        {"baseType": "STRING", "attributes": []},
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "INT", "attributes": []},
+            "attributes": [],
+        },
+        {"baseType": "DOUBLE", "attributes": []},
+    ]
 
-#     attributes = [
-#         Attribute(client=client,
-#           data={"name": attribute_names[idx], "type": attribute_types[idx]})
-#         for idx in range(len(attribute_names))
-#     ]
+    attributes = [
+        Attribute(client=client, data={"name": attribute_names[idx], "type": attribute_types[idx]})
+        for idx in range(len(attribute_names))
+    ]
 
-#     dataset = create_dataset.create_maybe(
-#         tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
-#     )
+    _ = tbox.data_io.manage_dataset.modify_dataset(
+        tamr=client, dataset_name=DATSET_NAME, attributes=attributes, primary_keys=PK,
+    )
 
-#     dataset = client.datasets.by_name(DATSET_NAME)
-#     dataset_attributes = dataset.attributes
-#     attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
-#     attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+    dataset = client.datasets.by_name(DATSET_NAME)
+    dataset_attributes = dataset.attributes
+    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
+    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
 
-#     assert len(attribute_list) == len(attributes)
-#     assert attribute_list == [a.name for a in attributes]
+    assert len(attribute_list) == len(attributes)
+    assert attribute_list == [a.name for a in attributes]
 
-#     expected_attribute_types = [
-#         {"baseType": "STRING", "attributes": []},
-#         {
-#             "baseType": "ARRAY",
-#             "innerType": {"baseType": "STRING", "attributes": []},
-#             "attributes": [],
-#         },
-#         {
-#             "baseType": "ARRAY",
-#             "innerType": {"baseType": "STRING", "attributes": []},
-#             "attributes": [],
-#         },
-#         {
-#             "baseType": "ARRAY",
-#             "innerType": {"baseType": "INT", "attributes": []},
-#             "attributes": [],
-#         },
-#         {"baseType": "DOUBLE", "attributes": []},
-#     ]
-#     for idx in range(len(expected_attribute_types)):
-#         assert attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
+    for idx in range(len(attribute_types)):
+        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
