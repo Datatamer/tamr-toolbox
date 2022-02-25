@@ -170,7 +170,6 @@ def modify_dataset(
         attribute_name = attribute_names[idx]
         if attribute_name in target_attribute_dict.keys():
             # This attribute already exists, update type if needed
-            # To Do: This feature does not work despite no errors
             if (
                 not use_default_type
                 and attribute_name not in primary_keys
@@ -180,7 +179,11 @@ def modify_dataset(
             ):
                 new_type = attributes[idx].type.spec()
                 new_attr_spec = target_attribute_dict[attribute_name].spec().with_type(new_type)
-                new_attr_spec.put()
+                # remove and add atrtibute with new type
+                target_dataset_attributes.delete_by_resource_id(
+                    target_attribute_dict[attribute_name].resource_id
+                )
+                target_dataset_attributes.create(new_attr_spec.to_dict())
             continue
 
         # Create new attribute
