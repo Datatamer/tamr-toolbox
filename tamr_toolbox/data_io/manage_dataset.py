@@ -59,7 +59,6 @@ def create_dataset(
 
 
 def modify_dataset(
-    tamr: Client,
     dataset: Dataset,
     new_dataset_spec: Optional[DatasetSpec] = None,
     attributes: Optional[Union[List[str], List[AttributeSpec]]] = None,
@@ -67,7 +66,6 @@ def modify_dataset(
     """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input
 
     Args:
-        tamr: TUC client
         dataset: An existing TUC dataset
         new_dataset_spec: Spec of the new dataset
         attributes: List of all attributes

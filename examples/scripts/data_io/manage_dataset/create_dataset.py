@@ -3,6 +3,7 @@ import argparse
 from typing import Dict, Any, List
 
 import tamr_toolbox as tbox
+from tamr_unify_client.dataset.resource import DatasetSpec
 
 
 def main(
@@ -10,7 +11,7 @@ def main(
     instance_connection_info: Dict[str, Any],
     dataset_name: str,
     attributes: List[str],
-    primary_key: str,
+    primary_keys: List[str],
     description: str,
 ) -> None:
     """Creates a dataset in Tamr
@@ -24,15 +25,17 @@ def main(
     """
     # Create the tamr client
     tamr_client = tbox.utils.client.create(**instance_connection_info)
+    dataset_spec = (
+        DatasetSpec.new()
+        .with_name(dataset_name)
+        .with_key_attribute_names(primary_keys)
+        .with_description(description)
+    )
 
     LOGGER.info(f"Creating dataset: {dataset_name}")
 
     tbox.data_io.manage_dataset.create_dataset(
-        tamr=tamr_client,
-        dataset_name=dataset_name,
-        attributes=attributes,
-        primary_keys=primary_key,
-        description=description,
+        tamr=tamr_client, dataset_spec=dataset_spec, attributes=attributes,
     )
 
 
@@ -56,6 +59,6 @@ if __name__ == "__main__":
         instance_connection_info=CONFIG["my_tamr_instance"],
         dataset_name=CONFIG["datasets"]["my_source_dataset"]["name"],
         attributes=CONFIG["datasets"]["my_source_dataset"]["attributes"],
-        primary_key=CONFIG["datasets"]["my_source_dataset"]["primary_key"],
+        primary_keys=CONFIG["datasets"]["my_source_dataset"]["primary_key"],
         description=CONFIG["datasets"]["my_source_dataset"]["description"],
     )

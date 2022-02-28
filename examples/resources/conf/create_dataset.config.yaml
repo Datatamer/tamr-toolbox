@@ -13,6 +13,6 @@ datasets:
     my_mastering_project_dataset:
         name: "test_create_dataset"
         attributes: ["unique_id", "name", "address"]
-        primary_key: "unique_id"
+        primary_keys: ["unique_id"]
         description: "Dataset for testing"
 

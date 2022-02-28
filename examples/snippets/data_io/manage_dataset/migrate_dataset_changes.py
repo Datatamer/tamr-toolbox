@@ -1,5 +1,5 @@
 """
-An example script to migrate changes to a dataset from one instance of Tamr to another
+An example script to migrate changes to a dataset attributes from one instance of Tamr to another
 """
 import tamr_toolbox as tbox
 
@@ -25,16 +25,11 @@ for ds in datasets:
     source_dataset = source_client.datasets.by_name(dataset_name)
 
     # Get updated dataset definition
-    attributes = [attr for attr in source_dataset.attributes.stream()]
-    description = source_dataset.description
-    tags = source_dataset.tags
+    attributes = [attr.spec() for attr in source_dataset.attributes.stream()]
+    dataset_spec = source_dataset.spec()
+    target_dataset = target_client.datasets.by_name(dataset_name)
 
     # Migrate dataset updates from source to target instance
     tbox.data_io.manage_dataset.modify_dataset(
-        client=target_client,
-        dataset_name=dataset_name,
-        attributes=attributes,
-        primary_keys=primary_key,
-        description=description,
-        tags=tags,
+        dataset=target_dataset, new_dataset_spec=dataset_spec, attributes=attributes,
     )

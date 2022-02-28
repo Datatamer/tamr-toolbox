@@ -94,12 +94,18 @@ Export CSV from taxonomy to a designated filepath
 Manage Dataset
 ------------------------------------------------------------------------
 
-Migrate dataset definition changes from a source to target instance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. literalinclude :: ../../examples/snippets/data_io/manage_dataset/migrate_dataset_changes.py
- :language: python
-
 Create a dataset
 ~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude :: ../../examples/scripts/data_io/manage_dataset/create_dataset.py
+ :language: python
+
+Add attributes to a dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/snippets/data_io/manage_dataset/add_complex_attribute.py
+ :language: python
+
+
+Migrate dataset definition changes from a source to target instance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/snippets/data_io/manage_dataset/migrate_dataset_changes.py
  :language: python
