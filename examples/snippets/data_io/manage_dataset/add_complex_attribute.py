@@ -38,6 +38,4 @@ for idx in range(len(attribute_names)):
         AttributeSpec.new().with_name(name).with_type(AttributeType(attribute_types[idx]).spec())
     )
 
-updated_dataset = tbox.data_io.manage_dataset.modify_dataset(
-    dataset=dataset, attributes=attribute_specs,
-)
+updated_dataset = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attribute_specs,)

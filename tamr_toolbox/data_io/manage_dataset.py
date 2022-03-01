@@ -1,14 +1,16 @@
+from typing import List, Optional, Union
+
 from tamr_unify_client import Client
 from tamr_unify_client.dataset.resource import Dataset, DatasetSpec
-from typing import List, Optional, Union
 from tamr_unify_client.attribute.resource import AttributeSpec
 from tamr_unify_client.attribute.type import AttributeType
 
 
-def create_dataset(
-    tamr: Client, dataset_spec: DatasetSpec, attributes: Union[List[str], List[AttributeSpec]],
+def create(
+    *, tamr: Client, dataset_spec: DatasetSpec, attributes: Union[List[str], List[AttributeSpec]],
 ) -> Dataset:
-    """Flexibly create a source dataset in Tamr. Will use array string as deafult attribute type.
+    """Flexibly create a source dataset in Tamr. Will use array string as deafult attribute type
+       if none are specified.
 
     Args:
         tamr: TUC client
@@ -28,7 +30,7 @@ def create_dataset(
     dataset_name = creation_spec_dict["name"]
     primary_keys = creation_spec_dict["keyAttributeNames"]
 
-    dataset_exists = _check_dataset_exists(target_instance=tamr, dataset=dataset_name)
+    dataset_exists = check_dataset_exists(target_instance=tamr, dataset=dataset_name)
     if not dataset_exists:
         tamr.datasets.create(creation_spec_dict)
     else:
@@ -42,7 +44,7 @@ def create_dataset(
 
     # Attributes to add to dataset
     if type(attributes[0]) is not AttributeSpec:
-        attributes = _create_default_specs(attributes)
+        attributes = _create_default_specs(attribute_names=attributes)
 
     # Update attributes in dataset
     for attribute in attributes:
@@ -58,7 +60,8 @@ def create_dataset(
     return target_dataset
 
 
-def modify_dataset(
+def modify(
+    *,
     dataset: Dataset,
     new_dataset_spec: Optional[DatasetSpec] = None,
     attributes: Optional[Union[List[str], List[AttributeSpec]]] = None,
@@ -94,7 +97,7 @@ def modify_dataset(
     if attributes:
         # Attributes to add to dataset
         if type(attributes[0]) is not AttributeSpec:
-            attributes = _create_default_specs(attributes)
+            attributes = _create_default_specs(attribute_names=attributes)
 
         # Get current dataset attributes
         target_dataset_attributes = dataset.attributes
@@ -133,7 +136,26 @@ def modify_dataset(
     return dataset
 
 
-def _create_default_specs(attribute_names: List[str]) -> List[AttributeSpec]:
+def check_dataset_exists(*, target_instance: Client, dataset: str) -> bool:
+    """Check if the dataset exists on target instance
+
+    Args:
+        target_instance: Tamr python client object for the target instance
+        dataset: The dataset name
+
+    Return:
+        True or False for if the dataset exists in target instance
+    """
+
+    try:
+        target_instance.datasets.by_name(dataset)
+    except KeyError:
+        return False
+
+    return True
+
+
+def _create_default_specs(*, attribute_names: List[str]) -> List[AttributeSpec]:
     """Create list of attributeSpec with default type
 
     Args:
@@ -154,22 +176,3 @@ def _create_default_specs(attribute_names: List[str]) -> List[AttributeSpec]:
     for name in attribute_names:
         attribute_specs.append(AttributeSpec.new().with_name(name).with_type(default_type.spec()))
     return attribute_specs
-
-
-def _check_dataset_exists(*, target_instance: Client, dataset: str) -> bool:
-    """Check if the dataset exists on target instance
-
-    Args:
-        target_instance: Tamr python client object for the target instance
-        dataset: The dataset name
-
-    Return:
-        True or False for if the dataset exists in target instance
-    """
-
-    try:
-        target_instance.datasets.by_name(dataset)
-    except KeyError:
-        return False
-
-    return True

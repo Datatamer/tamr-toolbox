@@ -2,14 +2,14 @@
 import pytest
 
 import tamr_toolbox as tbox
+from tamr_toolbox import utils
+from tamr_toolbox.utils.testing import mock_api
+
+from tamr_unify_client import Client
 from tamr_unify_client.attribute.resource import AttributeSpec
 from tamr_unify_client.dataset.resource import DatasetSpec
 from tamr_unify_client.attribute.type import AttributeType
 
-# from tamr_unify_client.attribute.type import AttributeType
-from tamr_toolbox import utils
-
-from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
 # A valid password is not needed for offline tests, some value must be provided
@@ -25,29 +25,28 @@ PRIMARY_KEYS = ["unique_id"]
 enforce_online_test = False
 
 
-def remove_test_datasets():
-    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+def remove_test_datasets(client: Client):
     dataset_names = [
         DATASET_NAME,
         DATASET_NAME + "_multikey",
         DATASET_NAME + "_non_default_attribute",
     ]
     for dataset_name in dataset_names:
-        if tbox.data_io.manage_dataset._check_dataset_exists(
+        if tbox.data_io.manage_dataset.check_dataset_exists(
             target_instance=client, dataset=dataset_name
         ):
             dataset = client.datasets.by_name(dataset_name)
             dataset.delete()
-        assert not tbox.data_io.manage_dataset._check_dataset_exists(
+        assert not tbox.data_io.manage_dataset.check_dataset_exists(
             target_instance=client, dataset=dataset_name
         )
 
 
 @mock_api(enforce_online_test=enforce_online_test)
 def test_create_new_dataset():
-    # Reset test datasets if they exist
-    remove_test_datasets()
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    # Reset test datasets if they exist
+    remove_test_datasets(client=client)
     attributes = ["unique_id", "name", "address"]
     description = "My test dataset"
     dataset_spec = (
@@ -57,7 +56,7 @@ def test_create_new_dataset():
         .with_description(description)
     )
 
-    _ = tbox.data_io.manage_dataset.create_dataset(
+    _ = tbox.data_io.manage_dataset.create(
         tamr=client, dataset_spec=dataset_spec, attributes=attributes,
     )
 
@@ -96,7 +95,7 @@ def test_dataset_already_exists():
     attributes = ["name", "address", "user_id", "account_number"]
 
     with pytest.raises(ValueError):
-        _ = tbox.data_io.manage_dataset.create_dataset(
+        _ = tbox.data_io.manage_dataset.create(
             tamr=client, dataset_spec=dataset_spec, attributes=attributes,
         )
 
@@ -116,7 +115,7 @@ def test_create_multiple_pk():
         .with_description(description)
     )
 
-    _ = tbox.data_io.manage_dataset.create_dataset(
+    _ = tbox.data_io.manage_dataset.create(
         tamr=client, dataset_spec=dataset_spec, attributes=attributes,
     )
 
@@ -188,7 +187,7 @@ def test_create_dataset_w_attribute_specs():
             .with_type(AttributeType(attribute_types[idx]).spec())
         )
 
-    _ = tbox.data_io.manage_dataset.create_dataset(
+    _ = tbox.data_io.manage_dataset.create(
         tamr=client, dataset_spec=dataset_spec, attributes=attribute_specs,
     )
 
@@ -212,7 +211,7 @@ def test_add_default_attribute():
     attributes = ["unique_id", "name", "address", "phone"]
     dataset = client.datasets.by_name(DATASET_NAME)
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(dataset=dataset, attributes=attributes,)
+    _ = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attributes,)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
 
@@ -231,9 +230,7 @@ def test_update_description():
 
     new_dataset_spec = dataset.spec().with_description(description)
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(
-        dataset=dataset, new_dataset_spec=new_dataset_spec,
-    )
+    _ = tbox.data_io.manage_dataset.modify(dataset=dataset, new_dataset_spec=new_dataset_spec,)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     assert updated_dataset.description == description
@@ -248,7 +245,7 @@ def test_remove_attribute():
 
     new_dataset_spec = dataset.spec().with_description(description)
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(
+    _ = tbox.data_io.manage_dataset.modify(
         dataset=dataset, new_dataset_spec=new_dataset_spec, attributes=attributes
     )
 
@@ -297,7 +294,7 @@ def test_add_non_default_attribute():
             .with_type(AttributeType(attribute_types[idx]).spec())
         )
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(dataset=dataset, attributes=attribute_specs,)
+    _ = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attribute_specs,)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
 
@@ -347,7 +344,7 @@ def test_add_primitive_attribute():
             .with_type(AttributeType(attribute_types[idx]).spec())
         )
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(dataset=dataset, attributes=attribute_specs,)
+    _ = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attribute_specs,)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     dataset_attributes = updated_dataset.attributes
@@ -368,7 +365,7 @@ def test_modify_ud():
     attributes = [attr.spec() for attr in dataset.attributes.stream()]
 
     with pytest.raises(ValueError):
-        _ = tbox.data_io.manage_dataset.modify_dataset(dataset=dataset, attributes=attributes,)
+        _ = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attributes,)
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -379,9 +376,7 @@ def test_update_tags():
 
     new_dataset_spec = dataset.spec().with_tags(tags)
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(
-        dataset=dataset, new_dataset_spec=new_dataset_spec,
-    )
+    _ = tbox.data_io.manage_dataset.modify(dataset=dataset, new_dataset_spec=new_dataset_spec,)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     assert updated_dataset.tags == tags
@@ -421,7 +416,7 @@ def test_change_attribute_type():
             .with_type(AttributeType(attribute_types[idx]).spec())
         )
 
-    _ = tbox.data_io.manage_dataset.modify_dataset(dataset=dataset, attributes=attribute_specs,)
+    _ = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attribute_specs,)
 
     dataset = client.datasets.by_name(DATASET_NAME)
     dataset_attributes = dataset.attributes

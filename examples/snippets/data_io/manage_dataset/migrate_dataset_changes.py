@@ -19,7 +19,6 @@ target_client = tbox.utils.client.create(**my_config["target_migration_instance"
 datasets = my_config["datasets"]
 for ds in datasets:
     dataset_name = ds["dataset_name"]
-    primary_key = ds["primary_key"]
 
     # Get dataset from source instance
     source_dataset = source_client.datasets.by_name(dataset_name)
@@ -30,6 +29,6 @@ for ds in datasets:
     target_dataset = target_client.datasets.by_name(dataset_name)
 
     # Migrate dataset updates from source to target instance
-    tbox.data_io.manage_dataset.modify_dataset(
+    tbox.data_io.manage_dataset.modify(
         dataset=target_dataset, new_dataset_spec=dataset_spec, attributes=attributes,
     )
