@@ -63,9 +63,7 @@ def create(
     Returns:
         Tamr client
     """
-    full_address = (
-        f"{protocol}://{host}:{port}" if port is not None else f"{protocol}://{host}"
-    )
+    full_address = f"{protocol}://{host}:{port}" if port is not None else f"{protocol}://{host}"
     LOGGER.info(f"Creating client as user {username} at {full_address}.")
     client = Client(
         auth=UsernamePasswordAuth(username=username, password=password),
@@ -82,11 +80,7 @@ def create(
 
 
 def get_with_connection_retry(
-    client: Client,
-    api_endpoint: str,
-    *,
-    timeout_seconds: int = 600,
-    sleep_seconds: int = 20,
+    client: Client, api_endpoint: str, *, timeout_seconds: int = 600, sleep_seconds: int = 20,
 ) -> requests.Response:
     """Will handle exceptions when attempting to connect to the Tamr API.
         This is used to handle connection issues when Tamr restarts due to a restore.
@@ -108,9 +102,7 @@ def get_with_connection_retry(
             # If we got for example a connection refused exception, try again later
             LOGGER.warning(f"Caught exception in connect {e}")
             sleep(sleep_seconds)
-    raise TimeoutError(
-        f"Took longer than {timeout_seconds} seconds to connect to tamr."
-    )
+    raise TimeoutError(f"Took longer than {timeout_seconds} seconds to connect to tamr.")
 
 
 def poll_endpoint(
@@ -155,9 +147,7 @@ def poll_endpoint(
             sleep_seconds=poll_interval_seconds,
         )
         state = op.json()["state"]
-    raise TimeoutError(
-        f"Took longer than {polling_timeout_seconds} seconds to connect to tamr."
-    )
+    raise TimeoutError(f"Took longer than {polling_timeout_seconds} seconds to connect to tamr.")
 
 
 def _from_response(response: Response) -> Client:
@@ -172,12 +162,8 @@ def _from_response(response: Response) -> Client:
     request = response.request
     url_matcher = re.match(r"(https?)://(.*):(\d{4})(.*)", request.url)
 
-    auth_hash_matcher = re.match(
-        r"BasicCreds (.*)", request.headers.get("Authorization")
-    )
-    creds_matcher = re.match(
-        r"(.*):(.*)", b64decode(auth_hash_matcher.group(1)).decode("latin1")
-    )
+    auth_hash_matcher = re.match(r"BasicCreds (.*)", request.headers.get("Authorization"))
+    creds_matcher = re.match(r"(.*):(.*)", b64decode(auth_hash_matcher.group(1)).decode("latin1"))
 
     return create(
         username=creds_matcher.group(1),

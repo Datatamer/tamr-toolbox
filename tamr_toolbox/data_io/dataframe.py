@@ -6,7 +6,6 @@ from typing import Optional, List
 from collections import OrderedDict, defaultdict
 from functools import partial
 
-import pandas as pd
 from tamr_unify_client.dataset.resource import Dataset
 
 from tamr_toolbox.data_io import common
@@ -319,7 +318,7 @@ def _check_nonnull_columns(
 
 
 def _check_custom(
-    df: pd.DataFrame, columns_to_check: Optional[List[str]], check_function
+    df: "pandas.DataFrame", columns_to_check: Optional[List[str]], check_function
 ) -> ValidationCheck:
     """
     Args:
