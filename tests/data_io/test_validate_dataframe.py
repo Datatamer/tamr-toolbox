@@ -88,7 +88,8 @@ def test_check_custom():
             return True
 
     df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [1, 1, 2, 2], "c": [2, 2, 2, 2]})
-    test_return = dataframe.validate(df_check, custom_check_columns=[check_for_value, ["a"]])
-    print(test_return)
+    dataframe.validate(df_check, custom_check_columns=[check_for_value, ["a"]])
     with pytest.raises(ValueError):
-        dataframe.validate(df_check, custom_check_columns=[check_for_value, ["b", "c"]])
+        dataframe.validate(df_check, custom_check_columns=[check_for_value, ["b"]])
+    with pytest.raises(ValueError):
+        dataframe.validate(df_check, custom_check_columns=[check_for_value, ["c"]])
