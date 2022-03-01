@@ -9,20 +9,19 @@ from tamr_unify_client.attribute.type import AttributeType
 def create(
     *, tamr: Client, dataset_spec: DatasetSpec, attributes: Union[List[str], List[AttributeSpec]],
 ) -> Dataset:
-    """Flexibly create a source dataset in Tamr. Will use array string as deafult attribute type
+    """Flexibly create a source dataset in Tamr. Will use array string as default attribute type
        if none are specified.
 
     Args:
         tamr: TUC client
-        dataset_spec: A representation of the server view of a dataset
-        attributes: List of all attributes
+        dataset_spec: A representation of the server view of a dataset (DatasetSpec)
+        attributes: List of all attributes in new dataset
 
     Returns:
         Dataset created in Tamr
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: primary key is not in attributes
         ValueError: A dataset with name '{dataset_name}' already exists
     """
 
@@ -70,11 +69,11 @@ def modify(
 
     Args:
         dataset: An existing TUC dataset
-        new_dataset_spec: Spec of the new dataset
-        attributes: List of all attributes
+        new_dataset_spec: updated DatasetSpec for dataset
+        attributes: List of all attributes in updated dataset
 
     Returns:
-        Dataset created in Tamr
+        Updated Dataset
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
@@ -159,8 +158,7 @@ def _create_default_specs(*, attribute_names: List[str]) -> List[AttributeSpec]:
     """Create list of attributeSpec with default type
 
     Args:
-        attribute_one: first type
-        attribute_two: second type
+        attribute_names: List of names of attributes
 
     Return:
         True or False for if the types match
