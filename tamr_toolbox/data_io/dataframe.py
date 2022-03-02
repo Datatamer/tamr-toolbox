@@ -2,7 +2,7 @@
 import os
 import logging
 
-from typing import Optional, List
+from typing import Optional, List, Callable, Any
 from collections import OrderedDict, defaultdict
 from functools import partial
 
@@ -256,7 +256,7 @@ def _check_present_columns(
 
 
 def _check_unique_columns(
-    df_profile: "pandas.DataFrame", *, require_unique_columns: Optional[List[str]] = None,
+    df_profile: "pandas.DataFrame", *, require_unique_columns: Optional[List[str]] = None
 ) -> ValidationCheck:
     """
     Checks that a specified list of columns in a DataFrame have all unique values
@@ -318,7 +318,9 @@ def _check_nonnull_columns(
 
 
 def _check_custom(
-    df: "pandas.DataFrame", columns_to_check: Optional[List[str]], check_function
+    df: "pandas.DataFrame",
+    columns_to_check: Optional[List[str]],
+    check_function: Callable[[Any], bool],
 ) -> ValidationCheck:
     """
     Args:
