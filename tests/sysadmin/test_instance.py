@@ -263,3 +263,112 @@ def test_restart_tamr(run_command):
             ),
         ]
     )
+
+
+@mock.patch("tamr_toolbox.sysadmin.instance._run_command", return_value=(0, "", ""))
+def test_get_configs(run_command):
+    # test get all
+    tbox.sysadmin.instance.get_configs(tamr_install_dir="/data",)
+    run_command_args = run_command.mock_calls[0][2]
+    assert run_command_args["command"] == "/data/tamr/utils/unify-admin.sh config:get"
+    run_command.reset_mock()
+
+    # test get list of names
+    tbox.sysadmin.instance.get_configs(
+        config_names=["EXAMPLE", "other"], tamr_install_dir="/data",
+    )
+    run_command_args = run_command.mock_calls[0][2]
+    assert (
+        run_command_args["command"] == "/data/tamr/utils/unify-admin.sh config:get EXAMPLE other"
+    )
+    run_command.reset_mock()
+
+    # test user defined flag
+    tbox.sysadmin.instance.get_configs(
+        config_names=["A", "B"], tamr_install_dir="", user_defined_only=True
+    )
+    run_command_args = run_command.mock_calls[0][2]
+    assert "--userDefined" in run_command_args["command"]
+    run_command.reset_mock()
+
+    tbox.sysadmin.instance.get_configs(tamr_install_dir="", user_defined_only=True)
+    run_command_args = run_command.mock_calls[0][2]
+    assert "--userDefined" in run_command_args["command"]
+    run_command.reset_mock()
+
+    tbox.sysadmin.instance.get_configs(
+        config_names=["A", "B"], tamr_install_dir="", user_defined_only=False
+    )
+    run_command_args = run_command.mock_calls[0][2]
+    assert "--userDefined" not in run_command_args["command"]
+    run_command.reset_mock()
+
+    # test config_search_regex
+    stdout = (
+        "TAMR_JOB_SPARK_DRIVER_MEM: 3G\nTAMR_JOB_SPARK_EXECUTOR_CORES: 3\n"
+        "TAMR_JOB_SPARK_EXECUTOR_INSTANCES: 1\nTAMR_JOB_SPARK_EXECUTOR_MEM: 26G\n"
+        "TAMR_SPARK_CORES: 6\nTAMR_SPARK_MEMORY: 33G"
+    )
+    with mock.patch("tamr_toolbox.sysadmin.instance._run_command", return_value=(0, stdout, "")):
+        configs = tbox.sysadmin.instance.get_configs(
+            config_search_regex="cores", tamr_install_dir=""
+        )
+        assert len(configs.items()) == 2
+        assert configs["TAMR_SPARK_CORES"] == 6
+        assert configs["TAMR_JOB_SPARK_EXECUTOR_CORES"] == 3
+
+    # test get_config
+    with mock.patch("tamr_toolbox.sysadmin.instance._run_command", return_value=(0, stdout, "")):
+        config_value = tbox.sysadmin.instance.get_config(
+            config_name="TAMR_JOB_SPARK_DRIVER_MEM", tamr_install_dir=""
+        )
+        assert config_value == "3G"
+
+
+@mock.patch("tamr_toolbox.sysadmin.instance._run_command", return_value=(0, "", ""))
+def test_set_configs(run_command):
+    # test set simple
+    with mock.patch(
+        "tamr_toolbox.sysadmin.instance.get_configs", return_value={"example": None, "other": None}
+    ):
+        tbox.sysadmin.instance.set_configs(
+            tamr_install_dir="/data", configs={"example": 0, "other": "a"}
+        )
+        run_command_args = run_command.mock_calls[0][2]
+        assert (
+            run_command_args["command"]
+            == "/data/tamr/utils/unify-admin.sh config:set example=0 other=a"
+        )
+        run_command.reset_mock()
+
+    # test invalid config names
+    with mock.patch(
+        "tamr_toolbox.sysadmin.instance.get_configs", return_value={"goodConfig": None}
+    ):
+        with pytest.raises(ValueError) as error:
+            tbox.sysadmin.instance.set_configs(
+                tamr_install_dir="/data", configs={"goodConfig": 0, "badConfig": "a"}
+            )
+        assert "badConfig" in error.value.args[0]
+        assert "goodConfig" not in error.value.args[0]
+        run_command.reset_mock()
+
+    # test changed config
+    with mock.patch(
+        "tamr_toolbox.sysadmin.instance.get_configs",
+        side_effect=[
+            {"example": 0, "other": "a", "choice": "cat"},
+            {"example": 9, "other": "a", "choice": "dog"},
+        ],
+    ):
+        changed_configs = tbox.sysadmin.instance.set_configs(
+            tamr_install_dir="/data", configs={"example": 9}
+        )
+        run_command_args = run_command.mock_calls[0][2]
+        assert (
+            run_command_args["command"] == "/data/tamr/utils/unify-admin.sh config:set example=9"
+        )
+        assert len(changed_configs.keys()) == 2
+        assert changed_configs["example"] == 9
+        assert changed_configs["choice"] == "dog"
+        run_command.reset_mock()
