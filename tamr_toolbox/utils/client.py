@@ -80,7 +80,7 @@ def create(
 
 
 def get_with_connection_retry(
-    client: Client, api_endpoint: str, *, timeout_seconds: int = 600, sleep_seconds: int = 20,
+    client: Client, api_endpoint: str, *, timeout_seconds: int = 600, sleep_seconds: int = 20
 ) -> requests.Response:
     """Will handle exceptions when attempting to connect to the Tamr API.
         This is used to handle connection issues when Tamr restarts due to a restore.
