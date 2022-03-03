@@ -15,6 +15,7 @@ tbox.data_io.dataframe.validate(
     require_present_columns=["primary_key", "column_1", "column_2"],
     require_unique_columns=["primary_key"],
     require_nonnull_columns=["primary_key", "column_1"],
+    custom_check_columns=["function_name", ["column_1", "column_2"]],
 )
 
 # can also have validation return a boolean and a dict of failed columns
@@ -24,6 +25,8 @@ result = tbox.data_io.dataframe.validate(
     require_present_columns=["primary_key", "column_1", "column_2"],
     require_unique_columns=["primary_key"],
     require_nonnull_columns=["primary_key", "column_1"],
+    custom_check_columns=["function_name", ["column_1", "column_2"]],
+
 )
 
 # result bool will be True if all tests succeed, then proceed to upsert the records from the
