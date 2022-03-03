@@ -69,3 +69,14 @@ jobs:
           path: tamr_toolbox_all_dependencies.zip
           name: ${{ steps.get_name.outputs.file_name }}_all_dependencies.zip
 
+      - name: Create wheel dir - pip and setuptools
+        run: |
+          pip wheel --wheel-dir ./pip_setuptools "pip==$(pip list | grep pip | tr -s ' ' | cut -d ' ' -f 2)"
+          pip wheel --wheel-dir ./pip_setuptools "setuptools==$(pip list | grep setuptools | tr -s ' ' | cut -d ' ' -f 2)"
+      - name: Zip wheel dir - pip and setuptools
+        run: zip -r pip_and_setuptools.zip pip_setuptools
+      - name: Upload wheel dir - pip and setuptools
+        uses: actions/upload-artifact@v2
+        with:
+          path: pip_and_setuptools.zip
+          name: ${{ steps.get_name.outputs.file_name }}_pip_and_setuptools.zip
