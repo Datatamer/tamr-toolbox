@@ -74,7 +74,7 @@ jobs:
           pip wheel --wheel-dir ./pip_setuptools "pip==$(pip list | grep pip | tr -s ' ' | cut -d ' ' -f 2)"
           pip wheel --wheel-dir ./pip_setuptools "setuptools==$(pip list | grep setuptools | tr -s ' ' | cut -d ' ' -f 2)"
       - name: Zip wheel dir - pip and setuptools
-        run: zip -r pip.zip pip
+        run: zip -r pip_and_setuptools.zip pip_setuptools
       - name: Upload wheel dir - pip and setuptools
         uses: actions/upload-artifact@v2
         with:
