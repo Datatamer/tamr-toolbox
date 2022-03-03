@@ -289,7 +289,7 @@ def _check_unique_columns(
 
 
 def _check_nonnull_columns(
-    df_profile: "pandas.DataFrame", *, require_nonnull_columns: Optional[List[str]] = None,
+    df_profile: "pandas.DataFrame", *, require_nonnull_columns: Optional[List[str]] = None
 ) -> ValidationCheck:
     """
     Checks that a specified list of columns in a DataFrame have all non-null values
@@ -350,7 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_check_columns=None,
+    custom_check_columns: Optional[List[str]] = None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
