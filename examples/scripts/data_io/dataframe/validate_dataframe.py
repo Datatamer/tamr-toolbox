@@ -8,7 +8,7 @@ def main() -> ValidationCheck:
     Returns: ValidationCheck object consisting of Pass/Fail and dict of failed columns
     """
 
-    def custom_check_function(value):
+    def ensure_not_2(value):
         if value == 2:
             return False
         else:
@@ -23,7 +23,7 @@ def main() -> ValidationCheck:
         require_present_columns=["a", "b"],
         require_unique_columns=["d"],
         require_nonnull_columns=["b", "c"],
-        custom_check_columns=[custom_check_function, ["a", "b"]],
+        custom_check_columns=[ensure_not_2(), ["a", "b"]],
     )
     return failed_checks_dict
 
