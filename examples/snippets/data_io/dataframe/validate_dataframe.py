@@ -8,6 +8,10 @@ def my_custom_function():
     pass
 
 
+def my_other_custom_function():
+    pass
+
+
 # Read config, make Tamr Client
 tamr = tbox.utils.client.create(username="user", password="pw", host="localhost")
 
@@ -20,7 +24,10 @@ tbox.data_io.dataframe.validate(
     require_present_columns=["primary_key", "column_1", "column_2"],
     require_unique_columns=["primary_key"],
     require_nonnull_columns=["primary_key", "column_1"],
-    custom_check=[my_custom_function, ["column_1", "column_2"]],
+    custom_check_columns=(
+        (my_custom_function, ["column_1", "column_2"]),
+        (my_other_custom_function(), ["column_1", "column_2"]),
+    ),
 )
 
 # can also have validation return a boolean and a dict of failed columns
@@ -30,7 +37,10 @@ result = tbox.data_io.dataframe.validate(
     require_present_columns=["primary_key", "column_1", "column_2"],
     require_unique_columns=["primary_key"],
     require_nonnull_columns=["primary_key", "column_1"],
-    custom_check=[my_custom_function, ["column_1", "column_2"]],
+    custom_check_columns=(
+        (my_custom_function, ["column_1", "column_2"]),
+        (my_other_custom_function(), ["column_1", "column_2"]),
+    ),
 )
 
 # result bool will be True if all tests succeed, then proceed to upsert the records from the

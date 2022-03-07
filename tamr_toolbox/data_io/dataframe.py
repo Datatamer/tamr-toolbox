@@ -350,7 +350,9 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_check: Tuple[Callable[[Any], bool], List[str]] = None,
+    custom_check: Tuple[
+        Tuple[Callable[[Any], bool], List[str]], Tuple[Callable[[Any], bool], List[str]]
+    ] = None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
@@ -365,7 +367,7 @@ def validate(
         require_unique_columns: list of columns that are checked to have all unique values,
             e.g. a primary key column
         require_nonnull_columns: list of columns that are checked to have all non-null values
-        custom_check: tuple of custom function and list of columns to apply function too
+        custom_check: tuple of tuples each containing custom function and list of columns to apply function too
 
 
     Returns:
@@ -402,11 +404,12 @@ def validate(
     )
 
     if custom_check is not None:
-        failed_checks_dict.update(
-            _check_custom(
-                df, check_function=custom_check[0], columns_to_check=custom_check[1],
-            ).details
-        )
+        for i in range(len(custom_check)):
+            failed_checks_dict.update(
+                _check_custom(
+                    df, check_function=custom_check[i][0], columns_to_check=custom_check[i][1],
+                ).details
+            )
 
     failed_checks_dict = dict(failed_checks_dict)
     passed = len(failed_checks_dict) == 0

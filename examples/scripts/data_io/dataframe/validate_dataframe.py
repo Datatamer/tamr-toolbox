@@ -14,8 +14,14 @@ def main() -> ValidationCheck:
         else:
             return True
 
+    def ensure_not_3(value):
+        if value == 3:
+            return False
+        else:
+            return True
+
     df1 = pd.DataFrame(
-        {"a": [1, 1, 1, 1], "b": [1, 1, 2, 2], "c": [2, 2, 2, 2], "d": [1, 2, 3, 4]}
+        {"a": [1, 1, 1, 1], "b": [1, 1, 2, 2], "c": [2, 2, 2, 2], "d": [3, 3, 3, 3]}
     )
 
     failed_checks_dict = dataframe.validate(
@@ -23,7 +29,7 @@ def main() -> ValidationCheck:
         require_present_columns=["a", "b"],
         require_unique_columns=["d"],
         require_nonnull_columns=["b", "c"],
-        custom_check=[ensure_not_2, ["a", "b"]],
+        custom_check=((ensure_not_2, ["a", "b"]), (ensure_not_3, ["a", "d"])),
     )
     return failed_checks_dict
 

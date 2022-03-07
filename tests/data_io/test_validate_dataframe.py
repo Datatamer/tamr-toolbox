@@ -81,15 +81,22 @@ def test_failure_dict_return():
 
 
 def test_check_custom():
-    def check_for_value(value):
+    def ensure_not_2(value):
         if value == 2:
             return False
         else:
             return True
 
-    df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [1, 1, 2, 2], "c": [2, 2, 2, 2]})
-    dataframe.validate(df_check, custom_check=[check_for_value, ["a"]])
+    def ensure_3(value):
+        if value == 3:
+            return True
+        else:
+            return False
+
+    df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [2, 2, 2, 2], "c": [3, 3, 3, 3]})
+    dataframe.validate(df_check, custom_check=((ensure_not_2, ["a"]), (ensure_3, ["c"])))
     with pytest.raises(ValueError):
-        dataframe.validate(df_check, custom_check=[check_for_value, ["b"]])
+        dataframe.validate(df_check, custom_check=((ensure_3, ["c"]), (ensure_not_2, ["b"])))
+
     with pytest.raises(ValueError):
-        dataframe.validate(df_check, custom_check=[check_for_value, ["c"]])
+        dataframe.validate(df_check, custom_check=((ensure_not_2, ["b"]),))
