@@ -320,7 +320,7 @@ def _check_nonnull_columns(
 def _check_custom(
     df: "pandas.DataFrame",
     columns_to_check: Optional[List[str]],
-    check_function: Callable[Any, bool],
+    check_function: Callable[[Any], bool],
 ) -> ValidationCheck:
     """
     Args:
@@ -350,7 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_check: Tuple[Callable[Any, bool], List[str]] = None,
+    custom_check: Tuple[Callable[[Any], bool], List[str]] = None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
