@@ -2,7 +2,7 @@
 import os
 import logging
 
-from typing import Optional, List, Callable, Any
+from typing import Optional, List, Callable, Any, Tuple
 from collections import OrderedDict, defaultdict
 from functools import partial
 
@@ -320,7 +320,7 @@ def _check_nonnull_columns(
 def _check_custom(
     df: "pandas.DataFrame",
     columns_to_check: Optional[List[str]],
-    check_function: Callable[[Any], bool],
+    check_function: Callable[Any, bool],
 ) -> ValidationCheck:
     """
     Args:
@@ -350,7 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_check_columns: Optional[List[str]] = None,
+    custom_check: Tuple[Callable[Any, bool], List[str]] = None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
@@ -400,12 +400,10 @@ def validate(
         _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
     )
 
-    if custom_check_columns is not None:
+    if custom_check is not None:
         failed_checks_dict.update(
             _check_custom(
-                df,
-                check_function=custom_check_columns[0],
-                columns_to_check=custom_check_columns[1],
+                df, check_function=custom_check[0], columns_to_check=custom_check[1],
             ).details
         )
 
