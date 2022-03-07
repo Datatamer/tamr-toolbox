@@ -23,7 +23,7 @@ def main() -> ValidationCheck:
         require_present_columns=["a", "b"],
         require_unique_columns=["d"],
         require_nonnull_columns=["b", "c"],
-        custom_check_columns=[ensure_not_2, ["a", "b"]],
+        custom_check=[ensure_not_2, ["a", "b"]],
     )
     return failed_checks_dict
 
