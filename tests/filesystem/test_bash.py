@@ -18,8 +18,10 @@ def _make_old_files(
     The files are created in a temporary directory which must be supplied
 
     Args:
+        directory_path: Path within temporary directory to create file structure
         num_days_old: number of days in the past to set the file modification times
         temporary_directory: The temporary directory to create backups within
+
     Returns:
         A tuple of two lists with the first containing the list of paths to the created directories
           and the second containing the list of paths to the created files
