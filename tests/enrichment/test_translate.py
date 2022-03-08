@@ -309,15 +309,16 @@ def test_translate_from_list(
     mock_client = Client()
 
     phrases_to_translate = ["Cheddar Cheese", "Ground beef", "whole chicken"]
-    dictionary = enrichment.translate.from_list(
-        all_phrases=phrases_to_translate,
-        client=mock_client,
-        dictionary=TEST_TRANSLATION_DICTIONARY,
-        source_language="auto",
-        target_language="fr",
-        chunk_size=chunk_size,
-        intermediate_save_every_n_chunks=intermediate_save_every_n_chunks,
-        intermediate_save_to_disk=intermediate_save_to_disk,
-        intermediate_folder=tempfile.gettempdir(),
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        dictionary = enrichment.translate.from_list(
+            all_phrases=phrases_to_translate,
+            client=mock_client,
+            dictionary=TEST_TRANSLATION_DICTIONARY,
+            source_language="auto",
+            target_language="fr",
+            chunk_size=chunk_size,
+            intermediate_save_every_n_chunks=intermediate_save_every_n_chunks,
+            intermediate_save_to_disk=intermediate_save_to_disk,
+            intermediate_folder=tempdir,
+        )
     assert dictionary == TEST_TRANSLATION_DICTIONARY_TRANSLATED
