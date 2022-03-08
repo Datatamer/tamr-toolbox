@@ -367,7 +367,8 @@ def validate(
         require_unique_columns: list of columns that are checked to have all unique values,
             e.g. a primary key column
         require_nonnull_columns: list of columns that are checked to have all non-null values
-        custom_check: tuple of tuples each containing custom function and list of columns to apply function too
+        custom_check: tuple of tuples each containing custom function and list of columns,
+            to apply function to
 
 
     Returns:
