@@ -405,10 +405,10 @@ def validate(
     )
 
     if custom_check is not None:
-        for i in range(len(custom_check)):
+        for custom_check in custom_checks:
             failed_checks_dict.update(
                 _check_custom(
-                    df, check_function=custom_check[i][0], columns_to_check=custom_check[i][1],
+                    df, check_function=custom_check[0], columns_to_check=custom_check[1],
                 ).details
             )
 
