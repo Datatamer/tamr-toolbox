@@ -10,7 +10,6 @@ from pathlib import Path
 
 
 def export_from_tamr(client: Client, *, project_name: str, export_path: str,) -> Operation:
-    LOGGER.info(f"Project {project_name} export from Tamr initializing...")
     project = client.projects.by_name(project_name)
     if not export_path:
         export_path = os.path.join(
@@ -27,7 +26,6 @@ def import_to_tamr(
     new_ud_name: str,
     overwrite_existing: bool = False,
 ) -> Operation:
-    LOGGER.info(f"Project {new_project_name} import to Tamr initializing...")
     return tbox.project.import_artifacts(
         tamr_client=client,
         project_artifact_path=zipfile_path,
@@ -38,7 +36,60 @@ def import_to_tamr(
 
 
 def main():
-    global LOGGER
+
+    # creating the logger object:
+    logging_dir = "."
+    LOGGER = tbu.logger.create(__file__, log_directory=logging_dir)
+    # Let Tamr Toolbox itself also contribute to the log
+    tbu.logger.enable_toolbox_logging(log_directory=logging_dir, log_to_terminal=False)
+    # Configure the logs from imported packages
+    tbu.logger.enable_package_logging(
+        "tamr_unify_client", log_directory=logging_dir, log_to_terminal=False
+    )
+
+    # load config file and create tamr client
+    conf_dir = "."
+    config = tbu.config.from_yaml(conf_dir)
+
+    ## This block was added on 2022-02-25 to process encrypted pwd
+    tamr_client = tbu.client.create(**config["tamr"])
+
+    # calling the action functions:
+    # exporting the target project from tamr
+    LOGGER.info(f"Project {opts.name} export from Tamr initializing...")
+    op = export_from_tamr(tamr_client, project_name=opts.name, export_path=opts.exportPath)
+    tbu.operation.enforce_success(op)
+    LOGGER.info(op)
+
+    ## preparing for the import
+    # finding the path to export file
+    zipfile_name = [
+        f
+        for f in os.listdir(opts.exportPath)
+        if (os.path.isfile(os.path.join(opts.exportPath, f)) and f.endswith(".zip"))
+    ][0]
+    zipfile_path = f"{opts.exportPath}/{zipfile_name}"
+
+    # constructing the new project name and respective unified dataset name to be imported to tamr
+    new_project_name = opts.newName if opts.newName else f"{opts.name}{opts.postfix}"
+    new_ud_name = opts.newUDName if opts.newUDName else f"{new_project_name}_unified_dataset"
+    # importing a copy of target project to tamr
+    LOGGER.info(f"Project {new_project_name} import to Tamr initializing...")
+    op = import_to_tamr(
+        tamr_client,
+        zipfile_path=zipfile_path,
+        new_project_name=new_project_name,
+        new_ud_name=new_ud_name,
+        overwrite_existing=opts.overwrite,
+    )
+    tbu.operation.enforce_success(op)
+    LOGGER.info(op)
+    LOGGER.info(
+        f"Project {new_project_name} was successfully forked from Tamr project {opts.name}!"
+    )
+
+
+if __name__ == "__main__":
     # parse args
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -72,55 +123,4 @@ def main():
     )
     opts = parser.parse_args()
 
-    # creating the logger object:
-    logging_dir = "."
-    LOGGER = tbu.logger.create(__file__, log_directory=logging_dir)
-    # Let Tamr Toolbox itself also contribute to the log
-    tbu.logger.enable_toolbox_logging(log_directory=logging_dir, log_to_terminal=False)
-    # Configure the logs from imported packages
-    tbu.logger.enable_package_logging(
-        "tamr_unify_client", log_directory=logging_dir, log_to_terminal=False
-    )
-
-    # load config file and create tamr client
-    conf_dir = "."
-    config = tbu.config.from_yaml(conf_dir)
-
-    ## This block was added on 2022-02-25 to process encrypted pwd
-    tamr_client = tbu.client.create(**config["tamr"])
-
-    # calling the action functions:
-    # exporting the target project from tamr
-    op = export_from_tamr(tamr_client, project_name=opts.name, export_path=opts.exportPath)
-    tbu.operation.enforce_success(op)
-    LOGGER.info(op)
-
-    ## preparing for the import
-    # finding the path to export file
-    zipfile_name = [
-        f
-        for f in os.listdir(opts.exportPath)
-        if (os.path.isfile(os.path.join(opts.exportPath, f)) and f.endswith(".zip"))
-    ][0]
-    zipfile_path = f"{opts.exportPath}/{zipfile_name}"
-
-    # constructing the new project name and respective unified dataset name to be imported to tamr
-    new_project_name = opts.newName if opts.newName else f"{opts.name}{opts.postfix}"
-    new_ud_name = opts.newUDName if opts.newUDName else f"{new_project_name}_unified_dataset"
-    # importing a copy of target project to tamr
-    op = import_to_tamr(
-        tamr_client,
-        zipfile_path=zipfile_path,
-        new_project_name=new_project_name,
-        new_ud_name=new_ud_name,
-        overwrite_existing=opts.overwrite,
-    )
-    tbu.operation.enforce_success(op)
-    LOGGER.info(op)
-    LOGGER.info(
-        f"Project {new_project_name} was successfully forked from Tamr project {opts.name}!"
-    )
-
-
-if __name__ == "__main__":
     main()
