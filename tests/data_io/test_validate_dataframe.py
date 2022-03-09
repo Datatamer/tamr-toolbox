@@ -94,9 +94,9 @@ def test_check_custom():
             return False
 
     df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [2, 2, 2, 2], "c": [3, 3, 3, 3]})
-    dataframe.validate(df_check, custom_check=((ensure_not_2, ["a"]), (ensure_3, ["c"])))
+    dataframe.validate(df_check, custom_checks=((ensure_not_2, ["a"]), (ensure_3, ["c"])))
     with pytest.raises(ValueError):
-        dataframe.validate(df_check, custom_check=((ensure_3, ["c"]), (ensure_not_2, ["b"])))
+        dataframe.validate(df_check, custom_checks=((ensure_3, ["c"]), (ensure_not_2, ["b"])))
 
     with pytest.raises(ValueError):
-        dataframe.validate(df_check, custom_check=((ensure_not_2, ["b"]),))
+        dataframe.validate(df_check, custom_checks=((ensure_not_2, ["b"]),))

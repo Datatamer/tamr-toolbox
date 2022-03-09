@@ -2,7 +2,7 @@
 import os
 import logging
 
-from typing import Optional, List, Callable, Any, Tuple
+from typing import Optional, List, Callable, Any, Iterable
 from collections import OrderedDict, defaultdict
 from functools import partial
 
@@ -350,8 +350,8 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_checks: Tuple[
-        Tuple[Callable[[Any], bool], List[str]], Tuple[Callable[[Any], bool], List[str]]
+    custom_checks: Iterable[
+        Iterable[Callable[[Any], bool], List[str]], Iterable[Callable[[Any], bool], List[str]]
     ] = None,
 ) -> ValidationCheck:
     """
@@ -403,7 +403,7 @@ def validate(
         _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
     )
 
-    if custom_check is not None:
+    if custom_checks is not None:
         for custom_check in custom_checks:
             failed_checks_dict.update(
                 _check_custom(
