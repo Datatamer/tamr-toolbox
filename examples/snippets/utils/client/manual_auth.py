@@ -1,10 +1,7 @@
 """
 Snippet for creating a tamr client object with manual passing of credentials during runtime.
 
-a. using the getpass function will conceal password phrase and requires manual human user input
-b. this approach cannot be coupled with fully automated workflows (e.g., crontab jobs)
-c. it is presumed that when setting AUTH manually the config.yaml file does not contain the
-   username and password fields
+Note: This approach cannot be coupled with fully automated workflows (e.g., crontab jobs)
 """
 
 from tamr_toolbox import utils as tbu
