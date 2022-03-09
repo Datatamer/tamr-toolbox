@@ -14,7 +14,8 @@ my_config = tbu.config.from_yaml(config_path)
 
 # prompting user for AUTH info from the terminal
 username = input("Enter username: ")
-password = getpass("Enter password: ")  # the password will not be visible while being typed in the terminal
+# the password will not be visible while being typed in the terminal
+password = getpass("Enter password: ")
 
 # creating the unify client object
 tamr_client = tbu.client.create(username=username, password=password, **my_config)
