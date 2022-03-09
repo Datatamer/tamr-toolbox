@@ -1,6 +1,6 @@
 """Tasks related to a Tamr instance"""
 import re
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
 
 import subprocess
 import logging
@@ -398,7 +398,7 @@ def get_configs(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """Retrieves configuration values from a Tamr instance.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
@@ -456,7 +456,7 @@ def get_config(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
-) -> any:
+) -> Any:
     """Retrieves a configuration value from a Tamr instance.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
@@ -488,12 +488,12 @@ def get_config(
 
 def set_configs(
     *,
-    configs: Dict[str, any],
+    configs: Dict[str, Any],
     tamr_install_dir: str,
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """Sets configuration values in a Tamr instance.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
@@ -564,12 +564,12 @@ def set_configs(
 def set_config(
     *,
     config_name: str,
-    config_value: any,
+    config_value: Any,
     tamr_install_dir: str,
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """Sets configuration values in a Tamr instance.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
