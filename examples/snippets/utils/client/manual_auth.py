@@ -1,26 +1,22 @@
 """
-this snippet shows how a tamr client object can be created
-with manual passing of credentials during runtime.
+Snippet for creating a tamr client object with manual passing of credentials during runtime.
 """
 from tamr_toolbox import utils as tbu
-from tamr_toolbox.utils.client import Client
 from getpass import getpass
 
 
-def manual_auth(config: dict) -> Client:
-    """
-    This function allows for setting up credentials in terminal when creating a unify client object
-    - using the getpass function will conceal password phrase and requires manual human user input
-    - this approach cannot be coupled with fully automated workflows (e.g., crobtab jobs)
-    """
+## a. using the getpass function will conceal password phrase and requires manual human user input
+## b. this approach cannot be coupled with fully automated workflows (e.g., crobtab jobs)
+## c. it is presumed that when setting AUTH manually the config.yaml file does not contain the
+## username and password fields
 
-    config["username"] = input("Enter username: ")
-    config["password"] = getpass("Enter password: ")
-
-    return tbu.client.create(**config)
-
-
-# eample implementation
+# setting up path to config file and loading the configuration variables
 config_path = "."
 my_config = tbu.config.from_yaml(config_path)
-tamr_client = manual_auth(my_config)
+
+# prompting user for AUTH info from the terminal
+username = input("Enter username: ")
+password = getpass("Enter password: ")
+
+# creating the unify client object
+tamr_client = tbu.client.create(username=username, password=password, **my_config)
