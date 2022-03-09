@@ -10,7 +10,7 @@ from getpass import getpass
 ## c. it is presumed that when setting AUTH manually the config.yaml file does not contain the
 ## username and password fields
 
-# setting up path to config file and loading the configuration variables
+# load configuration variables that do not include AUTH credentials
 config_path = "."
 my_config = tbu.config.from_yaml(config_path)
 
