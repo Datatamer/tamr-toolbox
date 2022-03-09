@@ -350,7 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_check: Tuple[
+    custom_checks: Tuple[
         Tuple[Callable[[Any], bool], List[str]], Tuple[Callable[[Any], bool], List[str]]
     ] = None,
 ) -> ValidationCheck:
