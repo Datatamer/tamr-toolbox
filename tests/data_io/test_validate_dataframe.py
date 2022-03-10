@@ -82,10 +82,7 @@ def test_failure_dict_return():
 
 def test_check_custom():
     def ensure_not_2(value):
-        if value == 2:
-            return False
-        else:
-            return True
+        return value != 2
 
     def ensure_3(value):
         if value == 3:
