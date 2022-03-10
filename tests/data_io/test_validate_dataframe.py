@@ -85,10 +85,7 @@ def test_check_custom():
         return value != 2
 
     def ensure_3(value):
-        if value == 3:
-            return True
-        else:
-            return False
+        return value == 3
 
     df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [2, 2, 2, 2], "c": [3, 3, 3, 3]})
     dataframe.validate(df_check, custom_checks=((ensure_not_2, ["a"]), (ensure_3, ["c"])))
