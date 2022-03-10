@@ -4,10 +4,7 @@ from tamr_toolbox.data_io import dataframe
 
 
 def ensure_not_2(value):
-    if value == 2:
-        return False
-    else:
-        return True
+    return value != 2
 
 
 def ensure_not_3(value):
