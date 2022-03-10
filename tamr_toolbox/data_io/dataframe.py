@@ -402,13 +402,12 @@ def validate(
         _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
     )
 
-    if custom_checks is not None:
-        for custom_check in custom_checks:
-            failed_checks_dict.update(
-                _check_custom(
-                    df, check_function=custom_check[0], columns_to_check=custom_check[1],
-                ).details
-            )
+    for custom_check in custom_checks:
+        failed_checks_dict.update(
+            _check_custom(
+                df, check_function=custom_check[0], columns_to_check=custom_check[1],
+            ).details
+        )
 
     failed_checks_dict = dict(failed_checks_dict)
     passed = len(failed_checks_dict) == 0
