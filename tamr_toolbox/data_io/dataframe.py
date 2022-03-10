@@ -350,7 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
-    custom_checks: Iterable[Callable[[Any], bool], List[str]] = None,
+    custom_checks: Iterable[Tuple[Callable[[Any], bool], List[str]]] = None,
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
