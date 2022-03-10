@@ -1,6 +1,8 @@
-from tamr_toolbox.models.validation_check import ValidationCheck
+"""Example script for validating the contents of a DataFrame"""
 import pandas as pd
+
 from tamr_toolbox.data_io import dataframe
+from tamr_toolbox.models.validation_check import ValidationCheck
 
 
 def ensure_not_2(value):
