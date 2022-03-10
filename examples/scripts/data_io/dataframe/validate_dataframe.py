@@ -8,10 +8,7 @@ def ensure_not_2(value):
 
 
 def ensure_not_3(value):
-    if value == 3:
-        return False
-    else:
-        return True
+    return value == 3
 
 
 def main() -> ValidationCheck:
