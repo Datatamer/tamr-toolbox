@@ -2,7 +2,7 @@
 import os
 import logging
 
-from typing import Optional, List, Callable, Any, Iterable
+from typing import Optional, List, Callable, Any, Iterable, Tuple
 from collections import OrderedDict, defaultdict
 from functools import partial
 
@@ -365,7 +365,8 @@ def validate(
         require_unique_columns: list of columns that are checked to have all unique values,
             e.g. a primary key column
         require_nonnull_columns: list of columns that are checked to have all non-null values
-        custom_checks: collection of tuples each containing a custom function and list of columns on which to apply it
+        custom_checks: collection of tuples each containing a custom function and list of columns,
+            on which to apply it
 
 
     Returns:
