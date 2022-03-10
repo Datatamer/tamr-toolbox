@@ -35,7 +35,7 @@ def import_to_tamr(
     )
 
 
-def main():
+def main(opts):
 
     # creating the logger object:
     logging_dir = "."
@@ -123,4 +123,4 @@ if __name__ == "__main__":
     )
     opts = parser.parse_args()
 
-    main()
+    main(opts)
