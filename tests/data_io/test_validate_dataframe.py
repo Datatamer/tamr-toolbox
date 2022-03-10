@@ -78,3 +78,19 @@ def test_failure_dict_return():
     result = dataframe.validate(df, raise_error=False, require_present_columns=["produce"])
     assert not result.passed
     assert "produce" in result.details["failed_present_columns"]
+
+
+def test_check_custom():
+    def ensure_not_2(value):
+        return value != 2
+
+    def ensure_3(value):
+        return value == 3
+
+    df_check = pd.DataFrame({"a": [1, 1, 1, 1], "b": [2, 2, 2, 2], "c": [3, 3, 3, 3]})
+    dataframe.validate(df_check, custom_checks=((ensure_not_2, ["a"]), (ensure_3, ["c"])))
+    with pytest.raises(ValueError):
+        dataframe.validate(df_check, custom_checks=((ensure_3, ["c"]), (ensure_not_2, ["b"])))
+
+    with pytest.raises(ValueError):
+        dataframe.validate(df_check, custom_checks=((ensure_not_2, ["b"]),))
