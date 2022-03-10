@@ -12,7 +12,8 @@ def ensure_not_3(value):
 
 
 def main() -> ValidationCheck:
-    """returns columns which failed checks
+    """Checks the columns of a DataFrame
+    
     Returns: ValidationCheck object consisting of Pass/Fail and dict of failed columns
     """
 
