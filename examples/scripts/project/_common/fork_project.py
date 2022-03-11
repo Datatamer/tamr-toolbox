@@ -1,14 +1,14 @@
 """ Example script for creating a copy of an existing project with a new name """
 
+import os
+from pathlib import Path
+from typing import Dict, Any
+import argparse
+from argparse import Namespace
 import tamr_toolbox as tbox
 from tamr_toolbox import utils as tbu
 from tamr_toolbox.utils.client import Client
 from tamr_toolbox.utils.operation import Operation
-import argparse
-from argparse import Namespace
-from typing import Dict, Any
-import os
-from pathlib import Path
 
 
 def export_from_tamr(client: Client, *, project_name: str, export_path: str,) -> Operation:
