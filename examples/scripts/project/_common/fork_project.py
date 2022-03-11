@@ -5,6 +5,8 @@ from tamr_toolbox import utils as tbu
 from tamr_toolbox.utils.client import Client
 from tamr_toolbox.utils.operation import Operation
 import argparse
+from argparse import Namespace
+from typing import Dict, Any
 import os
 from pathlib import Path
 
@@ -35,24 +37,10 @@ def import_to_tamr(
     )
 
 
-def main(opts):
-
-    # creating the logger object:
-    logging_dir = "."
-    LOGGER = tbu.logger.create(__file__, log_directory=logging_dir)
-    # Let Tamr Toolbox itself also contribute to the log
-    tbu.logger.enable_toolbox_logging(log_directory=logging_dir, log_to_terminal=False)
-    # Configure the logs from imported packages
-    tbu.logger.enable_package_logging(
-        "tamr_unify_client", log_directory=logging_dir, log_to_terminal=False
-    )
-
-    # load config file and create tamr client
-    conf_dir = "."
-    config = tbu.config.from_yaml(conf_dir)
+def main(*, opts: Namespace, instance_connection_info: Dict[str, Any]):
 
     ## This block was added on 2022-02-25 to process encrypted pwd
-    tamr_client = tbu.client.create(**config["tamr"])
+    tamr_client = tbu.client.create(**instance_connection_info)
 
     # calling the action functions:
     # exporting the target project from tamr
@@ -123,4 +111,18 @@ if __name__ == "__main__":
     )
     opts = parser.parse_args()
 
-    main(opts)
+    # creating the logger object:
+    logging_dir = "."
+    LOGGER = tbu.logger.create(__file__, log_directory=logging_dir)
+    # Let Tamr Toolbox itself also contribute to the log
+    tbu.logger.enable_toolbox_logging(log_directory=logging_dir, log_to_terminal=False)
+    # Configure the logs from imported packages
+    tbu.logger.enable_package_logging(
+        "tamr_unify_client", log_directory=logging_dir, log_to_terminal=False
+    )
+
+    # load config file and create tamr client
+    conf_dir = "."
+    config = tbu.config.from_yaml(conf_dir)
+
+    main(opts=opts, instance_connection_info=config["tamr"])
