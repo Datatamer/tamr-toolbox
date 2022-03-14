@@ -24,6 +24,7 @@ def send_message(
     *,
     teams_connector_card: "pymsteams.connectorcard",
     message: str,
+    title: str = "Tamr Job Watcher",
     raise_error: bool = True,
     **kwargs,
 ) -> JsonDict:
@@ -33,6 +34,7 @@ def send_message(
         teams_connector_card: A pymsteams connectorcard, instantiated with
             a Teams webhook
         message: A message to be sent to an MS Teams channel
+        title: Optional. Default is "Tamr Job Watcher".
         raise_error: Optional. If True, errors should be raised, if False
             fail silenty. Default True
 
@@ -53,6 +55,7 @@ def send_message(
 
     try:
         teams_connector_card.text(message)
+        teams_connector_card.title(title)
         teams_connector_card.send()
     except pymsteams.TeamsWebhookException as e:
         LOGGER.error(f"Error: {e}")
@@ -74,6 +77,7 @@ def send_message(
 def _send_job_status_message(
     *,
     teams_connector_card: "pymsteams.connectorcard",
+    title: str,
     operation: Operation,
     notify_states: List[OperationState],
 ) -> JsonDict:
@@ -82,6 +86,7 @@ def _send_job_status_message(
     Args:
         teams_connector_card: A pymsteams connectorcard, instantiated with
             a Teams webhook
+        title: The title of the message
         operation: A Tamr operation
         notify_states: States for which notifications should be sent
 
@@ -95,13 +100,14 @@ def _send_job_status_message(
     state = OperationState[operation.state]
     if state in notify_states:
         message = get_details(operation=operation)
-        return send_message(teams_connector_card=teams_connector_card, message=message)
+        return send_message(teams_connector_card=teams_connector_card, message=message, title=title)
 
 
 def monitor_job(
     tamr: Client,
     *,
     teams_connector_card: "pymsteams.connectorcard",
+    title: str = "Tamr Job Watcher",
     operation: Union[int, str, Operation],
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
@@ -113,6 +119,7 @@ def monitor_job(
         tamr: A Tamr client
         teams_connector_card: A pymsteams connectorcard, instantiated with
             a Teams webhook
+        title: Optional. Default is "Tamr Job Watcher".
         operation: A job ID or a Tamr operation
         poll_interval_seconds: Time interval (in seconds) between subsequent polls
         timeout_seconds: Time (in seconds) to wait
@@ -127,6 +134,7 @@ def monitor_job(
     """
     list_responses = monitor_job_common(
         tamr=tamr,
+        title=title,
         send_message=send_message,
         send_status_function=_send_job_status_message,
         teams_connector_card=teams_connector_card,
