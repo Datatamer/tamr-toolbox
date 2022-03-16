@@ -106,29 +106,30 @@ def test_dataset_export_csv(
     sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
     dataset = client.datasets.by_resource_id(sm_dataset_id)
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = Path(tempfile.gettempdir()) / f"test_export_csv_{timestamp}.csv"
-    records_written = csv.from_dataset(
-        dataset,
-        filename,
-        overwrite=True,
-        buffer_size=buffer_size,
-        nrows=nrows,
-        csv_delimiter=csv_delimiter,
-        flatten_delimiter=flatten_delimiter,
-        columns=columns,
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        filename = Path(tempdir) / f"test_export_csv_{timestamp}.csv"
+        records_written = csv.from_dataset(
+            dataset,
+            filename,
+            overwrite=True,
+            buffer_size=buffer_size,
+            nrows=nrows,
+            csv_delimiter=csv_delimiter,
+            flatten_delimiter=flatten_delimiter,
+            columns=columns,
+        )
 
-    # Load raw export data and sort for comparison.
-    # Clean up default handling of multi-values where a value is empty (e.g. "|Tuck") since the
-    # toolbox does not export in this way (e.g. "Tuck")
-    compare_to_df = pd.read_csv(
-        io.StringIO(TEST_DATA), dtype="object", index_col="tamr_id"
-    ).sort_index()
-    compare_to_df["all_names"] = compare_to_df["all_names"].str.strip("|").str.split("|")
+        # Load raw export data and sort for comparison.
+        # Clean up default handling of multi-values where a value is empty (e.g. "|Tuck") since the
+        # toolbox does not export in this way (e.g. "Tuck")
+        compare_to_df = pd.read_csv(
+            io.StringIO(TEST_DATA), dtype="object", index_col="tamr_id"
+        ).sort_index()
+        compare_to_df["all_names"] = compare_to_df["all_names"].str.strip("|").str.split("|")
 
-    test_df = pd.read_csv(
-        filename, dtype="object", delimiter=csv_delimiter, index_col="tamr_id", quotechar='"'
-    ).sort_index()
+        test_df = pd.read_csv(
+            filename, dtype="object", delimiter=csv_delimiter, index_col="tamr_id", quotechar='"'
+        ).sort_index()
     test_df["all_names"] = test_df["all_names"].str.split(flatten_delimiter)
 
     # Sort columns of test data
@@ -197,21 +198,37 @@ def test_dataset_export_csv_empty_dataset(
     empty_dataset_id = CONFIG["datasets"]["people_0_records"]
     dataset = client.datasets.by_resource_id(empty_dataset_id)
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = Path(tempfile.gettempdir()) / f"test_export_csv_{timestamp}.csv"
-    records_written = csv.from_dataset(
-        dataset, filename, overwrite=True, buffer_size=buffer_size, nrows=nrows, columns=columns
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        filename = Path(tempdir) / f"test_export_csv_{timestamp}.csv"
+        records_written = csv.from_dataset(
+            dataset,
+            filename,
+            overwrite=True,
+            buffer_size=buffer_size,
+            nrows=nrows,
+            columns=columns,
+        )
+        records_written = csv.from_dataset(
+            dataset,
+            filename,
+            overwrite=True,
+            buffer_size=buffer_size,
+            nrows=nrows,
+            columns=columns,
+        )
 
-    header_string = EMPTY_TEST_DATA if columns is None else ",".join(f'"{col}"' for col in columns)
+        header_string = (
+            EMPTY_TEST_DATA if columns is None else ",".join(f'"{col}"' for col in columns)
+        )
 
-    # Load raw export data and sort for comparison.
-    compare_to_df = pd.read_csv(
-        io.StringIO(header_string), dtype="object", index_col="id"
-    ).sort_index()
+        # Load raw export data and sort for comparison.
+        compare_to_df = pd.read_csv(
+            io.StringIO(header_string), dtype="object", index_col="id"
+        ).sort_index()
 
-    test_df = pd.read_csv(
-        filename, dtype="object", delimiter=",", index_col="id", quotechar='"'
-    ).sort_index()
+        test_df = pd.read_csv(
+            filename, dtype="object", delimiter=",", index_col="id", quotechar='"'
+        ).sort_index()
 
     assert test_df.equals(compare_to_df)
     assert records_written == len(compare_to_df)
@@ -355,29 +372,30 @@ def test_dataset_renaming_csv_columns(
     sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
     dataset = client.datasets.by_resource_id(sm_dataset_id)
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = Path(tempfile.gettempdir()) / f"test_export_csv_{timestamp}.csv"
-    records_written = csv.from_dataset(
-        dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict,
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        filename = Path(tempdir) / f"test_export_csv_{timestamp}.csv"
+        records_written = csv.from_dataset(
+            dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict,
+        )
 
-    # Load raw export data and sort for comparison.
-    # Clean up default handling of multi-values where a value is empty (e.g. "|Tuck") since the
-    # toolbox does not export in this way (e.g. "Tuck")
-    compare_to_df = pd.read_csv(
-        io.StringIO(TEST_DATA), dtype="object", index_col="tamr_id"
-    ).sort_index()
-    compare_to_df["all_names"] = compare_to_df["all_names"].str.strip("|").str.split("|")
+        # Load raw export data and sort for comparison.
+        # Clean up default handling of multi-values where a value is empty (e.g. "|Tuck") since the
+        # toolbox does not export in this way (e.g. "Tuck")
+        compare_to_df = pd.read_csv(
+            io.StringIO(TEST_DATA), dtype="object", index_col="tamr_id"
+        ).sort_index()
+        compare_to_df["all_names"] = compare_to_df["all_names"].str.strip("|").str.split("|")
 
-    # Sort columns of test data
-    if columns is not None:
-        columns.remove("tamr_id")
-        compare_to_df = compare_to_df[columns]
-    # CSV renaming should behave the same way as pandas dataframe renaming
-    compare_to_df.rename(columns=column_name_dict, inplace=True)
+        # Sort columns of test data
+        if columns is not None:
+            columns.remove("tamr_id")
+            compare_to_df = compare_to_df[columns]
+        # CSV renaming should behave the same way as pandas dataframe renaming
+        compare_to_df.rename(columns=column_name_dict, inplace=True)
 
-    test_df = pd.read_csv(
-        filename, dtype="object", delimiter=",", index_col="tamr_id", quotechar='"'
-    ).sort_index()
+        test_df = pd.read_csv(
+            filename, dtype="object", delimiter=",", index_col="tamr_id", quotechar='"'
+        ).sort_index()
     test_df["all_names"] = test_df["all_names"].str.split("|")
 
     assert records_written == len(compare_to_df)
@@ -393,13 +411,18 @@ def test_dataset_invalid_renaming_map(
     sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
     dataset = client.datasets.by_resource_id(sm_dataset_id)
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = Path(tempfile.gettempdir()) / f"test_export_csv_{timestamp}.csv"
+    with tempfile.TemporaryDirectory() as tempdir:
+        filename = Path(tempdir) / f"test_export_csv_{timestamp}.csv"
 
-    # ValueError raised by renaming that would yield duplicate columns
-    with pytest.raises(ValueError):
-        csv.from_dataset(
-            dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict,
-        )
+        # ValueError raised by renaming that would yield duplicate columns
+        with pytest.raises(ValueError):
+            csv.from_dataset(
+                dataset,
+                filename,
+                overwrite=True,
+                columns=columns,
+                column_name_dict=column_name_dict,
+            )
 
 
 @mock_api()

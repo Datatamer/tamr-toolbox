@@ -6,5 +6,6 @@
 * [Models](modules/models.rst)
 * [Notifications](modules/notifications.md)
 * [Project](modules/project.md)
+* [Sysadmin](modules/sysadmin.rst)
 * [Utilities](modules/utils.rst)
 * [Workflow](modules/workflow.md)

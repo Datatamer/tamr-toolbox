@@ -18,26 +18,27 @@ CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
 )
 
-TEMP_DIR = Path(tempfile.gettempdir())
-
 
 def _make_backup(
-    backup_name: str, completion_status: str, manifest_extension: str = "json"
+    backup_name: str,
+    completion_status: str,
+    temporary_directory: Path,
+    manifest_extension: str = "json",
 ) -> Tuple[List, List]:
     """
     Creates a simulated backup with the primary files in place necessary for identification.
-    The files are created in a temporary directory
+    The files are created in a temporary directory that must be supplied
 
     Args:
         backup_name: The name of the backup to be used as the backup path
         completion_status: The status of the backup to put in the simulated manifest file
+        temporary_directory: The temporary directory to create backups within
         manifest_extension: Either "json" or "yaml"
     Returns:
         A tuple of two lists with the first containing the list of paths to the created directories
           and the second containing the list of paths to the created files
     """
-
-    top_level_directory = TEMP_DIR / backup_name
+    top_level_directory = temporary_directory / backup_name
     directories = [
         top_level_directory / "config",
         top_level_directory / "database",
@@ -135,87 +136,92 @@ def test_bad_backup_id():
 def test_validate_and_remove_backup(backups: List[str], completion: str):
     all_directories = []
     all_files = []
-    for backup_name in backups:
-        directories, files = _make_backup(backup_name, completion)
-        all_directories.extend(directories)
-        all_files.extend(files)
-        valid = backup.validate_backup(TEMP_DIR / backup_name)
+    with tempfile.TemporaryDirectory() as tempdir:
+        for backup_name in backups:
+            directories, files = _make_backup(backup_name, completion, Path(tempdir))
+            all_directories.extend(directories)
+            all_files.extend(files)
+            valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-        assert valid
+            assert valid
 
-    backup.delete_backups(backups=backups, backup_directory=TEMP_DIR)
+        backup.delete_backups(backups=backups, backup_directory=Path(tempdir))
 
-    for directory in all_directories:
-        assert not path.exists(directory), f"Removed directory {directory} still exists"
+        for directory in all_directories:
+            assert not path.exists(directory), f"Removed directory {directory} still exists"
 
-    for file in all_files:
-        assert not path.exists(file), f"Removed file {file} still exists"
+        for file in all_files:
+            assert not path.exists(file), f"Removed file {file} still exists"
 
 
 def test_invalid_date():
     backup_name = "2020-07_12_04_489"
-    _make_backup(backup_name, "_SUCCEEDED")
-    valid = backup.validate_backup(TEMP_DIR / backup_name)
+    with tempfile.TemporaryDirectory() as tempdir:
+        _make_backup(backup_name, "_SUCCEEDED", Path(tempdir))
+        valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-    assert not valid
+        assert not valid
 
-    backups = [TEMP_DIR / backup_name]
-    bash.remove_directories(backups, allow_recursive_deletes=True)
+        backups = [Path(tempdir) / backup_name]
+        bash.remove_directories(backups, allow_recursive_deletes=True)
 
 
 def test_missing_files():
-    top_level_directory = TEMP_DIR / "2020-07-04_12_04_489"
-    directories = [
-        top_level_directory / "config",
-        top_level_directory / "database",
-        top_level_directory / "elasticsearch",
-        top_level_directory / "files",
-        top_level_directory / "hbase" / "archive" / "data" / "tamr",
-        top_level_directory / "files" / "dataset",
-        top_level_directory / "files" / "dedup",
-        top_level_directory / "files" / "job",
-        top_level_directory / "files" / "procurify",
-    ]
-    bash.create_directories(directories)
+    with tempfile.TemporaryDirectory() as tempdir:
+        top_level_directory = Path(tempdir) / "2020-07-04_12_04_489"
+        directories = [
+            top_level_directory / "config",
+            top_level_directory / "database",
+            top_level_directory / "elasticsearch",
+            top_level_directory / "files",
+            top_level_directory / "hbase" / "archive" / "data" / "tamr",
+            top_level_directory / "files" / "dataset",
+            top_level_directory / "files" / "dedup",
+            top_level_directory / "files" / "job",
+            top_level_directory / "files" / "procurify",
+        ]
+        bash.create_directories(directories)
 
-    files = [
-        top_level_directory / "config" / "config.json",
-        top_level_directory / "database" / "pg_dump.out",
-        top_level_directory / "_SUCCEEDED",
-    ]
+        files = [
+            top_level_directory / "config" / "config.json",
+            top_level_directory / "database" / "pg_dump.out",
+            top_level_directory / "_SUCCEEDED",
+        ]
 
-    for file in files:
-        with open(file, "w"):
-            pass
+        for file in files:
+            with open(file, "w"):
+                pass
 
-    valid = backup.validate_backup(Path(top_level_directory))
+        valid = backup.validate_backup(Path(top_level_directory))
 
-    assert not valid
+        assert not valid
 
-    backups = [top_level_directory]
-    bash.remove_directories(backups, allow_recursive_deletes=True)
+        backups = [top_level_directory]
+        bash.remove_directories(backups, allow_recursive_deletes=True)
 
 
 def test_manifest_yaml():
     backup_name = "2020-12-16_19-33-03-982"
-    _make_backup(backup_name, "_SUCCEEDED", manifest_extension="yaml")
-    valid = backup.validate_backup(TEMP_DIR / backup_name)
+    with tempfile.TemporaryDirectory() as tempdir:
+        _make_backup(backup_name, "_SUCCEEDED", Path(tempdir), manifest_extension="yaml")
+        valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-    assert valid
+        assert valid
 
-    backups = [TEMP_DIR / backup_name]
-    bash.remove_directories(backups, allow_recursive_deletes=True)
+        backups = [Path(tempdir) / backup_name]
+        bash.remove_directories(backups, allow_recursive_deletes=True)
 
 
 def test_manifest_invalid_extension():
     backup_name = "2020-12-16_19-33-03-982"
-    _make_backup(backup_name, "_SUCCEEDED", manifest_extension="txt")
-    valid = backup.validate_backup(TEMP_DIR / backup_name)
+    with tempfile.TemporaryDirectory() as tempdir:
+        _make_backup(backup_name, "_SUCCEEDED", Path(tempdir), manifest_extension="txt")
+        valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-    assert not valid
+        assert not valid
 
-    backups = [TEMP_DIR / backup_name]
-    bash.remove_directories(backups, allow_recursive_deletes=True)
+        backups = [Path(tempdir) / backup_name]
+        bash.remove_directories(backups, allow_recursive_deletes=True)
 
 
 def test_keeping_backups():
@@ -237,33 +243,34 @@ def test_keeping_backups():
         "2020-07-04_17-33-42-871",
     ]
     failed_backups_keep = ["2020-07-05_15-33-42-871"]
-    for backup_name in completed_backups:
-        _make_backup(backup_name, "_SUCCEEDED")
-        valid = backup.validate_backup(TEMP_DIR / backup_name)
+    with tempfile.TemporaryDirectory() as tempdir:
+        for backup_name in completed_backups:
+            _make_backup(backup_name, "_SUCCEEDED", Path(tempdir))
+            valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-        assert valid
+            assert valid
 
-    for backup_name in failed_backups:
-        _make_backup(backup_name, "_FAILED")
-        valid = backup.validate_backup(TEMP_DIR / backup_name)
+        for backup_name in failed_backups:
+            _make_backup(backup_name, "_FAILED", Path(tempdir))
+            valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-        assert valid
+            assert valid
 
-    result = backup.classify_backups(TEMP_DIR)
-    assert len(result["succeeded"]) == 5
-    assert len(result["not_succeeded"]) == 3
+        result = backup.classify_backups(Path(tempdir))
+        assert len(result["succeeded"]) == 5
+        assert len(result["not_succeeded"]) == 3
 
-    deleted_backups = backup.delete_old_backups(
-        TEMP_DIR, num_successful_backups_to_keep=3, num_failed_backups_to_keep=1
-    )
-    assert len(deleted_backups) == 4
+        deleted_backups = backup.delete_old_backups(
+            Path(tempdir), num_successful_backups_to_keep=3, num_failed_backups_to_keep=1
+        )
+        assert len(deleted_backups) == 4
 
-    result = backup.classify_backups(TEMP_DIR)
-    assert len(result["succeeded"]) == 3
-    assert len(result["not_succeeded"]) == 1
+        result = backup.classify_backups(Path(tempdir))
+        assert len(result["succeeded"]) == 3
+        assert len(result["not_succeeded"]) == 1
 
-    all_backups = completed_backups_keep + failed_backups_keep
-    backup.delete_backups(backups=all_backups, backup_directory=TEMP_DIR)
+        all_backups = completed_backups_keep + failed_backups_keep
+        backup.delete_backups(backups=all_backups, backup_directory=Path(tempdir))
 
 
 def test_keeping_more_failed_backups_than_present():
@@ -272,47 +279,54 @@ def test_keeping_more_failed_backups_than_present():
         "2020-07-05_14-33-42-871",
         "2020-07-05_15-33-42-871",
     ]
-    for backup_name in failed_backups:
-        _make_backup(backup_name, "_FAILED")
-        valid = backup.validate_backup(TEMP_DIR / backup_name)
+    with tempfile.TemporaryDirectory() as tempdir:
+        for backup_name in failed_backups:
+            _make_backup(backup_name, "_FAILED", Path(tempdir))
+            valid = backup.validate_backup(Path(tempdir) / backup_name)
 
-        assert valid
+            assert valid
 
-    result = backup.classify_backups(TEMP_DIR)
-    assert len(result["not_succeeded"]) == 3
+        result = backup.classify_backups(Path(tempdir))
+        assert len(result["not_succeeded"]) == 3
 
-    deleted_backups = backup.delete_old_backups(
-        TEMP_DIR, num_successful_backups_to_keep=3, num_failed_backups_to_keep=5
-    )
-    assert len(deleted_backups) == 0
+        deleted_backups = backup.delete_old_backups(
+            Path(tempdir), num_successful_backups_to_keep=3, num_failed_backups_to_keep=5
+        )
+        assert len(deleted_backups) == 0
 
-    result = backup.classify_backups(TEMP_DIR)
-    assert len(result["not_succeeded"]) == 3
+        result = backup.classify_backups(Path(tempdir))
+        assert len(result["not_succeeded"]) == 3
 
-    backup.delete_backups(backups=failed_backups, backup_directory=TEMP_DIR)
+        backup.delete_backups(backups=failed_backups, backup_directory=Path(tempdir))
 
 
 def test_delete_spark_event_logs():
     file_ages_days = [1, 10, 20]
     log_dir = "tamr/unify-data/job/sparkEventLogs"
-    for age in file_ages_days:
-        _make_old_files(log_dir, age)
+    with tempfile.TemporaryDirectory() as tempdir:
+        for age in file_ages_days:
+            _make_old_files(log_dir, age, Path(tempdir))
 
-    result = backup.delete_old_spark_event_logs(TEMP_DIR, num_days_to_keep=30)
-    assert len(result) == 0
+        result = backup.delete_old_spark_event_logs(Path(tempdir), num_days_to_keep=30)
+        assert len(result) == 0
 
-    result = backup.delete_old_spark_event_logs(TEMP_DIR, num_days_to_keep=14)
-    assert len(result) == 2
+        result = backup.delete_old_spark_event_logs(Path(tempdir), num_days_to_keep=14)
+        assert len(result) == 2
 
-    result = backup.delete_old_spark_event_logs(TEMP_DIR, num_days_to_keep=0)
-    assert len(result) == 4
+        result = backup.delete_old_spark_event_logs(Path(tempdir), num_days_to_keep=0)
+        assert len(result) == 4
 
 
 def test_delete_spark_event_logs_invalid_num_days():
-    with pytest.raises(ValueError):
-        backup.delete_old_spark_event_logs(TEMP_DIR, num_days_to_keep=-1)
+    with tempfile.TemporaryDirectory() as tempdir:
+        # Make sure filepath is present
+        log_dir = "tamr/unify-data/job/sparkEventLogs"
+        _make_old_files(log_dir, 0, Path(tempdir))
+        with pytest.raises(ValueError):
+            backup.delete_old_spark_event_logs(Path(tempdir), num_days_to_keep=-1)
 
 
 def test_delete_spark_event_logs_invalid_path():
-    with pytest.raises(FileNotFoundError):
-        backup.delete_old_spark_event_logs(TEMP_DIR / "fake_path")
+    with tempfile.TemporaryDirectory() as tempdir:
+        with pytest.raises(FileNotFoundError):
+            backup.delete_old_spark_event_logs(Path(tempdir) / "fake_path")

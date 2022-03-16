@@ -8,6 +8,7 @@ from . import workflow
 from . import notifications
 from . import enrichment
 from . import dataset
+from . import sysadmin
 
 import logging
 
@@ -23,4 +24,5 @@ __all__ = [
     "workflow",
     "notifications",
     "enrichment",
+    "sysadmin",
 ]

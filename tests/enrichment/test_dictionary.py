@@ -101,37 +101,39 @@ def test_dictionary_filename():
 
 
 def test_dictionary_creating_and_loading():
-    dictionary_folder = Path(tempfile.gettempdir())
-    target_language = "fr"
-    source_language = "auto"
+    with tempfile.TemporaryDirectory() as tempdir:
+        dictionary_folder = Path(tempdir)
+        target_language = "fr"
+        source_language = "auto"
 
-    empty_dictionary_filepath = enrichment.dictionary.create(
-        dictionary_folder, target_language=target_language, source_language=source_language
-    )
-    assert empty_dictionary_filepath == str(dictionary_folder / "dictionary_auto_to_fr.json")
+        empty_dictionary_filepath = enrichment.dictionary.create(
+            dictionary_folder, target_language=target_language, source_language=source_language
+        )
+        assert empty_dictionary_filepath == str(dictionary_folder / "dictionary_auto_to_fr.json")
 
-    empty_dictionary = enrichment.dictionary.load(
-        dictionary_folder, target_language=target_language, source_language=source_language,
-    )
-    assert empty_dictionary == {}
+        empty_dictionary = enrichment.dictionary.load(
+            dictionary_folder, target_language=target_language, source_language=source_language,
+        )
+        assert empty_dictionary == {}
 
 
 def test_dictionary_saving_and_loading():
-    dictionary_folder = Path(tempfile.gettempdir())
-    target_language = "fr"
-    source_language = "auto"
+    with tempfile.TemporaryDirectory() as tempdir:
+        dictionary_folder = Path(tempdir)
+        target_language = "fr"
+        source_language = "auto"
 
-    enrichment.dictionary.save(
-        translation_dictionary=TEST_TRANSLATION_DICTIONARY,
-        dictionary_folder=dictionary_folder,
-        target_language=target_language,
-        source_language=source_language,
-    )
+        enrichment.dictionary.save(
+            translation_dictionary=TEST_TRANSLATION_DICTIONARY,
+            dictionary_folder=dictionary_folder,
+            target_language=target_language,
+            source_language=source_language,
+        )
 
-    saved_dictionary = enrichment.dictionary.load(
-        dictionary_folder, target_language=target_language, source_language=source_language,
-    )
-    assert TEST_TRANSLATION_DICTIONARY == saved_dictionary
+        saved_dictionary = enrichment.dictionary.load(
+            dictionary_folder, target_language=target_language, source_language=source_language,
+        )
+        assert TEST_TRANSLATION_DICTIONARY == saved_dictionary
 
 
 def test_dictionary_updating():

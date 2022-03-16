@@ -5,5 +5,6 @@
 * [Filesystem](examples/filesystem.rst)
 * [Notifications](examples/notifications.md)
 * [Project](examples/project.rst)
+* [Sysadmin](examples/sysadmin.rst)
 * [Utilities](examples/utils.rst)
 * [Workflow](examples/workflow.rst)
