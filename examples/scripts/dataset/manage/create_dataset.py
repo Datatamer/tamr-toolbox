@@ -27,7 +27,7 @@ def main(
 
     LOGGER.info(f"Creating dataset: {dataset_name}")
 
-    tbox.data_io.manage_dataset.create(
+    tbox.dataset.manage.create(
         tamr=tamr_client,
         dataset_name=dataset_name,
         primary_keys=primary_keys,

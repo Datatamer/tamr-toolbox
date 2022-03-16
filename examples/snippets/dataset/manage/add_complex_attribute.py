@@ -29,6 +29,6 @@ attribute_types = [
     {"baseType": "DOUBLE"},
 ]
 
-updated_dataset = tbox.data_io.manage_dataset.modify(
+updated_dataset = tbox.dataset.manage.update(
     dataset=dataset, attributes=attribute_names, attribute_types=attribute_types
 )

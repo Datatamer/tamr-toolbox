@@ -32,7 +32,7 @@ for ds in datasets:
     target_dataset = target_client.datasets.by_name(dataset_name)
 
     # Migrate dataset updates from source to target instance
-    tbox.data_io.manage_dataset.modify(
+    tbox.dataset.manage.update(
         dataset=target_dataset,
         attributes=attributes,
         attribute_types=attribute_types,
