@@ -2,8 +2,6 @@
 An example script to change dataset attributes for a Tamr dataset
 """
 import tamr_toolbox as tbox
-from tamr_unify_client.attribute.resource import AttributeSpec
-from tamr_unify_client.attribute.type import AttributeType
 
 
 # load example multi config
@@ -31,11 +29,6 @@ attribute_types = [
     {"baseType": "DOUBLE"},
 ]
 
-attribute_specs = []
-for idx in range(len(attribute_names)):
-    name = attribute_names[idx]
-    attribute_specs.append(
-        AttributeSpec.new().with_name(name).with_type(AttributeType(attribute_types[idx]).spec())
-    )
-
-updated_dataset = tbox.data_io.manage_dataset.modify(dataset=dataset, attributes=attribute_specs,)
+updated_dataset = tbox.data_io.manage_dataset.modify(
+    dataset=dataset, attributes=attribute_names, attribute_types=attribute_types
+)

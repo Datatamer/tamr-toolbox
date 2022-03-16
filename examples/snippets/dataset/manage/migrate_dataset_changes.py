@@ -24,11 +24,18 @@ for ds in datasets:
     source_dataset = source_client.datasets.by_name(dataset_name)
 
     # Get updated dataset definition
-    attributes = [attr.spec() for attr in source_dataset.attributes.stream()]
-    dataset_spec = source_dataset.spec()
+    attributes = [attr for attr in source_dataset.attributes.stream()]
+    attribute_names = [attr.name for attr in attributes]
+    attribute_types = [attr.spec().to_dict()["type"] for attr in attributes]
+    description = source_dataset.description
+    tags = source_dataset.tags
     target_dataset = target_client.datasets.by_name(dataset_name)
 
     # Migrate dataset updates from source to target instance
     tbox.data_io.manage_dataset.modify(
-        dataset=target_dataset, new_dataset_spec=dataset_spec, attributes=attributes,
+        dataset=target_dataset,
+        attributes=attributes,
+        attribute_types=attribute_types,
+        description=description,
+        tags=tags,
     )

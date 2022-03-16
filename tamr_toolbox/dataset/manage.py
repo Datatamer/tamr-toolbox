@@ -1,37 +1,79 @@
 from typing import List, Optional, Union
 
 from tamr_unify_client import Client
-from tamr_unify_client.dataset.resource import Dataset, DatasetSpec
+from tamr_unify_client.dataset.resource import Dataset
 from tamr_unify_client.attribute.resource import AttributeSpec
 from tamr_unify_client.attribute.type import AttributeType
 
+from tamr_toolbox.models.data_type import JsonDict
+
 
 def create(
-    *, tamr: Client, dataset_spec: DatasetSpec, attributes: Union[List[str], List[AttributeSpec]],
+    *,
+    tamr: Client,
+    dataset_name: str,
+    primary_keys: Optional[List[str]] = None,
+    attributes: Optional[List[str]] = None,
+    attribute_types: Optional[List[JsonDict]] = None,
+    description: Optional[str] = None,
+    external_id: Optional[str] = None,
+    tags: Optional[List[str]] = None,
+    dataset: Optional[Dataset] = None,
 ) -> Dataset:
     """Flexibly create a source dataset in Tamr. Will use array string as default attribute type
-       if none are specified.
+       if none are specified. If a dataset object is passed, a new dataset with dataset_name as
+       its name will be created that has the same attributes and primary keys as the dataset.
 
     Args:
         tamr: TUC client
-        dataset_spec: A representation of the server view of a dataset (DatasetSpec)
-        attributes: List of all attributes in new dataset
+        dataset_name: name for new dataset
+        primary_keys: one or more attributes for primary key(s) of new dataset
+        attributes: list of attribute names for new dataset
+        attribute_types: list of attribute types, if None the default will be ARRAY STRING
+        description: text description of new dataset
+        external_id: external_id for dataset, if None Tamr will create one for you
+        tags: tags for new dataset
+        dataset: optional dataset TUC object that the new dataset will replicate
 
     Returns:
         Dataset created in Tamr
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
+        ValueError: Dataset or primary_keys must be defined
         ValueError: A dataset with name '{dataset_name}' already exists
+        ValueError: Length of attributes and attribute_types must match
     """
 
-    creation_spec_dict = dataset_spec.to_dict()
-    dataset_name = creation_spec_dict["name"]
-    primary_keys = creation_spec_dict["keyAttributeNames"]
+    if not dataset and not primary_keys:
+        raise ValueError(f"Dataset or primary_keys must be defined")
 
-    dataset_exists = check_dataset_exists(target_instance=tamr, dataset=dataset_name)
+    # Get dataset information
+    if dataset:
+        # Get attributes from dataset object
+        attribute_specs = [attr.spec() for attr in dataset.attributes.stream()]
+        # Get dataset spec information
+        description = dataset.description
+        tags = dataset.tags
+        primary_keys = dataset.key_attribute_names
+    elif attribute_types and len(attributes) != len(attribute_types):
+        raise ValueError(f"Length of attributes and attribute_types must match")
+    else:
+        # Create attributes from input
+        attribute_specs = _create_specs(
+            attribute_names=attributes, attribute_types=attribute_types
+        )
+
+    dataset_exists = exists(target_instance=tamr, dataset=dataset_name)
     if not dataset_exists:
-        tamr.datasets.create(creation_spec_dict)
+        creation_spec = {
+            "name": dataset_name,
+            "description": description,
+            "keyAttributeNames": primary_keys,
+            "externalId": external_id,
+            "tags": tags,
+        }
+        tamr.datasets.create(creation_spec)
     else:
         raise ValueError(f"A dataset with name '{dataset_name}' already exists")
 
@@ -41,12 +83,8 @@ def create(
     # Get current dataset attributes
     target_dataset_attributes = target_dataset.attributes
 
-    # Attributes to add to dataset
-    if type(attributes[0]) is not AttributeSpec:
-        attributes = _create_default_specs(attribute_names=attributes)
-
     # Update attributes in dataset
-    for attribute in attributes:
+    for attribute in attribute_specs:
         attr_spec_dict = attribute.to_dict()
         attribute_name = attr_spec_dict["name"]
         if attribute_name in primary_keys:
@@ -59,18 +97,23 @@ def create(
     return target_dataset
 
 
-def modify(
+def update(
     *,
     dataset: Dataset,
-    new_dataset_spec: Optional[DatasetSpec] = None,
-    attributes: Optional[Union[List[str], List[AttributeSpec]]] = None,
+    attributes: Optional[List[str]] = None,
+    attribute_types: Optional[List[JsonDict]] = None,
+    description: Optional[str] = None,
+    tags: Optional[List[str]] = None,
 ) -> Dataset:
-    """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input
+    """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input.
+       If no attrbute_types are passed in the default will be ARRAY STRING
 
     Args:
         dataset: An existing TUC dataset
-        new_dataset_spec: updated DatasetSpec for dataset
-        attributes: List of all attributes in updated dataset
+        attributes: list of attribute names to add/keep for dataset
+        attribute_types: list of attribute types, if None the default will be ARRAY STRING
+        description: updated text description of dataset, if None will not update
+        tags: updated tags for dataset, if None will not update tags
 
     Returns:
         Updated Dataset
@@ -79,24 +122,24 @@ def modify(
         requests.HTTPError: If any HTTP error is encountered
         ValueError: trying to alter a unified dataset
     """
+    dataset_name = dataset.name
     if dataset.upstream_datasets():
-        raise ValueError(f"{dataset.name} is not a source dataset")
+        raise ValueError(f"{dataset_name} is not a source dataset")
 
-    if new_dataset_spec:
-        # Update description and tags
-        dataset_spec = dataset.spec()
+    # Update description and tags
+    dataset_spec = dataset.spec()
+    if description:
+        dataset_spec = dataset_spec.with_description(description)
+    if tags:
+        dataset_spec = dataset_spec.with_tags(tags)
 
-        new_spec_dict = new_dataset_spec.to_dict()
-        new_description = new_spec_dict["description"]
-        new_tags = new_spec_dict["tags"]
-
-        dataset_spec = dataset_spec.with_description(new_description).with_tags(new_tags)
-        dataset_spec.put()
+    dataset_spec.put()
 
     if attributes:
-        # Attributes to add to dataset
-        if type(attributes[0]) is not AttributeSpec:
-            attributes = _create_default_specs(attribute_names=attributes)
+        # Create attributes from input
+        attribute_specs = _create_specs(
+            attribute_names=attributes, attribute_types=attribute_types
+        )
 
         # Get current dataset attributes
         target_dataset_attributes = dataset.attributes
@@ -106,7 +149,7 @@ def modify(
         primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
 
         # Update attributes in dataset
-        for attribute in attributes:
+        for attribute in attribute_specs:
             attr_spec_dict = attribute.to_dict()
             attribute_name = attr_spec_dict["name"]
             if attribute_name in primary_keys:
@@ -125,7 +168,7 @@ def modify(
                 target_dataset_attributes.create(attr_spec_dict)
 
         # Remove any attributes from dataset that aren't in the new list of attributes
-        attribute_names = [attr.to_dict()["name"] for attr in attributes]
+        attribute_names = [attr.to_dict()["name"] for attr in attribute_specs]
         for existing_attribute in target_attribute_dict.keys():
             if existing_attribute not in attribute_names:
                 target_dataset_attributes.delete_by_resource_id(
@@ -135,7 +178,7 @@ def modify(
     return dataset
 
 
-def check_dataset_exists(*, target_instance: Client, dataset: str) -> bool:
+def exists(*, target_instance: Client, dataset: str) -> bool:
     """Check if the dataset exists on target instance
 
     Args:
@@ -154,23 +197,29 @@ def check_dataset_exists(*, target_instance: Client, dataset: str) -> bool:
     return True
 
 
-def _create_default_specs(*, attribute_names: List[str]) -> List[AttributeSpec]:
-    """Create list of attributeSpec with default type
+def _create_specs(
+    *, attribute_names: List[str], attribute_types: Union[List[JsonDict], None]
+) -> List[AttributeSpec]:
+    """Create list of attributeSpec. Use default type if none is given
 
     Args:
         attribute_names: List of names of attributes
+        attribute_types: List of attribute types as json or None
 
     Return:
-        True or False for if the types match
+        List of AttributeSpecs
     """
-    default_type = AttributeType(
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "STRING", "attributes": []},
-            "attributes": [],
-        }
-    )
+    default_type = {
+        "baseType": "ARRAY",
+        "innerType": {"baseType": "STRING", "attributes": []},
+        "attributes": [],
+    }
     attribute_specs = []
-    for name in attribute_names:
-        attribute_specs.append(AttributeSpec.new().with_name(name).with_type(default_type.spec()))
+    for idx in range(len(attribute_names)):
+        name = attribute_names[idx]
+        if attribute_types:
+            attr_type = AttributeType(attribute_types[idx])
+        else:
+            attr_type = AttributeType(default_type)
+        attribute_specs.append(AttributeSpec.new().with_name(name).with_type(attr_type.spec()))
     return attribute_specs

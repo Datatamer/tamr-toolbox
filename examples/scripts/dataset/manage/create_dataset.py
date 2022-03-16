@@ -3,7 +3,6 @@ import argparse
 from typing import Dict, Any, List
 
 import tamr_toolbox as tbox
-from tamr_unify_client.dataset.resource import DatasetSpec
 
 
 def main(
@@ -25,17 +24,15 @@ def main(
     """
     # Create the tamr client
     tamr_client = tbox.utils.client.create(**instance_connection_info)
-    dataset_spec = (
-        DatasetSpec.new()
-        .with_name(dataset_name)
-        .with_key_attribute_names(primary_keys)
-        .with_description(description)
-    )
 
     LOGGER.info(f"Creating dataset: {dataset_name}")
 
     tbox.data_io.manage_dataset.create(
-        tamr=tamr_client, dataset_spec=dataset_spec, attributes=attributes,
+        tamr=tamr_client,
+        dataset_name=dataset_name,
+        primary_keys=primary_keys,
+        attributes=attributes,
+        description=description,
     )
 
 
