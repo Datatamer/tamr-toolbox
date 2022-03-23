@@ -2,7 +2,6 @@ from google.cloud.client import Client
 from boto3 import client
 import tamr_toolbox as tbox
 
-
 # Google examples
 google_storage_client = Client()
 
@@ -17,7 +16,7 @@ def google_upload(
     """ Upload data to a google storage bucket"""
 
     storage_client = cloud_client.Client.from_service_account_json(
-        "credentials"
+        "credentials.json"
     )  # needs credentials
     bucket = storage_client.get_bucket(bucket_name)
     destination_filepath.upload_from_filename(source_filepath)
@@ -34,7 +33,7 @@ def google_download(
     """ Download data to a google storage bucket"""
 
     storage_client = cloud_client.Client.from_service_account_json(
-        "credentials"
+        "credentials.json"
     )  # needs credentials
     bucket = cloud_client.get_bucket(bucket_name)
     blob = bucket.blob(source_filepath)
