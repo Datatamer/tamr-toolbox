@@ -1,6 +1,5 @@
 from google.cloud.client import Client
 from boto3 import client
-import tamr_toolbox as tbox
 from tarfile import is_tarfile
 import tempfile
 import os
