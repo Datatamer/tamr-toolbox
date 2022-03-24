@@ -65,7 +65,6 @@ def main(
         "Retreiving project names and resource IDs from Tamr and storing as a lookup dictionary"
     )
     project_id_dict = {}
-
     for project in tamr_client.projects:
         project_id_dict[project.name] = project.resource_id
 
@@ -128,9 +127,6 @@ def main(
         LOGGER.info("Golden Records Updated")
     else:
         LOGGER.info("FAILURE to update Golden Records")
-
-    for project in tamr_client.projects:
-        project_id_dict[project.name] = project.resource_id
 
     LOGGER.info("Advaning pinned version of CHANGES dataset")
     pin_ChangesDataset = tamr_client.projects.client.post(
