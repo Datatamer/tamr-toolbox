@@ -1,5 +1,4 @@
-"""Script for running a Mastering Pipeline upto the point of Updating Golden Records"""
-# %%
+"""Script for running a Golden Records Delta Pipeline"""
 from typing import Dict, Any
 from os.path import join
 from pathlib import Path
@@ -24,8 +23,6 @@ golden_records_delta_pipeline:
     GR_output_delta_project: "GR_Output_Delta"
     GR_mapping_project: "GR_Mapping"
 """
-
-
 CONFIG = freeze(
     utils.config.from_yaml(join(Path(__file__).resolve().parents[1], "conf", "config.yaml"))
 )
