@@ -12,6 +12,11 @@ from tamr_toolbox.utils.operation import Operation
 
 
 def export_from_tamr(client: Client, *, project_name: str, export_path: str,) -> Operation:
+    """
+    This function sets path for project artifacts export from Tamr and makes the call to execute
+    the export action.
+    Export path defaults to "project-movement/<project_name>" if no user-defined value is passed.py
+    """
     project = client.projects.by_name(project_name)
     if not export_path:
         export_path = os.path.join(
@@ -20,26 +25,8 @@ def export_from_tamr(client: Client, *, project_name: str, export_path: str,) ->
     return tbox.project.export_artifacts(project=project, artifact_directory_path=export_path)
 
 
-def import_to_tamr(
-    client: Client,
-    *,
-    zipfile_path: str,
-    new_project_name: str,
-    new_ud_name: str,
-    overwrite_existing: bool = False,
-) -> Operation:
-    return tbox.project.import_artifacts(
-        tamr_client=client,
-        project_artifact_path=zipfile_path,
-        new_project_name=new_project_name,
-        new_unified_dataset_name=new_ud_name,
-        overwrite_existing=overwrite_existing,
-    )
-
-
 def main(*, opts: Namespace, instance_connection_info: Dict[str, Any]):
 
-    ## This block was added on 2022-02-25 to process encrypted pwd
     tamr_client = tbu.client.create(**instance_connection_info)
 
     # calling the action functions:
@@ -63,11 +50,11 @@ def main(*, opts: Namespace, instance_connection_info: Dict[str, Any]):
     new_ud_name = opts.newUDName if opts.newUDName else f"{new_project_name}_unified_dataset"
     # importing a copy of target project to tamr
     LOGGER.info(f"Project {new_project_name} import to Tamr initializing...")
-    op = import_to_tamr(
-        tamr_client,
-        zipfile_path=zipfile_path,
+    op = tbox.project.import_artifacts(
+        tamr_client=tamr_client,
+        project_artifact_path=zipfile_path,
         new_project_name=new_project_name,
-        new_ud_name=new_ud_name,
+        new_unified_dataset_name=new_ud_name,
         overwrite_existing=opts.overwrite,
     )
     tbu.operation.enforce_success(op)
