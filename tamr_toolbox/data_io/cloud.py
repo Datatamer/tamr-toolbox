@@ -28,8 +28,6 @@ def google_upload(
     blob = bucket.blob(destination_filepath)
 
     if compress and not is_tarfile(source_filepath):
-        # if file needs to be tared -> create tared version in tempdir >-> upload content from new tempdir
-
         temp_dir = tempfile.gettempdir()
         temp_path = os.path.join(temp_dir, "temp_file")
         with tarfile.open(temp_path) as tar:
@@ -92,8 +90,6 @@ def s3_upload(
         compress: Tar file before upload
     """
     if compress and not is_tarfile(source_filepath):
-        # if file needs to be tared -> create tared version in tempdir >-> upload content from new tempdir
-
         temp_dir = tempfile.gettempdir()
         temp_path = os.path.join(temp_dir, "temp_file")
         with tarfile.open(temp_path) as tar:

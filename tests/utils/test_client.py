@@ -7,7 +7,6 @@ from tamr_unify_client.auth import UsernamePasswordAuth
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
-
 # Provide dummy default for offline tests
 os.environ.setdefault(
     "TAMR_TOOLBOX_PASSWORD", "none_provided",
@@ -79,11 +78,9 @@ def test_get_with_connection_retry():
         # confirm that the intended warning was written to the log
         assert "Caught exception in connect" in f.read()
 
-
     # Cleanup temp directory
     try:
         tempdir.cleanup()
     except (PermissionError, NotADirectoryError):
         # Windows sometimes fails so try one more time
         tempdir.cleanup()
-
