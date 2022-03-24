@@ -29,7 +29,7 @@ golden_records_delta_pipeline:
 CONFIG = freeze(
     utils.config.from_yaml(join(Path(__file__).resolve().parents[1], "conf", "config.yaml"))
 )
-LOGGER = utils.logger.create("MasteringPipeline", log_directory=CONFIG["logging_dir"])
+LOGGER = utils.logger.create("GoldenRecordsDeltaPipeline", log_directory=CONFIG["logging_dir"])
 # Let Tamr Toolbox itself also contribute to the log
 utils.logger.enable_toolbox_logging(log_directory=CONFIG["logging_dir"])
 LOGGER.info("Logging Enabled")
