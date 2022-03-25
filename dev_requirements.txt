@@ -3,9 +3,11 @@ flake8==3.7.9
 invoke==1.4.1
 mypy==0.761
 pytest==5.3.5
-Sphinx==4.4.0
+Sphinx==3.5.4
+jinja2==2.10
 sphinx_rtd_theme==0.5.1
 sphinx-autodoc-typehints==1.11.1
 recommonmark==0.7.1
 click==7.1.1
 pdfkit==0.6.1
+markupsafe==2.0.1
