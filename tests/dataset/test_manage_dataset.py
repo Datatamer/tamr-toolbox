@@ -404,6 +404,17 @@ def test_update_ud():
 
 
 @mock_api(enforce_online_test=enforce_online_test)
+def test_incorrect_pks():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    dataset = client.datasets.by_name(DATASET_NAME)
+
+    with pytest.raises(ValueError):
+        tbox.dataset.manage.update(
+            dataset=dataset, primary_keys=["abcd"],
+        )
+
+
+@mock_api(enforce_online_test=enforce_online_test)
 def test_update_tags():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset = client.datasets.by_name(DATASET_NAME)

@@ -129,16 +129,16 @@ def update(
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
 
+    # Confirm primary keys match
+    if primary_keys != dataset.spec().to_dict()["keyAttributeNames"]:
+        raise ValueError(f"Primary keys did not match Tamr dataset primary keys")
+
     # Update description and tags
     dataset_spec = dataset.spec()
     if description:
         dataset_spec = dataset_spec.with_description(description)
     if tags:
         dataset_spec = dataset_spec.with_tags(tags)
-
-    # Confirm primary keys match
-    if primary_keys != dataset.spec().to_dict()["keyAttributeNames"]:
-        raise ValueError(f"Primary keys did not match Tamr dataset primary keys")
 
     dataset_spec.put()
 
