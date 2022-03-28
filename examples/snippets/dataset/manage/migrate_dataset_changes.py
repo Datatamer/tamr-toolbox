@@ -25,8 +25,11 @@ for ds in datasets:
 
     # Get updated dataset definition
     attributes = [attr for attr in source_dataset.attributes.stream()]
-    attribute_names = [attr.name for attr in attributes]
-    attribute_types = [attr.spec().to_dict()["type"] for attr in attributes]
+    attr_type_dict = {}
+    for attr in attributes:
+        attr_type_dict[attr.name] = attr.spec().to_dict()["type"]
+    attribute_names = attr_type_dict.keys()
+
     description = source_dataset.description
     tags = source_dataset.tags
     target_dataset = target_client.datasets.by_name(dataset_name)
@@ -35,7 +38,7 @@ for ds in datasets:
     tbox.dataset.manage.update(
         dataset=target_dataset,
         attributes=attributes,
-        attribute_types=attribute_types,
+        attribute_types=attr_type_dict,
         description=description,
         tags=tags,
     )
