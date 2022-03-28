@@ -29,6 +29,7 @@ for ds in datasets:
     for attr in attributes:
         attr_type_dict[attr.name] = attr.spec().to_dict()["type"]
     attribute_names = attr_type_dict.keys()
+    primary_keys = source_dataset.spec().to_dict()["keyAttributeNames"]
 
     description = source_dataset.description
     tags = source_dataset.tags
@@ -37,6 +38,7 @@ for ds in datasets:
     # Migrate dataset updates from source to target instance
     tbox.dataset.manage.update(
         dataset=target_dataset,
+        primary_keys=primary_keys,
         attributes=attributes,
         attribute_types=attr_type_dict,
         description=description,

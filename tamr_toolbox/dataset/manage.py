@@ -100,6 +100,7 @@ def create(
 def update(
     *,
     dataset: Dataset,
+    primary_keys: List[str],
     attributes: Optional[List[str]] = None,
     attribute_types: Optional[JsonDict] = None,
     description: Optional[str] = None,
@@ -110,6 +111,7 @@ def update(
 
     Args:
         dataset: An existing TUC dataset
+        primary_keys: one or more attributes for primary key(s) of new dataset
         attributes: list of attribute names to add/keep for dataset
         attribute_types: dict of attribute types, attribute name is key and type is value
         description: updated text description of dataset, if None will not update
@@ -121,6 +123,7 @@ def update(
     Raises:
         requests.HTTPError: If any HTTP error is encountered
         ValueError: trying to alter a unified dataset
+        ValueError: Primary keys did not match Tamr dataset primary keys
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -132,6 +135,10 @@ def update(
         dataset_spec = dataset_spec.with_description(description)
     if tags:
         dataset_spec = dataset_spec.with_tags(tags)
+
+    # Confirm primary keys match
+    if primary_keys != dataset.spec().to_dict()["keyAttributeNames"]:
+        raise ValueError(f"Primary keys did not match Tamr dataset primary keys")
 
     dataset_spec.put()
 
@@ -146,7 +153,6 @@ def update(
         target_attribute_dict = {}
         for attr in target_dataset_attributes.stream():
             target_attribute_dict[attr.name] = attr
-        primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
 
         # Update attributes in dataset
         for attribute in attribute_specs:

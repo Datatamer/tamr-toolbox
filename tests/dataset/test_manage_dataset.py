@@ -248,7 +248,7 @@ def test_add_default_attribute():
     dataset = client.datasets.by_name(DATASET_NAME)
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attributes,
+        dataset=dataset, primary_keys=PRIMARY_KEYS, attributes=attributes,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -267,7 +267,7 @@ def test_update_description():
     description = "My test dataset with phone"
 
     tbox.dataset.manage.update(
-        dataset=dataset, description=description,
+        dataset=dataset, primary_keys=PRIMARY_KEYS, description=description,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -281,7 +281,9 @@ def test_remove_attribute():
     attributes = ["unique_id", "name", "address"]
     description = "My test dataset without phone"
 
-    tbox.dataset.manage.update(dataset=dataset, attributes=attributes, description=description)
+    tbox.dataset.manage.update(
+        dataset=dataset, primary_keys=PRIMARY_KEYS, attributes=attributes, description=description
+    )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
 
@@ -323,7 +325,10 @@ def test_add_non_default_attribute():
         attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
+        dataset=dataset,
+        primary_keys=PRIMARY_KEYS,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -369,7 +374,10 @@ def test_add_primitive_attribute():
         attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+        dataset=dataset,
+        primary_keys=PRIMARY_KEYS,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -390,7 +398,9 @@ def test_update_ud():
     dataset = client.datasets.by_name("minimal_mastering_unified_dataset")
 
     with pytest.raises(ValueError):
-        tbox.dataset.manage.update(dataset=dataset,)
+        tbox.dataset.manage.update(
+            dataset=dataset, primary_keys=PRIMARY_KEYS,
+        )
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -400,7 +410,7 @@ def test_update_tags():
     tags = ["testing"]
 
     tbox.dataset.manage.update(
-        dataset=dataset, tags=tags,
+        dataset=dataset, primary_keys=PRIMARY_KEYS, tags=tags,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -436,7 +446,10 @@ def test_change_attribute_type():
         attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
+        dataset=dataset,
+        primary_keys=PRIMARY_KEYS,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
