@@ -4,6 +4,7 @@ invoke==1.4.1
 mypy==0.761
 pytest==5.3.5
 Sphinx==3.5.4
+jinja2==2.3
 sphinx_rtd_theme==0.5.1
 sphinx-autodoc-typehints==1.11.1
 recommonmark==0.7.1
