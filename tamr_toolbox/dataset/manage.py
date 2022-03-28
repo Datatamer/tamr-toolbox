@@ -14,7 +14,7 @@ def create(
     dataset_name: str,
     primary_keys: Optional[List[str]] = None,
     attributes: Optional[List[str]] = None,
-    attribute_types: Optional[List[JsonDict]] = None,
+    attribute_types: Optional[JsonDict] = None,
     description: Optional[str] = None,
     external_id: Optional[str] = None,
     tags: Optional[List[str]] = None,
@@ -29,7 +29,7 @@ def create(
         dataset_name: name for new dataset
         primary_keys: one or more attributes for primary key(s) of new dataset
         attributes: list of attribute names for new dataset
-        attribute_types: list of attribute types, if None the default will be ARRAY STRING
+        attribute_types: dict of attribute types, attribute name is key and type is value
         description: text description of new dataset
         external_id: external_id for dataset, if None Tamr will create one for you
         tags: tags for new dataset
@@ -101,7 +101,7 @@ def update(
     *,
     dataset: Dataset,
     attributes: Optional[List[str]] = None,
-    attribute_types: Optional[List[JsonDict]] = None,
+    attribute_types: Optional[JsonDict] = None,
     description: Optional[str] = None,
     tags: Optional[List[str]] = None,
 ) -> Dataset:
@@ -111,7 +111,7 @@ def update(
     Args:
         dataset: An existing TUC dataset
         attributes: list of attribute names to add/keep for dataset
-        attribute_types: list of attribute types, if None the default will be ARRAY STRING
+        attribute_types: dict of attribute types, attribute name is key and type is value
         description: updated text description of dataset, if None will not update
         tags: updated tags for dataset, if None will not update tags
 
@@ -170,7 +170,10 @@ def update(
         # Remove any attributes from dataset that aren't in the new list of attributes
         attribute_names = [attr.to_dict()["name"] for attr in attribute_specs]
         for existing_attribute in target_attribute_dict.keys():
-            if existing_attribute not in attribute_names:
+            if (
+                existing_attribute not in attribute_names
+                and existing_attribute not in primary_keys
+            ):
                 target_dataset_attributes.delete_by_resource_id(
                     target_attribute_dict[existing_attribute].resource_id
                 )
@@ -198,13 +201,13 @@ def exists(*, client: Client, dataset: str) -> bool:
 
 
 def _create_specs(
-    *, attribute_names: List[str], attribute_types: Union[List[JsonDict], None]
+    *, attribute_names: List[str], attribute_types: Union[JsonDict, None]
 ) -> List[AttributeSpec]:
     """Create list of attributeSpec. Use default type if none is given
 
     Args:
         attribute_names: List of names of attributes
-        attribute_types: List of attribute types as json or None
+        attribute_types: dict of attribute types, attribute name is key and type is value
 
     Return:
         List of AttributeSpecs
@@ -217,8 +220,8 @@ def _create_specs(
     attribute_specs = []
     for idx in range(len(attribute_names)):
         name = attribute_names[idx]
-        if attribute_types:
-            attr_type = AttributeType(attribute_types[idx])
+        if attribute_types and name in attribute_types.keys():
+            attr_type = AttributeType(attribute_types[name])
         else:
             attr_type = AttributeType(default_type)
         attribute_specs.append(AttributeSpec.new().with_name(name).with_type(attr_type.spec()))

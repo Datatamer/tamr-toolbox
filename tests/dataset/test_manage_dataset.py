@@ -214,11 +214,15 @@ def test_create_dataset_w_attribute_types():
             "attributes": [],
         },
     ]
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
+
     tbox.dataset.manage.create(
         client=client,
         dataset_name=dataset_name,
         attributes=attribute_names,
-        attribute_types=attribute_types,
+        attribute_types=attr_type_dict,
         primary_keys=PRIMARY_KEYS,
         description=description,
     )
@@ -314,9 +318,12 @@ def test_add_non_default_attribute():
             "attributes": [],
         },
     ]
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attribute_types
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -357,9 +364,12 @@ def test_add_primitive_attribute():
         },
         {"baseType": "INT", "attributes": []},
     ]
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attribute_types,
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -421,9 +431,12 @@ def test_change_attribute_type():
         },
         {"baseType": "DOUBLE", "attributes": []},
     ]
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attribute_types
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
