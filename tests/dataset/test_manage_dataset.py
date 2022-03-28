@@ -30,10 +30,10 @@ def remove_test_datasets(client: Client):
         DATASET_NAME + "_dup",
     ]
     for dataset_name in dataset_names:
-        if tbox.dataset.manage.exists(target_instance=client, dataset=dataset_name):
+        if tbox.dataset.manage.exists(client=client, dataset=dataset_name):
             dataset = client.datasets.by_name(dataset_name)
             dataset.delete()
-        assert not tbox.dataset.manage.exists(target_instance=client, dataset=dataset_name)
+        assert not tbox.dataset.manage.exists(client=client, dataset=dataset_name)
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -46,7 +46,7 @@ def test_create_new_dataset():
     description = "My test dataset"
 
     tbox.dataset.manage.create(
-        tamr=client,
+        client=client,
         dataset_name=DATASET_NAME,
         attributes=attributes,
         primary_keys=PRIMARY_KEYS,
@@ -90,7 +90,7 @@ def test_create_duplicate_dataset():
 
     existing_dataset = client.datasets.by_name(DATASET_NAME)
 
-    tbox.dataset.manage.create(tamr=client, dataset_name=dataset_name, dataset=existing_dataset)
+    tbox.dataset.manage.create(client=client, dataset_name=dataset_name, dataset=existing_dataset)
 
     dataset = client.datasets.by_name(dataset_name)
 
@@ -127,7 +127,7 @@ def test_dataset_already_exists():
 
     with pytest.raises(ValueError):
         tbox.dataset.manage.create(
-            tamr=client,
+            client=client,
             dataset_name=DATASET_NAME,
             attributes=attributes,
             primary_keys=PRIMARY_KEYS,
@@ -140,7 +140,7 @@ def test_no_dataset_or_pk():
 
     with pytest.raises(ValueError):
         tbox.dataset.manage.create(
-            tamr=client, dataset_name=DATASET_NAME,
+            client=client, dataset_name=DATASET_NAME,
         )
 
 
@@ -153,7 +153,7 @@ def test_create_multiple_pk():
     dataset_name = DATASET_NAME + "_multikey"
 
     tbox.dataset.manage.create(
-        tamr=client,
+        client=client,
         dataset_name=dataset_name,
         attributes=attributes,
         primary_keys=primary_keys,
@@ -215,7 +215,7 @@ def test_create_dataset_w_attribute_types():
         },
     ]
     tbox.dataset.manage.create(
-        tamr=client,
+        client=client,
         dataset_name=dataset_name,
         attributes=attribute_names,
         attribute_types=attribute_types,

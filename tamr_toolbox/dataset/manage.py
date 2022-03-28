@@ -10,7 +10,7 @@ from tamr_toolbox.models.data_type import JsonDict
 
 def create(
     *,
-    tamr: Client,
+    client: Client,
     dataset_name: str,
     primary_keys: Optional[List[str]] = None,
     attributes: Optional[List[str]] = None,
@@ -64,7 +64,7 @@ def create(
             attribute_names=attributes, attribute_types=attribute_types
         )
 
-    dataset_exists = exists(target_instance=tamr, dataset=dataset_name)
+    dataset_exists = exists(client=client, dataset=dataset_name)
     if not dataset_exists:
         creation_spec = {
             "name": dataset_name,
@@ -73,12 +73,12 @@ def create(
             "externalId": external_id,
             "tags": tags,
         }
-        tamr.datasets.create(creation_spec)
+        client.datasets.create(creation_spec)
     else:
         raise ValueError(f"A dataset with name '{dataset_name}' already exists")
 
     # Get new dataset
-    target_dataset = tamr.datasets.by_name(dataset_name)
+    target_dataset = client.datasets.by_name(dataset_name)
 
     # Get current dataset attributes
     target_dataset_attributes = target_dataset.attributes
@@ -178,7 +178,7 @@ def update(
     return dataset
 
 
-def exists(*, target_instance: Client, dataset: str) -> bool:
+def exists(*, client: Client, dataset: str) -> bool:
     """Check if the dataset exists on target instance
 
     Args:
@@ -190,7 +190,7 @@ def exists(*, target_instance: Client, dataset: str) -> bool:
     """
 
     try:
-        target_instance.datasets.by_name(dataset)
+        client.datasets.by_name(dataset)
     except KeyError:
         return False
 
