@@ -42,7 +42,6 @@ def create(
         requests.HTTPError: If any HTTP error is encountered
         ValueError: Dataset or primary_keys must be defined
         ValueError: A dataset with name '{dataset_name}' already exists
-        ValueError: Length of attributes and attribute_types must match
     """
 
     if not dataset and not primary_keys:
@@ -56,8 +55,6 @@ def create(
         description = dataset.description
         tags = dataset.tags
         primary_keys = dataset.key_attribute_names
-    elif attribute_types and len(attributes) != len(attribute_types):
-        raise ValueError(f"Length of attributes and attribute_types must match")
     else:
         # Create attributes from input
         attribute_specs = _create_specs(
