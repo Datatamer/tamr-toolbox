@@ -28,6 +28,7 @@ def remove_test_datasets(client: Client):
         DATASET_NAME + "_multikey",
         DATASET_NAME + "_non_default_attribute",
         DATASET_NAME + "_dup",
+        DATASET_NAME + "_no_attr",
     ]
     for dataset_name in dataset_names:
         if tbox.dataset.manage.exists(client=client, dataset=dataset_name):
@@ -75,6 +76,27 @@ def test_create_new_dataset():
             "innerType": {"baseType": "STRING", "attributes": []},
             "attributes": [],
         },
+    ]
+    for idx in range(len(expected_attribute_types)):
+        assert attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
+
+
+@mock_api(enforce_online_test=enforce_online_test)
+def test_create_new_dataset_no_attr():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    dataset_name = DATASET_NAME + "_no_attr"
+
+    tbox.dataset.manage.create(
+        client=client, dataset_name=dataset_name, primary_keys=PRIMARY_KEYS,
+    )
+
+    dataset = client.datasets.by_name(dataset_name)
+
+    dataset_attributes = dataset.attributes
+    attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+
+    expected_attribute_types = [
+        {"baseType": "STRING", "attributes": []},
     ]
     for idx in range(len(expected_attribute_types)):
         assert attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
@@ -462,6 +484,65 @@ def test_change_attribute_type():
         attributes=attribute_names,
         attribute_types=attr_type_dict,
     )
+
+    updated_dataset = client.datasets.by_name(DATASET_NAME)
+    dataset_attributes = updated_dataset.attributes
+    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
+    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+
+    assert len(attribute_list) == len(attribute_names)
+    assert attribute_list == attribute_names
+
+    for idx in range(len(attribute_types)):
+        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
+
+
+@mock_api(enforce_online_test=enforce_online_test)
+def test_partially_define_types():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    dataset = client.datasets.by_name(DATASET_NAME)
+    attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
+    attribute_types = [
+        {"baseType": "STRING", "attributes": []},
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "INT", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+    ]
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
+
+    # remove some types defs
+    del attr_type_dict["name"]
+    del attr_type_dict["sales_count"]
+
+    tbox.dataset.manage.update(
+        dataset=dataset,
+        primary_keys=PRIMARY_KEYS,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
+    )
+
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     dataset_attributes = updated_dataset.attributes

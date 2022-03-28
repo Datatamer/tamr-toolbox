@@ -56,7 +56,6 @@ def create(
         tags = dataset.tags
         primary_keys = dataset.key_attribute_names
     else:
-        # Create attributes from input
         attribute_specs = _create_specs(
             attribute_names=attributes, attribute_types=attribute_types
         )
@@ -221,11 +220,12 @@ def _create_specs(
         "attributes": [],
     }
     attribute_specs = []
-    for idx in range(len(attribute_names)):
-        name = attribute_names[idx]
-        if attribute_types and name in attribute_types.keys():
-            attr_type = AttributeType(attribute_types[name])
-        else:
-            attr_type = AttributeType(default_type)
-        attribute_specs.append(AttributeSpec.new().with_name(name).with_type(attr_type.spec()))
+    if attribute_names:
+        for idx in range(len(attribute_names)):
+            name = attribute_names[idx]
+            if attribute_types and name in attribute_types.keys():
+                attr_type = AttributeType(attribute_types[name])
+            else:
+                attr_type = AttributeType(default_type)
+            attribute_specs.append(AttributeSpec.new().with_name(name).with_type(attr_type.spec()))
     return attribute_specs
