@@ -8,6 +8,25 @@ from tamr_unify_client.attribute.type import AttributeType
 from tamr_toolbox.models.data_type import JsonDict
 
 
+def exists(*, client: Client, dataset: str) -> bool:
+    """Check if the dataset exists on target instance
+
+    Args:
+        target_instance: Tamr python client object for the target instance
+        dataset: The dataset name
+
+    Return:
+        True or False for if the dataset exists in target instance
+    """
+
+    try:
+        client.datasets.by_name(dataset)
+    except KeyError:
+        return False
+
+    return True
+
+
 def create(
     *,
     client: Client,
@@ -94,9 +113,8 @@ def create(
 
 
 def update(
-    *,
     dataset: Dataset,
-    primary_keys: List[str],
+    *,
     attributes: Optional[List[str]] = None,
     attribute_types: Optional[JsonDict] = None,
     description: Optional[str] = None,
@@ -119,15 +137,11 @@ def update(
     Raises:
         requests.HTTPError: If any HTTP error is encountered
         ValueError: trying to alter a unified dataset
-        ValueError: Primary keys did not match Tamr dataset primary keys
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
-
-    # Confirm primary keys match
-    if primary_keys != dataset.spec().to_dict()["keyAttributeNames"]:
-        raise ValueError(f"Primary keys did not match Tamr dataset primary keys")
+    primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
 
     # Update description and tags
     dataset_spec = dataset.spec()
@@ -139,67 +153,205 @@ def update(
     dataset_spec.put()
 
     if attributes:
-        # Create attributes from input
-        attribute_specs = _create_specs(
-            attribute_names=attributes, attribute_types=attribute_types
-        )
-
         # Get current dataset attributes
         target_dataset_attributes = dataset.attributes
-        target_attribute_dict = {}
+        existing_attributes = []
         for attr in target_dataset_attributes.stream():
-            target_attribute_dict[attr.name] = attr
+            existing_attributes.append(attr.name)
 
         # Update attributes in dataset
-        for attribute in attribute_specs:
-            attr_spec_dict = attribute.to_dict()
-            attribute_name = attr_spec_dict["name"]
+        for attribute_name in attributes:
             if attribute_name in primary_keys:
                 continue
-            elif attribute_name in target_attribute_dict.keys():
+            elif attribute_name in existing_attributes:
                 # This attribute already exists, update to new type
-                new_type = AttributeType(attribute.to_dict()["type"])
-                target_attribute = target_attribute_dict[attribute_name]
-                new_attr_spec = target_attribute.spec().with_type(new_type.spec())
-
-                # Remove and add attribute with new type
-                target_dataset_attributes.delete_by_resource_id(target_attribute.resource_id)
-                target_dataset_attributes.create(new_attr_spec.to_dict())
+                edit_attributes(
+                    dataset=dataset, attributes=[attribute_name], attribute_types=attribute_types
+                )
             else:
                 # This attribute does not already exist, create
-                target_dataset_attributes.create(attr_spec_dict)
+                create_attributes(
+                    dataset=dataset, attributes=[attribute_name], attribute_types=attribute_types
+                )
 
         # Remove any attributes from dataset that aren't in the new list of attributes
-        attribute_names = [attr.to_dict()["name"] for attr in attribute_specs]
-        for existing_attribute in target_attribute_dict.keys():
-            if (
-                existing_attribute not in attribute_names
-                and existing_attribute not in primary_keys
-            ):
-                target_dataset_attributes.delete_by_resource_id(
-                    target_attribute_dict[existing_attribute].resource_id
-                )
+        for attribute_name in existing_attributes:
+            if attribute_name not in attributes and attribute_name not in primary_keys:
+                delete_attributes(dataset=dataset, attributes=[attribute_name])
 
     return dataset
 
 
-def exists(*, client: Client, dataset: str) -> bool:
-    """Check if the dataset exists on target instance
+def create_attributes(
+    *, dataset: Dataset, attributes: List[str], attribute_types: Optional[JsonDict] = None,
+) -> Dataset:
+    """Creates attributes in dataset if they don't already exist.
+       If no attrbute_types are passed in the default will be ARRAY STRING
 
     Args:
-        target_instance: Tamr python client object for the target instance
-        dataset: The dataset name
+        dataset: An existing TUC dataset
+        attributes: list of attribute names to add to dataset
+        attribute_types: dict of attribute types, attribute name is key and type is value
 
-    Return:
-        True or False for if the dataset exists in target instance
+    Returns:
+        Updated Dataset
+
+    Raises:
+        requests.HTTPError: If any HTTP error is encountered
+        ValueError: trying to alter a unified dataset
+        ValueError: An attribute with name '{attribute_name}' already exists in {dataset_name}
     """
+    dataset_name = dataset.name
+    if dataset.upstream_datasets():
+        raise ValueError(f"{dataset_name} is not a source dataset")
 
-    try:
-        client.datasets.by_name(dataset)
-    except KeyError:
-        return False
+    # Create attributes from input
+    attribute_specs = _create_specs(attribute_names=attributes, attribute_types=attribute_types)
 
-    return True
+    # Get current dataset attributes
+    target_dataset_attributes = dataset.attributes
+    existing_attributes = []
+    for attr in target_dataset_attributes.stream():
+        existing_attributes.append(attr.name)
+
+    # Check that none of the new attribute names already exist
+    for attribute_name in attributes:
+        if attribute_name in existing_attributes:
+            # This attribute already exists
+            raise ValueError(
+                f"An attribute with name '{attribute_name}' already exists in {dataset_name}"
+            )
+
+    # Add attributes to dataset
+    for attribute in attribute_specs:
+        attr_spec_dict = attribute.to_dict()
+        target_dataset_attributes.create(attr_spec_dict)
+
+    return dataset
+
+
+def edit_attributes(
+    *,
+    dataset: Dataset,
+    attributes: List[str],
+    attribute_types: Optional[JsonDict] = None,
+    attribute_descriptions: Optional[JsonDict] = None,
+) -> Dataset:
+    """Edits existing attributes in dataset.
+       If an attrbute_type is not defined the default will be ARRAY STRING
+
+    Args:
+        dataset: An existing TUC dataset
+        attributes: list of attribute names to edit in dataset
+        attribute_types: dict of attribute types, attribute name is key and type is value
+        attribute_descriptions: dict, attribute name is key and description is value
+
+    Returns:
+        Updated Dataset
+
+    Raises:
+        requests.HTTPError: If any HTTP error is encountered
+        ValueError: trying to alter a unified dataset
+        ValueError: An attribute with name '{attribute_name}' does not exist in {dataset_name}
+        ValueError: The attribute: '{attribute_name}' is a primary key and can't be updated
+    """
+    dataset_name = dataset.name
+    if dataset.upstream_datasets():
+        raise ValueError(f"{dataset_name} is not a source dataset")
+
+    # Create attributes from input
+    attribute_specs = _create_specs(attribute_names=attributes, attribute_types=attribute_types)
+
+    # Get current dataset attributes
+    target_dataset_attributes = dataset.attributes
+    target_attribute_dict = {}
+    for attr in target_dataset_attributes.stream():
+        target_attribute_dict[attr.name] = attr
+    existing_attributes = target_attribute_dict.keys()
+    primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
+
+    # Check that all of the attribute names already exist in dataset
+    for attribute_name in attributes:
+        if attribute_name not in existing_attributes:
+            # This attribute does not exist
+            raise ValueError(
+                f"An attribute with name '{attribute_name}' does not exist in {dataset_name}"
+            )
+        elif attribute_name in primary_keys:
+            # Can not edit a primary key
+            raise ValueError(
+                f"The attribute: '{attribute_name}' is a primary key and can't be updated"
+            )
+
+    # Update attributes in dataset
+    for attribute in attribute_specs:
+        attr_spec_dict = attribute.to_dict()
+        attribute_name = attr_spec_dict["name"]
+
+        # Update type
+        new_type = AttributeType(attribute.to_dict()["type"])
+        target_attribute = target_attribute_dict[attribute_name]
+        new_attr_spec = target_attribute.spec().with_type(new_type.spec())
+
+        # Update description
+        if attribute_descriptions and attribute_name in attribute_descriptions.keys():
+            new_attr_spec = new_attr_spec.with_description(attribute_descriptions[attribute_name])
+
+        # Remove and add attribute with new spec
+        target_dataset_attributes.delete_by_resource_id(target_attribute.resource_id)
+        target_dataset_attributes.create(new_attr_spec.to_dict())
+
+    return dataset
+
+
+def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dataset:
+    """Remove attributes from dataset by attribute name
+
+    Args:
+        dataset: An existing TUC dataset
+        primary_keys: one or more attributes for primary key(s) of new dataset
+        attributes: list of attribute names to delete from dataset
+
+    Returns:
+        Updated Dataset
+
+    Raises:
+        requests.HTTPError: If any HTTP error is encountered
+        ValueError: trying to alter a unified dataset
+        ValueError: attribute with {attribute_name} does not exist in {dataset_name}
+        ValueError: The attribute: '{attribute_name}' is a primary key and can't be removed
+    """
+    dataset_name = dataset.name
+    if dataset.upstream_datasets():
+        raise ValueError(f"{dataset_name} is not a source dataset")
+
+    # Get current dataset attributes
+    target_dataset_attributes = dataset.attributes
+    target_attribute_dict = {}
+    for attr in target_dataset_attributes.stream():
+        target_attribute_dict[attr.name] = attr
+    existing_attributes = target_attribute_dict.keys()
+    primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
+
+    # Check all attributes exist before starting to remove any
+    for attribute_name in attributes:
+        if attribute_name not in existing_attributes:
+            raise ValueError(
+                f"attribute with name '{attribute_name}' does not exist in {dataset_name}"
+            )
+        elif attribute_name in primary_keys:
+            # Can not edit a primary key
+            raise ValueError(
+                f"The attribute: '{attribute_name}' is a primary key and can't be removed"
+            )
+
+    # Remove attributes from dataset
+    for attribute_name in attributes:
+        target_dataset_attributes.delete_by_resource_id(
+            target_attribute_dict[attribute_name].resource_id
+        )
+
+    return dataset
 
 
 def _create_specs(
