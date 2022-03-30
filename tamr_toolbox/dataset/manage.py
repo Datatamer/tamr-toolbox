@@ -121,7 +121,7 @@ def update(
     tags: Optional[List[str]] = None,
 ) -> Dataset:
     """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input.
-       If no attrbute_types are passed in the default will be ARRAY STRING
+       If no attribute_types are passed in the default will be ARRAY STRING
 
     Args:
         dataset: An existing TUC dataset
