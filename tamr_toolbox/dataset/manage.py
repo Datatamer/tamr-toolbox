@@ -12,7 +12,7 @@ def exists(*, client: Client, dataset: str) -> bool:
     """Check if the dataset exists on target instance
 
     Args:
-        target_instance: Tamr python client object for the target instance
+        client: Tamr python client object for the target instance
         dataset: The dataset name
 
     Return:
@@ -31,40 +31,40 @@ def create(
     *,
     client: Client,
     dataset_name: str,
+    dataset: Optional[Dataset] = None,
     primary_keys: Optional[List[str]] = None,
     attributes: Optional[List[str]] = None,
     attribute_types: Optional[JsonDict] = None,
     description: Optional[str] = None,
     external_id: Optional[str] = None,
     tags: Optional[List[str]] = None,
-    dataset: Optional[Dataset] = None,
 ) -> Dataset:
     """Flexibly create a source dataset in Tamr. Will use array string as default attribute type
        if none are specified. If a dataset object is passed, a new dataset with dataset_name as
        its name will be created that has the same attributes and primary keys as the dataset.
 
     Args:
-        tamr: TUC client
+        client: TUC client
         dataset_name: name for new dataset
+        dataset: optional dataset TUC object to use as a template for new dataset
         primary_keys: one or more attributes for primary key(s) of new dataset
         attributes: list of attribute names for new dataset
         attribute_types: dict of attribute types, attribute name is key and type is value
         description: text description of new dataset
         external_id: external_id for dataset, if None Tamr will create one for you
         tags: tags for new dataset
-        dataset: optional dataset TUC object that the new dataset will replicate
 
     Returns:
         Dataset created in Tamr
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: Dataset or primary_keys must be defined
+        ValueError: dataset or primary_keys must be defined
         ValueError: A dataset with name '{dataset_name}' already exists
     """
 
     if not dataset and not primary_keys:
-        raise ValueError(f"Dataset or primary_keys must be defined")
+        raise ValueError(f"dataset or primary_keys must be defined")
 
     # Get dataset information
     if dataset:
@@ -125,7 +125,6 @@ def update(
 
     Args:
         dataset: An existing TUC dataset
-        primary_keys: one or more attributes for primary key(s) of new dataset
         attributes: list of attribute names to add/keep for dataset
         attribute_types: dict of attribute types, attribute name is key and type is value
         description: updated text description of dataset, if None will not update
@@ -136,7 +135,7 @@ def update(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: trying to alter a unified dataset
+        ValueError: {dataset_name} is not a source dataset
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -186,7 +185,7 @@ def create_attributes(
     *, dataset: Dataset, attributes: List[str], attribute_types: Optional[JsonDict] = None,
 ) -> Dataset:
     """Creates attributes in dataset if they don't already exist.
-       If no attrbute_types are passed in the default will be ARRAY STRING
+       If no attrbute_types are passed in, the default will be ARRAY STRING
 
     Args:
         dataset: An existing TUC dataset
@@ -251,7 +250,7 @@ def edit_attributes(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: trying to alter a unified dataset
+        ValueError: {dataset_name} is not a source dataset
         ValueError: An attribute with name '{attribute_name}' does not exist in {dataset_name}
         ValueError: The attribute: '{attribute_name}' is a primary key and can't be updated
     """
@@ -309,7 +308,6 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
 
     Args:
         dataset: An existing TUC dataset
-        primary_keys: one or more attributes for primary key(s) of new dataset
         attributes: list of attribute names to delete from dataset
 
     Returns:
@@ -317,7 +315,7 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: trying to alter a unified dataset
+        ValueError: {dataset_name} is not a source dataset
         ValueError: attribute with {attribute_name} does not exist in {dataset_name}
         ValueError: The attribute: '{attribute_name}' is a primary key and can't be removed
     """
