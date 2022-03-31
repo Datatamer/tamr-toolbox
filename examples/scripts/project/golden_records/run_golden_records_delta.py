@@ -59,7 +59,7 @@ def main(
     # Create the tamr client
     tamr_client = utils.client.create(**instance_connection_info)
     LOGGER.info(
-        "Retreiving project names and resource IDs from Tamr and storing as a lookup dictionary"
+        "Retrieving project names and resource IDs from Tamr and storing as a lookup dictionary"
     )
     project_id_dict = {}
     for project in tamr_client.projects:
@@ -125,7 +125,7 @@ def main(
     else:
         LOGGER.info("FAILURE to update Golden Records")
 
-    LOGGER.info("Advaning pinned version of CHANGES dataset")
+    LOGGER.info("Advancing pinned version of CHANGES dataset")
     pin_ChangesDataset = tamr_client.projects.client.post(
         "/api/dataset/datasets/" + pipeline_vars["GR_changes_dataset"] + "/advancePinnedVersion"
     )
@@ -135,7 +135,7 @@ def main(
     else:
         LOGGER.info("FAILURE to advanced Changes Dataset")
 
-    LOGGER.info("Advaning pinned version of DELTA dataset")
+    LOGGER.info("Advancing pinned version of DELTA dataset")
 
     pin_DeltasDataset = tamr_client.projects.client.post(
         "/api/dataset/datasets/"
