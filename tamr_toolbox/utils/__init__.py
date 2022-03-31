@@ -7,6 +7,7 @@ from . import version
 from . import testing
 from . import upstream
 from . import downstream
+from . import recipe
 
 __all__ = [
     "config",
@@ -17,4 +18,5 @@ __all__ = [
     "testing",
     "upstream",
     "downstream",
+    "recipe",
 ]
