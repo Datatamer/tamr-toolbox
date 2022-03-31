@@ -1,4 +1,5 @@
 from typing import List, Optional, Union
+import logging
 
 from tamr_unify_client import Client
 from tamr_unify_client.dataset.resource import Dataset
@@ -7,20 +8,22 @@ from tamr_unify_client.attribute.type import AttributeType
 
 from tamr_toolbox.models.data_type import JsonDict
 
+LOGGER = logging.getLogger(__name__)
 
-def exists(*, client: Client, dataset: str) -> bool:
+
+def exists(*, client: Client, dataset_name: str) -> bool:
     """Check if the dataset exists on target instance
 
     Args:
         client: Tamr python client object for the target instance
-        dataset: The dataset name
+        dataset_name: The dataset name
 
     Return:
         True or False for if the dataset exists in target instance
     """
 
     try:
-        client.datasets.by_name(dataset)
+        client.datasets.by_name(dataset_name)
     except KeyError:
         return False
 
@@ -79,7 +82,7 @@ def create(
             attribute_names=attributes, attribute_types=attribute_types
         )
 
-    dataset_exists = exists(client=client, dataset=dataset_name)
+    dataset_exists = exists(client=client, dataset_name=dataset_name)
     if not dataset_exists:
         creation_spec = {
             "name": dataset_name,
@@ -89,6 +92,7 @@ def create(
             "tags": tags,
         }
         client.datasets.create(creation_spec)
+        LOGGER.info(f"A dataset with name {dataset_name} has been created")
     else:
         raise ValueError(f"A dataset with name '{dataset_name}' already exists")
 
@@ -108,6 +112,7 @@ def create(
         else:
             # Create new attribute
             target_dataset_attributes.create(attr_spec_dict)
+            LOGGER.info(f"Created attribute '{attribute_name}' in {dataset_name}")
 
     return target_dataset
 
@@ -146,8 +151,10 @@ def update(
     dataset_spec = dataset.spec()
     if description:
         dataset_spec = dataset_spec.with_description(description)
+        LOGGER.info(f"Updating description for {dataset_name}")
     if tags:
         dataset_spec = dataset_spec.with_tags(tags)
+        LOGGER.info(f"Updating tags for {dataset_name}")
 
     dataset_spec.put()
 
@@ -197,12 +204,17 @@ def create_attributes(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
+        TypeError: attributes arg must be a List
         ValueError: trying to alter a unified dataset
         ValueError: An attribute with name '{attribute_name}' already exists in {dataset_name}
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
+
+    # Check input type is correct
+    if type(attributes) != list:
+        raise TypeError("attributes arg must be a List")
 
     # Create attributes from input
     attribute_specs = _create_specs(attribute_names=attributes, attribute_types=attribute_types)
@@ -225,6 +237,8 @@ def create_attributes(
     for attribute in attribute_specs:
         attr_spec_dict = attribute.to_dict()
         target_dataset_attributes.create(attr_spec_dict)
+        attribute_name = attr_spec_dict["name"]
+        LOGGER.info(f"Created attribute '{attribute_name}' in {dataset_name}")
 
     return dataset
 
@@ -253,10 +267,15 @@ def edit_attributes(
         ValueError: {dataset_name} is not a source dataset
         ValueError: An attribute with name '{attribute_name}' does not exist in {dataset_name}
         ValueError: The attribute: '{attribute_name}' is a primary key and can't be updated
+        TypeError: attributes arg must be a List
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
+
+    # Check input type is correct
+    if type(attributes) != list:
+        raise TypeError("attributes arg must be a List")
 
     # Create attributes from input
     attribute_specs = _create_specs(attribute_names=attributes, attribute_types=attribute_types)
@@ -299,6 +318,7 @@ def edit_attributes(
         # Remove and add attribute with new spec
         target_dataset_attributes.delete_by_resource_id(target_attribute.resource_id)
         target_dataset_attributes.create(new_attr_spec.to_dict())
+        LOGGER.info(f"Updated attribute '{attribute_name}' in {dataset_name}")
 
     return dataset
 
@@ -318,10 +338,15 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
         ValueError: {dataset_name} is not a source dataset
         ValueError: attribute with {attribute_name} does not exist in {dataset_name}
         ValueError: The attribute: '{attribute_name}' is a primary key and can't be removed
+        TypeError: attributes arg must be a List
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
+
+    # Check input type is correct
+    if type(attributes) != list:
+        raise TypeError("attributes arg must be a List")
 
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
@@ -348,6 +373,7 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
         target_dataset_attributes.delete_by_resource_id(
             target_attribute_dict[attribute_name].resource_id
         )
+        LOGGER.info(f"Deleted attribute '{attribute_name}' in {dataset_name}")
 
     return dataset
 

@@ -20,7 +20,7 @@ dataset = client.datasets.by_name(dataset_name)
 
 # Note you can optionally just past in a list of attribute names
 # The attribute types will default to ARRAY STRING
-attribute_names = ["unique_id", "name", "address", "user_id", "sales"]
+attribute_names = ["client_id", "name", "address", "user_id", "sales"]
 attribute_types = [
     {"baseType": "STRING"},
     {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
@@ -29,6 +29,10 @@ attribute_types = [
     {"baseType": "DOUBLE"},
 ]
 
-updated_dataset = tbox.dataset.manage.update(
-    dataset=dataset, attributes=attribute_names, attribute_types=attribute_types
+attr_type_dict = {}
+for i in range(len(attribute_names)):
+    attr_type_dict[attribute_names[i]] = attribute_types[i]
+
+updated_dataset = tbox.dataset.manage.create_attributes(
+    dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
 )

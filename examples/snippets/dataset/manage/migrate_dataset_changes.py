@@ -32,13 +32,19 @@ for ds in datasets:
 
     description = source_dataset.description
     tags = source_dataset.tags
-    target_dataset = target_client.datasets.by_name(dataset_name)
 
     # Migrate dataset updates from source to target instance
-    tbox.dataset.manage.update(
-        dataset=target_dataset,
-        attributes=attributes,
-        attribute_types=attr_type_dict,
-        description=description,
-        tags=tags,
-    )
+    if tbox.dataset.manage.exists(client=target_client, dataset_name=dataset_name):
+        target_dataset = target_client.datasets.by_name(dataset_name)
+        tbox.dataset.manage.update(
+            dataset=target_dataset,
+            attributes=attributes,
+            attribute_types=attr_type_dict,
+            description=description,
+            tags=tags,
+        )
+    else:
+        primary_keys = source_dataset.spec().to_dict()["keyAttributeNames"]
+        tbox.dataset.manage.create(
+            client=target_client, primary_keys=primary_keys, dataset=source_dataset,
+        )

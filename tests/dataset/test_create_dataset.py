@@ -31,10 +31,10 @@ def remove_test_datasets(client: Client):
         DATASET_NAME + "_no_attr",
     ]
     for dataset_name in dataset_names:
-        if tbox.dataset.manage.exists(client=client, dataset=dataset_name):
+        if tbox.dataset.manage.exists(client=client, dataset_name=dataset_name):
             dataset = client.datasets.by_name(dataset_name)
             dataset.delete()
-        assert not tbox.dataset.manage.exists(client=client, dataset=dataset_name)
+        assert not tbox.dataset.manage.exists(client=client, dataset_name=dataset_name)
 
 
 @mock_api(enforce_online_test=enforce_online_test)
