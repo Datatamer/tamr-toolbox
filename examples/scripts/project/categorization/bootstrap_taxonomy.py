@@ -87,15 +87,11 @@ def main(
         category_list = [category.split("|") for category in category_set]
         category_list.sort()
 
-    # Create a dictionary of full path between string and list (used as label path)
-    taxonomy_dict = {", ".join(category): category for category in category_list}
+    # Create a dictionary of full path as a string to the leaf node name (used as label path)
+    taxonomy_dict = {", ".join(category): category[-1] for category in category_list}
 
     # Create a dataframe
-    df = pd.DataFrame(list(taxonomy_dict.items()), columns=["Category Path", "Category Path List"])
-
-    # Add category data
-    df["Category Name"] = df["Category Path List"].apply(lambda x: x[-1])
-    df.drop("Category Path List", axis=1, inplace=True)
+    df = pd.DataFrame(list(taxonomy_dict.items()), columns=["Category Path", "Category Name"])
 
     # Create a dataset in Tamr
     taxonomy_dataset = project.client.datasets.create_from_dataframe(
