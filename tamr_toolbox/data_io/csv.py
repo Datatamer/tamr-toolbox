@@ -1,5 +1,5 @@
 """Tasks related to moving data in or out of Tamr using delimited files"""
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Dict
 from functools import partial
 from pathlib import Path
 
@@ -23,6 +23,7 @@ def from_dataset(
     *,
     csv_delimiter: str = ",",
     columns: Optional[List[str]] = None,
+    column_name_dict: Optional[Dict[str, str]] = None,
     flatten_delimiter: str = "|",
     quote_character: str = '"',
     quoting: int = csv.QUOTE_MINIMAL,
@@ -44,6 +45,8 @@ def from_dataset(
         csv_delimiter: Delimiter of the csv file
         columns: Optional, Ordered list of columns to write. If None, write all columns in
             arbitrary order.
+        column_name_dict: Optional, Dictionary in the format {<Tamr dataset column name> : <new csv
+            column name>}, used to rename some or all columns in the output file.
         flatten_delimiter: Flatten list types to strings by concatenating with this delimiter
         quote_character: Character used to escape value for csv delimiter when it appears in the
             value.
@@ -69,7 +72,7 @@ def from_dataset(
             and `overwrite` is False
         RuntimeError: if `dataset` is not streamable and `allow_dataset_refresh` is False
         ValueError: if `columns` or `flatten_columns` contain columns that are not
-            present in `dataset`
+            present in `dataset`, or if column renaming would yield duplicate column names
     """
     LOGGER.info(
         f"Streaming records to csv file {export_file_path} from dataset {dataset.name} "
@@ -118,6 +121,12 @@ def from_dataset(
 
     func = partial(common._flatten_list, delimiter=flatten_delimiter, force=True)
 
+    full_column_name_dict = common._get_column_mapping_dict(
+        dataset_attribute_names=attribute_names,
+        column_name_dict=column_name_dict,
+        columns=columns,
+    )
+
     # Open CSV file and use newline='' as recommended by
     # https://docs.python.org/3/library/csv.html#csv.writer
     with open(export_file_path, "w", newline="", encoding=encoding) as csv_file:
@@ -134,12 +143,14 @@ def from_dataset(
         ):
             # Obtain and write the header information only on the first pass
             if header is None:
-                header = record.keys() if columns is None else columns
+                header = full_column_name_dict.values()
                 csv_writer.writerow(header)
 
             # Replace empty values with a specific null value
             # This also allows nulls to be treated differently from empty strings
-            record = [na_value if record[k] is None else record[k] for k in header]
+            record = [
+                na_value if record[k] is None else record[k] for k in full_column_name_dict.keys()
+            ]
             buffer.append(record)
 
             at_max_buffer = buffer_size is not None and (len(buffer) >= buffer_size)

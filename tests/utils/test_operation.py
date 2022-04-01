@@ -6,6 +6,7 @@ from tamr_toolbox.utils.operation import (
     get_details,
     get_all,
     get_active,
+    monitor,
 )
 from tamr_toolbox.utils.testing import mock_api
 from tamr_toolbox.models.operation_state import OperationState
@@ -71,3 +72,25 @@ def test_get_active():
     op_statuses = [OperationState(op.state) for op in op_get_active]
     expected_op_statues = [OperationState.PENDING, OperationState.RUNNING]
     assert all(op_status in expected_op_statues for op_status in op_statuses)
+
+
+@mock_api()
+def test_monitor():
+    client = utils.client.create(**CONFIG["my_instance_name"])
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    project = project.as_mastering()
+    op = project.pairs().refresh(asynchronous=True)
+    status = OperationState[op.state]
+    assert status == OperationState.PENDING
+
+    op_running = monitor(op, poll_interval_seconds=1)
+
+    running_status = OperationState[op_running.state]
+    assert op.resource_id == op_running.resource_id
+    assert running_status == OperationState.RUNNING
+
+    op_succeeded = monitor(op_running, poll_interval_seconds=1)
+
+    succeeded_status = OperationState[op_succeeded.state]
+    assert op.resource_id == op_succeeded.resource_id
+    assert succeeded_status == OperationState.SUCCEEDED

@@ -35,7 +35,7 @@ def _add_handler(logger: logging.Logger, log_directory: Optional[str] = None, **
         logger: the logging.Logger class to which you would like to add a handler
         log_directory: Optional log directory to pass. If not None a FileHandler is added,
             otherwise a StreamHandler
-         **kwargs: Keyword arguments for the _get_log_filename
+        **kwargs: Keyword arguments for the _get_log_filename
      """
     if log_directory is None:
         handler = logging.StreamHandler()
@@ -49,7 +49,7 @@ def _add_handler(logger: logging.Logger, log_directory: Optional[str] = None, **
     logger.setLevel(logging.INFO)
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter(
-        "%(levelname)s <%(thread)d> [%(asctime)s] %(name)s <%(filename)s:%(lineno)d>  %(message)s"
+        "%(levelname)s <%(thread)d> [%(asctime)s] %(name)s <%(filename)s:%(lineno)d> %(message)s"
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
@@ -123,6 +123,7 @@ def set_logging_level(logger_name: str, level: str) -> None:
 def enable_package_logging(
     package_name: str,
     *,
+    log_to_terminal: bool = True,
     log_directory: Optional[str] = None,
     level: Optional[str] = None,
     log_prefix: str = "",
@@ -133,6 +134,7 @@ def enable_package_logging(
 
     Args:
         package_name: the name of the package for which to enable logging
+        log_to_terminal: Boolean indicating whether or not to log messages to the terminal
         log_directory: optional log directory which the package will write logs
         level: optional level to specify, default is WARNING (inherited from base logging package)
         log_prefix: Optional prefix for log files, if None will be blank string
@@ -141,6 +143,8 @@ def enable_package_logging(
 
     package_logger = logging.getLogger(package_name)
     _add_handler(package_logger, log_directory, log_prefix=log_prefix, date_format=date_format)
+    if log_to_terminal:
+        _add_handler(package_logger, log_prefix=log_prefix, date_format=date_format)
 
     if level is not None:
         set_logging_level(package_name, level)
@@ -148,6 +152,7 @@ def enable_package_logging(
 
 def enable_toolbox_logging(
     *,
+    log_to_terminal: bool = True,
     log_directory: Optional[str] = None,
     level: Optional[str] = None,
     log_prefix: str = "",
@@ -156,6 +161,7 @@ def enable_toolbox_logging(
     """A simple wrapper to enable_package_logging to give friendly call for users.
 
     Args:
+        log_to_terminal: Boolean indicating whether or not to log messages to the terminal
         log_directory: optional directory to which to write tamr_toolbox logs
         level: Optional logging level to specify, default is WARNING
             (inherited from base logging package)
@@ -165,6 +171,7 @@ def enable_toolbox_logging(
 
     enable_package_logging(
         "tamr_toolbox",
+        log_to_terminal=log_to_terminal,
         log_directory=log_directory,
         level=level,
         log_prefix=log_prefix,

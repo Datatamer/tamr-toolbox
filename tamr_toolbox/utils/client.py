@@ -46,6 +46,7 @@ def create(
     host: str,
     port: Optional[Union[str, int]] = 9100,
     protocol: str = "http",
+    store_auth_cookie: bool = False,
     enforce_healthy: bool = False,
 ) -> Client:
     """Creates a Tamr client from the provided configuration values
@@ -56,6 +57,7 @@ def create(
         host: The ip address of Tamr
         port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port
         protocol: https or http
+        store_auth_cookie: If true will allow Tamr authentication cookie to be stored and reused
         enforce_healthy: If true will enforce a healthy state upon creation
 
     Returns:
@@ -68,6 +70,7 @@ def create(
         host=host,
         port=int(port) if port is not None else None,
         protocol=protocol,
+        store_auth_cookie=store_auth_cookie,
     )
     if enforce_healthy:
         if not health_check(client):
@@ -95,7 +98,7 @@ def get_with_connection_retry(
         try:
             response = client.get(api_endpoint)
             return response
-        except ConnectionError as e:
+        except requests.exceptions.ConnectionError as e:
             # If we got for example a connection refused exception, try again later
             LOGGER.warning(f"Caught exception in connect {e}")
             sleep(sleep_seconds)
@@ -155,7 +158,6 @@ def _from_response(response: Response) -> Client:
 
     Returns:
         New Tamr Client based on the previous response
-
     """
     request = response.request
     url_matcher = re.match(r"(https?)://(.*):(\d{4})(.*)", request.url)

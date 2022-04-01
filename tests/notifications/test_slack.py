@@ -204,13 +204,13 @@ def test_monitor_job_timeout():
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
 
-    timeout_seconds = 0.02
+    timeout_seconds = 0.2
     list_responses = notifications.slack.monitor_job(
         tamr=client,
         slack_client=mock_client,
         channel="#test_tbox_messaging",
         operation=op,
-        poll_interval_seconds=0.01,
+        poll_interval_seconds=0.1,
         timeout_seconds=timeout_seconds,
     )
     saved_responses = [
@@ -220,28 +220,6 @@ def test_monitor_job_timeout():
             "text": f"Host: {client.host} \n Job: {op.resource_id} \n "
             f"Description: Materialize views [minimal_schema_mapping_unified_dataset] "
             f"to Elastic \n Status: PENDING ",
-            "user": "USER",
-            "team": "TEAM",
-            "bot_profile": {
-                "id": "BOT_ID",
-                "deleted": False,
-                "name": "Tamr Jobs Watch",
-                "updated": 1593130492,
-                "app_id": "APP_ID",
-                "icons": {
-                    "image_36": "https://a.slack-edge.com/80588/img/plugins/app/bot_36.png",
-                    "image_48": "https://a.slack-edge.com/80588/img/plugins/app/bot_48.png",
-                    "image_72": "https://a.slack-edge.com/80588/img/plugins/app/service_72.png",
-                },
-                "team_id": "TEAM",
-            },
-        },
-        {
-            "bot_id": "BOT_ID",
-            "type": "message",
-            "text": f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize "
-            f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
-            f"Status: RUNNING ",
             "user": "USER",
             "team": "TEAM",
             "bot_profile": {

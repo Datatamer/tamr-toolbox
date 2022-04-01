@@ -15,10 +15,6 @@ for tamr_backup in backups:
 LOGGER.info("Deleting old sparkEventLogs")
 tbox.workflow.backup.delete_old_spark_event_logs("/home/ubuntu", num_days_to_keep=14)
 
-# optional: delete old sparkEventLogs before backup to reduce backup size
-LOGGER.info("Deleting old sparkEventLogs")
-tbox.workflow.backup.delete_old_spark_event_logs("/home/ubuntu", num_days_to_keep=14)
-
 LOGGER.info("About to run backup")
 op = tbox.workflow.backup.initiate_backup(tamr)
 backup_id = op.json()["relativeId"]
