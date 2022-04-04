@@ -7,9 +7,6 @@ import tamr_toolbox as tbox
 # load example multi config
 my_config = tbox.utils.config.from_yaml("examples/resources/conf/migrate_dataset.config.yaml")
 
-# Use the configuration to create a global logger
-LOGGER = tbox.utils.logger.create(__name__, log_directory=my_config["logging_dir"])
-
 # Create the source tamr client
 client = tbox.utils.client.create(**my_config["source_migration_instance"])
 

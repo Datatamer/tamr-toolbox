@@ -6,9 +6,6 @@ import tamr_toolbox as tbox
 # load example multi config
 my_config = tbox.utils.config.from_yaml("examples/resources/conf/migrate_dataset.config.yaml")
 
-# Use the configuration to create a global logger
-LOGGER = tbox.utils.logger.create(__name__, log_directory=my_config["logging_dir"])
-
 # Create the source tamr client
 source_client = tbox.utils.client.create(**my_config["source_migration_instance"])
 
@@ -24,10 +21,9 @@ for ds in datasets:
     source_dataset = source_client.datasets.by_name(dataset_name)
 
     # Get updated dataset definition
-    attributes = [attr for attr in source_dataset.attributes.stream()]
-    attr_type_dict = {}
-    for attr in attributes:
-        attr_type_dict[attr.name] = attr.spec().to_dict()["type"]
+    attr_type_dict = {
+        attr.name: attr.spec().to_dict()["type"] for attr in source_dataset.attributes
+    }
     attribute_names = attr_type_dict.keys()
 
     description = source_dataset.description
@@ -38,7 +34,7 @@ for ds in datasets:
         target_dataset = target_client.datasets.by_name(dataset_name)
         tbox.dataset.manage.update(
             dataset=target_dataset,
-            attributes=attributes,
+            attributes=attribute_names,
             attribute_types=attr_type_dict,
             description=description,
             tags=tags,

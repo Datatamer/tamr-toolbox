@@ -108,6 +108,7 @@ def create(
         attribute_name = attr_spec_dict["name"]
         if attribute_name in primary_keys:
             # This attribute already exists
+            LOGGER.info(f"'{attribute_name}' is a primary key in {dataset_name}")
             continue
         else:
             # Create new attribute
@@ -192,7 +193,7 @@ def create_attributes(
     *, dataset: Dataset, attributes: List[str], attribute_types: Optional[JsonDict] = None,
 ) -> Dataset:
     """Creates attributes in dataset if they don't already exist.
-       If no attrbute_types are passed in, the default will be ARRAY STRING
+       If no attribute_types are passed in, the default will be ARRAY STRING
 
     Args:
         dataset: An existing TUC dataset
