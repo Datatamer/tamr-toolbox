@@ -69,6 +69,13 @@ Run Golden Records Step-By-Step
 .. literalinclude:: ../../examples/scripts/project/golden_records/run_golden_records_verbose.py
   :language: python
 
+Run Golden Records Delta Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/resources/conf/gr_delta_project.config.yaml
+  :language: yaml
+.. literalinclude:: ../../examples/scripts/project/golden_records/run_golden_records_delta.py
+  :language: python
+
 Schema Mapping
 ------------------------------------------------------------------------
 Run Schema Mapping Simple

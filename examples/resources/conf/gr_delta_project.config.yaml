@@ -1,0 +1,20 @@
+logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/logs"
+
+my_tamr_instance:
+    host: $TAMR_HOST # Example: "1.2.3.4"
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+golden_records_delta_pipeline:
+    pre_processing_projects: ["preprocessing_first_datasource", "preprocessing_second_datasource"]
+    mastering_project: "My_Mastering_Project"
+    GR_project: "MY_GR_Project"
+    GR_changes_dataset: "GR_Changes_unified_dataset"
+    GR_changes_project: "GR_Changes"
+    GR_mapping_delta_dataset: "GR_Mapping_Delta_unified_dataset"
+    GR_mapping_delta_project: "GR_Mapping_Delta"
+    GR_output_project: "GR_Output"
+    GR_output_delta_project: "GR_Output_Delta"
+    GR_mapping_project: "GR_Mapping"

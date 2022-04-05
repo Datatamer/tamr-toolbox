@@ -10,21 +10,10 @@ import tamr_toolbox as tbox
 # Use `freeze` to get an immutable object that cannot be modified
 
 # example config
-"""
-golden_records_delta_pipeline:
-    pre_processing_projects: ["preprocessing_first_datasource", "preprocessing_second_datasource"]
-    mastering_project: "My_Mastering_Project"
-    GR_project: "MY_GR_Project"
-    GR_changes_dataset: "GR_Changes_unified_dataset"
-    GR_changes_project: "GR_Changes"
-    GR_mapping_delta_dataset: "GR_Mapping_Delta_unified_dataset"
-    GR_mapping_delta_project: "GR_Mapping_Delta"
-    GR_output_project: "GR_Output"
-    GR_output_delta_project: "GR_Output_Delta"
-    GR_mapping_project: "GR_Mapping"
-"""
+
 CONFIG = freeze(
-    utils.config.from_yaml(join(Path(__file__).resolve().parents[1], "conf", "config.yaml"))
+    utils.config.from_yaml(
+        join(Path(__file__).resolve().parents[1], "conf", "gr_delta_config.yaml"))
 )
 LOGGER = utils.logger.create("GoldenRecordsDeltaPipeline", log_directory=CONFIG["logging_dir"])
 # Let Tamr Toolbox itself also contribute to the log
