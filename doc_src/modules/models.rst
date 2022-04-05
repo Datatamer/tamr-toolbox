@@ -13,6 +13,6 @@ Validation Check
 ------------------------
 .. automodule:: tamr_toolbox.models.validation_check
 
-Project Artifacts
+Project Steps
 ------------------------
-.. automodule:: tamr_toolbox.models.project_artifacts
+.. automodule:: tamr_toolbox.models.project_steps
