@@ -1,4 +1,3 @@
-from google.cloud.client import Client
 from boto3 import client
 from tarfile import is_tarfile
 import tempfile
