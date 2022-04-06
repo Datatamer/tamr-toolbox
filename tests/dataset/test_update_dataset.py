@@ -4,6 +4,12 @@ import pytest
 import tamr_toolbox as tbox
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
+from tamr_toolbox.models.attribute_type import (
+    Array,
+    STRING,
+    INT,
+    DOUBLE,
+)
 
 from tests._common import get_toolbox_root_dir
 
@@ -79,24 +85,14 @@ def test_add_non_default_attribute():
     dataset = client.datasets.by_name(DATASET_NAME)
 
     attribute_names = ["unique_id", "name", "address", "user_id"]
+
     attribute_types = [
-        {"baseType": "STRING", "attributes": []},
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "STRING", "attributes": []},
-            "attributes": [],
-        },
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "STRING", "attributes": []},
-            "attributes": [],
-        },
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "INT", "attributes": []},
-            "attributes": [],
-        },
+        STRING,
+        Array(STRING),
+        Array(STRING),
+        Array(INT),
     ]
+
     attr_type_dict = {}
     for i in range(len(attribute_names)):
         attr_type_dict[attribute_names[i]] = attribute_types[i]
@@ -114,8 +110,27 @@ def test_add_non_default_attribute():
     assert len(attribute_list) == len(attribute_names)
     assert attribute_list == attribute_names
 
+    expected_attribute_types = [
+        {"baseType": "STRING", "attributes": []},
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "INT", "attributes": []},
+            "attributes": [],
+        },
+    ]
+
     for idx in range(len(attribute_types)):
-        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
+        assert tamr_attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -124,7 +139,32 @@ def test_add_primitive_attribute():
     dataset = client.datasets.by_name(DATASET_NAME)
 
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
+
     attribute_types = [
+        STRING,
+        Array(STRING),
+        Array(STRING),
+        Array(INT),
+        INT,
+    ]
+
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
+
+    tbox.dataset.manage.update(
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+    )
+
+    updated_dataset = client.datasets.by_name(DATASET_NAME)
+    dataset_attributes = updated_dataset.attributes
+    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
+    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+
+    assert len(attribute_list) == len(attribute_names)
+    assert attribute_list == attribute_names
+
+    expected_attribute_types = [
         {"baseType": "STRING", "attributes": []},
         {
             "baseType": "ARRAY",
@@ -143,24 +183,9 @@ def test_add_primitive_attribute():
         },
         {"baseType": "INT", "attributes": []},
     ]
-    attr_type_dict = {}
-    for i in range(len(attribute_names)):
-        attr_type_dict[attribute_names[i]] = attribute_types[i]
-
-    tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
-    )
-
-    updated_dataset = client.datasets.by_name(DATASET_NAME)
-    dataset_attributes = updated_dataset.attributes
-    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
-    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
-
-    assert len(attribute_list) == len(attribute_names)
-    assert attribute_list == attribute_names
 
     for idx in range(len(attribute_types)):
-        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
+        assert tamr_attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -191,7 +216,32 @@ def test_change_attribute_type():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset = client.datasets.by_name(DATASET_NAME)
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
+
     attribute_types = [
+        STRING,
+        Array(STRING),
+        Array(STRING),
+        Array(INT),
+        DOUBLE,
+    ]
+
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
+
+    tbox.dataset.manage.update(
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+    )
+
+    updated_dataset = client.datasets.by_name(DATASET_NAME)
+    dataset_attributes = updated_dataset.attributes
+    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
+    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
+
+    assert len(attribute_list) == len(attribute_names)
+    assert attribute_list == attribute_names
+
+    expected_attribute_types = [
         {"baseType": "STRING", "attributes": []},
         {
             "baseType": "ARRAY",
@@ -210,24 +260,9 @@ def test_change_attribute_type():
         },
         {"baseType": "DOUBLE", "attributes": []},
     ]
-    attr_type_dict = {}
-    for i in range(len(attribute_names)):
-        attr_type_dict[attribute_names[i]] = attribute_types[i]
-
-    tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
-    )
-
-    updated_dataset = client.datasets.by_name(DATASET_NAME)
-    dataset_attributes = updated_dataset.attributes
-    attribute_list = [attribute.name for attribute in dataset_attributes.stream()]
-    tamr_attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
-
-    assert len(attribute_list) == len(attribute_names)
-    assert attribute_list == attribute_names
 
     for idx in range(len(attribute_types)):
-        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
+        assert tamr_attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -235,29 +270,15 @@ def test_partially_define_types():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset = client.datasets.by_name(DATASET_NAME)
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
+
     attribute_types = [
-        {"baseType": "STRING", "attributes": []},
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "STRING", "attributes": []},
-            "attributes": [],
-        },
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "STRING", "attributes": []},
-            "attributes": [],
-        },
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "INT", "attributes": []},
-            "attributes": [],
-        },
-        {
-            "baseType": "ARRAY",
-            "innerType": {"baseType": "STRING", "attributes": []},
-            "attributes": [],
-        },
+        STRING,
+        Array(STRING),
+        Array(STRING),
+        Array(INT),
+        Array(STRING),
     ]
+
     attr_type_dict = {}
     for i in range(len(attribute_names)):
         attr_type_dict[attribute_names[i]] = attribute_types[i]
@@ -282,5 +303,29 @@ def test_partially_define_types():
     assert len(attribute_list) == len(attribute_names)
     assert attribute_list == attribute_names
 
+    expected_attribute_types = [
+        {"baseType": "STRING", "attributes": []},
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "INT", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+    ]
+
     for idx in range(len(attribute_types)):
-        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
+        assert tamr_attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]

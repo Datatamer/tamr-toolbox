@@ -2,6 +2,7 @@
 import tamr_toolbox as tbox
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
+from tamr_toolbox.models.attribute_type import Array, STRING, DOUBLE, INT
 
 from tests._common import get_toolbox_root_dir
 
@@ -56,3 +57,34 @@ def test_remove_attribute_by_name():
         updated_attributes.append(attr.name)
 
     assert attribute_name not in updated_attributes
+
+
+def test_from_json():
+
+    attribute_types = [
+        {"baseType": "STRING", "attributes": []},
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "STRING", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "INT", "attributes": []},
+            "attributes": [],
+        },
+        {
+            "baseType": "ARRAY",
+            "innerType": {"baseType": "DOUBLE", "attributes": []},
+            "attributes": [],
+        },
+    ]
+
+    converted_attr_types = [
+        tbox.models.attribute_type.from_json(attr_type) for attr_type in attribute_types
+    ]
+
+    expected_attribute_types = [STRING, Array(STRING), Array(INT), Array(DOUBLE)]
+
+    for i in range(len(converted_attr_types)):
+        assert converted_attr_types[i] == expected_attribute_types[i]

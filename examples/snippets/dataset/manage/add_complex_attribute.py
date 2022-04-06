@@ -2,6 +2,12 @@
 An example script to change dataset attributes for a Tamr dataset
 """
 import tamr_toolbox as tbox
+from tamr_toolbox.models.attribute_type import (
+    Array,
+    STRING,
+    INT,
+    DOUBLE,
+)
 
 
 # load example multi config
@@ -19,11 +25,11 @@ dataset = client.datasets.by_name(dataset_name)
 # The attribute types will default to ARRAY STRING
 attribute_names = ["client_id", "name", "address", "user_id", "sales"]
 attribute_types = [
-    {"baseType": "STRING"},
-    {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-    {"baseType": "ARRAY", "innerType": {"baseType": "STRING"}},
-    {"baseType": "ARRAY", "innerType": {"baseType": "INT"}},
-    {"baseType": "DOUBLE"},
+    STRING,
+    Array(STRING),
+    Array(STRING),
+    Array(INT),
+    DOUBLE,
 ]
 
 attr_type_dict = {}

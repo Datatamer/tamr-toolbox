@@ -4,6 +4,11 @@ import pytest
 import tamr_toolbox as tbox
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
+from tamr_toolbox.models.attribute_type import (
+    Array,
+    STRING,
+    DOUBLE,
+)
 
 from tamr_unify_client import Client
 
@@ -64,6 +69,7 @@ def test_create_new_dataset():
 
     assert len(attribute_list) == len(attributes)
     assert attribute_list == attributes
+
     expected_attribute_types = [
         {"baseType": "STRING", "attributes": []},
         {
@@ -218,7 +224,23 @@ def test_create_dataset_w_attribute_types():
     dataset_name = DATASET_NAME + "_non_default_attribute"
 
     attribute_names = ["unique_id", "name", "address", "salary"]
-    attribute_types = [
+
+    attribute_types = [STRING, Array(STRING), Array(STRING), Array(DOUBLE)]
+
+    attr_type_dict = {}
+    for i in range(len(attribute_names)):
+        attr_type_dict[attribute_names[i]] = attribute_types[i]
+
+    tbox.dataset.manage.create(
+        client=client,
+        dataset_name=dataset_name,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
+        primary_keys=PRIMARY_KEYS,
+        description=description,
+    )
+
+    expected_attribute_types = [
         {"baseType": "STRING", "attributes": []},
         {
             "baseType": "ARRAY",
@@ -236,18 +258,6 @@ def test_create_dataset_w_attribute_types():
             "attributes": [],
         },
     ]
-    attr_type_dict = {}
-    for i in range(len(attribute_names)):
-        attr_type_dict[attribute_names[i]] = attribute_types[i]
-
-    tbox.dataset.manage.create(
-        client=client,
-        dataset_name=dataset_name,
-        attributes=attribute_names,
-        attribute_types=attr_type_dict,
-        primary_keys=PRIMARY_KEYS,
-        description=description,
-    )
 
     dataset = client.datasets.by_name(dataset_name)
 
@@ -260,4 +270,4 @@ def test_create_dataset_w_attribute_types():
     assert len(attribute_list) == len(attribute_names)
     assert attribute_list == attribute_names
     for idx in range(len(tamr_attribute_types)):
-        assert tamr_attribute_types[idx].spec().to_dict() == attribute_types[idx]
+        assert tamr_attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]

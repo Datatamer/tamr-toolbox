@@ -1,10 +1,14 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 import logging
 
 from tamr_unify_client import Client
 from tamr_unify_client.dataset.resource import Dataset
 from tamr_unify_client.attribute.resource import AttributeSpec
 from tamr_unify_client.attribute.type import AttributeType
+from tamr_toolbox.models.attribute_type import (
+    AttrType,
+    to_json,
+)
 
 from tamr_toolbox.models.data_type import JsonDict
 
@@ -37,7 +41,7 @@ def create(
     dataset: Optional[Dataset] = None,
     primary_keys: Optional[List[str]] = None,
     attributes: Optional[List[str]] = None,
-    attribute_types: Optional[JsonDict] = None,
+    attribute_types: Optional[Dict[str, AttrType]] = None,
     description: Optional[str] = None,
     external_id: Optional[str] = None,
     tags: Optional[List[str]] = None,
@@ -52,7 +56,7 @@ def create(
         dataset: optional dataset TUC object to use as a template for new dataset
         primary_keys: one or more attributes for primary key(s) of new dataset
         attributes: list of attribute names for new dataset
-        attribute_types: dict of attribute types, attribute name is key and type is value
+        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
         description: text description of new dataset
         external_id: external_id for dataset, if None Tamr will create one for you
         tags: tags for new dataset
@@ -122,7 +126,7 @@ def update(
     dataset: Dataset,
     *,
     attributes: Optional[List[str]] = None,
-    attribute_types: Optional[JsonDict] = None,
+    attribute_types: Optional[Dict[str, AttrType]] = None,
     description: Optional[str] = None,
     tags: Optional[List[str]] = None,
 ) -> Dataset:
@@ -132,7 +136,7 @@ def update(
     Args:
         dataset: An existing TUC dataset
         attributes: list of attribute names to add/keep for dataset
-        attribute_types: dict of attribute types, attribute name is key and type is value
+        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
         description: updated text description of dataset, if None will not update
         tags: updated tags for dataset, if None will not update tags
 
@@ -190,7 +194,10 @@ def update(
 
 
 def create_attributes(
-    *, dataset: Dataset, attributes: List[str], attribute_types: Optional[JsonDict] = None,
+    *,
+    dataset: Dataset,
+    attributes: List[str],
+    attribute_types: Optional[Dict[str, AttrType]] = None,
 ) -> Dataset:
     """Creates attributes in dataset if they don't already exist.
        If no attribute_types are passed in, the default will be ARRAY STRING
@@ -198,7 +205,7 @@ def create_attributes(
     Args:
         dataset: An existing TUC dataset
         attributes: list of attribute names to add to dataset
-        attribute_types: dict of attribute types, attribute name is key and type is value
+        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
 
     Returns:
         Updated Dataset
@@ -248,7 +255,7 @@ def edit_attributes(
     *,
     dataset: Dataset,
     attributes: List[str],
-    attribute_types: Optional[JsonDict] = None,
+    attribute_types: Optional[Dict[str, AttrType]] = None,
     attribute_descriptions: Optional[JsonDict] = None,
 ) -> Dataset:
     """Edits existing attributes in dataset.
@@ -257,7 +264,7 @@ def edit_attributes(
     Args:
         dataset: An existing TUC dataset
         attributes: list of attribute names to edit in dataset
-        attribute_types: dict of attribute types, attribute name is key and type is value
+        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
         attribute_descriptions: dict, attribute name is key and description is value
 
     Returns:
@@ -380,7 +387,7 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
 
 
 def _create_specs(
-    *, attribute_names: List[str], attribute_types: Union[JsonDict, None]
+    *, attribute_names: List[str], attribute_types: Union[Dict[str, AttrType], None]
 ) -> List[AttributeSpec]:
     """Create list of attributeSpec. Use default type if none is given
 
@@ -401,7 +408,7 @@ def _create_specs(
         for idx in range(len(attribute_names)):
             name = attribute_names[idx]
             if attribute_types and name in attribute_types.keys():
-                attr_type = AttributeType(attribute_types[name])
+                attr_type = AttributeType(to_json(attribute_types[name]))
             else:
                 attr_type = AttributeType(default_type)
             attribute_specs.append(AttributeSpec.new().with_name(name).with_type(attr_type.spec()))

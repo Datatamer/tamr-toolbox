@@ -22,7 +22,8 @@ for ds in datasets:
 
     # Get updated dataset definition
     attr_type_dict = {
-        attr.name: attr.spec().to_dict()["type"] for attr in source_dataset.attributes
+        attr.name: tbox.models.attribute_type.from_json(attr.spec().to_dict()["type"])
+        for attr in source_dataset.attributes
     }
     attribute_names = attr_type_dict.keys()
 
