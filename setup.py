@@ -32,6 +32,8 @@ setup(
             "responses==0.10.14",
             "google-cloud-translate==2.0.1",
             "paramiko>=2.8.0",
+            "boto3>=1.21.21",
+            "google>=3.0.0",
         ],
         # Individual sets of dependencies
         "pandas": ["pandas>=0.21.0"],

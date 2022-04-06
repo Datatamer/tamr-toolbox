@@ -6,13 +6,12 @@ import os
 import tarfile
 
 # Google examples
-google_storage_client = Client()
 
 
 def google_upload(
+    cloud_client,
     source_filepath="path_to_my_local_file",
     destination_filepath="path_to_my_file_on_google_bucket",
-    cloud_client=google_storage_client,
     bucket_name="my_google_bucket",
     compress=True,
 ):
@@ -40,9 +39,9 @@ def google_upload(
 
 
 def google_download(
+    cloud_client,
     source_filepath="path_to_my_file_on_google_bucket",
     destination_filepath="path_to_my_local_file",
-    cloud_client=google_storage_client,
     bucket_name="my_google_bucket",
     decompress=False,
 ):
@@ -137,9 +136,9 @@ def s3_download(
 
 
 def file_upload(
+    cloud_client,
     source_filepath="path_to_my_local_file",
     destination_filepath="path_to_my_file_on_google_bucket",
-    cloud_client=google_storage_client,
     bucket_name="my_google_bucket",
     compress=True,
 ):
@@ -170,9 +169,9 @@ def file_upload(
 
 
 def file_download(
+    cloud_client,
     source_filepath="path_to_my_file_on_s3_bucket",
     destination_filepath="path_to_my_local_file",
-    cloud_client=google_storage_client,
     bucket_name="my_google_bucket",
     decompress=True,
 ):
