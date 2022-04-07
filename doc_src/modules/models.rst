@@ -16,3 +16,7 @@ Validation Check
 Project Artifacts
 ------------------------
 .. automodule:: tamr_toolbox.models.project_artifacts
+
+Attribute Type
+------------------------
+.. automodule:: tamr_toolbox.models.attribute_type
