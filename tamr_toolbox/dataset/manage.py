@@ -8,6 +8,7 @@ from tamr_unify_client.attribute.type import AttributeType
 from tamr_toolbox.models.attribute_type import (
     AttrType,
     to_json,
+    from_json,
 )
 
 from tamr_toolbox.models.data_type import JsonDict
@@ -129,6 +130,7 @@ def update(
     attribute_types: Optional[Dict[str, AttrType]] = None,
     description: Optional[str] = None,
     tags: Optional[List[str]] = None,
+    override_existing_types: bool = False,
 ) -> Dataset:
     """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input.
        If no attribute_types are passed in the default will be ARRAY STRING
@@ -139,6 +141,7 @@ def update(
         attribute_types: dict of attribute types, attribute name is key and AttributeType is value
         description: updated text description of dataset, if None will not update
         tags: updated tags for dataset, if None will not update tags
+        override_existing_types: bool flag, when true will alter exisiting attributes
 
     Returns:
         Updated Dataset
@@ -177,7 +180,10 @@ def update(
             elif attribute_name in existing_attributes:
                 # This attribute already exists, update to new type
                 edit_attributes(
-                    dataset=dataset, attributes=[attribute_name], attribute_types=attribute_types
+                    dataset=dataset,
+                    attributes=[attribute_name],
+                    attribute_types=attribute_types,
+                    override_existing_types=override_existing_types,
                 )
             else:
                 # This attribute does not already exist, create
@@ -257,6 +263,7 @@ def edit_attributes(
     attributes: List[str],
     attribute_types: Optional[Dict[str, AttrType]] = None,
     attribute_descriptions: Optional[JsonDict] = None,
+    override_existing_types: bool = False,
 ) -> Dataset:
     """Edits existing attributes in dataset.
        If an attrbute_type is not defined the default will be ARRAY STRING
@@ -266,6 +273,7 @@ def edit_attributes(
         attributes: list of attribute names to edit in dataset
         attribute_types: dict of attribute types, attribute name is key and AttributeType is value
         attribute_descriptions: dict, attribute name is key and description is value
+        override_existing_types: bool flag, when true will alter exisiting attributes
 
     Returns:
         Updated Dataset
@@ -313,20 +321,41 @@ def edit_attributes(
     for attribute in attribute_specs:
         attr_spec_dict = attribute.to_dict()
         attribute_name = attr_spec_dict["name"]
+        existing_attribute_spec = target_attribute_dict[attribute_name].spec()
+        new_type_class = from_json(attr_spec_dict["type"])
+        old_type_class = from_json(existing_attribute_spec.to_dict()["type"])
 
-        # Update type
-        new_type = AttributeType(attribute.to_dict()["type"])
-        target_attribute = target_attribute_dict[attribute_name]
-        new_attr_spec = target_attribute.spec().with_type(new_type.spec())
+        if new_type_class == old_type_class:
+            # Update description
+            if attribute_descriptions and attribute_name in attribute_descriptions.keys():
+                existing_attribute_spec = existing_attribute_spec.with_description(
+                    attribute_descriptions[attribute_name]
+                )
+                existing_attribute_spec.put()
+        elif override_existing_types:
+            # Update type
+            new_type = AttributeType(attribute.to_dict()["type"])
+            new_attr_spec = existing_attribute_spec.with_type(new_type.spec())
 
-        # Update description
-        if attribute_descriptions and attribute_name in attribute_descriptions.keys():
-            new_attr_spec = new_attr_spec.with_description(attribute_descriptions[attribute_name])
+            # Update description
+            if attribute_descriptions and attribute_name in attribute_descriptions.keys():
+                new_attr_spec = new_attr_spec.with_description(
+                    attribute_descriptions[attribute_name]
+                )
 
-        # Remove and add attribute with new spec
-        target_dataset_attributes.delete_by_resource_id(target_attribute.resource_id)
-        target_dataset_attributes.create(new_attr_spec.to_dict())
-        LOGGER.info(f"Updated attribute '{attribute_name}' in {dataset_name}")
+            # Remove and add attribute with new spec
+            target_dataset_attributes.delete_by_resource_id(
+                target_attribute_dict[attribute_name].resource_id
+            )
+            target_dataset_attributes.create(new_attr_spec.to_dict())
+            LOGGER.info(f"Updated attribute '{attribute_name}' in {dataset_name}")
+        else:
+            LOGGER.info(
+                f"""The attribute '{attribute_name}' in {dataset_name} curently has
+                 the type '{str(old_type_class)}'. Set '{override_existing_types}' to
+                 True to update the type to '{str(new_type_class)}
+                """
+            )
 
     return dataset
 
