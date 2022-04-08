@@ -1,9 +1,10 @@
 """Tests for tasks related to moving data in or out of Tamr using delimited files"""
+from logging import warning
 import pytest
 
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.low_latency.llm import llm_query
+from tamr_toolbox.low_latency.llm import llm_query, poll_llm_status
 
 from tests._common import get_toolbox_root_dir
 
@@ -91,10 +92,27 @@ def test_llm_bad_batch_size():
     return None
 
 
+def test_llm_bad_request_type():
+    llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
+    with pytest.raises(ValueError):
+        llm_query(
+            llm_client,
+            project_name="minimal_mastering",
+            records=[{"ssn": "0000"}],
+            type="unknown type",
+        )
+    return None
+
+
 def test_llm_no_input_data():
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
 
-    result = llm_query(llm_client, project_name="minimal_mastering", records=[], type="records",)
+    with pytest.warns(
+        expected_warning=warning("No input supplied to llm_query -- returning empty result.")
+    ):
+        result = llm_query(
+            llm_client, project_name="minimal_mastering", records=[], type="records",
+        )
     assert len(result) == 0
     return None
 
@@ -121,4 +139,35 @@ def test_llm_query_with_single_record(type: str):
         }
     else:
         assert {"218c3f66-b240-3b08-b688-2c8d0506f12f"} == {x["clusterId"] for x in result[0]}
+    return None
+
+
+@mock_api()
+def test_poll_llm_status():
+    llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
+    # Test project that is queryable
+    queryable = poll_llm_status(llm_client, project_name="minimal_mastering")
+    assert queryable
+    # Test project that is not queryable
+    queryable = poll_llm_status(llm_client, project_name="minimal_incomplete_mastering")
+    assert ~queryable
+    return None
+
+
+@mock_api()
+def test_llm_query_nonqueryable_project():
+    llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
+    with pytest.raises(RuntimeError):
+        llm_query(
+            llm_client,
+            project_name="minimal_incomplete_mastering",
+            records={
+                "ssn": [""],
+                "last_name": ["Cohen"],
+                "first_name": ["Rob"],
+                "all_names": ["", "Rob"],
+                "full_name": ["Rob Cohen"],
+            },
+            type="records",
+        )
     return None

@@ -1,0 +1,11 @@
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "true"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}
+{"method": "GET", "url": "http://ip-00001:9170/api/v1/projects/minimal_incomplete_mastering:isQueryable", "status": 200, "content_type": "application/json", "body": "false"}

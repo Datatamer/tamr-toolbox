@@ -122,6 +122,7 @@ def llm_query(
     # Sett up keys to read results
     if type == "records":
         record_key = "queryRecordId"
+        prob_key = "matchProbability"
     elif type == "clusters":
         record_key = "entityId"
         prob_key = "avgMatchProb"
@@ -163,9 +164,9 @@ def llm_query(
 
                     if max_num_matches and len(result_dict[index]) >= max_num_matches:
                         continue
+
                     if min_match_prob:
-                        prob = result[prob_key] if type == "clusters" else get_record_prob(result)
-                        if prob < min_match_prob:
+                        if result[prob_key] < min_match_prob:
                             continue
 
                     result_dict[index].append(result)
@@ -176,21 +177,3 @@ def llm_query(
             raise RuntimeError(message)
 
     return result_dict
-
-
-def get_record_prob(input: JsonDict) -> float:
-    """Parses dictionary returned from a LLM records query. If match, returns confidence of match.
-    If non-match, returns 1 - confidence.
-
-    Args:
-        input: Dictionary which contains keys 'suggestedLabel' and 'suggestedLabelConfidence'
-    Returns:
-        confidence that input _is_ a match
-    """
-
-    prob = input["suggestedLabelConfidence"]
-
-    if input["suggestedLabel"] == "MATCH":
-        return prob
-    else:
-        return 1 - prob
