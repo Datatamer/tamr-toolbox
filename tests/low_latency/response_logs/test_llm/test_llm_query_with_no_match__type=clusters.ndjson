@@ -1,0 +1,2 @@
+{"method": "POST", "url": "http://ip-00001:9170/api/v1/projects/minimal_mastering:match?type=clusters", "status": 200, "content_type": "application/json", "body": ""}
+{"method": "POST", "url": "http://ip-00001:9170/api/v1/projects/minimal_mastering:match?type=clusters", "status": 200, "content_type": "application/json", "body": ""}

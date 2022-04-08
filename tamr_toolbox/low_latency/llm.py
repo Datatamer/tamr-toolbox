@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional, Literal
+from typing import List, Dict, Optional, Literal, Union
 import json
 from collections import defaultdict
 import logging
@@ -40,7 +40,7 @@ def update_llm_data(
     )
     response = tamr_client.post(url)
     if not response.ok:
-        message = f"Update LLM Failed at submission time: {response.content}"
+        message = f"Update LLM failed at submission time: {response.content}"
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
@@ -86,9 +86,9 @@ def llm_query(
     match_client: Client,
     *,
     project_name: str,
-    records: List[JsonDict],
+    records: Union[JsonDict, List[JsonDict]],
     type: Literal["records", "clusters"],
-    batch_size: int = 1000,
+    batch_size: Optional[int] = None,
     min_match_prob: Optional[float] = None,
     max_num_matches: Optional[int] = None,
 ) -> Dict[int, List[JsonDict]]:
@@ -99,10 +99,10 @@ def llm_query(
     Args:
         match_client: a Tamr client set to use the port of the Match API
         project_name: name of target mastering project
-        records: list of records to match
+        records: record or list of records to match
         type: whether to pull record or cluster matches
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
-            timeouts), Default 1000
+            timeouts), Default None sends a single LLM call with all records
         min_match_prob: if set, only matches with probability above minimum will be returned,
             Default None
         max_num_matches: if set, at most max_num_matches will be returned for each input record in
@@ -111,13 +111,15 @@ def llm_query(
         Dict keyed by integers (the indices of the records), with value a list containing closest
             matched clusters
     Raises:
-        Runtime error if query fails
+        ValueError: if match type is not "records" or "clusters", or if batch_size is non-positive
+        RuntimeError: if query fails
     """
 
     result_dict = defaultdict(lambda: [])  # dict which defaults to empty list to hold results
 
     url = f"/api/v1/projects/{project_name}:match?type={type}"
 
+    # Sett up keys to read results
     if type == "records":
         record_key = "queryRecordId"
     elif type == "clusters":
@@ -126,13 +128,28 @@ def llm_query(
     else:
         raise ValueError(f"Unsupported match type {type}.")
 
-    for j in range(len(records) // batch_size + 1):  # split into batches
+    # Convert single record to list for processing
+    if isinstance(records, Dict):
+        records = [records]
+
+    # Check batch size and set if not supplied
+    if batch_size is None:
+        batch_size = len(records)
+        if batch_size == 0:
+            LOGGER.warn("No input supplied to llm_query -- returning empty result.")
+            return result_dict
+    elif batch_size <= 0:
+        raise ValueError(f"Batch size must be non-negative: received {batch_size}")
+
+    # Split into batches and convert to LLM query format
+    for j in range(len(records) // batch_size + 1):
         json_records = [
             {"recordId": str(batch_size * j + k), "record": rec}
             for k, rec in enumerate(records[batch_size * j : batch_size * (j + 1)])
         ]
         response = match_client.post(url, json=json_records)
 
+        # Process responses
         if response.ok:
             if response.content == b"":  # handle null response
                 continue
@@ -142,7 +159,7 @@ def llm_query(
             for resp_block in response.content.decode("utf-8").split("\n"):
                 if resp_block:
                     result = json.loads(resp_block)
-                    index = int(result(record_key))
+                    index = int(result[record_key])
 
                     if max_num_matches and len(result_dict[index]) >= max_num_matches:
                         continue

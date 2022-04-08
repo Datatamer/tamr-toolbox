@@ -5,6 +5,13 @@ toolbox_test_instance:
     username: "admin"
     password: $TAMR_TOOLBOX_PASSWORD
 
+toolbox_llm_test_instance:
+    host: $TAMR_TOOLBOX_HOST
+    protocol: "http"
+    port: "9170"
+    username: "admin"
+    password: $TAMR_TOOLBOX_PASSWORD
+
 toolbox_backup_test_instance:
     host: $TAMR_TOOLBOX_BACKUP_HOST
     protocol: "http"
