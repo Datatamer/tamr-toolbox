@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional, Literal, Union
+from typing import List, Dict, Optional, Union
 import json
 from collections import defaultdict
 import logging
@@ -87,7 +87,7 @@ def llm_query(
     *,
     project_name: str,
     records: Union[JsonDict, List[JsonDict]],
-    type: Literal["records", "clusters"],
+    type: str,
     batch_size: Optional[int] = None,
     min_match_prob: Optional[float] = None,
     max_num_matches: Optional[int] = None,
@@ -100,7 +100,7 @@ def llm_query(
         match_client: a Tamr client set to use the port of the Match API
         project_name: name of target mastering project
         records: record or list of records to match
-        type: whether to pull record or cluster matches
+        type: one of "records" or  "clusters" -- whether to pull record or cluster matches
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
             timeouts), Default None sends a single LLM call with all records
         min_match_prob: if set, only matches with probability above minimum will be returned,
