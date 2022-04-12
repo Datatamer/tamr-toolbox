@@ -88,5 +88,3 @@ Export CSV from taxonomy to a designated filepath
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/data_io/csv/export_from_taxonomy.py
   :language: python
-
-
