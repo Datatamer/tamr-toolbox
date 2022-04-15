@@ -21,12 +21,13 @@ def update_llm_data(
     do_use_manual_clustering: bool = False,
 ) -> None:
     """
-    Updates published clusters for LLM query if needed
+    Updates data for LLM query if needed, based on latest published clusters.
+
     Args:
         tamr_client: Tamr client object
         project_name: name of the project to be updated
-        do_update_clusters: whether to update clusters, Deafult True
-        do_use_manual_clustering: whether to use externally managed clustering, Default False
+        do_update_clusters: whether to update clusters, default True
+        do_use_manual_clustering: whether to use externally managed clustering, default False
     """
 
     url = (
@@ -54,13 +55,13 @@ def poll_llm_status(
     match_client: Client, *, project_name: str, num_tries: int = 10, wait_sec: int = 1
 ) -> bool:
     """
-    Check if LLM is queryable. Try up to num_tries times at 1s intervals.
+    Check if LLM is queryable. Try up to num_tries times at 1s (or user-specified) interval.
 
     Args:
         match_client: a Tamr client set to use the port of the Match API
         project_name: name of target mastering project
-        num_tries: optional, max number of times to poll endpoint, Default 10
-        wait_sec: optional, number of seconds to wait between tries, Default 1
+        num_tries: max number of times to poll endpoint, default 10
+        wait_sec: number of seconds to wait between tries, default 1
     Returns:
         bool indicating whether project is queryable
     """
@@ -103,14 +104,13 @@ def llm_query(
         records: record or list of records to match
         type: one of "records" or  "clusters" -- whether to pull record or cluster matches
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
-            timeouts), Default None sends a single LLM call with all records
+            timeouts), default None sends a single LLM call with all records
         min_match_prob: if set, only matches with probability above minimum will be returned,
-            Default None
+            default None
         max_num_matches: if set, at most max_num_matches will be returned for each input record in
-            records, Default None
+            records, default None
     Returns:
-        Dict keyed by integers (the indices of the records), with value a list containing closest
-            matched clusters
+        Dict keyed by integers (indices of inputs), with value a list containing matcched data
     Raises:
         ValueError: if match type is not "records" or "clusters", or if batch_size is non-positive
         RuntimeError: if query fails
