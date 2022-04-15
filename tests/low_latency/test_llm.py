@@ -1,4 +1,4 @@
-"""Tests for tasks related to moving data in or out of Tamr using delimited files"""
+"""Tests for LLM utilities"""
 from logging import warning
 import pytest
 
