@@ -226,15 +226,15 @@ def test_llm_min_match_prob(type: str):
 def test_update_llm_data_bad_proj():
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
-    with pytest.raises(RuntimeError, match="is not a mastering project"):
+    with pytest.raises(RuntimeError, match="DedupInfo was not found"):
         update_llm_data(client, project_name="minimal_categorization")
     return None
 
 
 @mock_api()
-def test_update_llm_data():
-
+def test_refresh_and_update():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    client.post(f"projects/1/publishedClusters:refresh")
     result = update_llm_data(client, project_name="minimal_mastering")
-
     assert result is None
+    return None

@@ -25,21 +25,9 @@ def update_llm_data(
     Args:
         tamr_client: Tamr client object
         project_name: name of the project to be updated
-        do_update_clusters: whether to update clusters, defaults to True
-        do_use_manual_clustering: whether to use externally managed clustering, defaults to False
+        do_update_clusters: whether to update clusters, Deafult True
+        do_use_manual_clustering: whether to use externally managed clustering, Default False
     """
-
-    # Get project ID from name and refresh published clusters
-    project = tamr_client.projects.by_name(project_name=project_name)
-    url = f"projects/{project.resource_id}/publishedClusters:refresh"
-    response = tamr_client.post(url)
-
-    if not response.ok:
-        message = f"Cluster refresh for {project_name} failed: {response.json()['message']}."
-        LOGGER.error(message)
-        raise RuntimeError(message)
-
-    LOGGER.info(f"Cluster publication complete for {project_name}.")
 
     url = (
         f"projects/{project_name}:updateLLM?updateClusters={do_update_clusters}"
@@ -47,7 +35,10 @@ def update_llm_data(
     )
     response = tamr_client.post(url)
     if not response.ok:
-        message = f"LLM update for {project_name} failed at submission time: {response.content}"
+        message = (
+            f"LLM update for {project_name} failed at submission time: "
+            + response.json()["message"]
+        )
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
@@ -59,14 +50,17 @@ def update_llm_data(
     return None
 
 
-def poll_llm_status(match_client: Client, *, project_name: str, num_tries: int = 10) -> bool:
+def poll_llm_status(
+    match_client: Client, *, project_name: str, num_tries: int = 10, wait_sec: int = 1
+) -> bool:
     """
     Check if LLM is queryable. Try up to num_tries times at 1s intervals.
 
     Args:
         match_client: a Tamr client set to use the port of the Match API
         project_name: name of target mastering project
-        num_tries: optional, max number of times to poll endpoint
+        num_tries: optional, max number of times to poll endpoint, Default 10
+        wait_sec: optional, number of seconds to wait between tries, Default 1
     Returns:
         bool indicating whether project is queryable
     """
@@ -84,7 +78,7 @@ def poll_llm_status(match_client: Client, *, project_name: str, num_tries: int =
             break
 
         counter += 1
-        time.sleep(1)  # call api at 1s interval if project isn't yet queryable
+        time.sleep(wait_sec)  # call api at wait_sec interval if project isn't yet queryable
 
     return queryable
 
