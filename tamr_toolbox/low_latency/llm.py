@@ -21,7 +21,7 @@ def update_llm_data(
     do_use_manual_clustering: bool = False,
 ) -> None:
     """
-    Updates a project to be LLM queryable, if needed
+    Updates published clusters for LLM query if needed
     Args:
         tamr_client: Tamr client object
         project_name: name of the project to be updated
@@ -29,10 +29,17 @@ def update_llm_data(
         do_use_manual_clustering: whether to use externally managed clustering, defaults to False
     """
 
-    url = f"projects/{project_name}/publishedClusters:refresh"
-    tamr_client.post(url)
+    # Get project ID from name and refresh published clusters
+    project = tamr_client.projects.by_name(project_name=project_name)
+    url = f"projects/{project.resource_id}/publishedClusters:refresh"
+    response = tamr_client.post(url)
 
-    LOGGER.info("Tamr publish clusters complete")
+    if not response.ok:
+        message = f"Cluster refresh for {project_name} failed: {response.json()['message']}."
+        LOGGER.error(message)
+        raise RuntimeError(message)
+
+    LOGGER.info(f"Cluster publication complete for {project_name}.")
 
     url = (
         f"projects/{project_name}:updateLLM?updateClusters={do_update_clusters}"
@@ -40,14 +47,14 @@ def update_llm_data(
     )
     response = tamr_client.post(url)
     if not response.ok:
-        message = f"Update LLM failed at submission time: {response.content}"
+        message = f"LLM update for {project_name} failed at submission time: {response.content}"
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
 
     # An operation id of '-1' is returned when LLM is already up to date
     if operation_id != "-1":
-        operation = Operation.from_resource_id(tamr_client, operation_id=operation_id)
+        operation = Operation.from_resource_id(tamr_client, operation_id)
         operation.wait()
     return None
 
