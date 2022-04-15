@@ -2,6 +2,7 @@
 * [Data Input/Output](examples/data_io.rst)
 * [Enrichment](examples/enrichment.rst)
 * [Filesystem](examples/filesystem.rst)
+* [Low Latency](examples/low_latency.rst)
 * [Notifications](examples/notifications.md)
 * [Project](examples/project.rst)
 * [Utilities](examples/utils.rst)
