@@ -302,7 +302,6 @@ def edit_attributes(
         attr_spec_dict = _make_spec_dict(
             attribute_name=attribute_name, attribute_types=attribute_types
         )
-        attribute_name = attr_spec_dict["name"]
         existing_attribute_spec = target_attribute_dict[attribute_name].spec()
         new_type_class = attribute_type.from_json(attr_spec_dict["type"])
         old_type_class = attribute_type.from_json(existing_attribute_spec.to_dict()["type"])

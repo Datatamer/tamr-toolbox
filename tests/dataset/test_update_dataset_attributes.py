@@ -30,7 +30,10 @@ def test_update_attribute_descriptions():
     }
 
     tbox.dataset.manage.edit_attributes(
-        dataset=dataset, attributes=attribute_names, attribute_descriptions=attribute_description,
+        dataset=dataset,
+        attributes=attribute_names,
+        attribute_descriptions=attribute_description,
+        override_existing_types=True,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
