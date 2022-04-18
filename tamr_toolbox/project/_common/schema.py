@@ -5,6 +5,7 @@ from tamr_unify_client.project.attribute_mapping.resource import (
 )
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.dataset.resource import Dataset
+
 from typing import List
 import logging
 from json import JSONDecodeError
@@ -62,7 +63,7 @@ def map_attribute(
         project: The project in which to perform the mapping
 
     Returns:
-        AttributeMapping that was created
+        The created AttributeMapping
 
     Raises:
         ValueError: if input variables `source_attribute_name` or `source_dataset_name` or
@@ -90,9 +91,7 @@ def map_attribute(
         LOGGER.error(error_msg)
         raise ValueError(error_msg)
 
-    try:
-        assert source_attribute_name in [x.name for x in source_dataset.attributes]
-    except AssertionError:
+    if source_attribute_name not in [x.name for x in source_dataset.attributes]:
         error_msg = f"Attribute {source_attribute_name} not found in {source_dataset_name}!"
         LOGGER.error(error_msg)
         raise ValueError(error_msg)

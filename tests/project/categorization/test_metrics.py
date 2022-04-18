@@ -45,9 +45,9 @@ def test_check_taxonomy_depth_true():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(CATEGORIZATION_PROJECT_ID)
 
-    assert metrics._check_taxonomy_depth(project, tier=1)
-    assert metrics._check_taxonomy_depth(project, tier=2)
-    assert metrics._check_taxonomy_depth(project, tier=3)
+    metrics._check_taxonomy_depth(project, tier=1)
+    metrics._check_taxonomy_depth(project, tier=2)
+    metrics._check_taxonomy_depth(project, tier=3)
 
 
 @mock_api()

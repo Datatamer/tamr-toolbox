@@ -32,6 +32,13 @@ Run Categorization Step-By-Step
 .. literalinclude:: ../../examples/scripts/project/categorization/run_categorization_verbose.py
   :language: python
 
+Bootstrap a Categorization Model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/resources/conf/project.config.yaml
+  :language: yaml
+.. literalinclude:: ../../examples/scripts/project/categorization/bootstrap_taxonomy.py
+  :language: python
+
 Obtain Average Confidence for a Specific Tier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/project/categorization/get_tier_confidence.py
