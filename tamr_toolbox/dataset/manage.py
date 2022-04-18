@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import Optional, Dict, Iterable
 import logging
 
 from tamr_unify_client import Client
@@ -34,12 +34,12 @@ def create(
     client: Client,
     dataset_name: str,
     dataset: Optional[Dataset] = None,
-    primary_keys: Optional[List[str]] = None,
-    attributes: Optional[List[str]] = None,
+    primary_keys: Optional[Iterable[str]] = None,
+    attributes: Optional[Iterable[str]] = None,
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     description: Optional[str] = None,
     external_id: Optional[str] = None,
-    tags: Optional[List[str]] = None,
+    tags: Optional[Iterable[str]] = None,
 ) -> Dataset:
     """Flexibly create a source dataset in Tamr. Will use array string as default attribute type
        if none are specified. If a dataset object is passed, a new dataset with dataset_name as
@@ -63,6 +63,7 @@ def create(
         requests.HTTPError: If any HTTP error is encountered
         ValueError: If both dataset and primary_keys are not defined
         ValueError: If the dataset already exists
+        TypeError: If the attributes argument is not an Iterable
     """
 
     if not dataset and not primary_keys:
@@ -80,6 +81,10 @@ def create(
         description = dataset.description
         tags = dataset.tags
         primary_keys = dataset.key_attribute_names
+
+    # Check input type is correct
+    if attributes and not isinstance(attributes, Iterable):
+        raise TypeError("attributes arg must be an Iterable")
 
     dataset_exists = exists(client=client, dataset_name=dataset_name)
     if not dataset_exists:
@@ -111,10 +116,10 @@ def create(
 def update(
     dataset: Dataset,
     *,
-    attributes: Optional[List[str]] = None,
+    attributes: Optional[Iterable[str]] = None,
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     description: Optional[str] = None,
-    tags: Optional[List[str]] = None,
+    tags: Optional[Iterable[str]] = None,
     override_existing_types: bool = False,
 ) -> Dataset:
     """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input.
@@ -134,11 +139,16 @@ def update(
     Raises:
         requests.HTTPError: If any HTTP error is encountered
         ValueError: If the dataset is not a source dataset
+        TypeError: If the attributes argument is not an Iterable
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
     primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
+
+    # Check input type is correct
+    if attributes and not isinstance(attributes, Iterable):
+        raise TypeError("attributes arg must be an Iterable")
 
     # Update description and tags
     dataset_spec = dataset.spec()
@@ -187,7 +197,7 @@ def update(
 def create_attributes(
     *,
     dataset: Dataset,
-    attributes: List[str],
+    attributes: Iterable[str],
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
 ) -> Dataset:
     """Creates attributes in dataset if they don't already exist.
@@ -203,7 +213,7 @@ def create_attributes(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        TypeError: If the attributes argument is not a List
+        TypeError: If the attributes argument is not an Iterable
         ValueError: If the dataset is a unified dataset
         ValueError: If an attribute passed in already exists in the dataset
     """
@@ -212,8 +222,8 @@ def create_attributes(
         raise ValueError(f"{dataset_name} is not a source dataset")
 
     # Check input type is correct
-    if type(attributes) != list:
-        raise TypeError("attributes arg must be a List")
+    if not isinstance(attributes, Iterable):
+        raise TypeError("attributes arg must be an Iterable")
 
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
@@ -243,7 +253,7 @@ def create_attributes(
 def edit_attributes(
     *,
     dataset: Dataset,
-    attributes: List[str],
+    attributes: Iterable[str],
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     attribute_descriptions: Optional[JsonDict] = None,
     override_existing_types: bool = False,
@@ -266,15 +276,15 @@ def edit_attributes(
         ValueError: If the dataset is not a source dataset
         ValueError: If a passed attribute does not exist in the dataset
         ValueError: If a passed attribute is a primary key and can't be removed
-        TypeError: If the attributes argument is not a list
+        TypeError: If the attributes argument is not an Iterable
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
 
     # Check input type is correct
-    if type(attributes) != list:
-        raise TypeError("attributes arg must be a List")
+    if not isinstance(attributes, Iterable):
+        raise TypeError("attributes arg must be an Iterable")
 
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
@@ -339,7 +349,7 @@ def edit_attributes(
     return dataset
 
 
-def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dataset:
+def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) -> Dataset:
     """Remove attributes from dataset by attribute name
 
     Args:
@@ -353,15 +363,15 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
         ValueError: If the dataset is not a source dataset
         ValueError: If a passed attribute does not exist in the dataset
         ValueError: If a passed attribute is a primary key and can't be removed
-        TypeError: If the attributes argument is not a list
+        TypeError: If the attributes argument is not an Iterable
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
 
     # Check input type is correct
-    if not isinstance(attributes, list):
-        raise TypeError("attributes arg must be a List")
+    if not isinstance(attributes, Iterable):
+        raise TypeError("attributes arg must be an Iterable")
 
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
