@@ -39,6 +39,7 @@ for ds in datasets:
             attribute_types=attr_type_dict,
             description=description,
             tags=tags,
+            override_existing_types=True,
         )
     else:
         primary_keys = source_dataset.spec().to_dict()["keyAttributeNames"]
