@@ -26,7 +26,7 @@ class Array:
     """
 
     _tag: ClassVar[str] = "ARRAY"
-    inner_type: "AttrType"
+    inner_type: "AttributeType"
 
 
 @dataclass(frozen=True)
@@ -40,7 +40,7 @@ class Map:
     """
 
     _tag: ClassVar[str] = "MAP"
-    inner_type: "AttrType"
+    inner_type: "AttributeType"
 
 
 @dataclass(frozen=True)
@@ -57,7 +57,7 @@ class SubAttribute:
     """
 
     name: str
-    type: "AttrType"
+    type: "AttributeType"
     is_nullable: bool
 
 
@@ -74,10 +74,25 @@ class Record:
 
 ComplexType = Union[Array, Map, Record]
 
-AttrType = Union[PrimitiveType, ComplexType]
+AttributeType = Union[PrimitiveType, ComplexType]
+
+# complex type aliases
+DEFAULT: AttributeType = Array(STRING)
+GEOSPATIAL: AttributeType = Record(
+    attributes=(
+        SubAttribute(name="point", is_nullable=True, type=Array(DOUBLE)),
+        SubAttribute(name="multiPoint", is_nullable=True, type=Array(Array(DOUBLE))),
+        SubAttribute(name="lineString", is_nullable=True, type=Array(Array(DOUBLE))),
+        SubAttribute(name="multiLineString", is_nullable=True, type=Array(Array(Array(DOUBLE)))),
+        SubAttribute(name="polygon", is_nullable=True, type=Array(Array(Array(DOUBLE)))),
+        SubAttribute(
+            name="multiPolygon", is_nullable=True, type=Array(Array(Array(Array(DOUBLE)))),
+        ),
+    )
+)
 
 
-def from_json(data: JsonDict) -> AttrType:
+def from_json(data: JsonDict) -> AttributeType:
     """Make an attribute type from JSON data (deserialize)
     Args:
         data: JSON data from Tamr server
@@ -123,7 +138,7 @@ def _subattribute_from_json(data: JsonDict) -> SubAttribute:
     return SubAttribute(**d)
 
 
-def to_json(attr_type: AttrType) -> JsonDict:
+def to_json(attr_type: AttributeType) -> JsonDict:
     """Serialize attribute type to JSON
     Args:
         attr_type: Attribute type to serialize

@@ -2,12 +2,7 @@
 An example script to change dataset attributes for a Tamr dataset
 """
 import tamr_toolbox as tbox
-from tamr_toolbox.models.attribute_type import (
-    Array,
-    STRING,
-    INT,
-    DOUBLE,
-)
+from tamr_toolbox.models import attribute_type
 
 
 # load example multi config
@@ -23,13 +18,14 @@ dataset = client.datasets.by_name(dataset_name)
 
 # Note you can optionally just past in a list of attribute names
 # The attribute types will default to ARRAY STRING
-attribute_names = ["client_id", "name", "address", "user_id", "sales"]
+attribute_names = ["client_id", "name", "address", "user_id", "sales", "location"]
 attribute_types = [
-    STRING,
-    Array(STRING),
-    Array(STRING),
-    Array(INT),
-    DOUBLE,
+    attribute_type.STRING,
+    attribute_type.DEFAULT,
+    attribute_type.DEFAULT,
+    attribute_type.Array(attribute_type.INT),
+    attribute_type.DOUBLE,
+    attribute_type.GEOSPATIAL,
 ]
 
 attr_type_dict = {}

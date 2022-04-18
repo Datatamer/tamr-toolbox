@@ -230,7 +230,10 @@ def test_change_attribute_type():
         attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+        dataset=dataset,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
+        override_existing_types=True,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -288,7 +291,10 @@ def test_partially_define_types():
     del attr_type_dict["sales_count"]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+        dataset=dataset,
+        attributes=attribute_names,
+        attribute_types=attr_type_dict,
+        override_existing_types=True,
     )
 
     attr_type_dict = {}

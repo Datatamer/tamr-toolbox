@@ -1,15 +1,9 @@
-from typing import List, Optional, Union, Dict
+from typing import List, Optional, Dict
 import logging
 
 from tamr_unify_client import Client
 from tamr_unify_client.dataset.resource import Dataset
-from tamr_unify_client.attribute.resource import AttributeSpec
-from tamr_unify_client.attribute.type import AttributeType
-from tamr_toolbox.models.attribute_type import (
-    AttrType,
-    to_json,
-    from_json,
-)
+from tamr_toolbox.models import attribute_type
 
 from tamr_toolbox.models.data_type import JsonDict
 
@@ -42,7 +36,7 @@ def create(
     dataset: Optional[Dataset] = None,
     primary_keys: Optional[List[str]] = None,
     attributes: Optional[List[str]] = None,
-    attribute_types: Optional[Dict[str, AttrType]] = None,
+    attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     description: Optional[str] = None,
     external_id: Optional[str] = None,
     tags: Optional[List[str]] = None,
@@ -77,15 +71,15 @@ def create(
     # Get dataset information
     if dataset:
         # Get attributes from dataset object
-        attribute_specs = [attr.spec() for attr in dataset.attributes.stream()]
+        attributes = []
+        attribute_types = {}
+        for attr in dataset.attributes.stream():
+            attributes.append(attr.name)
+            attribute_types[attr.name] = attribute_type.from_json(attr.type.spec().to_dict())
         # Get dataset spec information
         description = dataset.description
         tags = dataset.tags
         primary_keys = dataset.key_attribute_names
-    else:
-        attribute_specs = _create_specs(
-            attribute_names=attributes, attribute_types=attribute_types
-        )
 
     dataset_exists = exists(client=client, dataset_name=dataset_name)
     if not dataset_exists:
@@ -104,21 +98,12 @@ def create(
     # Get new dataset
     target_dataset = client.datasets.by_name(dataset_name)
 
-    # Get current dataset attributes
-    target_dataset_attributes = target_dataset.attributes
-
     # Update attributes in dataset
-    for attribute in attribute_specs:
-        attr_spec_dict = attribute.to_dict()
-        attribute_name = attr_spec_dict["name"]
-        if attribute_name in primary_keys:
-            # This attribute already exists
-            LOGGER.info(f"'{attribute_name}' is a primary key in {dataset_name}")
-            continue
-        else:
-            # Create new attribute
-            target_dataset_attributes.create(attr_spec_dict)
-            LOGGER.info(f"Created attribute '{attribute_name}' in {dataset_name}")
+    if attributes:
+        filtered_attributes = [attr for attr in attributes if attr not in primary_keys]
+        create_attributes(
+            dataset=target_dataset, attributes=filtered_attributes, attribute_types=attribute_types
+        )
 
     return target_dataset
 
@@ -127,7 +112,7 @@ def update(
     dataset: Dataset,
     *,
     attributes: Optional[List[str]] = None,
-    attribute_types: Optional[Dict[str, AttrType]] = None,
+    attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     description: Optional[str] = None,
     tags: Optional[List[str]] = None,
     override_existing_types: bool = False,
@@ -203,7 +188,7 @@ def create_attributes(
     *,
     dataset: Dataset,
     attributes: List[str],
-    attribute_types: Optional[Dict[str, AttrType]] = None,
+    attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
 ) -> Dataset:
     """Creates attributes in dataset if they don't already exist.
        If no attribute_types are passed in, the default will be ARRAY STRING
@@ -230,9 +215,6 @@ def create_attributes(
     if type(attributes) != list:
         raise TypeError("attributes arg must be a List")
 
-    # Create attributes from input
-    attribute_specs = _create_specs(attribute_names=attributes, attribute_types=attribute_types)
-
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
     existing_attributes = []
@@ -248,10 +230,11 @@ def create_attributes(
             )
 
     # Add attributes to dataset
-    for attribute in attribute_specs:
-        attr_spec_dict = attribute.to_dict()
+    for attribute_name in attributes:
+        attr_spec_dict = _make_spec_dict(
+            attribute_name=attribute_name, attribute_types=attribute_types
+        )
         target_dataset_attributes.create(attr_spec_dict)
-        attribute_name = attr_spec_dict["name"]
         LOGGER.info(f"Created attribute '{attribute_name}' in {dataset_name}")
 
     return dataset
@@ -261,7 +244,7 @@ def edit_attributes(
     *,
     dataset: Dataset,
     attributes: List[str],
-    attribute_types: Optional[Dict[str, AttrType]] = None,
+    attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     attribute_descriptions: Optional[JsonDict] = None,
     override_existing_types: bool = False,
 ) -> Dataset:
@@ -293,9 +276,6 @@ def edit_attributes(
     if type(attributes) != list:
         raise TypeError("attributes arg must be a List")
 
-    # Create attributes from input
-    attribute_specs = _create_specs(attribute_names=attributes, attribute_types=attribute_types)
-
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
     target_attribute_dict = {}
@@ -318,12 +298,14 @@ def edit_attributes(
             )
 
     # Update attributes in dataset
-    for attribute in attribute_specs:
-        attr_spec_dict = attribute.to_dict()
+    for attribute_name in attributes:
+        attr_spec_dict = _make_spec_dict(
+            attribute_name=attribute_name, attribute_types=attribute_types
+        )
         attribute_name = attr_spec_dict["name"]
         existing_attribute_spec = target_attribute_dict[attribute_name].spec()
-        new_type_class = from_json(attr_spec_dict["type"])
-        old_type_class = from_json(existing_attribute_spec.to_dict()["type"])
+        new_type_class = attribute_type.from_json(attr_spec_dict["type"])
+        old_type_class = attribute_type.from_json(existing_attribute_spec.to_dict()["type"])
 
         if new_type_class == old_type_class:
             # Update description
@@ -334,20 +316,18 @@ def edit_attributes(
                 existing_attribute_spec.put()
         elif override_existing_types:
             # Update type
-            new_type = AttributeType(attribute.to_dict()["type"])
-            new_attr_spec = existing_attribute_spec.with_type(new_type.spec())
+            new_attr_spec = existing_attribute_spec.to_dict()
+            new_attr_spec["type"] = attr_spec_dict["type"]
 
             # Update description
             if attribute_descriptions and attribute_name in attribute_descriptions.keys():
-                new_attr_spec = new_attr_spec.with_description(
-                    attribute_descriptions[attribute_name]
-                )
+                new_attr_spec["description"] = attribute_descriptions[attribute_name]
 
             # Remove and add attribute with new spec
             target_dataset_attributes.delete_by_resource_id(
                 target_attribute_dict[attribute_name].resource_id
             )
-            target_dataset_attributes.create(new_attr_spec.to_dict())
+            target_dataset_attributes.create(new_attr_spec)
             LOGGER.info(f"Updated attribute '{attribute_name}' in {dataset_name}")
         else:
             LOGGER.info(
@@ -415,30 +395,21 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
     return dataset
 
 
-def _create_specs(
-    *, attribute_names: List[str], attribute_types: Union[Dict[str, AttrType], None]
-) -> List[AttributeSpec]:
-    """Create list of attributeSpec. Use default type if none is given
+def _make_spec_dict(
+    attribute_name: str, attribute_types: Dict[str, attribute_type.AttributeType]
+) -> JsonDict:
+    """Create attribute spec dictionary
 
     Args:
-        attribute_names: List of names of attributes
-        attribute_types: dict of attribute types, attribute name is key and type is value
+        attribute_name: name of the attribute
+        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
 
-    Return:
-        List of AttributeSpecs
+    Returns:
+        Json Dict
     """
-    default_type = {
-        "baseType": "ARRAY",
-        "innerType": {"baseType": "STRING", "attributes": []},
-        "attributes": [],
-    }
-    attribute_specs = []
-    if attribute_names:
-        for idx in range(len(attribute_names)):
-            name = attribute_names[idx]
-            if attribute_types and name in attribute_types.keys():
-                attr_type = AttributeType(to_json(attribute_types[name]))
-            else:
-                attr_type = AttributeType(default_type)
-            attribute_specs.append(AttributeSpec.new().with_name(name).with_type(attr_type.spec()))
-    return attribute_specs
+    if attribute_types and attribute_name in attribute_types.keys():
+        attr_type = attr_type = attribute_types[attribute_name]
+    else:
+        attr_type = attribute_type.DEFAULT
+    result = {"name": attribute_name, "type": attribute_type.to_json(attr_type=attr_type)}
+    return result

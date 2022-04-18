@@ -20,14 +20,17 @@ enforce_online_test = False
 
 
 @mock_api(enforce_online_test=enforce_online_test)
-def test_update_attribute_description():
+def test_update_attribute_descriptions():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset = client.datasets.by_name(DATASET_NAME)
-    attribute_name = "user_id"
-    attribute_description = {attribute_name: "The unique id for each sales rep"}
+    attribute_names = ["address", "user_id"]
+    attribute_description = {
+        "user_id": "The unique id for each sales rep",
+        "address": "an address",
+    }
 
     tbox.dataset.manage.edit_attributes(
-        dataset=dataset, attributes=[attribute_name], attribute_descriptions=attribute_description,
+        dataset=dataset, attributes=attribute_names, attribute_descriptions=attribute_description,
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -36,8 +39,9 @@ def test_update_attribute_description():
     for attr in target_dataset_attributes.stream():
         target_attribute_dict[attr.name] = attr
 
-    updated_attr = target_attribute_dict[attribute_name]
-    assert updated_attr.description == attribute_description[attribute_name]
+    for attribute_name in attribute_names:
+        updated_attr = target_attribute_dict[attribute_name]
+        assert updated_attr.description == attribute_description[attribute_name]
 
 
 @mock_api(enforce_online_test=enforce_online_test)
