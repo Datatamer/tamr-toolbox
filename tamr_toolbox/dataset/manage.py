@@ -61,8 +61,8 @@ def create(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: dataset or primary_keys must be defined
-        ValueError: A dataset with name '{dataset_name}' already exists
+        ValueError: If both dataset and primary_keys are not defined
+        ValueError: If the dataset already exists
     """
 
     if not dataset and not primary_keys:
@@ -126,14 +126,14 @@ def update(
         attribute_types: dict of attribute types, attribute name is key and AttributeType is value
         description: updated text description of dataset, if None will not update
         tags: updated tags for dataset, if None will not update tags
-        override_existing_types: bool flag, when true will alter exisiting attributes
+        override_existing_types: bool flag, when true will alter existing attributes
 
     Returns:
         Updated Dataset
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: {dataset_name} is not a source dataset
+        ValueError: If the dataset is not a source dataset
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -203,9 +203,9 @@ def create_attributes(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        TypeError: attributes arg must be a List
-        ValueError: trying to alter a unified dataset
-        ValueError: An attribute with name '{attribute_name}' already exists in {dataset_name}
+        TypeError: If the attributes argument is not a List
+        ValueError: If the dataset is a unified dataset
+        ValueError: If an attribute passed in already exists in the dataset
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -249,7 +249,7 @@ def edit_attributes(
     override_existing_types: bool = False,
 ) -> Dataset:
     """Edits existing attributes in dataset.
-       If an attrbute_type is not defined the default will be ARRAY STRING
+       If an attribute_type is not defined the default will be ARRAY STRING
 
     Args:
         dataset: An existing TUC dataset
@@ -263,10 +263,10 @@ def edit_attributes(
 
     Raises:
         requests.HTTPError: If any HTTP error is encountered
-        ValueError: {dataset_name} is not a source dataset
-        ValueError: An attribute with name '{attribute_name}' does not exist in {dataset_name}
-        ValueError: The attribute: '{attribute_name}' is a primary key and can't be updated
-        TypeError: attributes arg must be a List
+        ValueError: If the dataset is not a source dataset
+        ValueError: If a passed attribute does not exist in the dataset
+        ValueError: If a passed attribute is a primary key and can't be removed
+        TypeError: If the attributes argument is not a list
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -350,18 +350,17 @@ def delete_attributes(*, dataset: Dataset, attributes: List[str] = None,) -> Dat
         Updated Dataset
 
     Raises:
-        requests.HTTPError: If any HTTP error is encountered
-        ValueError: {dataset_name} is not a source dataset
-        ValueError: attribute with {attribute_name} does not exist in {dataset_name}
-        ValueError: The attribute: '{attribute_name}' is a primary key and can't be removed
-        TypeError: attributes arg must be a List
+        ValueError: If the dataset is not a source dataset
+        ValueError: If a passed attribute does not exist in the dataset
+        ValueError: If a passed attribute is a primary key and can't be removed
+        TypeError: If the attributes argument is not a list
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
 
     # Check input type is correct
-    if type(attributes) != list:
+    if not isinstance(attributes, list):
         raise TypeError("attributes arg must be a List")
 
     # Get current dataset attributes

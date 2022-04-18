@@ -27,6 +27,8 @@ See https://docs.tamr.com/reference#attribute-types
 .. autodata:: tamr_toolbox.models.attribute_type.INT
 .. autodata:: tamr_toolbox.models.attribute_type.LONG
 .. autodata:: tamr_toolbox.models.attribute_type.STRING
+.. autodata:: tamr_toolbox.models.attribute_type.DEFAULT
+.. autodata:: tamr_toolbox.models.attribute_type.GEOSPATIAL
 
 
 .. NOTE:
