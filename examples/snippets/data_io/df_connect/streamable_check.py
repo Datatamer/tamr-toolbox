@@ -1,5 +1,4 @@
-"""Snippet to add an explicit check to validate that a dataset is streamable using df_connect
-Do this by passing in a Dataset object rather than just the dataset name"""
+"""Snippet to add an explicit check to validate that a dataset is streamable when exporting with df_connect"""
 import tamr_toolbox as tbox
 
 # read config and connect Tamr client
@@ -17,11 +16,11 @@ tbox.data_io.df_connect.client.export_dataset(
 
 # if dataset is not streamable, this will raise an error
 if not dataset.status().is_streamable:
-    message = f"Dataset {dataset.name} is not streamable."
-    raise RuntimeError(message)
+    raise RuntimeError(f"Dataset {dataset.name} is not streamable.")
 tbox.data_io.df_connect.client.export_dataset(
     my_connect, dataset_name=dataset.name, target_table_name="target_table"
 )
+
 # if dataset is not streamable, this will allow it to be refreshed
 if not dataset.status().is_streamable:
     op = dataset.refresh()
