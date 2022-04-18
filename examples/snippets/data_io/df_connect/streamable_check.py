@@ -17,7 +17,7 @@ tbox.data_io.df_connect.client.export_dataset(
 
 # if dataset is not streamable, this will raise an error
 if not dataset.status().is_streamable:
-    raise RuntimeError(message)
+    raise RuntimeError(f"Dataset {dataset.name} is not streamable.")
 tbox.data_io.df_connect.client.export_dataset(
     my_connect, dataset_name=dataset.name, target_table_name="target_table"
 )
