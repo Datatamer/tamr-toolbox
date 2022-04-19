@@ -124,6 +124,10 @@ Export Artifacts
 .. literalinclude:: ../../examples/snippets/project/_common/export_artifacts.py
   :language: python
 
+Fork Project
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/scripts/project/_common/fork_project.py
+  :language: python
 
 Related Examples
 ------------------------------------------------------------------------
