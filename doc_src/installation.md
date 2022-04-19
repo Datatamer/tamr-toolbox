@@ -64,6 +64,15 @@ Required for [Slack](modules/notifications/slack.md)
 
 Library: [Slack Client](https://github.com/slackapi/python-slackclient) (`tamr-toolbox` uses version >= 2.7.2)
 
+***Optional Feature: Remote SSH Connection***
+
+Install instructions:
+`pip install 'tamr-toolbox[ssh]'`
+
+Required for [Instance](modules/sysadmin)
+
+Library: [Paramiko](https://github.com/paramiko/paramiko) (`tamr-toolbox` uses version >= 2.8.0)
+
 
 
 **Offline installation**

@@ -9,11 +9,19 @@ Run Backup Restore
 
 .. _workflow-run-projects:
 
-Run Multiple Projects
+Run Multiple Projects Sequentially
 ------------------------------------------------------
 .. literalinclude:: ../../examples/resources/conf/project.config.yaml
   :language: yaml
 .. literalinclude:: ../../examples/scripts/workflow/run_multiple_projects.py
+  :language: python
+
+
+Run Multiple Projects Concurrently
+------------------------------------------------------
+.. literalinclude:: ../../examples/resources/conf/project.config.yaml
+  :language: yaml
+.. literalinclude:: ../../examples/scripts/workflow/run_multiple_projects_concurrent.py
   :language: python
 
 
