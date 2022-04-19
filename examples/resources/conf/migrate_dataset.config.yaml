@@ -1,3 +1,5 @@
+# migrate_dataset.config.yaml
+
 source_migration_instance:
     host: $DEV_HOST
     protocol: "http"
@@ -16,4 +18,3 @@ logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/l
 
 datasets:
     - dataset_name: "test_dataset"
-      dataset_primary_key: "unique_id"

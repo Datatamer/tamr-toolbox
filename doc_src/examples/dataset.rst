@@ -24,3 +24,8 @@ Add attributes to a dataset
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude :: ../../examples/snippets/dataset/manage/add_complex_attribute.py
  :language: python
+
+Remove an attribute from a dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/snippets/dataset/manage/delete_attribute.py
+ :language: python

@@ -11,9 +11,8 @@ my_config = tbox.utils.config.from_yaml("examples/resources/conf/migrate_dataset
 # Create the source tamr client
 client = tbox.utils.client.create(**my_config["source_migration_instance"])
 
-
-dataset_name = "<your dataset name>"
 # Get dataset from Tamr instance
+dataset_name = "<your dataset name>"
 dataset = client.datasets.by_name(dataset_name)
 
 # Note you can optionally just past in a list of attribute names

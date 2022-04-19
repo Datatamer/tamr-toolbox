@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Iterable
+from typing import List, Optional, Dict, Iterable
 import logging
 
 from tamr_unify_client import Client
@@ -11,7 +11,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 def exists(*, client: Client, dataset_name: str) -> bool:
-    """Check if the dataset exists on target instance
+    """
+    Check if a dataset exists in a Tamr instance
 
     Args:
         client: Tamr python client object for the target instance
@@ -34,27 +35,35 @@ def create(
     client: Client,
     dataset_name: str,
     dataset: Optional[Dataset] = None,
-    primary_keys: Optional[Iterable[str]] = None,
+    primary_keys: Optional[List[str]] = None,
     attributes: Optional[Iterable[str]] = None,
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
+    attribute_descriptions: Optional[Dict[str, str]] = None,
     description: Optional[str] = None,
     external_id: Optional[str] = None,
-    tags: Optional[Iterable[str]] = None,
+    tags: Optional[List[str]] = None,
 ) -> Dataset:
-    """Flexibly create a source dataset in Tamr. Will use array string as default attribute type
-       if none are specified. If a dataset object is passed, a new dataset with dataset_name as
-       its name will be created that has the same attributes and primary keys as the dataset.
+    """
+    Flexibly create a source dataset in Tamr. A template dataset object can be passed in to create
+    a duplicate dataset with a new name. If the template dataset is not provided, the user must
+    define the primary_keys for the dataset to be created. Additional attributes can be added
+    in the attributes argument. The default attribute type will be ARRAY STRING. To set non-default
+    attribute types, you must define them in the attribute_types dictionary. Any attribute
+    descriptions can be specified in the attribute_descriptions dictionary.
 
     Args:
-        client: TUC client
-        dataset_name: name for new dataset
-        dataset: optional dataset TUC object to use as a template for new dataset
-        primary_keys: one or more attributes for primary key(s) of new dataset
-        attributes: list of attribute names for new dataset
-        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
-        description: text description of new dataset
+        client: TUC client object
+        dataset_name: name for the new dataset being created
+        dataset: optional dataset TUC object to use as a template for the new dataset
+        primary_keys: one or more attributes for primary key(s) of the new dataset
+        attributes: a list of attribute names to create in the new dataset
+        attribute_types: dictionary for non-default types, attribute name is the key and
+            AttributeType is the value
+        attribute_descriptions: dictionary for attribute descriptions, attribute name is the key
+            and the attribute description is the value
+        description: description of the new dataset
         external_id: external_id for dataset, if None Tamr will create one for you
-        tags: tags for new dataset
+        tags: the list of tags for the new dataset
 
     Returns:
         Dataset created in Tamr
@@ -64,6 +73,17 @@ def create(
         ValueError: If both dataset and primary_keys are not defined
         ValueError: If the dataset already exists
         TypeError: If the attributes argument is not an Iterable
+
+    Example:
+        >>> import tamr_toolbox as tbox
+        >>> tamr_client = tbox.utils.client.create(**instance_connection_info)
+        >>> tbox.dataset.manage.create(
+        >>>     client=tamr_client,
+        >>>     dataset_name="my_new_dataset",
+        >>>     primary_keys=["unique_id"],
+        >>>     attributes=["name","address"],
+        >>>     description="My new dataset",
+        >>> )
     """
 
     if not dataset and not primary_keys:
@@ -72,11 +92,11 @@ def create(
     # Get dataset information
     if dataset:
         # Get attributes from dataset object
-        attributes = []
-        attribute_types = {}
+        attribute_types, attribute_descriptions = {}, {}
         for attr in dataset.attributes.stream():
-            attributes.append(attr.name)
             attribute_types[attr.name] = attribute_type.from_json(attr.type.spec().to_dict())
+            attribute_descriptions[attr.name] = attr.description
+        attributes = attribute_types.keys()
         # Get dataset spec information
         description = dataset.description
         tags = dataset.tags
@@ -107,7 +127,10 @@ def create(
     if attributes:
         filtered_attributes = [attr for attr in attributes if attr not in primary_keys]
         create_attributes(
-            dataset=target_dataset, attributes=filtered_attributes, attribute_types=attribute_types
+            dataset=target_dataset,
+            attributes=filtered_attributes,
+            attribute_types=attribute_types,
+            attribute_descriptions=attribute_descriptions,
         )
 
     return target_dataset
@@ -118,20 +141,31 @@ def update(
     *,
     attributes: Optional[Iterable[str]] = None,
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
+    attribute_descriptions: Optional[Dict[str, str]] = None,
     description: Optional[str] = None,
-    tags: Optional[Iterable[str]] = None,
+    tags: Optional[List[str]] = None,
     override_existing_types: bool = False,
 ) -> Dataset:
-    """Flexibly update a source dataset in Tamr. Will add/remove attributes to match input.
-       If no attribute_types are passed in the default will be ARRAY STRING
+    """
+    Flexibly update a source dataset in Tamr. All the attributes that should exist in the dataset
+    must be defined in the attributes argument. This function will add/remove attributes in the
+    dataset until the dataset attributes matches the set of attributes passed in as an argument.
+    The default attribute type will be ARRAY STRING. To set non-default attribute types, you must
+    define them in the attribute_types dictionary. Any attribute descriptions can be specified in
+    the attribute_descriptions dictionary. By default, the existing attribute types will not
+    change unless override_existing_types is set to True. When it's False, the attribute type
+    updates will only be logged.
 
     Args:
         dataset: An existing TUC dataset
-        attributes: list of attribute names to add/keep for dataset
-        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
-        description: updated text description of dataset, if None will not update
-        tags: updated tags for dataset, if None will not update tags
-        override_existing_types: bool flag, when true will alter existing attributes
+        attributes: Complete list of attribute names that should exist in the updated dataset
+        attribute_types: dictionary for non-default types, attribute name is the key and
+            AttributeType is the value
+        attribute_descriptions: dictionary for attribute descriptions, attribute name is the
+            key and the attribute description is the value
+        description: updated description of dataset, if None will not update the description
+        tags: updated tags for the dataset, if None will not update tags
+        override_existing_types: boolean flag, when true will alter existing attribute's types
 
     Returns:
         Updated Dataset
@@ -140,6 +174,19 @@ def update(
         requests.HTTPError: If any HTTP error is encountered
         ValueError: If the dataset is not a source dataset
         TypeError: If the attributes argument is not an Iterable
+
+    Example:
+        >>> import tamr_toolbox as tbox
+        >>> from tbox.models import attribute_type
+        >>> tamr_client = tbox.utils.client.create(**instance_connection_info)
+        >>> dataset = = tamr_client.datasets.by_name("my_dataset_name")
+        >>> tbox.dataset.manage.update(
+        >>>     client=tamr_client,
+        >>>     dataset=dataset,
+        >>>     attributes=["unique_id","name","address","total_sales"],
+        >>>     attribute_types={"total_sales":attribute_type.ARRAY(attribute_type.DOUBLE)},
+        >>>     override_existing_types = True,
+        >>> )
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -174,16 +221,28 @@ def update(
                 continue
             elif attribute_name in existing_attributes:
                 # This attribute already exists, update to new type
+                type_dict = {
+                    attribute_name: (attribute_types or dict()).get(
+                        attribute_name, attribute_type.DEFAULT
+                    )
+                }
+                desc_dict = {
+                    attribute_name: (attribute_descriptions or dict()).get(attribute_name)
+                }
+
                 edit_attributes(
                     dataset=dataset,
-                    attributes=[attribute_name],
-                    attribute_types=attribute_types,
+                    attribute_types=type_dict,
+                    attribute_descriptions=desc_dict,
                     override_existing_types=override_existing_types,
                 )
             else:
                 # This attribute does not already exist, create
                 create_attributes(
-                    dataset=dataset, attributes=[attribute_name], attribute_types=attribute_types
+                    dataset=dataset,
+                    attributes=[attribute_name],
+                    attribute_types=attribute_types,
+                    attribute_descriptions=attribute_descriptions,
                 )
 
         # Remove any attributes from dataset that aren't in the new list of attributes
@@ -199,14 +258,20 @@ def create_attributes(
     dataset: Dataset,
     attributes: Iterable[str],
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
+    attribute_descriptions: Optional[Dict[str, str]] = None,
 ) -> Dataset:
-    """Creates attributes in dataset if they don't already exist.
-       If no attribute_types are passed in, the default will be ARRAY STRING
+    """
+    Creates new attributes in a dataset. The default attribute type will be ARRAY STRING. To
+    set non-default attribute types, you must define them in the attribute_types dictionary.
+    Any attribute descriptions can be specified in the attribute_descriptions dictionary.
 
     Args:
         dataset: An existing TUC dataset
-        attributes: list of attribute names to add to dataset
-        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
+        attributes: list of attribute names to be added to dataset
+        attribute_types: dictionary for non-default types, attribute name is the key and
+            AttributeType is the value
+        attribute_descriptions: dictionary for attribute descriptions, attribute name is the
+            key and the attribute description is the value
 
     Returns:
         Updated Dataset
@@ -216,6 +281,7 @@ def create_attributes(
         TypeError: If the attributes argument is not an Iterable
         ValueError: If the dataset is a unified dataset
         ValueError: If an attribute passed in already exists in the dataset
+
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
@@ -242,7 +308,9 @@ def create_attributes(
     # Add attributes to dataset
     for attribute_name in attributes:
         attr_spec_dict = _make_spec_dict(
-            attribute_name=attribute_name, attribute_types=attribute_types
+            attribute_name=attribute_name,
+            attribute_types=attribute_types,
+            attribute_descriptions=attribute_descriptions,
         )
         target_dataset_attributes.create(attr_spec_dict)
         LOGGER.info(f"Created attribute '{attribute_name}' in {dataset_name}")
@@ -253,20 +321,26 @@ def create_attributes(
 def edit_attributes(
     *,
     dataset: Dataset,
-    attributes: Iterable[str],
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
-    attribute_descriptions: Optional[JsonDict] = None,
-    override_existing_types: bool = False,
+    attribute_descriptions: Optional[Dict[str, str]] = None,
+    override_existing_types: bool = True,
 ) -> Dataset:
-    """Edits existing attributes in dataset.
-       If an attribute_type is not defined the default will be ARRAY STRING
+    """
+    Edits existing attributes in a dataset. The attribute type and/or descriptions can be updated
+    to new values. Attributes that the user wants to update must either in either the
+    attribute_types or attribute_descriptions dictionaries or both. The default attribute type
+    will be ARRAY STRING. To set non-default attribute types, you must define them in the
+    attribute_types dictionary. Any attribute descriptions can be specified in the
+    attribute_descriptions dictionary. If only the attribute_descriptions dictionary is defined,
+    it will be assumed the attribute types should be set to the default (ARRAY STRING).
 
     Args:
         dataset: An existing TUC dataset
-        attributes: list of attribute names to edit in dataset
-        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
-        attribute_descriptions: dict, attribute name is key and description is value
-        override_existing_types: bool flag, when true will alter exisiting attributes
+        attribute_types: dictionary for non-default types, attribute name is the key and
+            AttributeType is the value
+        attribute_descriptions: dictionary for attribute descriptions, attribute name is the
+            key and the attribute description is the value
+        override_existing_types: bool flag, when true will alter existing attributes
 
     Returns:
         Updated Dataset
@@ -276,15 +350,25 @@ def edit_attributes(
         ValueError: If the dataset is not a source dataset
         ValueError: If a passed attribute does not exist in the dataset
         ValueError: If a passed attribute is a primary key and can't be removed
-        TypeError: If the attributes argument is not an Iterable
+        ValueError: If there are no updates to attributes in attribute_types or
+            attribute_descriptions arguments
     """
     dataset_name = dataset.name
     if dataset.upstream_datasets():
         raise ValueError(f"{dataset_name} is not a source dataset")
 
-    # Check input type is correct
-    if not isinstance(attributes, Iterable):
-        raise TypeError("attributes arg must be an Iterable")
+    # Check description or type changes are passed in
+    if attribute_types is None and attribute_descriptions is None:
+        raise ValueError(
+            """Updates to attributes must be passed in via attribute_types
+            or attribute_descriptions arguments"""
+        )
+
+    # Get list of attributes that need updating from attribute_types and
+    # attribute_descriptions dictionaries
+    attributes = {attr for attr in attribute_types or list()} | {
+        attr for attr in attribute_descriptions or list()
+    }
 
     # Get current dataset attributes
     target_dataset_attributes = dataset.attributes
@@ -310,7 +394,9 @@ def edit_attributes(
     # Update attributes in dataset
     for attribute_name in attributes:
         attr_spec_dict = _make_spec_dict(
-            attribute_name=attribute_name, attribute_types=attribute_types
+            attribute_name=attribute_name,
+            attribute_types=attribute_types,
+            attribute_descriptions=attribute_descriptions,
         )
         existing_attribute_spec = target_attribute_dict[attribute_name].spec()
         new_type_class = attribute_type.from_json(attr_spec_dict["type"])
@@ -318,19 +404,26 @@ def edit_attributes(
 
         if new_type_class == old_type_class:
             # Update description
-            if attribute_descriptions and attribute_name in attribute_descriptions.keys():
+            if (
+                attribute_descriptions is not None
+                and attribute_name in attribute_descriptions.keys()
+            ):
                 existing_attribute_spec = existing_attribute_spec.with_description(
                     attribute_descriptions[attribute_name]
                 )
                 existing_attribute_spec.put()
+            else:
+                LOGGER.info(
+                    f"There are no updates to the attribute '{attribute_name}' in {dataset_name}"
+                )
         elif override_existing_types:
             # Update type
             new_attr_spec = existing_attribute_spec.to_dict()
             new_attr_spec["type"] = attr_spec_dict["type"]
 
             # Update description
-            if attribute_descriptions and attribute_name in attribute_descriptions.keys():
-                new_attr_spec["description"] = attribute_descriptions[attribute_name]
+            if "description" in attr_spec_dict.keys():
+                new_attr_spec["description"] = attr_spec_dict["description"]
 
             # Remove and add attribute with new spec
             target_dataset_attributes.delete_by_resource_id(
@@ -404,20 +497,33 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) ->
 
 
 def _make_spec_dict(
-    attribute_name: str, attribute_types: Dict[str, attribute_type.AttributeType]
+    attribute_name: str,
+    attribute_types: Dict[str, attribute_type.AttributeType],
+    attribute_descriptions: Dict[str, str],
 ) -> JsonDict:
-    """Create attribute spec dictionary
+    """
+    Create attribute spec dictionary. The default attribute type will be ARRAY STRING. To
+    set non-default attribute types, you must define them in the attribute_types
+    dictionary. Any attribute descriptions can be specified in the attribute_descriptions
+    dictionary.
 
     Args:
         attribute_name: name of the attribute
-        attribute_types: dict of attribute types, attribute name is key and AttributeType is value
+        attribute_types: dictionary for non-default types, attribute name is the key and
+            AttributeType is the value
+        attribute_descriptions: dictionary for attribute descriptions, attribute name is the
+            key and the attribute description is the value
 
     Returns:
         Json Dict
     """
-    if attribute_types and attribute_name in attribute_types.keys():
+    if attribute_types is not None and attribute_name in attribute_types.keys():
         attr_type = attr_type = attribute_types[attribute_name]
     else:
         attr_type = attribute_type.DEFAULT
+
     result = {"name": attribute_name, "type": attribute_type.to_json(attr_type=attr_type)}
+
+    if attribute_descriptions is not None and attribute_name in attribute_descriptions.keys():
+        result["description"] = attribute_descriptions[attribute_name]
     return result

@@ -31,7 +31,33 @@ def test_update_attribute_descriptions():
 
     tbox.dataset.manage.edit_attributes(
         dataset=dataset,
-        attributes=attribute_names,
+        attribute_descriptions=attribute_description,
+        override_existing_types=True,
+    )
+
+    updated_dataset = client.datasets.by_name(DATASET_NAME)
+    target_dataset_attributes = updated_dataset.attributes
+    target_attribute_dict = {}
+    for attr in target_dataset_attributes.stream():
+        target_attribute_dict[attr.name] = attr
+
+    for attribute_name in attribute_names:
+        updated_attr = target_attribute_dict[attribute_name]
+        assert updated_attr.description == attribute_description[attribute_name]
+
+
+@mock_api(enforce_online_test=enforce_online_test)
+def test_remove_attribute_descriptions():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    dataset = client.datasets.by_name(DATASET_NAME)
+    attribute_names = ["address", "user_id"]
+    attribute_description = {
+        "user_id": "",
+        "address": "",
+    }
+
+    tbox.dataset.manage.edit_attributes(
+        dataset=dataset,
         attribute_descriptions=attribute_description,
         override_existing_types=True,
     )
