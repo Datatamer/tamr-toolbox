@@ -388,7 +388,7 @@ def edit_attributes(
         elif attribute_name in primary_keys:
             # Can not edit a primary key
             raise ValueError(
-                f"The attribute: '{attribute_name}' is a primary key and can't be updated"
+                f"The attribute '{attribute_name}' is a primary key and can't be updated"
             )
 
     # Update attributes in dataset
@@ -435,7 +435,7 @@ def edit_attributes(
             LOGGER.info(
                 f"""The attribute '{attribute_name}' in {dataset_name} curently has
                  the type '{str(old_type_class)}'. Set 'override_existing_types' to
-                 True to update the type to '{str(new_type_class)}
+                 True to update the type to '{str(new_type_class)}'
                 """
             )
 
@@ -477,13 +477,11 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) ->
     # Check all attributes exist before starting to remove any
     for attribute_name in attributes:
         if attribute_name not in existing_attributes:
-            raise ValueError(
-                f"attribute with name '{attribute_name}' does not exist in {dataset_name}"
-            )
+            raise ValueError(f"The attribute '{attribute_name}' does not exist in {dataset_name}")
         elif attribute_name in primary_keys:
             # Can not edit a primary key
             raise ValueError(
-                f"The attribute: '{attribute_name}' is a primary key and can't be removed"
+                f"The attribute '{attribute_name}' is a primary key and can't be removed"
             )
 
     # Remove attributes from dataset
@@ -518,7 +516,7 @@ def _make_spec_dict(
         Json Dict
     """
     if attribute_types is not None and attribute_name in attribute_types.keys():
-        attr_type = attr_type = attribute_types[attribute_name]
+        attr_type = attribute_types[attribute_name]
     else:
         attr_type = attribute_type.DEFAULT
 
