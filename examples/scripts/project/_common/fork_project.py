@@ -1,10 +1,20 @@
-""" Example script for creating a copy of an existing project with a new name """
+"""Example script for creating a copy of an existing project with a new name
+
+To copy a project as "_copy"-postfixed name of the target project:
+    python fork_project.py --export_path /path/to/export-file-dir/
+                           --project_name <target_project_name>
+                           --postfix _copy
+
+To specify new project name explicitly:
+    python fork_project.py --export_path /path/to/export-file-dir/
+                           --project_name <target_project_name>
+                           --new_name <new_project_name>
+"""
 
 import os
 from pathlib import Path
 from typing import Dict, Any
 import argparse
-from argparse import Namespace
 import tamr_toolbox as tbox
 from tamr_toolbox import utils as tbu
 from tamr_toolbox.utils.client import Client
@@ -20,7 +30,7 @@ def export_from_tamr(client: Client, *, project_name: str, export_path: str,) ->
     Args:
         client: an instance of Tamr unify client object
         project_name: name of the project to be exported from Tamr
-        export_path: export path - must be accessible to the VM hosting Tamr 
+        export_path: export path - must be accessible to the VM hosting Tamr
 
     Returns:
         operation for project export api call
@@ -44,20 +54,14 @@ def main(
     instance_connection_info: Dict[str, Any],
 ):
     """
-    This function creates a fork copy of a Tamr project by exporting the target project 
+    This function creates a fork copy of a Tamr project by exporting the target project
     and importing it back to Tamr under a new name
-
-    Example scripts for creating a copy of an existing project with the new project name:
-        - as "_copy"-postfixed name of the target project:
-            python fork_project.py --export_path /path/to/export-file-dir/ --project_name <target_project_name> --postfix _copy
-        - specified explicitly:
-            python fork_project.py --export_path /path/to/export-file-dir/ --project_name <target_project_name> --new_name <new_project_name>
 
     Args:
         project_name: name of the existing target project
         new_name: name of the forked project (Optional)
         postfix: if specified, will use and modify the target project name (Optional)
-        new_ud_name: if specified, will explicitly the name of the unified dataset of the forked project
+        new_ud_name: explicitly specify the name of unified dataset of forked project (Optional)
         export_path: export path - must be accessible to the VM hosting Tamr
         overwrite: flag to overwrite existing project artifacts
         instance_connection_info: Tamr instance & AUTH configs
@@ -104,7 +108,10 @@ if __name__ == "__main__":
     # parse args
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--project_name", default=None, required=True, help="raise to specify the name of target project",
+        "--project_name",
+        default=None,
+        required=True,
+        help="raise to specify the name of target project",
     )
     parser.add_argument(
         "--export_path",
@@ -149,11 +156,11 @@ if __name__ == "__main__":
     config = tbu.config.from_yaml(conf_dir)
 
     main(
-        project_name=opts.project_name, 
+        project_name=opts.project_name,
         new_name=opts.new_name,
         postfix=opts.postfix,
         new_ud_name=opts.new_ud_name,
         export_path=opts.export_path,
         overwrite=opts.overwrite,
-        instance_connection_info=config["tamr"]
+        instance_connection_info=config["tamr"],
     )
