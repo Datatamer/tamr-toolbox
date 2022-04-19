@@ -434,7 +434,7 @@ def edit_attributes(
         else:
             LOGGER.info(
                 f"""The attribute '{attribute_name}' in {dataset_name} curently has
-                 the type '{str(old_type_class)}'. Set '{override_existing_types}' to
+                 the type '{str(old_type_class)}'. Set 'override_existing_types' to
                  True to update the type to '{str(new_type_class)}
                 """
             )
