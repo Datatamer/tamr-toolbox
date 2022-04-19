@@ -107,6 +107,7 @@ def main(
 if __name__ == "__main__":
     # parse args
     parser = argparse.ArgumentParser()
+    parser.add_argument("--config", help="path to a YAML configuration file", required=False)
     parser.add_argument(
         "--project_name",
         default=None,
@@ -141,19 +142,14 @@ if __name__ == "__main__":
     )
     opts = parser.parse_args()
 
-    # creating the logger object:
-    logging_dir = "."
-    LOGGER = tbu.logger.create(__file__, log_directory=logging_dir)
-    # Let Tamr Toolbox itself also contribute to the log
-    tbu.logger.enable_toolbox_logging(log_directory=logging_dir, log_to_terminal=False)
-    # Configure the logs from imported packages
-    tbu.logger.enable_package_logging(
-        "tamr_unify_client", log_directory=logging_dir, log_to_terminal=False
-    )
-
     # load config file and create tamr client
-    conf_dir = "."
-    config = tbu.config.from_yaml(conf_dir)
+    CONFIG = tbox.utils.config.from_yaml(
+        path_to_file=opts.config, default_path_to_file="/path/to/my/conf/project.config.yaml"
+    )
+    # creating the logger object:
+    LOGGER = tbox.utils.logger.create(__name__, log_directory=CONFIG["logging_dir"])
+    # Let Tamr Toolbox itself also contribute to the log
+    tbu.logger.enable_toolbox_logging(log_directory=CONFIG["logging_dir"], log_to_terminal=False)
 
     main(
         project_name=opts.project_name,
@@ -162,5 +158,5 @@ if __name__ == "__main__":
         new_ud_name=opts.new_ud_name,
         export_path=opts.export_path,
         overwrite=opts.overwrite,
-        instance_connection_info=config["tamr"],
+        instance_connection_info=CONFIG["tamr"],
     )
