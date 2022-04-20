@@ -1,5 +1,5 @@
 """
-An example script to change dataset attributes for a Tamr dataset
+An example script to delete attributes from a Tamr dataset
 """
 import tamr_toolbox as tbox
 
