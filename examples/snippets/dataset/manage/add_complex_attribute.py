@@ -18,19 +18,15 @@ dataset = client.datasets.by_name(dataset_name)
 # Note you can optionally just past in a list of attribute names
 # The attribute types will default to ARRAY STRING
 attribute_names = ["client_id", "name", "address", "user_id", "sales", "location"]
-attribute_types = [
-    attribute_type.STRING,
-    attribute_type.DEFAULT,
-    attribute_type.DEFAULT,
-    attribute_type.Array(attribute_type.INT),
-    attribute_type.DOUBLE,
-    attribute_type.GEOSPATIAL,
-]
-
-attr_type_dict = {}
-for i in range(len(attribute_names)):
-    attr_type_dict[attribute_names[i]] = attribute_types[i]
+attribute_types = {
+    "client_id": attribute_type.STRING,
+    "name": attribute_type.DEFAULT,
+    "address": attribute_type.DEFAULT,
+    "user_id": attribute_type.Array(attribute_type.INT),
+    "sales": attribute_type.DOUBLE,
+    "location": attribute_type.GEOSPATIAL,
+}
 
 updated_dataset = tbox.dataset.manage.create_attributes(
-    dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
+    dataset=dataset, attributes=attribute_names, attribute_types=attribute_types
 )
