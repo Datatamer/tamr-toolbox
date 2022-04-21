@@ -464,10 +464,7 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) ->
         raise TypeError("attributes arg must be an Iterable")
 
     # Get current dataset attributes
-    target_dataset_attributes = dataset.attributes
-    target_attribute_dict = {}
-    for attr in target_dataset_attributes.stream():
-        target_attribute_dict[attr.name] = attr
+    target_attribute_dict = {attr.name: attr for attr in target_dataset_attributes}
     existing_attributes = target_attribute_dict.keys()
     primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
 
