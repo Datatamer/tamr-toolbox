@@ -211,9 +211,7 @@ def update(
 
     if attributes:
         # Get current dataset attributes
-        target_dataset_attributes = dataset.attributes
-        existing_attributes = []
-        for attr in target_dataset_attributes.stream():
+        existing_attributes = [attr.name for attr in dataset.attributes]
             existing_attributes.append(attr.name)
 
         # Update attributes in dataset
