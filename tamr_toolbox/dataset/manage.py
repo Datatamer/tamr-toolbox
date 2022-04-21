@@ -325,14 +325,14 @@ def edit_attributes(
     attribute_descriptions: Optional[Dict[str, str]] = None,
     override_existing_types: bool = True,
 ) -> Dataset:
-    """
-    Edits existing attributes in a dataset. The attribute type and/or descriptions can be updated
-    to new values. Attributes that the user wants to update must either in either the
-    attribute_types or attribute_descriptions dictionaries or both. The default attribute type
-    will be ARRAY STRING. To set non-default attribute types, you must define them in the
-    attribute_types dictionary. Any attribute descriptions can be specified in the
-    attribute_descriptions dictionary. If only the attribute_descriptions dictionary is defined,
-    it will be assumed the attribute types should be set to the default (ARRAY STRING).
+    """Edit existing attributes in a dataset
+    
+    The attribute type and/or descriptions can be updated to new values. Attributes that will be
+    updated must be in either the attribute_types or attribute_descriptions dictionaries or
+    both. The default attribute type will be ARRAY STRING. To set non-default attribute types, they
+    must be defined in the attribute_types dictionary. Any attribute descriptions can be specified
+    in the attribute_descriptions dictionary. If only the attribute_descriptions dictionary is
+    defined, their attribute types will be set to the default ARRAY STRING.
 
     Args:
         dataset: An existing TUC dataset
