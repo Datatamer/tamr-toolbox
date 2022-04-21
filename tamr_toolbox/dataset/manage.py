@@ -146,15 +146,16 @@ def update(
     tags: Optional[List[str]] = None,
     override_existing_types: bool = False,
 ) -> Dataset:
-    """
-    Flexibly update a source dataset in Tamr. All the attributes that should exist in the dataset
-    must be defined in the attributes argument. This function will add/remove attributes in the
-    dataset until the dataset attributes matches the set of attributes passed in as an argument.
-    The default attribute type will be ARRAY STRING. To set non-default attribute types, you must
-    define them in the attribute_types dictionary. Any attribute descriptions can be specified in
-    the attribute_descriptions dictionary. By default, the existing attribute types will not
-    change unless override_existing_types is set to True. When it's False, the attribute type
-    updates will only be logged.
+    """Flexibly update a source dataset in Tamr
+
+    All the attributes that should exist in the dataset must be defined in the attributes argument.
+    This function will add/remove attributes in the dataset until the dataset attributes matches
+    the set of attributes passed in as an argument. The default attribute type will be ARRAY
+    STRING . To set non-default attribute types, they must be defined in the attribute_types
+    dictionary. Any attribute descriptions can be specified in the attribute_descriptions
+    dictionary. By default, the existing attribute types will not change unless
+    override_existing_types is set to True. When False, the attribute type updates will only be
+    logged.
 
     Args:
         dataset: An existing TUC dataset
