@@ -13,7 +13,8 @@ import tamr_toolbox as tbox
 
 CONFIG = freeze(
     utils.config.from_yaml(
-        join(Path(__file__).resolve().parents[1], "conf", "gr_delta_config.yaml"))
+        join(Path(__file__).resolve().parents[1], "conf", "gr_delta_config.yaml")
+    )
 )
 LOGGER = utils.logger.create("GoldenRecordsDeltaPipeline", log_directory=CONFIG["logging_dir"])
 # Let Tamr Toolbox itself also contribute to the log
@@ -24,7 +25,7 @@ LOGGER.info("Logging Enabled")
 def main(
     *, instance_connection_info: Dict[str, str], pipeline_vars: Dict[str, Any]
 ) -> Dict[str, str]:
-    """Runs a Golden Records pipeline and generates delta datasets before publishing golden records.
+    """Runs a Golden Records pipeline.
     Args:
         instance_connection_info: Information for connecting to Tamr (host, port, username etc)
         pipeline_vars: Names of target projects and datasets for a golden records delta pipeline
@@ -48,7 +49,7 @@ def main(
     # Create the tamr client
     tamr_client = utils.client.create(**instance_connection_info)
     LOGGER.info(
-        "Retrieving project names and resource IDs from Tamr and storing as a lookup dictionary"
+        "Retrieving project names and resource IDs from Tamr & storing as a lookup dictionary"
     )
     project_id_dict = {}
     for project in tamr_client.projects:
