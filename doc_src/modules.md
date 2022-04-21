@@ -1,5 +1,6 @@
 # Modules
 * [Data Input/Output](modules/data_io.md)
+* [Dataset](modules/dataset.md)
 * [Enrichment](modules/enrichment.md)
 * [Filesystem](modules/filesystem.rst)
 * [Models](modules/models.rst)
