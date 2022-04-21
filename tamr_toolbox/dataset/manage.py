@@ -493,11 +493,11 @@ def _make_spec_dict(
     attribute_types: Dict[str, attribute_type.AttributeType],
     attribute_descriptions: Dict[str, str],
 ) -> JsonDict:
-    """
-    Create attribute spec dictionary. The default attribute type will be ARRAY STRING. To
-    set non-default attribute types, you must define them in the attribute_types
-    dictionary. Any attribute descriptions can be specified in the attribute_descriptions
-    dictionary.
+    """Create attribute spec dictionary
+    
+    The default attribute type will be ARRAY STRING. Non-default attribute types can be specified
+    in the attribute_types dictionary. Any attribute descriptions can be specified in the
+    attribute_descriptions dictionary.
 
     Args:
         attribute_name: name of the attribute
