@@ -291,10 +291,7 @@ def create_attributes(
         raise TypeError("attributes arg must be an Iterable")
 
     # Get current dataset attributes
-    target_dataset_attributes = dataset.attributes
-    existing_attributes = []
-    for attr in target_dataset_attributes.stream():
-        existing_attributes.append(attr.name)
+    existing_attributes = [attr.name for attr in dataset.attributes]
 
     # Check that none of the new attribute names already exist
     for attribute_name in attributes:
@@ -311,7 +308,7 @@ def create_attributes(
             attribute_types=attribute_types,
             attribute_descriptions=attribute_descriptions,
         )
-        target_dataset_attributes.create(attr_spec_dict)
+        dataset.attributes.create(attr_spec_dict)
         LOGGER.info(f"Created attribute '{attribute_name}' in {dataset_name}")
 
     return dataset
