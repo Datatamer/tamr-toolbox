@@ -261,10 +261,11 @@ def create_attributes(
     attribute_types: Optional[Dict[str, attribute_type.AttributeType]] = None,
     attribute_descriptions: Optional[Dict[str, str]] = None,
 ) -> Dataset:
-    """
-    Creates new attributes in a dataset. The default attribute type will be ARRAY STRING. To
-    set non-default attribute types, you must define them in the attribute_types dictionary.
-    Any attribute descriptions can be specified in the attribute_descriptions dictionary.
+    """Create new attributes in a dataset
+
+    The default attribute type will be ARRAY STRING. To set non-default attribute types, they must
+    be defined in the attribute_types dictionary. Any attribute descriptions can be specified in
+    the attribute_descriptions dictionary.
 
     Args:
         dataset: An existing TUC dataset
