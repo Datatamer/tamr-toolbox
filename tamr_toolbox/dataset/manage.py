@@ -49,7 +49,7 @@ def create(
     the template dataset is not provided, the primary_keys must be defined for the dataset to be
     created. Additional attributes can be added in the attributes argument. The default attribute
     type will be ARRAY STRING. Non-default attribute types can be specified in the attribute_types
-    dictionary. Any attribute descriptions can be specified in the attribute_descriptions 
+    dictionary. Any attribute descriptions can be specified in the attribute_descriptions
     dictionary.
 
     Args:
@@ -212,7 +212,6 @@ def update(
     if attributes:
         # Get current dataset attributes
         existing_attributes = [attr.name for attr in dataset.attributes]
-            existing_attributes.append(attr.name)
 
         # Update attributes in dataset
         for attribute_name in attributes:
@@ -326,13 +325,13 @@ def edit_attributes(
     override_existing_types: bool = True,
 ) -> Dataset:
     """Edit existing attributes in a dataset
-    
+
     The attribute type and/or descriptions can be updated to new values. Attributes that will be
     updated must be in either the attribute_types or attribute_descriptions dictionaries or
     both. The default attribute type will be ARRAY STRING. To set non-default attribute types, they
     must be defined in the attribute_types dictionary. Any attribute descriptions can be specified
     in the attribute_descriptions dictionary. If only the attribute_descriptions dictionary is
-    defined, their attribute types will be set to the default ARRAY STRING.
+    defined, the attribute type will not be updated.
 
     Args:
         dataset: An existing TUC dataset
@@ -371,7 +370,7 @@ def edit_attributes(
     }
 
     # Get current dataset attributes
-    target_attribute_dict = {attr.name: attr for attr in target_dataset_attributes}
+    target_attribute_dict = {attr.name: attr for attr in dataset.attributes}
     existing_attributes = target_attribute_dict.keys()
     primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
 
@@ -396,7 +395,10 @@ def edit_attributes(
             attribute_descriptions=attribute_descriptions,
         )
         existing_attribute_spec = target_attribute_dict[attribute_name].spec()
-        new_type_class = attribute_type.from_json(attr_spec_dict["type"])
+        if attribute_types is None or attribute_name not in attribute_types:
+            new_type_class = attribute_type.from_json(existing_attribute_spec.to_dict()["type"])
+        else:
+            new_type_class = attribute_type.from_json(attr_spec_dict["type"])
         old_type_class = attribute_type.from_json(existing_attribute_spec.to_dict()["type"])
 
         if new_type_class == old_type_class:
@@ -423,10 +425,10 @@ def edit_attributes(
                 new_attr_spec["description"] = attr_spec_dict["description"]
 
             # Remove and add attribute with new spec
-            target_dataset_attributes.delete_by_resource_id(
+            dataset.attributes.delete_by_resource_id(
                 target_attribute_dict[attribute_name].resource_id
             )
-            target_dataset_attributes.create(new_attr_spec)
+            dataset.attributes.create(new_attr_spec)
             LOGGER.info(f"Updated attribute '{attribute_name}' in {dataset_name}")
         else:
             LOGGER.info(
@@ -464,7 +466,7 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) ->
         raise TypeError("attributes arg must be an Iterable")
 
     # Get current dataset attributes
-    target_attribute_dict = {attr.name: attr for attr in target_dataset_attributes}
+    target_attribute_dict = {attr.name: attr for attr in dataset.attributes}
     existing_attributes = target_attribute_dict.keys()
     primary_keys = dataset.spec().to_dict()["keyAttributeNames"]
 
@@ -480,9 +482,7 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) ->
 
     # Remove attributes from dataset
     for attribute_name in attributes:
-        target_dataset_attributes.delete_by_resource_id(
-            target_attribute_dict[attribute_name].resource_id
-        )
+        dataset.attributes.delete_by_resource_id(target_attribute_dict[attribute_name].resource_id)
         LOGGER.info(f"Deleted attribute '{attribute_name}' in {dataset_name}")
 
     return dataset
@@ -494,7 +494,7 @@ def _make_spec_dict(
     attribute_descriptions: Dict[str, str],
 ) -> JsonDict:
     """Create attribute spec dictionary
-    
+
     The default attribute type will be ARRAY STRING. Non-default attribute types can be specified
     in the attribute_types dictionary. Any attribute descriptions can be specified in the
     attribute_descriptions dictionary.
