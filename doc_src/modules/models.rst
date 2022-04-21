@@ -21,8 +21,6 @@ Project Steps
 ------------------------
 .. automodule:: tamr_toolbox.models.project_steps
 
-
-=======
 Attribute Types
 ------------------------
 
