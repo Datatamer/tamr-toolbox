@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 CONFIDENCE_DATASET_SUFFIX = "classifications_average_confidences"
 
 
-def _check_dataset_with_confidence(dataset: Dataset) -> bool:
+def _check_dataset_with_confidence(dataset: Dataset) -> None:
     """
     Checks if the dataset contains necessary attributes for obtaining confidence information
 
@@ -37,10 +37,9 @@ def _check_dataset_with_confidence(dataset: Dataset) -> bool:
         )
         LOGGER.error(wrong_attribute_error)
         raise RuntimeError(wrong_attribute_error)
-    return True
 
 
-def _check_taxonomy_depth(project: Project, *, tier: int) -> bool:
+def _check_taxonomy_depth(project: Project, *, tier: int) -> None:
     """
     Checks the maximum depth of the taxonomy associated wit
 
@@ -57,7 +56,7 @@ def _check_taxonomy_depth(project: Project, *, tier: int) -> bool:
 
     # depth check is not required for leaf nodes
     if tier == -1:
-        return True
+        return
 
     max_depth = 0
     classification_project = project.as_categorization()
@@ -74,7 +73,6 @@ def _check_taxonomy_depth(project: Project, *, tier: int) -> bool:
         )
         LOGGER.error(invalid_tier_value_error)
         raise ValueError(invalid_tier_value_error)
-    return True
 
 
 def _create_leaf_node_set(taxonomy: Taxonomy) -> set:
@@ -249,10 +247,10 @@ def get_tier_confidence(
             raise RuntimeError(cannot_stream_error)
 
     # check dataset contains necessary attributes
-    assert _check_dataset_with_confidence(dataset)
+    _check_dataset_with_confidence(dataset)
 
     # check tier does not exceed maximum taxonomy depth
-    assert _check_taxonomy_depth(project, tier=tier)
+    _check_taxonomy_depth(project, tier=tier)
 
     # obtain categories at tier
     selected_category_set = _get_categories_at_tier(project, tier=tier)
