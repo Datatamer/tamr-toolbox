@@ -43,13 +43,14 @@ def create(
     external_id: Optional[str] = None,
     tags: Optional[List[str]] = None,
 ) -> Dataset:
-    """
-    Flexibly create a source dataset in Tamr. A template dataset object can be passed in to create
-    a duplicate dataset with a new name. If the template dataset is not provided, the user must
-    define the primary_keys for the dataset to be created. Additional attributes can be added
-    in the attributes argument. The default attribute type will be ARRAY STRING. To set non-default
-    attribute types, you must define them in the attribute_types dictionary. Any attribute
-    descriptions can be specified in the attribute_descriptions dictionary.
+    """Flexibly create a source dataset in Tamr
+
+    A template dataset object can be passed in to create a duplicate dataset with a new name. If
+    the template dataset is not provided, the primary_keys must be defined for the dataset to be
+    created. Additional attributes can be added in the attributes argument. The default attribute
+    type will be ARRAY STRING. Non-default attribute types can be specified in the attribute_types
+    dictionary. Any attribute descriptions can be specified in the attribute_descriptions 
+    dictionary.
 
     Args:
         client: TUC client object
