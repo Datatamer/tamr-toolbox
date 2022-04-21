@@ -107,8 +107,7 @@ def create(
     if attributes and not isinstance(attributes, Iterable):
         raise TypeError("attributes arg must be an Iterable")
 
-    dataset_exists = exists(client=client, dataset_name=dataset_name)
-    if not dataset_exists:
+    if not exists(client=client, dataset_name=dataset_name):
         creation_spec = {
             "name": dataset_name,
             "description": description,
