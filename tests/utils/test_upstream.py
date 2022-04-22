@@ -26,7 +26,7 @@ def test_get_upstream_projects():
         "type='GOLDEN_RECORDS')]"
     )
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_get_upstream_datasets():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     downstream_dataset = client.datasets.by_resource_id(
@@ -34,4 +34,4 @@ def test_get_upstream_datasets():
     )
 
     datasets = upstream.datasets(downstream_dataset)
-    assert (str(datasets)) == "['unify://unified-data/v1/datasets/60']"
+    assert len(datasets) == 10
