@@ -114,17 +114,22 @@ def _find_datasets(
     main_dataset = dataset
     # Create list of datasets to go through
     datasets_to_check = [main_dataset]
+    # Create list of checked datasets
+    datasets_checked = []
 
     # Find all upstream datasets
     while len(datasets_to_check) > 0:     
         # output is a list; check if anything present, add output to upstream datasets
         # and add to list of datasets to check
-        upstream = _request_upstream_datasets(datasets_to_check[0])
-        datasets_to_check.remove(datasets_to_check[0])
-        if len(upstream) != 0:
-            dataset_upstream.extend(upstream)
-            datasets_to_check.extend(upstream)
-    
+        if datasets_to_check[0].name not in datasets_checked:
+            upstream = _request_upstream_datasets(datasets_to_check[0])
+            datasets_checked.append(datasets_to_check[0].name)
+            datasets_to_check.remove(datasets_to_check[0])
+            if len(upstream) != 0:
+                dataset_upstream.extend(upstream)
+                datasets_to_check.extend(upstream)
+        else:
+            datasets_to_check.remove(datasets_to_check[0])
 
     return dataset_upstream
 
