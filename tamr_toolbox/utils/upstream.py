@@ -3,6 +3,7 @@ from typing import List, Optional
 import logging
 
 from tamr_unify_client.project.resource import Project
+from tamr_unify_client.dataset.resource import Dataset
 
 LOGGER = logging.getLogger(__name__)
 
@@ -94,6 +95,24 @@ def _find_projects(
         ]
 
         return upstream_projects
+
+def _find_datasets(
+    dataset: Dataset
+) -> List[Dataset]:
+    """Returns a dataset's upstream datasets.
+
+        Args:
+            dataset: a tamr dataset
+        Returns:
+            List of upstream datasets
+
+    """
+    
+    dataset_upstream = dataset.client.get(
+        f"/api/versioned/v1/datasets/{dataset.resource_id}/upstreamDatasets"
+        ).json()
+
+    return dataset_upstream
 
 
 def projects(project: Project) -> List[Project]:
