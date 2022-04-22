@@ -134,6 +134,7 @@ def _find_datasets(
     dataset_names = []
     for data in data_upstream:
         dataset_names.append(data.name)
+    # Use dictionary to remove duplicate names
     names_datasets_zip = dict(zip(dataset_names, data_upstream))
     dataset_upstream = list(names_datasets_zip.values())
     return dataset_upstream
