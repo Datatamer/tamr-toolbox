@@ -107,12 +107,26 @@ def _find_datasets(
             List of upstream datasets
 
     """
-    
+
     dataset_upstream = dataset.client.get(
         f"/api/versioned/v1/datasets/{dataset.resource_id}/upstreamDatasets"
         ).json()
 
     return dataset_upstream
+
+def datasets(dataset: Dataset) -> List[Dataset]:
+    """ Check for upstream datasets associated with a specified dataset
+
+    Args:
+        dataset: the tamr dataset for which associated upstream datasets are retrieved
+    Returns:
+            List of tamr datasets upstream of the target dataset
+    """
+
+    # Retrieve upstream projects (if any) from a specified Project
+    upstream_datasets = _find_datasets(dataset)
+
+    return upstream_datasets
 
 
 def projects(project: Project) -> List[Project]:
