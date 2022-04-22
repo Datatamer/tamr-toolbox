@@ -108,7 +108,23 @@ def _find_datasets(
 
     """
 
-    dataset_upstream = _request_upstream_datasets(dataset)
+    # Create empty list to populate with upstream datasets
+    dataset_upstream = []
+    # Main dataset
+    main_dataset = dataset
+    # Create list of datasets to go through
+    datasets_to_check = [main_dataset]
+
+    # Find all upstream datasets
+    while len(datasets_to_check) > 0:     
+        # output is a list; check if anything present, add output to upstream datasets
+        # and add to list of datasets to check
+        upstream = _request_upstream_datasets(datasets_to_check[0])
+        datasets_to_check.remove(datasets_to_check[0])
+        if len(upstream) != 0:
+            dataset_upstream.extend(upstream)
+            datasets_to_check.extend(upstream)
+    
 
     return dataset_upstream
 
@@ -121,12 +137,14 @@ def _request_upstream_datasets(
         Args:
             dataset: a tamr dataset
         Returns:
-            The upstream dataset
+            The upstream datasets 
     """
-    dataset_upstream = dataset.client.get(
-        f"/api/versioned/v1/datasets/{dataset.resource_id}/upstreamDatasets"
-        ).json()
-        
+    # Find upstream datasets, output is a DatasetURI
+    upstream = dataset.upstream_datasets()
+    dataset_upstream = []
+    # Make Dataset our of DatasetURI
+    for data in upstream:
+        dataset_upstream.append(dataset.client.datasets.by_resource_id(data.resource_id))
     return dataset_upstream
 
 
@@ -139,6 +157,7 @@ def datasets(dataset: Dataset) -> List[Dataset]:
             List of tamr datasets upstream of the target dataset
     """
     upstream_datasets = _find_datasets(dataset)
+
     return upstream_datasets
 
 
