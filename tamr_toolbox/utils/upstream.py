@@ -109,7 +109,7 @@ def _find_datasets(
     """
 
     # Create empty list to populate with upstream datasets
-    dataset_upstream = []
+    data_upstream = []
     # Main dataset
     main_dataset = dataset
     # Create list of datasets to go through
@@ -126,11 +126,16 @@ def _find_datasets(
             datasets_checked.append(datasets_to_check[0].name)
             datasets_to_check.remove(datasets_to_check[0])
             if len(upstream) != 0:
-                dataset_upstream.extend(upstream)
+                data_upstream.extend(upstream)
                 datasets_to_check.extend(upstream)
         else:
             datasets_to_check.remove(datasets_to_check[0])
-
+    # Deduplicate & collect names: deduplicate based on identical names
+    dataset_names = []
+    for data in data_upstream:
+        dataset_names.append(data.name)
+    names_datasets_zip = dict(zip(dataset_names, data_upstream))
+    dataset_upstream = list(names_datasets_zip.values())
     return dataset_upstream
 
 def _request_upstream_datasets(
