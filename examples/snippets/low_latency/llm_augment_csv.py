@@ -2,8 +2,8 @@ import pandas as pd
 import tamr_toolbox as tbox
 
 
-# Make Tamr Client
-client = tbox.utils.client.create(username="user", password="pw", host="localhost")
+# Initialize Tamr Client -- note port must be 9170 for low-latency match service
+client = tbox.utils.client.create(username="user", password="pw", host="localhost", port=9170)
 
 # Get source data and rename columns to match project unified dataset as needed
 filename = "/Data/source_data/incoming_employees.csv"
