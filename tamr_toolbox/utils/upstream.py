@@ -101,7 +101,7 @@ def _find_datasets(dataset: Dataset) -> List[Dataset]:
     """Returns a dataset's upstream datasets.
 
         Args:
-            dataset: a tamr dataset
+            dataset: a Tamr Dataset Object
         Returns:
             List of upstream datasets
 
@@ -144,7 +144,7 @@ def _request_upstream_datasets(dataset: Dataset) -> Dataset:
     """ Returns a dataset's upstream dataset
 
         Args:
-            dataset: a tamr dataset
+            dataset: a Tamr Dataset Object
         Returns:
             The upstream datasets
     """
@@ -161,9 +161,9 @@ def datasets(dataset: Dataset) -> List[Dataset]:
     """ Check for upstream datasets associated with a specified dataset
 
     Args:
-        dataset: the tamr dataset for which associated upstream datasets are retrieved
+        dataset: the Tamr dataset for which associated upstream datasets are retrieved
     Returns:
-            List of tamr datasets upstream of the target dataset
+            List of Tamr datasets upstream of the target dataset
     """
     upstream_datasets = _find_datasets(dataset)
 
