@@ -25,3 +25,10 @@ Downstream
 ------------------------
 .. automodule:: tamr_toolbox.utils.downstream
 
+Upstream
+------------------------
+.. automodule:: tamr_toolbox.utils.upstream
+
+Version
+------------------------
+.. automodule:: tamr_toolbox.utils.version
