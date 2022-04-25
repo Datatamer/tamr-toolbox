@@ -96,6 +96,7 @@ def _find_projects(
 
         return upstream_projects
 
+
 def _find_datasets(
     dataset: Dataset
 ) -> List[Dataset]:
@@ -118,7 +119,7 @@ def _find_datasets(
     datasets_checked = []
 
     # Find all upstream datasets
-    while len(datasets_to_check) > 0:     
+    while len(datasets_to_check) > 0:
         # output is a list; check if anything present, add output to upstream datasets
         # and add to list of datasets to check
         if datasets_to_check[0].name not in datasets_checked:
@@ -139,6 +140,7 @@ def _find_datasets(
     dataset_upstream = list(names_datasets_zip.values())
     return dataset_upstream
 
+
 def _request_upstream_datasets(
     dataset: Dataset
 ) -> Dataset:
@@ -148,7 +150,7 @@ def _request_upstream_datasets(
         Args:
             dataset: a tamr dataset
         Returns:
-            The upstream datasets 
+            The upstream datasets
     """
     # Find upstream datasets, output is a DatasetURI
     upstream = dataset.upstream_datasets()
