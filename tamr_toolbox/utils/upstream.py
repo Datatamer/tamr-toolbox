@@ -91,8 +91,7 @@ def _find_projects(
         upstream_projects.reverse()
 
         upstream_projects = [
-            project.client.projects.by_resource_id(project_id)
-            for project_id in upstream_projects
+            project.client.projects.by_resource_id(project_id) for project_id in upstream_projects
         ]
 
         return upstream_projects
@@ -154,9 +153,7 @@ def _request_upstream_datasets(dataset: Dataset) -> Dataset:
     dataset_upstream = []
     # Make Dataset our of DatasetURI
     for data in upstream:
-        dataset_upstream.append(
-            dataset.client.datasets.by_resource_id(data.resource_id)
-        )
+        dataset_upstream.append(dataset.client.datasets.by_resource_id(data.resource_id))
     return dataset_upstream
 
 
