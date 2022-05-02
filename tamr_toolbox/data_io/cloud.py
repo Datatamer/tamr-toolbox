@@ -1,9 +1,7 @@
-from boto3 import client
-from tarfile import is_tarfile
 import tempfile
 import os
 import tarfile
-
+import shutil
 
 # Google examples
 
@@ -26,13 +24,12 @@ def gcs_upload(
     bucket = cloud_client.get_bucket(bucket_name)
     blob = bucket.blob(destination_filepath)
 
-    if tar_file and not is_tarfile(source_filepath):
-        temp_dir = tempfile.gettempdir()
-        temp_path = os.path.join(temp_dir, "temp_file")
-        with tarfile.open(temp_path) as tar:
-            tar.add(source_filepath, arcname=os.path.basename(source_filepath))
+    if tar_file:
+        with tempfile.NamedTemporaryFile() as tmp:
+            with tarfile.open(tmp.name, "w") as tar:
+                tar.add(source_filepath)
 
-        blob.upload_from_filename(tempfile)
+            blob.upload_from_filename(tmp.name)
 
     else:
         blob.upload_from_filename(source_filepath)
@@ -58,25 +55,25 @@ def gcs_download(
     blob = bucket.blob(source_filepath)
 
     if untar:
-        temp_dir = tempfile.gettempdir()
-        temp_path = os.path.join(temp_dir, "temp_file")
-        blob.download_to_filename(temp_path)
-        with open(temp_path) as file:
-            if is_tarfile(file):
-                with tarfile.open(temp_path) as tar_file:
+        with tempfile.NamedTemporaryFile() as temp_path:
+            blob.download_to_filename(temp_path.name)
+
+            if tarfile.is_tarfile(temp_path.name):
+                with tarfile.open(temp_path.name) as tar_file:
                     tar_file.extractall(destination_filepath)
+            else:
+                blob.download_to_filename(destination_filepath)
     else:
         blob.download_to_filename(destination_filepath)
 
 
 # Amazon S3 examples
-amazon_storage_client = client("s3")
 
 
 def s3_upload(
+    cloud_client,
     source_filepath="path_to_my_local_file",
     destination_filepath="path_to_my_file_on_s3_bucket",
-    cloud_client=amazon_storage_client,
     bucket_name="my_google_bucket",
     tar_file=False,
 ):
@@ -88,7 +85,7 @@ def s3_upload(
         bucket_name: name of AWS bucket
         tar_file: Tar file before upload
     """
-    if tar_file and not is_tarfile(source_filepath):
+    if tar_file and not tarfile.is_tarfile(source_filepath):
         temp_dir = tempfile.gettempdir()
         temp_path = os.path.join(temp_dir, "temp_file")
         with tarfile.open(temp_path) as tar:
@@ -104,9 +101,9 @@ def s3_upload(
 
 
 def s3_download(
+    cloud_client,
     source_filepath="path_to_my_file_on_s3_bucket",
     destination_filepath="path_to_my_local_file",
-    cloud_client=amazon_storage_client,
     bucket_name="my_google_bucket",
     untar=False,
 ):
@@ -126,7 +123,7 @@ def s3_download(
             Bucket=bucket_name, Key=source_filepath, Filename=temp_path,
         )
         with open(temp_path) as file:
-            if is_tarfile(file):
+            if tarfile.is_tarfile(file):
                 with tarfile.open(temp_path) as tar_file:
                     tar_file.extractall(destination_filepath)
     else:
