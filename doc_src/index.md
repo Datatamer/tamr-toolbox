@@ -1,5 +1,7 @@
 # Tamr Toolbox
 
+Tamr toolbox is awesome! Everyone should contribute.
+
 The Tamr Toolbox is a Python library created to provide a simple interface for common interactions with Tamr and common data workflows that include Tamr. The more specialized [Tamr Python Client](https://github.com/Datatamer/tamr-client) library is used for direct interactions with Tamr in both the development of the Tamr Toolbox and in the recommended use of the Tamr Toolbox.  
 
 
