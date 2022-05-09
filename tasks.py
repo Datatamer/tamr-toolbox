@@ -42,10 +42,11 @@ def format(c, fix=False, diff=False):
 
 
 @task
-def test(c):
+def test(c, path=None):
     """Uses pytest to run the tests you have written for your code.
     """
-    c.run(f"python -m pytest", echo=True, pty=True)
+    arg = path if path is not None else ""
+    c.run(f"python -m pytest {arg}", echo=True, pty=True)
 
 
 @task
