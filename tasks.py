@@ -22,7 +22,7 @@ def lint(c):
 
 @task
 def format(c, fix=False, diff=False):
-    """ Uses black to report any formatting issues in your code
+    """Uses black to report any formatting issues in your code
 
     Args:
         fix: Flag to automatically fix formatting issues in your code
@@ -44,6 +44,9 @@ def format(c, fix=False, diff=False):
 @task
 def test(c, path=None):
     """Uses pytest to run the tests you have written for your code.
+
+    Args:
+        path: Flag to specify the path to a subset of tests to run
     """
     arg = path if path is not None else ""
     c.run(f"python -m pytest {arg}", echo=True, pty=True)
@@ -51,8 +54,7 @@ def test(c, path=None):
 
 @task
 def docs(c):
-    """Uses Sphinx to built Tamr-toolbox documentation html
-    """
+    """Uses Sphinx to built Tamr-toolbox documentation html"""
     c.run(
         f"sphinx-build -b html doc_src docs/_draft_build -W",
         echo=True,
