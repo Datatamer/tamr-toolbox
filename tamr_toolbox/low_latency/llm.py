@@ -90,6 +90,7 @@ def llm_query(
     project_name: str,
     records: Union[JsonDict, List[JsonDict]],
     type: str,
+    pKey: Optional[str] = None,
     batch_size: Optional[int] = None,
     min_match_prob: Optional[float] = None,
     max_num_matches: Optional[int] = None,
@@ -103,6 +104,7 @@ def llm_query(
         project_name: name of target mastering project
         records: record or list of records to match
         type: one of "records" or  "clusters" -- whether to pull record or cluster matches
+        pKey: a primary key for the data; if supplied, this must be a field in the input records
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
             timeouts), default None sends a single LLM call with all records
         min_match_prob: if set, only matches with probability above minimum will be returned,
@@ -110,7 +112,8 @@ def llm_query(
         max_num_matches: if set, at most max_num_matches will be returned for each input record in
             records, default None
     Returns:
-        Dict keyed by integers (indices of inputs), with value a list containing matcched data
+        Dict keyed by integers (indices of inputs), or by pKey if pKey is supplied, with value a 
+            list containing matcched data
     Raises:
         ValueError: if match type is not "records" or "clusters", or if batch_size is non-positive
         RuntimeError: if query fails
@@ -120,7 +123,7 @@ def llm_query(
 
     url = f"/api/v1/projects/{project_name}:match?type={type}"
 
-    # Sett up keys to read results
+    # Set up keys to read results
     if type == "records":
         record_key = "queryRecordId"
         prob_key = "matchProbability"
@@ -144,12 +147,9 @@ def llm_query(
         raise ValueError(f"Batch size must be non-negative: received {batch_size}")
 
     # Split into batches and convert to LLM query format
-    for j in range(len(records) // batch_size + 1):
-        json_records = [
-            {"recordId": str(batch_size * j + k), "record": rec}
-            for k, rec in enumerate(records[batch_size * j : batch_size * (j + 1)])
-        ]
-        response = match_client.post(url, json=json_records)
+    for j in range(0, len(records), batch_size):
+        json_recs = _prepare_json(records[j: j + batch_size], pKey=pKey, offset=j)
+        response = match_client.post(url, json=json_recs)
 
         # Process responses
         if response.ok:
@@ -161,7 +161,7 @@ def llm_query(
             for resp_block in response.content.decode("utf-8").split("\n"):
                 if resp_block:
                     result = json.loads(resp_block)
-                    index = int(result[record_key])
+                    index = int(result[record_key]) if pKey is None else result[record_key]
 
                     if max_num_matches and len(result_dict[index]) >= max_num_matches:
                         continue
@@ -178,3 +178,30 @@ def llm_query(
             raise RuntimeError(message)
 
     return result_dict
+
+
+def _prepare_json(records: List[JsonDict], *, pKey: Optional[str], offset: int) -> List[JsonDict]:
+    """
+    Put records into JSON format expected by LLM endpoint 
+
+    Args:
+        records: list of records to match
+        pKey: a primary key for the data; if supplied, this must be a field in the input records
+        offset: offset to apply to generated integer `recordId` -- this is necessary for batching
+    Returns:
+        List of formatted records
+    Raises:
+        ValueError: if pKey is supplied but is not a field in some record
+    """
+
+    if pKey:
+        try:
+            json_records = [{"recordId": rec.pop(pKey), "record": rec} for rec in records]
+        except KeyError:
+            raise ValueError(f"Not all input records had a primary key field {pKey}.")
+    else:  # use integers as recordId
+        json_records = [
+            {"recordId": str(offset + k), "record": rec} for k, rec in enumerate(records)
+        ]
+
+    return json_records
