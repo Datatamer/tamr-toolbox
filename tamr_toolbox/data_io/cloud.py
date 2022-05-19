@@ -12,6 +12,7 @@ def gcs_upload(
     destination_filepath="path_to_my_file_on_google_bucket",
     bucket_name="my_google_bucket",
     tar_file=True,
+    return_uploaded_file=False,
 ):
     """Upload data to a google storage bucket
     Args:
@@ -20,6 +21,9 @@ def gcs_upload(
         cloud_client: google storage client with user credentials
         bucket_name: name of google bucket
         tar_file: Tar file before upload
+        return_uploaded_file: If True, returns path to Tempfile with uploaded file
+
+
     """
     bucket = cloud_client.get_bucket(bucket_name)
     blob = bucket.blob(destination_filepath)
@@ -28,11 +32,16 @@ def gcs_upload(
         with tempfile.NamedTemporaryFile() as tmp:
             with tarfile.open(tmp.name, "w") as tar:
                 tar.add(source_filepath)
-
             blob.upload_from_filename(tmp.name)
+            if return_uploaded_file:
+                with tarfile.open(return_uploaded_file, "w") as tar:
+                    tar.add(source_filepath)
 
     else:
         blob.upload_from_filename(source_filepath)
+        if return_uploaded_file:
+            with tarfile.open(return_uploaded_file, "w") as tar:
+                tar.add(source_filepath)
 
 
 def gcs_download(
