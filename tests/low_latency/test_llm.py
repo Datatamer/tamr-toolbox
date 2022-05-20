@@ -48,7 +48,7 @@ MATCH_TEST_DATA = [
         ("clusters", 1, "testkey"),
     ],
 )
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_llm_query_with_match(type: str, batch_size: int, pKey: Optional[str]):
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
 
