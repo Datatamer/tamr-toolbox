@@ -148,7 +148,7 @@ def llm_query(
 
     # Split into batches and convert to LLM query format
     for j in range(0, len(records), batch_size):
-        json_recs = _prepare_json(records[j: j + batch_size], pKey=pKey, offset=j)
+        json_recs = _prepare_json(records[j : j + batch_size], pKey=pKey, offset=j)
         response = match_client.post(url, json=json_recs)
 
         # Process responses
@@ -166,9 +166,8 @@ def llm_query(
                     if max_num_matches and len(result_dict[index]) >= max_num_matches:
                         continue
 
-                    if min_match_prob:
-                        if result[prob_key] < min_match_prob:
-                            continue
+                    if min_match_prob and result[prob_key] < min_match_prob:
+                        continue
 
                     result_dict[index].append(result)
 
@@ -180,21 +179,21 @@ def llm_query(
     return result_dict
 
 
-def _prepare_json(records: List[JsonDict], *, pKey: Optional[str], offset: int) -> List[JsonDict]:
+def _prepare_json(records: List[JsonDict], *, pKey: Union[str, None], offset: int) -> List[JsonDict]:
     """
     Put records into JSON format expected by LLM endpoint 
 
     Args:
         records: list of records to match
-        pKey: a primary key for the data; if supplied, this must be a field in the input records
+        pKey: a primary key for the data; if not None, this must be a field in the input records
         offset: offset to apply to generated integer `recordId` -- this is necessary for batching
     Returns:
         List of formatted records
     Raises:
-        ValueError: if pKey is supplied but is not a field in some record
+        ValueError: if pKey is supplied but some supplied record(s) do not have the pKey field
     """
 
-    if pKey:
+    if pKey is not None:
         try:
             json_records = [{"recordId": rec.pop(pKey), "record": rec} for rec in records]
         except KeyError:

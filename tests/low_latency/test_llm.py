@@ -1,5 +1,6 @@
 """Tests for LLM utilities"""
 from logging import warning
+from typing import Optional
 import pytest
 
 from tamr_toolbox import utils
@@ -35,35 +36,55 @@ MATCH_TEST_DATA = [
 
 
 @pytest.mark.parametrize(
-    "type, batch_size", [("records", 1000), ("clusters", 1000), ("records", 1), ("clusters", 1)]
+    "type, batch_size, pKey",
+    [
+        ("records", 1000, None),
+        ("clusters", 1000, None),
+        ("records", 1, None),
+        ("clusters", 1, None),
+        ("records", 1000, "testkey"),
+        ("clusters", 1000, "testkey"),
+        ("records", 1, "testkey"),
+        ("clusters", 1, "testkey"),
+    ],
 )
-@mock_api()
-def test_llm_query_with_match(type: str, batch_size: int):
+@mock_api(enforce_online_test=True)
+def test_llm_query_with_match(type: str, batch_size: int, pKey: Optional[str]):
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
+
+    data = (
+        MATCH_TEST_DATA
+        if pKey is None
+        else [{**d, pKey: f"rec{k}"} for k, d in enumerate(MATCH_TEST_DATA)]
+    )
+
     result = llm_query(
         llm_client,
         project_name="minimal_mastering",
-        records=MATCH_TEST_DATA,
+        records=data,
         type=type,
         batch_size=batch_size,
+        pKey=pKey,
     )
 
     if type == "records":
         assert {"7279808247767404449", "8878137442375545950"} == {
-            x["matchedRecordId"] for x in result[0]
+            x["matchedRecordId"] for x in result["rec0" if pKey else 0]
         }
         assert {"-198958353428908929", "1134804050832671496"} == {
-            x["matchedRecordId"] for x in result[1]
+            x["matchedRecordId"] for x in result["rec1" if pKey else 1]
         }
     else:
-        assert {"218c3f66-b240-3b08-b688-2c8d0506f12f"} == {x["clusterId"] for x in result[0]}
+        assert {"218c3f66-b240-3b08-b688-2c8d0506f12f"} == {
+            x["clusterId"] for x in result["rec0" if pKey else 0]
+        }
         assert {
             "565e03e5-9349-34ef-a779-c4bcd9dcc49c",
             "8762d70e-b8a5-39f8-a387-8c9148e8254f",
-        } == {x["clusterId"] for x in result[1]}
-    assert result[2]
-    assert result[3]
-    assert result[4] == []  # testing that we don't got an index error
+        } == {x["clusterId"] for x in result["rec1" if pKey else 1]}
+    assert result["rec2" if pKey else 2]
+    assert result["rec3" if pKey else 3]
+    assert result["rec4" if pKey else 4] == []  # testing that we don't got an index error
 
     return None
 
@@ -237,4 +258,20 @@ def test_refresh_and_update():
     client.post(f"projects/1/publishedClusters:refresh")
     result = update_llm_data(client, project_name="minimal_mastering")
     assert result is None
+    return None
+
+
+def test_llm_bad_pKey():
+    llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
+    records = MATCH_TEST_DATA[1:3]
+    records[0]["test_pKey"] = "samplekey"
+
+    with pytest.raises(ValueError, match="Not all input records had a primary key"):
+        llm_query(
+            llm_client,
+            project_name="minimal_mastering",
+            records=records,
+            type="records",
+            pKey="test_pKey",
+        )
     return None
