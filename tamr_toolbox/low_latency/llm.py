@@ -112,7 +112,7 @@ def llm_query(
         max_num_matches: if set, at most max_num_matches will be returned for each input record in
             records, default None
     Returns:
-        Dict keyed by integers (indices of inputs), or by pKey if pKey is supplied, with value a 
+        Dict keyed by integers (indices of inputs), or by pKey if pKey is supplied, with value a
             list containing matcched data
     Raises:
         ValueError: if match type is not "records" or "clusters", or if batch_size is non-positive
@@ -179,9 +179,11 @@ def llm_query(
     return result_dict
 
 
-def _prepare_json(records: List[JsonDict], *, pKey: Union[str, None], offset: int) -> List[JsonDict]:
+def _prepare_json(
+    records: List[JsonDict], *, pKey: Union[str, None], offset: int
+) -> List[JsonDict]:
     """
-    Put records into JSON format expected by LLM endpoint 
+    Put records into JSON format expected by LLM endpoint
 
     Args:
         records: list of records to match
