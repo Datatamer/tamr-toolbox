@@ -38,3 +38,14 @@ Step 3: Use Cases
   :language: python
 
 ```
+
+
+## Email Notifications
+
+```eval_rst
+.. literalinclude:: ../../examples/snippets/notifications/enable_email_notifications.py
+  :language: python
+
+```
+
+

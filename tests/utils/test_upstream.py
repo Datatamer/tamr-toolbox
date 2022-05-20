@@ -25,3 +25,16 @@ def test_get_upstream_projects():
         "(relative_id='projects/2', name='minimal_golden_records', "
         "type='GOLDEN_RECORDS')]"
     )
+
+
+@mock_api()
+def test_get_upstream_datasets():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    downstream_dataset = client.datasets.by_resource_id(
+        CONFIG["datasets"][
+            "minimal_categorization_unified_dataset_classifications_average_confidences"
+        ]
+    )
+
+    datasets = upstream.datasets(downstream_dataset)
+    assert len(datasets) == 10

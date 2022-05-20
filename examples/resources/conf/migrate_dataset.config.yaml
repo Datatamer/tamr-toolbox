@@ -1,0 +1,20 @@
+# migrate_dataset.config.yaml
+
+source_migration_instance:
+    host: $DEV_HOST
+    protocol: "http"
+    port: "9100"
+    username: $TAMR_USERNAME
+    password: $TAMR_PASSWORD
+
+target_migration_instance:
+    host: $PROD_HOST
+    protocol: "http"
+    port: "9100"
+    username: $TAMR_USERNAME
+    password: $TAMR_PASSWORD
+
+logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/logs"
+
+datasets:
+    - dataset_name: "test_dataset"

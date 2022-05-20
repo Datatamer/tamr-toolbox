@@ -1,5 +1,6 @@
 # Examples
 * [Data Input/Output](examples/data_io.rst)
+* [Dataset](examples/dataset.rst)
 * [Enrichment](examples/enrichment.rst)
 * [Filesystem](examples/filesystem.rst)
 * [Notifications](examples/notifications.md)

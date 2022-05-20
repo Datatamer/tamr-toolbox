@@ -1,11 +1,13 @@
 """Tasks related to a Tamr instance"""
-
-from typing import Optional
+import re
+from typing import Optional, Dict, List, Any
 
 import subprocess
 import logging
 import time
 import os
+
+import yaml
 
 LOGGER = logging.getLogger(__name__)
 
@@ -384,4 +386,214 @@ def restart_tamr(
         impersonation_username=impersonation_username,
         impersonation_password=impersonation_password,
         verbose=verbose,
+    )
+
+
+def get_configs(
+    *,
+    config_names: Optional[List[str]] = None,
+    config_search_regex: Optional[str] = None,
+    user_defined_only: bool = False,
+    tamr_install_dir: str,
+    remote_client: Optional["paramiko.SSHClient"] = None,
+    impersonation_username: Optional[str] = None,
+    impersonation_password: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Retrieves configuration values from a Tamr instance.
+
+    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
+    If an impersonation_username is provided, the command is run as the provided user.
+    If an impersonation_password is provided, password authentication is used for impersonation,
+    otherwise sudo is used.
+
+    Args:
+        config_names: A list of configuration names to fetch the value for,
+            when None all configurations will be fetched
+        config_search_regex: A regular expression used to filter the names of the
+            configurations to return
+        user_defined_only: Whether to filter to only user defined config
+        tamr_install_dir: Full path to directory where Tamr is installed
+        remote_client: An ssh client providing a remote connection
+        impersonation_username: A bash user to run the command as,
+            this should be the tamr install user
+        impersonation_password: The password for the impersonation_username
+
+    Returns:
+        A dictionary of Tamr configuration variables and their values
+    """
+
+    LOGGER.info(f"Retrieving {'user defined ' if user_defined_only else ''}config from Tamr.")
+
+    user_defined_flag = " --userDefined" if user_defined_only else ""
+    command = f"{tamr_install_dir}/tamr/utils/unify-admin.sh config:get{user_defined_flag}"
+
+    if config_names is not None:
+        command = f"{command} {' '.join(config_names)}"
+
+    exit_code, stdout, stderr = _run_command(
+        command=command,
+        remote_client=remote_client,
+        impersonation_username=impersonation_username,
+        impersonation_password=impersonation_password,
+        enforce_success=True,
+    )
+
+    # Tamr returns configs in yaml form, here we convert to a dictionary representation
+    configs = yaml.load(stdout, Loader=yaml.SafeLoader)
+
+    if config_search_regex is not None:
+        LOGGER.info(f"Filtering to config names containing the regex '{config_search_regex}'.")
+        compiled_regex = re.compile(config_search_regex, re.IGNORECASE)
+        return {key: value for key, value in configs.items() if compiled_regex.search(key)}
+    else:
+        return configs
+
+
+def get_config(
+    *,
+    config_name: str,
+    tamr_install_dir: str,
+    remote_client: Optional["paramiko.SSHClient"] = None,
+    impersonation_username: Optional[str] = None,
+    impersonation_password: Optional[str] = None,
+) -> Any:
+    """Retrieves a configuration value from a Tamr instance.
+
+    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
+    If an impersonation_username is provided, the command is run as the provided user.
+    If an impersonation_password is provided, password authentication is used for impersonation,
+    otherwise sudo is used.
+
+    Args:
+        config_name: The configuration names to fetch the value for
+        tamr_install_dir: Full path to directory where Tamr is installed
+        remote_client: An ssh client providing a remote connection
+        impersonation_username: A bash user to run the command as,
+            this should be the tamr install user
+        impersonation_password: The password for the impersonation_username
+
+    Returns:
+        A dictionary of Tamr configuration variables and their values
+    """
+    return get_configs(
+        config_names=[config_name],
+        config_search_regex=None,
+        user_defined_only=False,
+        tamr_install_dir=tamr_install_dir,
+        remote_client=remote_client,
+        impersonation_username=impersonation_username,
+        impersonation_password=impersonation_password,
+    )[config_name]
+
+
+def set_configs(
+    *,
+    configs: Dict[str, Any],
+    tamr_install_dir: str,
+    remote_client: Optional["paramiko.SSHClient"] = None,
+    impersonation_username: Optional[str] = None,
+    impersonation_password: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Sets configuration values in a Tamr instance.
+
+    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
+    If an impersonation_username is provided, the command is run as the provided user.
+    If an impersonation_password is provided, password authentication is used for impersonation,
+    otherwise sudo is used.
+
+    Args:
+        configs: A dictionary of configuration variables and their desired values
+        tamr_install_dir: Full path to directory where Tamr is installed
+        remote_client: An ssh client providing a remote connection
+        impersonation_username: A bash user to run the command as,
+            this should be the tamr install user
+        impersonation_password: The password for the impersonation_username
+
+    Returns:
+        A dictionary of Tamr configuration variables and their values for any configuration
+        values that were  changed by running this command
+    """
+    LOGGER.info(f"Setting {len(configs.keys())} configs in Tamr.")
+
+    # When setting values, Tamr warns about invalid config names but does not error
+    # So we get all config to validate config names before sending the config:set command
+    starting_config = get_configs(
+        tamr_install_dir=tamr_install_dir,
+        config_names=None,
+        config_search_regex=None,
+        user_defined_only=False,
+        remote_client=remote_client,
+        impersonation_username=impersonation_username,
+        impersonation_password=impersonation_password,
+    )
+
+    invalid_config_names = set(configs.keys()).difference(starting_config.keys())
+    if len(invalid_config_names) > 0:
+        raise ValueError(
+            f"Cannot set provided Tamr configs. "
+            f"Invalid config names found: {invalid_config_names}"
+        )
+
+    # Run the set command
+    command = (
+        f"{tamr_install_dir}/tamr/utils/unify-admin.sh config:set "
+        f"{' '.join([f'{key}={value}' for key, value in configs.items()])}"
+    )
+    _run_command(
+        command=command,
+        remote_client=remote_client,
+        impersonation_username=impersonation_username,
+        impersonation_password=impersonation_password,
+        enforce_success=True,
+    )
+
+    # Retrieve all config again, to allow us to provide all config modified by the change
+    # A set action can impact other config values due to formula calculations
+    ending_config = get_configs(
+        tamr_install_dir=tamr_install_dir,
+        config_names=None,
+        config_search_regex=None,
+        user_defined_only=False,
+        remote_client=remote_client,
+        impersonation_username=impersonation_username,
+        impersonation_password=impersonation_password,
+    )
+    return {key: value for key, value in ending_config.items() if starting_config[key] != value}
+
+
+def set_config(
+    *,
+    config_name: str,
+    config_value: Any,
+    tamr_install_dir: str,
+    remote_client: Optional["paramiko.SSHClient"] = None,
+    impersonation_username: Optional[str] = None,
+    impersonation_password: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Sets configuration values in a Tamr instance.
+
+    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
+    If an impersonation_username is provided, the command is run as the provided user.
+    If an impersonation_password is provided, password authentication is used for impersonation,
+    otherwise sudo is used.
+
+    Args:
+        config_name: The name of the configuration variable to update
+        config_value: The desired value for the configuration variable
+        tamr_install_dir: Full path to directory where Tamr is installed
+        remote_client: An ssh client providing a remote connection
+        impersonation_username: A bash user to run the command as,
+            this should be the tamr install user
+        impersonation_password: The password for the impersonation_username
+
+    Returns:
+        A dictionary of Tamr configuration variables and their values for any configuration
+        values that were  changed by running this command
+    """
+    return set_configs(
+        tamr_install_dir=tamr_install_dir,
+        configs={config_name: config_value},
+        remote_client=remote_client,
+        impersonation_username=impersonation_username,
+        impersonation_password=impersonation_password,
     )
