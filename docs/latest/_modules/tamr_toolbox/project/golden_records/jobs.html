@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -180,6 +180,7 @@
     <span class="n">run_profile_golden_records</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_update_golden_records</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_publish_golden_records</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Executes specified steps of a golden records project.</span>
 
@@ -191,6 +192,8 @@
 <span class="sd">            dataset</span>
 <span class="sd">        run_publish_golden_records: Whether refresh should be called on the published golden</span>
 <span class="sd">            records dataset</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -214,10 +217,13 @@
         <span class="n">resp</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/projects/</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">/goldenRecordsProfile:refresh&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+
         <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">resp</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">run_update_golden_records</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating the draft golden records for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
@@ -226,10 +232,13 @@
         <span class="n">resp</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/projects/</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">/goldenRecords:refresh&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+
         <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">resp</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">run_publish_golden_records</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Publishing golden records for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
@@ -238,18 +247,23 @@
             <span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/projects/</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">/publishedGoldenRecords:refresh&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;?validate=true&amp;version=CURRENT&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+
         <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">resp</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">completed_operations</span>
 
 
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Run the project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target golden records project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -259,14 +273,19 @@
         <span class="n">run_profile_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_update_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_publish_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_input_dataset_profiling_information"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.update_input_dataset_profiling_information">[docs]</a><span class="k">def</span> <span class="nf">update_input_dataset_profiling_information</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_profiling_info"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.update_profiling_info">[docs]</a><span class="k">def</span> <span class="nf">update_profiling_info</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Updating all profiling information for golden records project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target golden records project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -276,14 +295,19 @@
         <span class="n">run_profile_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_update_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_publish_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_golden_records"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.update_golden_records">[docs]</a><span class="k">def</span> <span class="nf">update_golden_records</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_golden_records"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.update_golden_records">[docs]</a><span class="k">def</span> <span class="nf">update_golden_records</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Update the draft golden records of a project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target golden records project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -293,14 +317,19 @@
         <span class="n">run_profile_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_publish_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="publish_golden_records"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.publish_golden_records">[docs]</a><span class="k">def</span> <span class="nf">publish_golden_records</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="publish_golden_records"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.publish_golden_records">[docs]</a><span class="k">def</span> <span class="nf">publish_golden_records</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Publish the  golden records of a project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target golden records project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -310,14 +339,19 @@
         <span class="n">run_profile_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_publish_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_and_publish"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.update_and_publish">[docs]</a><span class="k">def</span> <span class="nf">update_and_publish</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_and_publish"><a class="viewcode-back" href="../../../../modules/project/golden_records.html#tamr_toolbox.project.golden_records.jobs.update_and_publish">[docs]</a><span class="k">def</span> <span class="nf">update_and_publish</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Update the draft golden records and publish the golden records</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target golden records project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -327,6 +361,7 @@
         <span class="n">run_profile_golden_records</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_publish_golden_records</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 </pre></div>
 

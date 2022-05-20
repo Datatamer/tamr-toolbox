@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -173,18 +173,22 @@
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_run_custom</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_run_custom</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Executes specified steps of a schema mapping project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target schema mapping project</span>
 <span class="sd">        run_update_unified_dataset: Whether refresh should be called on the unified dataset</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        TypeError: if the `project` is not a Schema Mapping project</span>
+<span class="sd">        TypeError: if the `project` is not a Schema Mapping projectgit</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ProjectType</span><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">:</span>
         <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot use as a schema mapping project. Project type: </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -196,35 +200,47 @@
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating the unified dataset for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">completed_operations</span>
 
 
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../../modules/project/schema_mapping.html#tamr_toolbox.project.schema_mapping.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../../modules/project/schema_mapping.html#tamr_toolbox.project.schema_mapping.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Run the project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target schema mapping project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span>
+        <span class="n">project</span><span class="p">,</span> <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span>
+    <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_unified_dataset"><a class="viewcode-back" href="../../../../modules/project/schema_mapping.html#tamr_toolbox.project.schema_mapping.jobs.update_unified_dataset">[docs]</a><span class="k">def</span> <span class="nf">update_unified_dataset</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_unified_dataset"><a class="viewcode-back" href="../../../../modules/project/schema_mapping.html#tamr_toolbox.project.schema_mapping.jobs.update_unified_dataset">[docs]</a><span class="k">def</span> <span class="nf">update_unified_dataset</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Updates the unified dataset for a schema mapping project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target schema mapping project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span>
+        <span class="n">project</span><span class="p">,</span> <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span>
+    <span class="p">)</span></div>
 </pre></div>
 
            </div>

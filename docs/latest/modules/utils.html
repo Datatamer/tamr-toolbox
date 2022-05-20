@@ -40,7 +40,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Workflow" href="workflow.html" />
-    <link rel="prev" title="Project Movement" href="project/movement.html" /> 
+    <link rel="prev" title="SysAdmin" href="sysadmin.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -97,11 +97,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Utilities</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.client">Client</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.config">Configuration</a></li>
@@ -109,6 +111,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.operation">Operation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.testing">Testing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.downstream">Downstream</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.upstream">Upstream</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.version">Version</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
@@ -556,7 +560,7 @@ when there is a state change</p>
 <p>Tasks related to testing code</p>
 <dl class="py function">
 <dt id="tamr_toolbox.utils.testing.mock_api">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.testing.</span></code><code class="sig-name descname"><span class="pre">mock_api</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_logs_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_online_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/testing.html#mock_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.testing.mock_api" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.testing.</span></code><code class="sig-name descname"><span class="pre">mock_api</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_logs_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_online_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/testing.html#mock_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.testing.mock_api" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator for <cite>pytest</cite> tests that mocks API requests by reading a file of
 pre-generated responses. Will generate responses file based on a real connection
 if pre-generated responses are not found.</p>
@@ -564,8 +568,9 @@ if pre-generated responses are not found.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>response_logs_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – Directory to read/write response logs</p></li>
-<li><p><strong>enforce_online_test</strong> – Whether an online test should be run, even if a response log
+<li><p><strong>enforce_online_test</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether an online test should be run, even if a response log
 already exists</p></li>
+<li><p><strong>asynchronous</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to <cite>wait</cite> for Operations called during the running of tests</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -636,6 +641,85 @@ regex (dataset name has suffix ‘unified_dataset’).</p></li>
 </dd></dl>
 
 </div>
+<div class="section" id="module-tamr_toolbox.utils.upstream">
+<span id="upstream"></span><h2>Upstream<a class="headerlink" href="#module-tamr_toolbox.utils.upstream" title="Permalink to this headline">¶</a></h2>
+<p>Functions related to projects upstream of a specified project</p>
+<dl class="py function">
+<dt id="tamr_toolbox.utils.upstream.datasets">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.upstream.</span></code><code class="sig-name descname"><span class="pre">datasets</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/upstream.html#datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.upstream.datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for upstream datasets associated with a specified dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – the Tamr dataset for which associated upstream datasets are retrieved</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of Tamr datasets upstream of the target dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.utils.upstream.projects">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.upstream.</span></code><code class="sig-name descname"><span class="pre">projects</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/upstream.html#projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.upstream.projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for upstream projects associated with a specified project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – the tamr project for which associated upstream projects are retrieved</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of tamr projects upstream of the target project</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tamr_toolbox.utils.version">
+<span id="version"></span><h2>Version<a class="headerlink" href="#module-tamr_toolbox.utils.version" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to the version of Tamr instances</p>
+<dl class="py function">
+<dt id="tamr_toolbox.utils.version.current">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></code><code class="sig-name descname"><span class="pre">current</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the version of Tamr for provided client</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>String representation of Tamr version</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.utils.version.enforce_after_or_equal">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></code><code class="sig-name descname"><span class="pre">enforce_after_or_equal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compare_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#enforce_after_or_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.enforce_after_or_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises an exception if the version of the Tamr client is before the provided compare version</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client</p></li>
+<li><p><strong>compare_version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – String representation of Tamr version</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -645,7 +729,7 @@ regex (dataset name has suffix ‘unified_dataset’).</p></li>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="workflow.html" class="btn btn-neutral float-right" title="Workflow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="project/movement.html" class="btn btn-neutral float-left" title="Project Movement" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sysadmin.html" class="btn btn-neutral float-left" title="SysAdmin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

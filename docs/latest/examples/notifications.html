@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -96,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Notifications</a><ul>
@@ -105,9 +106,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#step-3-use-cases">Step 3: Use Cases</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#email-notifications">Email Notifications</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
 </ul>
@@ -251,6 +254,64 @@ You may locate <strong>Details</strong> using a circled exclamation mark on its 
 <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="email-notifications">
+<h2>Email Notifications<a class="headerlink" href="#email-notifications" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for generating Email notifications based on Tamr jobs&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.operation_state</span> <span class="kn">import</span> <span class="n">OperationState</span>
+
+<span class="c1"># Make Tamr Client</span>
+<span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+
+<span class="c1"># Make Email configuration object that include smtp server information</span>
+<span class="c1"># and sender/recipient email addresses</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;sender_address&quot;</span><span class="p">:</span> <span class="s2">&quot;sender@gmail.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sender_password&quot;</span><span class="p">:</span> <span class="s2">&quot;sender_email_password&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;recipient_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;recipient@gmail.com&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;smtp_server&quot;</span><span class="p">:</span> <span class="s2">&quot;smtp.gmail.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;smtp_port&quot;</span><span class="p">:</span> <span class="mi">587</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># Send any email message</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">notifications</span><span class="o">.</span><span class="n">emails</span><span class="o">.</span><span class="n">send_email</span><span class="p">(</span>
+    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;This is a test message.&quot;</span><span class="p">,</span>
+    <span class="n">subject_line</span><span class="o">=</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span>
+    <span class="n">sender_address</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sender_address&quot;</span><span class="p">],</span>
+    <span class="n">sender_password</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sender_password&quot;</span><span class="p">],</span>
+    <span class="n">recipient_addresses</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;recipient_addresses&quot;</span><span class="p">],</span>
+    <span class="n">smtp_server</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;smtp_server&quot;</span><span class="p">],</span>
+    <span class="n">smtp_port</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;smtp_port&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Use case 1: Track the status updates for a specific job using its job id</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">notifications</span><span class="o">.</span><span class="n">emails</span><span class="o">.</span><span class="n">monitor_job</span><span class="p">(</span>
+    <span class="n">tamr</span><span class="o">=</span><span class="n">tamr</span><span class="p">,</span>
+    <span class="n">sender_address</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sender_address&quot;</span><span class="p">],</span>
+    <span class="n">sender_password</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sender_password&quot;</span><span class="p">],</span>
+    <span class="n">recipient_addresses</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;recipient_addresses&quot;</span><span class="p">],</span>
+    <span class="n">smtp_server</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;smtp_server&quot;</span><span class="p">],</span>
+    <span class="n">smtp_port</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;smtp_port&quot;</span><span class="p">],</span>
+    <span class="n">operation</span><span class="o">=</span><span class="s2">&quot;my_job_id&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Use case 2: Track the status updates for a job kicked off by the tamr-unify-client</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s2">&quot;Project_1&quot;</span><span class="p">)</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">notifications</span><span class="o">.</span><span class="n">emails</span><span class="o">.</span><span class="n">monitor_job</span><span class="p">(</span>
+    <span class="n">tamr</span><span class="o">=</span><span class="n">tamr</span><span class="p">,</span>
+    <span class="n">sender_address</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sender_address&quot;</span><span class="p">],</span>
+    <span class="n">sender_password</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;sender_password&quot;</span><span class="p">],</span>
+    <span class="n">recipient_addresses</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;recipient_addresses&quot;</span><span class="p">],</span>
+    <span class="n">smtp_server</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;smtp_server&quot;</span><span class="p">],</span>
+    <span class="n">smtp_port</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;smtp_port&quot;</span><span class="p">],</span>
+    <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">,</span>
+    <span class="n">notify_states</span><span class="o">=</span><span class="p">[</span><span class="n">OperationState</span><span class="o">.</span><span class="n">SUCCEEDED</span><span class="p">,</span> <span class="n">OperationState</span><span class="o">.</span><span class="n">FAILED</span><span class="p">,</span> <span class="n">OperationState</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
 </div>
 </div>
 </div>

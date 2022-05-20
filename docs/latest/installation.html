@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -202,6 +202,11 @@ your existing version.</p>
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'tamr-toolbox[slack]'</span></code></p>
 <p>Required for <a class="reference internal" href="modules/notifications/slack.html"><span class="doc">Slack</span></a></p>
 <p>Library: <a class="reference external" href="https://github.com/slackapi/python-slackclient">Slack Client</a> (<code class="docutils literal notranslate"><span class="pre">tamr-toolbox</span></code> uses version &gt;= 2.7.2)</p>
+<p><em><strong>Optional Feature: Remote SSH Connection</strong></em></p>
+<p>Install instructions:
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'tamr-toolbox[ssh]'</span></code></p>
+<p>Required for <a class="reference internal" href="modules/sysadmin.html"><span class="doc">Instance</span></a></p>
+<p>Library: <a class="reference external" href="https://github.com/paramiko/paramiko">Paramiko</a> (<code class="docutils literal notranslate"><span class="pre">tamr-toolbox</span></code> uses version &gt;= 2.8.0)</p>
 <p><strong>Offline installation</strong></p>
 <p>Download <code class="docutils literal notranslate"><span class="pre">tamr-toolbox</span></code> and its dependencies on a machine with the same operating system and python version as your target system, that has online access to PyPI:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip download <span class="s1">&#39;tamr-toolbox[all]&#39;</span> -d tamr-toolbox-requirements

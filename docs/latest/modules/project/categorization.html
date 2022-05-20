@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -97,6 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
@@ -115,6 +116,7 @@
 <li class="toctree-l3"><a class="reference internal" href="movement.html">Project Movement</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflow.html">Workflow</a></li>
 </ul>
@@ -197,13 +199,15 @@
 <p>Tasks related to running jobs for Tamr Categorization projects</p>
 <dl class="py function">
 <dt id="tamr_toolbox.project.categorization.jobs.run">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – The target categorization project</p></li>
 <li><p><strong>run_apply_feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether train should be called on the categorization model</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -217,11 +221,36 @@
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.categorization.jobs.update_unified_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">update_unified_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#update_unified_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.update_unified_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">update_unified_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#update_unified_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.update_unified_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the unified dataset for a categorization project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.jobs.apply_feedback">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">apply_feedback</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#apply_feedback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.apply_feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the model only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
@@ -234,11 +263,15 @@
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">apply_feedback_and_update_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#apply_feedback_and_update_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">apply_feedback_and_update_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#apply_feedback_and_update_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trains the model and updates the categorization predictions of a categorization project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
@@ -251,12 +284,16 @@
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.categorization.jobs.update_results_only">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">update_results_only</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#update_results_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.update_results_only" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">update_results_only</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#update_results_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.update_results_only" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the categorization predictions based on the existing model of a
 categorization project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
@@ -326,7 +363,7 @@ a warning and return the existing AttributeMapping from the project’s collecti
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>AttributeMapping that was created</p>
+<dd class="field-odd"><p>The created AttributeMapping</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – if input variables <cite>source_attribute_name</cite> or <cite>source_dataset_name</cite> or

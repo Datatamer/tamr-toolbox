@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -260,7 +260,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_endpoint</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">response</span>
-        <span class="k">except</span> <span class="ne">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="c1"># If we got for example a connection refused exception, try again later</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Caught exception in connect </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">sleep</span><span class="p">(</span><span class="n">sleep_seconds</span><span class="p">)</span>
@@ -320,7 +320,6 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        New Tamr Client based on the previous response</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">request</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span>
     <span class="n">url_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(https?)://(.*):(\d</span><span class="si">{4}</span><span class="s2">)(.*)&quot;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>

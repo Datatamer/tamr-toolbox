@@ -1,9 +1,11 @@
 # Examples
 * [Data Input/Output](examples/data_io.rst)
+* [Dataset](examples/dataset.rst)
 * [Enrichment](examples/enrichment.rst)
 * [Filesystem](examples/filesystem.rst)
 * [Low Latency](examples/low_latency.rst)
 * [Notifications](examples/notifications.md)
 * [Project](examples/project.rst)
+* [Sysadmin](examples/sysadmin.rst)
 * [Utilities](examples/utils.rst)
 * [Workflow](examples/workflow.rst)

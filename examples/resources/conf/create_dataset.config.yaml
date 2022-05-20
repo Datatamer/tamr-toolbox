@@ -1,0 +1,18 @@
+# create_dataset.config.yaml
+
+logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/logs"
+
+my_tamr_instance:
+    host: $TAMR_HOST # Example: "1.2.3.4"
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+datasets:
+    my_mastering_project_dataset:
+        name: "test_create_dataset"
+        attributes: ["unique_id", "name", "address"]
+        primary_keys: ["unique_id"]
+        description: "Dataset for testing"
+

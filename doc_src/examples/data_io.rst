@@ -52,6 +52,10 @@ Exporting a Tamr dataset to Hive
 .. literalinclude:: ../../examples/scripts/data_io/df_connect/export_to_hive.py
   :language: python
 
+Check if Tamr dataset is streamable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/df_connect/streamable_check.py
+  :language: python
 
 Dataframe
 ------------------------------------------------------------------------

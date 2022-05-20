@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -174,7 +174,7 @@
 <span class="n">CONFIDENCE_DATASET_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;classifications_average_confidences&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">_check_dataset_with_confidence</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_check_dataset_with_confidence</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks if the dataset contains necessary attributes for obtaining confidence information</span>
 
@@ -199,10 +199,9 @@
         <span class="p">)</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">wrong_attribute_error</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">wrong_attribute_error</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">True</span>
 
 
-<span class="k">def</span> <span class="nf">_check_taxonomy_depth</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tier</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_check_taxonomy_depth</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tier</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks the maximum depth of the taxonomy associated wit</span>
 
@@ -219,7 +218,7 @@
 
     <span class="c1"># depth check is not required for leaf nodes</span>
     <span class="k">if</span> <span class="n">tier</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span>
 
     <span class="n">max_depth</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">classification_project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">as_categorization</span><span class="p">()</span>
@@ -236,7 +235,6 @@
         <span class="p">)</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">invalid_tier_value_error</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">invalid_tier_value_error</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">True</span>
 
 
 <span class="k">def</span> <span class="nf">_create_leaf_node_set</span><span class="p">(</span><span class="n">taxonomy</span><span class="p">:</span> <span class="n">Taxonomy</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
@@ -411,10 +409,10 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">cannot_stream_error</span><span class="p">)</span>
 
     <span class="c1"># check dataset contains necessary attributes</span>
-    <span class="k">assert</span> <span class="n">_check_dataset_with_confidence</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">_check_dataset_with_confidence</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
     <span class="c1"># check tier does not exceed maximum taxonomy depth</span>
-    <span class="k">assert</span> <span class="n">_check_taxonomy_depth</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">tier</span><span class="o">=</span><span class="n">tier</span><span class="p">)</span>
+    <span class="n">_check_taxonomy_depth</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">tier</span><span class="o">=</span><span class="n">tier</span><span class="p">)</span>
 
     <span class="c1"># obtain categories at tier</span>
     <span class="n">selected_category_set</span> <span class="o">=</span> <span class="n">_get_categories_at_tier</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">tier</span><span class="o">=</span><span class="n">tier</span><span class="p">)</span>

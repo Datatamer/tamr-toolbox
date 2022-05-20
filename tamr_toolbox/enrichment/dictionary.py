@@ -10,7 +10,6 @@ from pathlib import Path
 import json
 import os
 import logging
-import tempfile
 
 LOGGER = logging.getLogger(__name__)
 
@@ -368,9 +367,11 @@ def to_dataset(
             LOGGER.error(error_message)
             raise ValueError(error_message)
 
+        # Get dataset name using filename function
+        # The value of dictionary folder here is unimportant
         dataset_name = os.path.basename(
             filename(
-                dictionary_folder=tempfile.gettempdir(),
+                dictionary_folder="not/a/real/path",  # will be dropped immediately
                 target_language=target_language,
                 source_language=source_language,
             )

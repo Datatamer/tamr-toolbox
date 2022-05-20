@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -176,7 +176,7 @@
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="list_backups"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.list_backups">[docs]</a><span class="k">def</span> <span class="nf">list_backups</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<div class="viewcode-block" id="list_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.list_backups">[docs]</a><span class="k">def</span> <span class="nf">list_backups</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Lists all backups available to Tamr client. Will list both succeeded and failed backups.</span>
 
 <span class="sd">    Args:</span>
@@ -188,7 +188,7 @@
         <span class="k">yield</span> <span class="n">backup</span></div>
 
 
-<div class="viewcode-block" id="get_backup_by_id"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.get_backup_by_id">[docs]</a><span class="k">def</span> <span class="nf">get_backup_by_id</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">backup_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+<div class="viewcode-block" id="get_backup_by_id"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.get_backup_by_id">[docs]</a><span class="k">def</span> <span class="nf">get_backup_by_id</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">backup_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Fetches the json object for a given backup ID.</span>
 
 <span class="sd">    Args:</span>
@@ -215,7 +215,7 @@
     <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="initiate_backup"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.initiate_backup">[docs]</a><span class="k">def</span> <span class="nf">initiate_backup</span><span class="p">(</span>
+<div class="viewcode-block" id="initiate_backup"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.initiate_backup">[docs]</a><span class="k">def</span> <span class="nf">initiate_backup</span><span class="p">(</span>
     <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
@@ -251,7 +251,7 @@
     <span class="k">return</span> <span class="n">op</span></div>
 
 
-<div class="viewcode-block" id="initiate_restore"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.initiate_restore">[docs]</a><span class="k">def</span> <span class="nf">initiate_restore</span><span class="p">(</span>
+<div class="viewcode-block" id="initiate_restore"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.initiate_restore">[docs]</a><span class="k">def</span> <span class="nf">initiate_restore</span><span class="p">(</span>
     <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
     <span class="n">backup_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -311,7 +311,7 @@
     <span class="k">return</span> <span class="n">op</span></div>
 
 
-<div class="viewcode-block" id="validate_backup"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.validate_backup">[docs]</a><span class="k">def</span> <span class="nf">validate_backup</span><span class="p">(</span>
+<div class="viewcode-block" id="validate_backup"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.validate_backup">[docs]</a><span class="k">def</span> <span class="nf">validate_backup</span><span class="p">(</span>
     <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Validates that a directory is a valid backup. A valid backup has a</span>
@@ -366,7 +366,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="delete_backups"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.delete_backups">[docs]</a><span class="k">def</span> <span class="nf">delete_backups</span><span class="p">(</span>
+<div class="viewcode-block" id="delete_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_backups">[docs]</a><span class="k">def</span> <span class="nf">delete_backups</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">backups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
@@ -398,7 +398,7 @@
     <span class="k">return</span> <span class="n">deleted_backups</span></div>
 
 
-<div class="viewcode-block" id="classify_backups"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.classify_backups">[docs]</a><span class="k">def</span> <span class="nf">classify_backups</span><span class="p">(</span>
+<div class="viewcode-block" id="classify_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.classify_backups">[docs]</a><span class="k">def</span> <span class="nf">classify_backups</span><span class="p">(</span>
     <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Takes stock of successful and failed valid backups in the backup directory.</span>
@@ -443,7 +443,7 @@
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;succeeded&quot;</span><span class="p">:</span> <span class="n">succeeded</span><span class="p">,</span> <span class="s2">&quot;not_succeeded&quot;</span><span class="p">:</span> <span class="n">not_succeeded</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="delete_old_backups"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.delete_old_backups">[docs]</a><span class="k">def</span> <span class="nf">delete_old_backups</span><span class="p">(</span>
+<div class="viewcode-block" id="delete_old_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_old_backups">[docs]</a><span class="k">def</span> <span class="nf">delete_old_backups</span><span class="p">(</span>
     <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">num_successful_backups_to_keep</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -527,7 +527,7 @@
         <span class="k">return</span> <span class="n">deleted_failed_backups</span> <span class="o">+</span> <span class="n">deleted_successful_backups</span></div>
 
 
-<div class="viewcode-block" id="delete_old_spark_event_logs"><a class="viewcode-back" href="../../../modules/workflow.html#tamr_toolbox.workflow.backup.delete_old_spark_event_logs">[docs]</a><span class="k">def</span> <span class="nf">delete_old_spark_event_logs</span><span class="p">(</span>
+<div class="viewcode-block" id="delete_old_spark_event_logs"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_old_spark_event_logs">[docs]</a><span class="k">def</span> <span class="nf">delete_old_spark_event_logs</span><span class="p">(</span>
     <span class="n">tamr_home_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">num_days_to_keep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">14</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>

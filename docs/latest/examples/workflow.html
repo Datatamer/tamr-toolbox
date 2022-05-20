@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -96,14 +96,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#run-backup-restore">Run Backup Restore</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#run-multiple-projects">Run Multiple Projects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-multiple-projects-sequentially">Run Multiple Projects Sequentially</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-multiple-projects-concurrently">Run Multiple Projects Concurrently</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#interactive-backup-cleanup">Interactive Backup Cleanup</a></li>
 </ul>
 </li>
@@ -200,10 +203,6 @@
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting old sparkEventLogs&quot;</span><span class="p">)</span>
 <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">delete_old_spark_event_logs</span><span class="p">(</span><span class="s2">&quot;/home/ubuntu&quot;</span><span class="p">,</span> <span class="n">num_days_to_keep</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 
-<span class="c1"># optional: delete old sparkEventLogs before backup to reduce backup size</span>
-<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting old sparkEventLogs&quot;</span><span class="p">)</span>
-<span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">delete_old_spark_event_logs</span><span class="p">(</span><span class="s2">&quot;/home/ubuntu&quot;</span><span class="p">,</span> <span class="n">num_days_to_keep</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;About to run backup&quot;</span><span class="p">)</span>
 <span class="n">op</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">initiate_backup</span><span class="p">(</span><span class="n">tamr</span><span class="p">)</span>
 <span class="n">backup_id</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;relativeId&quot;</span><span class="p">]</span>
@@ -233,22 +232,22 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="run-multiple-projects">
-<span id="workflow-run-projects"></span><h2>Run Multiple Projects<a class="headerlink" href="#run-multiple-projects" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="section" id="run-multiple-projects-sequentially">
+<span id="workflow-run-projects"></span><h2>Run Multiple Projects Sequentially<a class="headerlink" href="#run-multiple-projects-sequentially" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a pipeline consisting of multiple Tamr projects&quot;&quot;&quot;</span>
@@ -285,6 +284,89 @@
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks for </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2"> complete&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">operations</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/project.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">project_ids</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_schema_mapping_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_categorization_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_mastering_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_golden_records_project&quot;</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-multiple-projects-concurrently">
+<h2>Run Multiple Projects Concurrently<a class="headerlink" href="#run-multiple-projects-concurrently" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a pipeline consisting of multiple Tamr projects concurrently&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">project_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Runs the continuous steps of a multiple projects of any type</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        project_ids: The ids of the target projects to run in order</span>
+
+<span class="sd">    Returns: List of jobs run</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># Retrieve the projects</span>
+    <span class="n">my_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_id</span> <span class="ow">in</span> <span class="n">project_ids</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;About to run build graph for projects: </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">my_graph</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">from_project_list</span><span class="p">(</span><span class="n">my_projects</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Building planner object&quot;</span><span class="p">)</span>
+    <span class="n">my_planner</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Planner</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">my_graph</span><span class="p">,</span> <span class="n">tamr_client</span><span class="o">=</span><span class="n">tamr_client</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing concurrent workflow with 3 concurrent jobs&quot;</span><span class="p">)</span>
+    <span class="n">my_planner</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Planner</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">my_planner</span><span class="p">,</span> <span class="n">tamr_client</span><span class="p">,</span> <span class="n">concurrency_level</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span>
+
+    <span class="n">plan_status</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">PlanStatus</span><span class="o">.</span><span class="n">from_planner</span><span class="p">(</span><span class="n">my_planner</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status after running plan </span><span class="si">{</span><span class="n">plan_status</span><span class="si">}</span><span class="s2"> complete&quot;</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -240,7 +240,7 @@
     <span class="o">*</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Response</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;If the provided response is an Operation, wait for the operation to complete and</span>
-<span class="sd">    return responses related to that operation.</span>
+<span class="sd">    return responses related to that operation for cases where we are running synchronously.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        response: A previous Response generated from the same Tamr client</span>
@@ -250,11 +250,10 @@
 <span class="sd">        Responses related to polling the operation</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">client</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">_from_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
     <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation to complete: </span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="n">request_while_pending</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/operations/</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;PENDING&quot;</span><span class="p">:</span>
@@ -268,14 +267,18 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">request_while_pending</span><span class="p">,</span> <span class="n">request_while_running</span><span class="p">,</span> <span class="n">request_when_complete</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_log_response</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_log_response</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Appends a response to a file. If the response returned is</span>
 <span class="sd">     a Tamr Operation, poll the operation until complete and log those responses as well</span>
+<span class="sd">     unless asynchronous is set to True.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        log_path: File to write the response to</span>
 <span class="sd">        ip_dict: Mapping of previously encountered IP addresses to their anonymization number</span>
 <span class="sd">        response: The response to log</span>
+<span class="sd">        asynchoronous: Whether or not to `wait` for Operations called during the running of tests</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;logged request: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -289,7 +292,7 @@
         <span class="n">is_get_request</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span>
         <span class="n">is_not_error</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span>
 
-        <span class="k">if</span> <span class="n">is_get_request</span> <span class="ow">and</span> <span class="n">is_operation_request</span> <span class="ow">and</span> <span class="n">is_not_error</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_get_request</span> <span class="ow">and</span> <span class="n">is_operation_request</span> <span class="ow">and</span> <span class="n">is_not_error</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">asynchronous</span><span class="p">:</span>
             <span class="n">wait_resp</span> <span class="o">=</span> <span class="n">_collect_operation_calls</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
             <span class="n">all_responses</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">wait_resp</span><span class="p">)</span>
 
@@ -330,7 +333,10 @@
 
 
 <div class="viewcode-block" id="mock_api"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.testing.mock_api">[docs]</a><span class="k">def</span> <span class="nf">mock_api</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span> <span class="n">response_logs_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">enforce_online_test</span><span class="o">=</span><span class="kc">False</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">response_logs_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">enforce_online_test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Decorator for `pytest` tests that mocks API requests by reading a file of</span>
 <span class="sd">    pre-generated responses. Will generate responses file based on a real connection</span>
@@ -340,6 +346,7 @@
 <span class="sd">        response_logs_dir: Directory to read/write response logs</span>
 <span class="sd">        enforce_online_test: Whether an online test should be run, even if a response log</span>
 <span class="sd">            already exists</span>
+<span class="sd">        asynchronous: Whether or not to `wait` for Operations called during the running of tests</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Decorated function</span>
@@ -375,7 +382,10 @@
                     <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">_run_online_test</span><span class="p">(</span>
-                    <span class="n">response_log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span> <span class="n">test_function</span><span class="o">=</span><span class="n">test_function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                    <span class="n">response_log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span>
+                    <span class="n">test_function</span><span class="o">=</span><span class="n">test_function</span><span class="p">,</span>
+                    <span class="n">asynchronous</span><span class="o">=</span><span class="n">asynchronous</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wrapped</span>
@@ -422,12 +432,16 @@
             <span class="n">test_function</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@responses</span><span class="o">.</span><span class="n">activate</span>
-    <span class="k">def</span> <span class="nf">_run_online_test</span><span class="p">(</span><span class="n">response_log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">test_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_run_online_test</span><span class="p">(</span>
+        <span class="n">response_log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">test_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Runs a test function against a Tamr instance and saves the API responses to a file</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            response_log_path: Location to save API responses</span>
 <span class="sd">            test_function: The function to test</span>
+<span class="sd">            asynchoronous: Whether or not to run asynchronously</span>
+<span class="sd">                (i.e. don&#39;t `wait` for operations to finish)</span>
 <span class="sd">            **kwargs: Keyword arguments for the test function</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -459,7 +473,12 @@
 
             <span class="c1"># Prevent recursion</span>
             <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;responses._real_send&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">_BASE_SEND_REAL</span><span class="p">):</span>
-                <span class="n">_log_response</span><span class="p">(</span><span class="n">log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span> <span class="n">ip_dict</span><span class="o">=</span><span class="n">ip_lookup</span><span class="p">)</span>
+                <span class="n">_log_response</span><span class="p">(</span>
+                    <span class="n">log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span>
+                    <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                    <span class="n">ip_dict</span><span class="o">=</span><span class="n">ip_lookup</span><span class="p">,</span>
+                    <span class="n">asynchronous</span><span class="o">=</span><span class="n">asynchronous</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="k">return</span> <span class="n">response</span>
 
         <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;responses._real_send&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">_send_real_with_log</span><span class="p">):</span>

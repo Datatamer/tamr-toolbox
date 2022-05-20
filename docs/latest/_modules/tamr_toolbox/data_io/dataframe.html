@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -164,7 +164,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
@@ -479,6 +479,32 @@
     <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">_check_custom</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span>
+    <span class="n">columns_to_check</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">check_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Dataframe</span>
+<span class="sd">        columns_to_check: columns on which check_function will be applied</span>
+<span class="sd">        check_function: function applied on columns_to_check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ValidationCheck object, with bool for whether all checks passed and dict of failing columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns_to_check</span><span class="p">]</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">check_function</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns_to_check</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">df1</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> failed custom check </span><span class="si">{</span><span class="n">check_function</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">failed_checks_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;failed custom check </span><span class="si">{</span><span class="n">check_function</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../../modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
     <span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -486,6 +512,7 @@
     <span class="n">require_present_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">require_unique_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">require_nonnull_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">custom_checks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs validation checks on a DataFrame.</span>
@@ -500,6 +527,9 @@
 <span class="sd">        require_unique_columns: list of columns that are checked to have all unique values,</span>
 <span class="sd">            e.g. a primary key column</span>
 <span class="sd">        require_nonnull_columns: list of columns that are checked to have all non-null values</span>
+<span class="sd">        custom_checks: collection of tuples each containing a custom function and list of columns,</span>
+<span class="sd">            on which to apply it</span>
+
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ValidationCheck object, with bool for whether all checks passed and dict of failing columns</span>
@@ -534,7 +564,13 @@
         <span class="n">_check_nonnull_columns</span><span class="p">(</span><span class="n">df_profile</span><span class="p">,</span> <span class="n">require_nonnull_columns</span><span class="o">=</span><span class="n">require_nonnull_columns</span><span class="p">)</span><span class="o">.</span><span class="n">details</span>
     <span class="p">)</span>
 
-    <span class="c1"># convert to dict for printing/return</span>
+    <span class="k">for</span> <span class="n">custom_check</span> <span class="ow">in</span> <span class="n">custom_checks</span><span class="p">:</span>
+        <span class="n">failed_checks_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">_check_custom</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="n">check_function</span><span class="o">=</span><span class="n">custom_check</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">columns_to_check</span><span class="o">=</span><span class="n">custom_check</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">details</span>
+        <span class="p">)</span>
+
     <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span>
     <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">passed</span> <span class="ow">and</span> <span class="n">raise_error</span><span class="p">:</span>

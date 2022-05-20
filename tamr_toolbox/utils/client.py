@@ -158,7 +158,6 @@ def _from_response(response: Response) -> Client:
 
     Returns:
         New Tamr Client based on the previous response
-
     """
     request = response.request
     url_matcher = re.match(r"(https?)://(.*):(\d{4})(.*)", request.url)

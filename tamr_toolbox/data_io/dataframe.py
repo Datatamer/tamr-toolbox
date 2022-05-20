@@ -2,7 +2,7 @@
 import os
 import logging
 
-from typing import Optional, List
+from typing import Optional, List, Callable, Any, Iterable, Tuple
 from collections import OrderedDict, defaultdict
 from functools import partial
 
@@ -317,6 +317,32 @@ def _check_nonnull_columns(
     return ValidationCheck(passed, failed_checks_dict)
 
 
+def _check_custom(
+    df: "pandas.DataFrame",
+    columns_to_check: Optional[List[str]],
+    check_function: Callable[[Any], bool],
+) -> ValidationCheck:
+    """
+    Args:
+        df: Dataframe
+        columns_to_check: columns on which check_function will be applied
+        check_function: function applied on columns_to_check
+
+    Returns:
+        ValidationCheck object, with bool for whether all checks passed and dict of failing columns
+    """
+    failed_checks_dict = defaultdict(list)
+
+    df1 = df[columns_to_check].applymap(check_function)
+    for col in columns_to_check:
+        if not df1[col].all():
+            LOGGER.warning(f"column {col} failed custom check {check_function.__name__}")
+            failed_checks_dict[f"failed custom check {check_function.__name__}"].append(col)
+
+    passed = len(failed_checks_dict) == 0
+    return ValidationCheck(passed, failed_checks_dict)
+
+
 def validate(
     df: "pandas.DataFrame",
     *,
@@ -324,6 +350,7 @@ def validate(
     require_present_columns: Optional[List[str]] = None,
     require_unique_columns: Optional[List[str]] = None,
     require_nonnull_columns: Optional[List[str]] = None,
+    custom_checks: Iterable[Tuple[Callable[[Any], bool], List[str]]] = tuple(),
 ) -> ValidationCheck:
     """
     Performs validation checks on a DataFrame.
@@ -338,6 +365,9 @@ def validate(
         require_unique_columns: list of columns that are checked to have all unique values,
             e.g. a primary key column
         require_nonnull_columns: list of columns that are checked to have all non-null values
+        custom_checks: collection of tuples each containing a custom function and list of columns,
+            on which to apply it
+
 
     Returns:
         ValidationCheck object, with bool for whether all checks passed and dict of failing columns
@@ -372,7 +402,13 @@ def validate(
         _check_nonnull_columns(df_profile, require_nonnull_columns=require_nonnull_columns).details
     )
 
-    # convert to dict for printing/return
+    for custom_check in custom_checks:
+        failed_checks_dict.update(
+            _check_custom(
+                df, check_function=custom_check[0], columns_to_check=custom_check[1],
+            ).details
+        )
+
     failed_checks_dict = dict(failed_checks_dict)
     passed = len(failed_checks_dict) == 0
     if not passed and raise_error:

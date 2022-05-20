@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -97,6 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Models</a><ul>
@@ -104,10 +105,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.models.project_type">Project Type</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.models.validation_check">Validation Check</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.models.project_artifacts">Project Artifacts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.models.project_steps">Project Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attribute-types">Attribute Types</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
 </ul>
@@ -332,6 +336,152 @@ GR_OVERRIDES: artifact name for a Golden Records project</p>
 <li><p><strong>CATEGORIZATION</strong> – MasteringArtifacts dataclass instance</p></li>
 <li><p><strong>GOLDEN_RECORDS</strong> – MasteringArtifacts dataclass instance</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tamr_toolbox.models.project_steps">
+<span id="project-steps"></span><h2>Project Steps<a class="headerlink" href="#module-tamr_toolbox.models.project_steps" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="tamr_toolbox.models.project_steps.CategorizationSteps">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.project_steps.</span></code><code class="sig-name descname"><span class="pre">CategorizationSteps</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/project_steps.html#CategorizationSteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.project_steps.CategorizationSteps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum class for the steps of a classification project</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.models.project_steps.SchemaMappingSteps">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.project_steps.</span></code><code class="sig-name descname"><span class="pre">SchemaMappingSteps</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/project_steps.html#SchemaMappingSteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.project_steps.SchemaMappingSteps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum class for the steps of a schema mapping project</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.models.project_steps.MasteringSteps">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.project_steps.</span></code><code class="sig-name descname"><span class="pre">MasteringSteps</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/project_steps.html#MasteringSteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.project_steps.MasteringSteps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum class for the steps of a mastering project</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.models.project_steps.GoldenRecordsSteps">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.project_steps.</span></code><code class="sig-name descname"><span class="pre">GoldenRecordsSteps</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/project_steps.html#GoldenRecordsSteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.project_steps.GoldenRecordsSteps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum class for the steps of a golden records project</p>
+</dd></dl>
+
+</div>
+<div class="section" id="attribute-types">
+<h2>Attribute Types<a class="headerlink" href="#attribute-types" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="https://docs.tamr.com/reference#attribute-types">https://docs.tamr.com/reference#attribute-types</a></p>
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.BOOLEAN">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">BOOLEAN</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;PrimitiveType.BOOLEAN:</span> <span class="pre">1&gt;</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.BOOLEAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.DOUBLE">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">DOUBLE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.DOUBLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.INT">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">INT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;PrimitiveType.INT:</span> <span class="pre">3&gt;</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.INT" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.LONG">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">LONG</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;PrimitiveType.LONG:</span> <span class="pre">4&gt;</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.LONG" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.STRING">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">STRING</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;PrimitiveType.STRING:</span> <span class="pre">5&gt;</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.STRING" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.DEFAULT">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">DEFAULT</span></code><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">tamr_toolbox.models.attribute_type.PrimitiveType</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Array" title="tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Array"><span class="pre">tamr_toolbox.models.attribute_type.Array</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Map" title="tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Map"><span class="pre">tamr_toolbox.models.attribute_type.Map</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><span class="pre">tamr_toolbox.models.attribute_type.Record</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">Array(inner_type=&lt;PrimitiveType.STRING:</span> <span class="pre">5&gt;)</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.DEFAULT" title="Permalink to this definition">¶</a></dt>
+<dd><p>//docs.tamr.com/reference#attribute-types
+.. note:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>`sphinx_autodoc_typehints` cannot handle forward reference to `AttributeType`,
+so reference docs are written manually for this type
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inner_type</strong> – </p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p>See https</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt id="tamr_toolbox.models.attribute_type.GEOSPATIAL">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">GEOSPATIAL</span></code><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">tamr_toolbox.models.attribute_type.PrimitiveType</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Array" title="tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Array"><span class="pre">tamr_toolbox.models.attribute_type.Array</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Map" title="tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Map"><span class="pre">tamr_toolbox.models.attribute_type.Map</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><span class="pre">tamr_toolbox.models.attribute_type.Record</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">Record(attributes=(SubAttribute(name='point',</span> <span class="pre">type=Array(inner_type=&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;),</span> <span class="pre">is_nullable=True),</span> <span class="pre">SubAttribute(name='multiPoint',</span> <span class="pre">type=Array(inner_type=Array(inner_type=&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;)),</span> <span class="pre">is_nullable=True),</span> <span class="pre">SubAttribute(name='lineString',</span> <span class="pre">type=Array(inner_type=Array(inner_type=&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;)),</span> <span class="pre">is_nullable=True),</span> <span class="pre">SubAttribute(name='multiLineString',</span> <span class="pre">type=Array(inner_type=Array(inner_type=Array(inner_type=&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;))),</span> <span class="pre">is_nullable=True),</span> <span class="pre">SubAttribute(name='polygon',</span> <span class="pre">type=Array(inner_type=Array(inner_type=Array(inner_type=&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;))),</span> <span class="pre">is_nullable=True),</span> <span class="pre">SubAttribute(name='multiPolygon',</span> <span class="pre">type=Array(inner_type=Array(inner_type=Array(inner_type=Array(inner_type=&lt;PrimitiveType.DOUBLE:</span> <span class="pre">2&gt;)))),</span> <span class="pre">is_nullable=True)))</span></em><a class="headerlink" href="#tamr_toolbox.models.attribute_type.GEOSPATIAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>//docs.tamr.com/reference#attribute-types
+:param attributes:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>See https</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Array">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">Array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Array" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inner_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AttrType</span></code>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Map">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">Map</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.models.project_steps.tamr_toolbox.models.attribute_type.Map" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inner_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AttrType</span></code>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.models.attribute_type.Record">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">Record</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/attribute_type.html#Record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.attribute_type.Record" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.tamr.com/reference#attribute-types">https://docs.tamr.com/reference#attribute-types</a>
+:type attributes: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SubAttribute</span></code>, …]
+:param attributes:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.models.attribute_type.from_json">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">from_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/attribute_type.html#from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.attribute_type.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make an attribute type from JSON data (deserialize)
+:type data: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]
+:param data: JSON data from Tamr server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveType</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code>, <a class="reference internal" href="#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.models.attribute_type.to_json">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.models.attribute_type.</span></code><code class="sig-name descname"><span class="pre">to_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/models/attribute_type.html#to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.models.attribute_type.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize attribute type to JSON
+:type attr_type: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveType</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code>, <a class="reference internal" href="#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]
+:param attr_type: Attribute type to serialize</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>

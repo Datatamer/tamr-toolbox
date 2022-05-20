@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -184,6 +184,7 @@
     <span class="n">run_update_high_impact_pairs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_update_cluster_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_publish_clusters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Executes specified steps of a mastering project.</span>
 
@@ -199,6 +200,8 @@
 <span class="sd">        run_update_cluster_results: Whether refresh should be called on the record clusters dataset</span>
 <span class="sd">        run_publish_clusters: Whether refresh should be called on the published record clusters</span>
 <span class="sd">            dataset</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -218,54 +221,62 @@
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating the unified dataset for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_estimate_pair_counts</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estimate pair counts for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">estimate_pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">estimate_pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_generate_pairs</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating pairs for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_apply_feedback</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Applying feedback to the pairs model for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">pair_matching_model</span><span class="p">()</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">pair_matching_model</span><span class="p">()</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_update_pair_results</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating pair prediction results for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">pair_matching_model</span><span class="p">()</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">pair_matching_model</span><span class="p">()</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_update_high_impact_pairs</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Refreshing high impact pairs for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">high_impact_pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">high_impact_pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_update_cluster_results</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating cluster prediction results for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">record_clusters</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">record_clusters</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">run_publish_clusters</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Publishing clusters for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">published_clusters</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">published_clusters</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">completed_operations</span>
@@ -276,6 +287,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">run_estimate_pair_counts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_apply_feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Run the existing pipeline without training</span>
 
@@ -283,6 +295,8 @@
 <span class="sd">        project: Target mastering project</span>
 <span class="sd">        run_estimate_pair_counts: Whether an estimate pairs job should be run</span>
 <span class="sd">        run_apply_feedback: Whether train should be called on the pair matching model</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -297,14 +311,19 @@
         <span class="n">run_update_high_impact_pairs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_unified_dataset"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.update_unified_dataset">[docs]</a><span class="k">def</span> <span class="nf">update_unified_dataset</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_unified_dataset"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.update_unified_dataset">[docs]</a><span class="k">def</span> <span class="nf">update_unified_dataset</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Updates the unified dataset for a mastering project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -318,14 +337,19 @@
         <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="estimate_pair_counts"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.estimate_pair_counts">[docs]</a><span class="k">def</span> <span class="nf">estimate_pair_counts</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="estimate_pair_counts"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.estimate_pair_counts">[docs]</a><span class="k">def</span> <span class="nf">estimate_pair_counts</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Estimates the number of pairs for a mastering project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -339,14 +363,19 @@
         <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="generate_pairs"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.generate_pairs">[docs]</a><span class="k">def</span> <span class="nf">generate_pairs</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="generate_pairs"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.generate_pairs">[docs]</a><span class="k">def</span> <span class="nf">generate_pairs</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Generates the pairs for a mastering project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -360,15 +389,101 @@
         <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="apply_feedback_and_update_results"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.apply_feedback_and_update_results">[docs]</a><span class="k">def</span> <span class="nf">apply_feedback_and_update_results</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="apply_feedback"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.apply_feedback">[docs]</a><span class="k">def</span> <span class="nf">apply_feedback</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies feedback to update the model for a mastering project</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The operations that were run</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span>
+        <span class="n">project</span><span class="p">,</span>
+        <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_generate_pairs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_pair_predictions"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.update_pair_predictions">[docs]</a><span class="k">def</span> <span class="nf">update_pair_predictions</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates pair predictions only.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The operations that were run</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span>
+        <span class="n">project</span><span class="p">,</span>
+        <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_generate_pairs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_clusters"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.update_clusters">[docs]</a><span class="k">def</span> <span class="nf">update_clusters</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Re-runs clustering only.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The operations that were run</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span>
+        <span class="n">project</span><span class="p">,</span>
+        <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_generate_pairs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_feedback_and_update_results"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.apply_feedback_and_update_results">[docs]</a><span class="k">def</span> <span class="nf">apply_feedback_and_update_results</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Trains the model, predicts the pair labels, and updates the draft clusters of</span>
 <span class="sd">    a mastering project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -383,15 +498,20 @@
         <span class="n">run_update_high_impact_pairs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_results_only"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.update_results_only">[docs]</a><span class="k">def</span> <span class="nf">update_results_only</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_results_only"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.update_results_only">[docs]</a><span class="k">def</span> <span class="nf">update_results_only</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Predicts the pair labels based on the existing pair model and updates the draft clusters</span>
 <span class="sd">    of a mastering project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -406,14 +526,19 @@
         <span class="n">run_update_high_impact_pairs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="publish_clusters"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.publish_clusters">[docs]</a><span class="k">def</span> <span class="nf">publish_clusters</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="publish_clusters"><a class="viewcode-back" href="../../../../modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.publish_clusters">[docs]</a><span class="k">def</span> <span class="nf">publish_clusters</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Publishes the clusters of a mastering project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target mastering project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -427,6 +552,7 @@
         <span class="n">run_update_pair_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_cluster_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_publish_clusters</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 </pre></div>
 

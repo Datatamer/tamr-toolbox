@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -179,6 +179,7 @@
     <span class="n">run_update_unified_dataset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_apply_feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_update_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Executes specified steps of a categorization project.</span>
 
@@ -187,6 +188,8 @@
 <span class="sd">        run_update_unified_dataset: Whether refresh should be called on the unified dataset</span>
 <span class="sd">        run_apply_feedback: Whether train should be called on the pair matching model</span>
 <span class="sd">        run_update_results: Whether predict should be called on the pair matching model</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Operations that were run</span>
@@ -206,35 +209,49 @@
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating the unified dataset for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">run_apply_feedback</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Applying feedback to the categorization model for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">run_update_results</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Updating categorization results for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
         <span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
-        <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">completed_operations</span>
 
 
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_apply_feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">run_apply_feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Run the project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: The target categorization project</span>
 <span class="sd">        run_apply_feedback: Whether train should be called on the categorization model</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -244,14 +261,19 @@
         <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_apply_feedback</span><span class="o">=</span><span class="n">run_apply_feedback</span><span class="p">,</span>
         <span class="n">run_update_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_unified_dataset"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.update_unified_dataset">[docs]</a><span class="k">def</span> <span class="nf">update_unified_dataset</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_unified_dataset"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.update_unified_dataset">[docs]</a><span class="k">def</span> <span class="nf">update_unified_dataset</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Updates the unified dataset for a categorization project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target categorization project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -261,14 +283,41 @@
         <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="apply_feedback_and_update_results"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results">[docs]</a><span class="k">def</span> <span class="nf">apply_feedback_and_update_results</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="apply_feedback"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.apply_feedback">[docs]</a><span class="k">def</span> <span class="nf">apply_feedback</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Trains the model only.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Target categorization project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The operations that were run</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_run_custom</span><span class="p">(</span>
+        <span class="n">project</span><span class="p">,</span>
+        <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_update_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_feedback_and_update_results"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results">[docs]</a><span class="k">def</span> <span class="nf">apply_feedback_and_update_results</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Trains the model and updates the categorization predictions of a categorization project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target categorization project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -278,15 +327,21 @@
         <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_update_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_results_only"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.update_results_only">[docs]</a><span class="k">def</span> <span class="nf">update_results_only</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+<div class="viewcode-block" id="update_results_only"><a class="viewcode-back" href="../../../../modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.update_results_only">[docs]</a><span class="k">def</span> <span class="nf">update_results_only</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">CategorizationProject</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Updates the categorization predictions based on the existing model of a</span>
 <span class="sd">    categorization project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: Target categorization project</span>
+<span class="sd">        process_asynchronously: Whether or not to wait for the job to finish before returning</span>
+<span class="sd">            - must be set to True for concurrent workflow</span>
+
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -296,6 +351,7 @@
         <span class="n">run_update_unified_dataset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">run_update_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">process_asynchronously</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">,</span>
     <span class="p">)</span></div>
 </pre></div>
 

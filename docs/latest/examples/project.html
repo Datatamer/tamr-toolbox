@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Utilities" href="utils.html" />
+    <link rel="next" title="SysAdmin" href="sysadmin.html" />
     <link rel="prev" title="Notifications" href="notifications.html" /> 
 </head>
 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.5.0 - Icepick
+                1.7.0 - Knife
               </div>
             
           
@@ -96,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
@@ -108,6 +109,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#categorization">Categorization</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#run-categorization-simple">Run Categorization Simple</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#run-categorization-step-by-step">Run Categorization Step-By-Step</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bootstrap-a-categorization-model">Bootstrap a Categorization Model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obtain-average-confidence-for-a-specific-tier">Obtain Average Confidence for a Specific Tier</a></li>
 </ul>
 </li>
@@ -134,11 +136,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#project-movement">Project Movement</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#import-artifacts">Import Artifacts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#export-artifacts">Export Artifacts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fork-project">Fork Project</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#related-examples">Related Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
 </ul>
@@ -219,20 +223,20 @@
 <h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="add-dataset-to-project-and-perform-schema-mapping">
 <h3>Add dataset to project and perform schema mapping<a class="headerlink" href="#add-dataset-to-project-and-perform-schema-mapping" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
@@ -394,20 +398,20 @@
 <h2>Categorization<a class="headerlink" href="#categorization" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="run-categorization-simple">
 <h3>Run Categorization Simple<a class="headerlink" href="#run-categorization-simple" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Tamr Categorization project without model training&quot;&quot;&quot;</span>
@@ -471,20 +475,20 @@
 </div>
 <div class="section" id="run-categorization-step-by-step">
 <h3>Run Categorization Step-By-Step<a class="headerlink" href="#run-categorization-step-by-step" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Tamr Categorization project step-by-step including model training</span>
@@ -554,6 +558,202 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="bootstrap-a-categorization-model">
+<h3>Bootstrap a Categorization Model<a class="headerlink" href="#bootstrap-a-categorization-model" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for bootstrapping a Tamr Categorization project with taxonomy categories&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.attribute_mapping.resource</span> <span class="kn">import</span> <span class="n">AttributeMappingSpec</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.project.categorization</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># name of existing unified attribute to be compared against category names</span>
+<span class="n">UNIFIED_ATTRIBUTE_NAME</span> <span class="o">=</span> <span class="s2">&quot;description&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">categorization_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">unified_attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">category_tier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Bootstraps the model for a categorization projcets by adding the taxonomy as a separate</span>
+<span class="sd">    source with training labels</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        categorization_project_id: The id of the target categorization project</span>
+<span class="sd">        unified_attribute_name: The unified attribute to map the category names onto</span>
+<span class="sd">        category_tier: Which tier of the taxonomy to confine labels to. Use -1 for leaf nodes.</span>
+<span class="sd">            If not passed, all categories at all tiers will be used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Boolean indicating whether boostrap was successful or not</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: retrieved project is not a categorization project</span>
+<span class="sd">        ValueError: retrieved project does not have an attribute of the specified name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># Retrieve the project</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">categorization_project_id</span><span class="p">)</span><span class="o">.</span><span class="n">as_categorization</span><span class="p">()</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieved project with name: </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Validate dataset and attribute names</span>
+    <span class="c1"># Confirm the target unified attribute exists</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">unified_attribute_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">unified_attribute_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create a dataset with taxonomy categories</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_taxonomy_bootstrap_dataset&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="c1"># Dataset with `dataset_name` does not exist in Tamr. Proceed with dataset creation.</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataset_exists_error</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;A dataset with name </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> already exists. Try again after deleting the &quot;</span>
+            <span class="s2">&quot;dataset.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">dataset_exists_error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">dataset_exists_error</span><span class="p">)</span>
+
+    <span class="c1"># Proceed with dataset creation</span>
+    <span class="c1"># Get the project taxonomy</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not associated with any taxonomy yet.&quot;</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieved project taxonomy with name: </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Bootstrap all available categories</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">()</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">category_tier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">category_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">category</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">category_set</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">_get_categories_at_tier</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span> <span class="n">tier</span><span class="o">=</span><span class="n">category_tier</span><span class="p">)</span>
+        <span class="n">category_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">category</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">category_set</span><span class="p">]</span>
+        <span class="n">category_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="c1"># Create a dictionary of full path as a string to the leaf node name (used as label path)</span>
+    <span class="n">taxonomy_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">category</span><span class="p">):</span> <span class="n">category</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">category_list</span><span class="p">}</span>
+
+    <span class="c1"># Create a dataframe</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">taxonomy_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Category Path&quot;</span><span class="p">,</span> <span class="s2">&quot;Category Name&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Create a dataset in Tamr</span>
+    <span class="n">taxonomy_dataset</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">create_from_dataframe</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">primary_key_name</span><span class="o">=</span><span class="s2">&quot;Category Path&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span>
+    <span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created a dataset in Tamr with name: </span><span class="si">{</span><span class="n">taxonomy_dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add the dataset into the project</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">add_input_dataset</span><span class="p">(</span><span class="n">taxonomy_dataset</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="n">taxonomy_dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> to project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Map category name attribute to new unified attribute</span>
+    <span class="n">attr_mapping_spec</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">AttributeMappingSpec</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">with_input_dataset_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_input_attribute_name</span><span class="p">(</span><span class="s2">&quot;Category Name&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_unified_dataset_name</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_unified_attribute_name</span><span class="p">(</span><span class="n">unified_attribute_name</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">attribute_mappings</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">attr_mapping_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Created mapping from source attribute &#39;Category Name&#39; to unified attribute &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unified_attribute_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create transformation ensuring dataset tamr_id values match categorization path</span>
+    <span class="n">all_tx</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">schema_mapping</span><span class="o">.</span><span class="n">transformations</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">new_tx</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;SELECT *, CASE WHEN origin_source_name = &#39;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&#39; THEN &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;concat(origin_source_name, &#39;_&#39;, origin_entity_id) ELSE tamr_id END AS tamr_id;&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># Append so that it is applied after any other possibly conflicting transformations</span>
+    <span class="n">all_tx</span><span class="o">.</span><span class="n">unified_scope</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_tx</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">schema_mapping</span><span class="o">.</span><span class="n">transformations</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">all_tx</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Updating the unified dataset...&quot;</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">categorization</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_unified_dataset</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+    <span class="c1"># Prepare and post labels</span>
+    <span class="n">labels_to_bootstrap</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;CREATE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;recordId&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;verified&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">},</span> <span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;Taxonomy bootstrap&quot;</span><span class="p">}},</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">taxonomy_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">]</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;projects/</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">/categorizations/labels:updateRecords&quot;</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="n">labels_to_bootstrap</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created and inserted labels into </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Apply feedback and update results</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">categorization</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">apply_feedback_and_update_results</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully applied and updated the model&quot;</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed bootstrapping taxonomy in project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/project.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">enable_toolbox_logging</span><span class="p">(</span><span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">categorization_project_id</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_categorization_project&quot;</span><span class="p">],</span>
+        <span class="n">unified_attribute_name</span><span class="o">=</span><span class="n">UNIFIED_ATTRIBUTE_NAME</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="obtain-average-confidence-for-a-specific-tier">
 <h3>Obtain Average Confidence for a Specific Tier<a class="headerlink" href="#obtain-average-confidence-for-a-specific-tier" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for retrieving confidence metrics from a Tamr Categorization project&quot;&quot;&quot;</span>
@@ -583,20 +783,20 @@
 <h2>Mastering<a class="headerlink" href="#mastering" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="run-mastering-simple">
 <h3>Run Mastering Simple<a class="headerlink" href="#run-mastering-simple" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Tamr Mastering project without model training&quot;&quot;&quot;</span>
@@ -662,20 +862,20 @@
 </div>
 <div class="section" id="run-mastering-step-by-step">
 <h3>Run Mastering Step-By-Step<a class="headerlink" href="#run-mastering-step-by-step" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Mastering project step-by-step including model training&quot;&quot;&quot;</span>
@@ -758,20 +958,20 @@
 <h2>Golden Records<a class="headerlink" href="#golden-records" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="run-golden-records-simple">
 <h3>Run Golden Records Simple<a class="headerlink" href="#run-golden-records-simple" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Tamr Golden Records project&quot;&quot;&quot;</span>
@@ -834,20 +1034,20 @@
 </div>
 <div class="section" id="run-golden-records-step-by-step">
 <h3>Run Golden Records Step-By-Step<a class="headerlink" href="#run-golden-records-step-by-step" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Tamr Golden Records project step-by-step&quot;&quot;&quot;</span>
@@ -920,20 +1120,20 @@
 <h2>Schema Mapping<a class="headerlink" href="#schema-mapping" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="run-schema-mapping-simple">
 <h3>Run Schema Mapping Simple<a class="headerlink" href="#run-schema-mapping-simple" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Tamr Schema Mapping project&quot;&quot;&quot;</span>
@@ -996,20 +1196,20 @@
 </div>
 <div class="section" id="run-schema-mapping-step-by-step">
 <h3>Run Schema Mapping Step-By-Step<a class="headerlink" href="#run-schema-mapping-step-by-step" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a Schema Mapping project step-by-step&quot;&quot;&quot;</span>
@@ -1079,20 +1279,20 @@
 <h2>Transformations<a class="headerlink" href="#transformations" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="edit-unified-transformations">
 <h3>Edit Unified Transformations<a class="headerlink" href="#edit-unified-transformations" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for creation and editing of transformations scoped to the unified dataset</span>
@@ -1196,20 +1396,20 @@
 </div>
 <div class="section" id="edit-unified-and-input-transformations">
 <h3>Edit Unified and Input Transformations<a class="headerlink" href="#edit-unified-and-input-transformations" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span> <span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
 
-<span class="nt">my_tamr_instance</span><span class="p">:</span>
-    <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span> <span class="c1"># Example: &quot;1.2.3.4&quot;</span>
-    <span class="nt">protocol</span><span class="p">:</span> <span class="s">&quot;http&quot;</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="s">&quot;9100&quot;</span>
-    <span class="nt">username</span><span class="p">:</span> <span class="s">&quot;admin&quot;</span>
-    <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span>  <span class="c1"># Example: &quot;abc123&quot;</span>
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
 
-<span class="nt">projects</span><span class="p">:</span>
-    <span class="nt">my_mastering_project</span><span class="p">:</span> <span class="s">&quot;1&quot;</span>
-    <span class="nt">my_golden_records_project</span><span class="p">:</span> <span class="s">&quot;2&quot;</span>
-    <span class="nt">my_categorization_project</span><span class="p">:</span> <span class="s">&quot;3&quot;</span>
-    <span class="nt">my_schema_mapping_project</span><span class="p">:</span> <span class="s">&quot;4&quot;</span>
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for creation and editing of transformations of a Tamr project&quot;&quot;&quot;</span>
@@ -1427,6 +1627,173 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="fork-project">
+<h3>Fork Project<a class="headerlink" href="#fork-project" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for creating a copy of an existing project with a new name</span>
+
+<span class="sd">To copy a project as &quot;_copy&quot;-postfixed name of the target project:</span>
+<span class="sd">    python fork_project.py --export_path /path/to/export-file-dir/</span>
+<span class="sd">                           --project_name &lt;target_project_name&gt;</span>
+<span class="sd">                           --postfix _copy</span>
+
+<span class="sd">To specify new project name explicitly:</span>
+<span class="sd">    python fork_project.py --export_path /path/to/export-file-dir/</span>
+<span class="sd">                           --project_name &lt;target_project_name&gt;</span>
+<span class="sd">                           --new_name &lt;new_project_name&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">tbu</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+
+<span class="k">def</span> <span class="nf">export_from_tamr</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">export_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function sets path for project artifacts export from Tamr and makes the call to execute</span>
+<span class="sd">    the export action.</span>
+<span class="sd">    Export path defaults to &quot;project-movement/&lt;project_name&gt;&quot; if no user-defined value is passed.py</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: an instance of Tamr unify client object</span>
+<span class="sd">        project_name: name of the project to be exported from Tamr</span>
+<span class="sd">        export_path: export path - must be accessible to the VM hosting Tamr</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        operation for project export api call</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">project_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span><span class="p">:</span>
+        <span class="n">export_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;project-movement/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">export_artifacts</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span> <span class="n">artifact_directory_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">postfix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">new_ud_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">export_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function creates a fork copy of a Tamr project by exporting the target project</span>
+<span class="sd">    and importing it back to Tamr under a new name</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_name: name of the existing target project</span>
+<span class="sd">        new_name: name of the forked project (Optional)</span>
+<span class="sd">        postfix: if specified, will use and modify the target project name (Optional)</span>
+<span class="sd">        new_ud_name: explicitly specify the name of unified dataset of forked project (Optional)</span>
+<span class="sd">        export_path: export path - must be accessible to the VM hosting Tamr</span>
+<span class="sd">        overwrite: flag to overwrite existing project artifacts</span>
+<span class="sd">        instance_connection_info: Tamr instance &amp; AUTH configs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbu</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># calling the action functions:</span>
+    <span class="c1"># exporting the target project from tamr</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> export from Tamr initializing...&quot;</span><span class="p">)</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">export_from_tamr</span><span class="p">(</span><span class="n">tamr_client</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span> <span class="n">export_path</span><span class="o">=</span><span class="n">export_path</span><span class="p">)</span>
+    <span class="n">tbu</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
+    <span class="c1">## preparing for the import</span>
+    <span class="c1"># finding the path to export file</span>
+    <span class="n">zipfile_name</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">f</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">export_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_path</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">))</span>
+    <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">zipfile_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">export_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">zipfile_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># constructing the new project name and respective unified dataset name to be imported to tamr</span>
+    <span class="n">new_project_name</span> <span class="o">=</span> <span class="n">new_name</span> <span class="k">if</span> <span class="n">new_name</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_name</span><span class="si">}{</span><span class="n">postfix</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">new_ud_name</span> <span class="o">=</span> <span class="n">new_ud_name</span> <span class="k">if</span> <span class="n">new_ud_name</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_project_name</span><span class="si">}</span><span class="s2">_unified_dataset&quot;</span>
+    <span class="c1"># importing a copy of target project to tamr</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">new_project_name</span><span class="si">}</span><span class="s2"> import to Tamr initializing...&quot;</span><span class="p">)</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">import_artifacts</span><span class="p">(</span>
+        <span class="n">tamr_client</span><span class="o">=</span><span class="n">tamr_client</span><span class="p">,</span>
+        <span class="n">project_artifact_path</span><span class="o">=</span><span class="n">zipfile_path</span><span class="p">,</span>
+        <span class="n">new_project_name</span><span class="o">=</span><span class="n">new_project_name</span><span class="p">,</span>
+        <span class="n">new_unified_dataset_name</span><span class="o">=</span><span class="n">new_ud_name</span><span class="p">,</span>
+        <span class="n">overwrite_existing</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">tbu</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">new_project_name</span><span class="si">}</span><span class="s2"> was successfully forked from Tamr project </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">!&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># parse args</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--project_name&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;raise to specify the name of target project&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_path&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;raise to specify the path to export directory&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--new_ud_name&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;raise to explicitly specify the name of forked project unified dataset (optional)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--overwrite&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;if raised will replace a project with specified target name (if one already exists)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--new_name&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;raise to explicitly specify the name of the new project&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--postfix&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;raise to imply the name of the new project by postfixing the original project name&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># load config file and create tamr client</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/project.config.yaml&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># creating the logger object:</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+    <span class="c1"># Let Tamr Toolbox itself also contribute to the log</span>
+    <span class="n">tbu</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">enable_toolbox_logging</span><span class="p">(</span><span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">],</span> <span class="n">log_to_terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">project_name</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
+        <span class="n">new_name</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">new_name</span><span class="p">,</span>
+        <span class="n">postfix</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">postfix</span><span class="p">,</span>
+        <span class="n">new_ud_name</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">new_ud_name</span><span class="p">,</span>
+        <span class="n">export_path</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">export_path</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;tamr&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="related-examples">
 <h2>Related Examples<a class="headerlink" href="#related-examples" title="Permalink to this headline">¶</a></h2>
@@ -1442,7 +1809,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="utils.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sysadmin.html" class="btn btn-neutral float-right" title="SysAdmin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="notifications.html" class="btn btn-neutral float-left" title="Notifications" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
