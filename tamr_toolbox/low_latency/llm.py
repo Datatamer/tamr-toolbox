@@ -62,6 +62,7 @@ def poll_llm_status(
         project_name: name of target mastering project
         num_tries: max number of times to poll endpoint, default 10
         wait_sec: number of seconds to wait between tries, default 1
+
     Returns:
         bool indicating whether project is queryable
     """
@@ -90,30 +91,34 @@ def llm_query(
     project_name: str,
     records: Union[JsonDict, List[JsonDict]],
     type: str,
-    pKey: Optional[str] = None,
+    primary_key: Optional[str] = None,
     batch_size: Optional[int] = None,
     min_match_prob: Optional[float] = None,
     max_num_matches: Optional[int] = None,
 ) -> Dict[int, List[JsonDict]]:
     """
-    Find the best matching clusters or records for each supplied record. Returns empty list if
-    response is null.
+    Find the best matching clusters or records for each supplied record. Returns a dictionary where
+    each key correpsonds to an input record and the value is a list of the LLM results for that
+    record. An empty result list indicates a null response from LLM (or no responses above the
+    min_match_prob, if that parameter was supplied).
 
     Args:
         match_client: a Tamr client set to use the port of the Match API
         project_name: name of target mastering project
         records: record or list of records to match
         type: one of "records" or  "clusters" -- whether to pull record or cluster matches
-        pKey: a primary key for the data; if supplied, this must be a field in the input records
+        primary_key: a primary key for the data; if supplied, this must be a field in input records
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
             timeouts), default None sends a single LLM call with all records
         min_match_prob: if set, only matches with probability above minimum will be returned,
             default None
         max_num_matches: if set, at most max_num_matches will be returned for each input record in
             records, default None
+
     Returns:
-        Dict keyed by integers (indices of inputs), or by pKey if pKey is supplied, with value a
-            list containing matcched data
+        Dict keyed by integers (indices of inputs), or by primary_key if primary_key is supplied,
+            with value a list containing matched data
+
     Raises:
         ValueError: if match type is not "records" or "clusters", or if batch_size is non-positive
         RuntimeError: if query fails
@@ -148,7 +153,7 @@ def llm_query(
 
     # Split into batches and convert to LLM query format
     for j in range(0, len(records), batch_size):
-        json_recs = _prepare_json(records[j : j + batch_size], pKey=pKey, offset=j)
+        json_recs = _prepare_json(records[j : j + batch_size], primary_key=primary_key, offset=j)
         response = match_client.post(url, json=json_recs)
 
         # Process responses
@@ -157,11 +162,11 @@ def llm_query(
                 continue
 
             # If data was found, decode, identify source record, and add match to corresponding
-            # index in the list of lists of results
+            # list of results in the result dictionary
             for resp_block in response.content.decode("utf-8").split("\n"):
                 if resp_block:
                     result = json.loads(resp_block)
-                    index = int(result[record_key]) if pKey is None else result[record_key]
+                    index = int(result[record_key]) if primary_key is None else result[record_key]
 
                     if max_num_matches and len(result_dict[index]) >= max_num_matches:
                         continue
@@ -180,26 +185,29 @@ def llm_query(
 
 
 def _prepare_json(
-    records: List[JsonDict], *, pKey: Union[str, None], offset: int
+    records: List[JsonDict], *, primary_key: Union[str, None], offset: int
 ) -> List[JsonDict]:
     """
     Put records into JSON format expected by LLM endpoint
 
     Args:
         records: list of records to match
-        pKey: a primary key for the data; if not None, this must be a field in the input records
+        primary_key: a primary key for the data; if not None, must be a field in the input records
         offset: offset to apply to generated integer `recordId` -- this is necessary for batching
+
     Returns:
         List of formatted records
+
     Raises:
-        ValueError: if pKey is supplied but some supplied record(s) do not have the pKey field
+        ValueError: if primary_key is supplied but some supplied record(s) do not have the
+            primary_key field
     """
 
-    if pKey is not None:
+    if primary_key is not None:
         try:
-            json_records = [{"recordId": rec.pop(pKey), "record": rec} for rec in records]
+            json_records = [{"recordId": rec.pop(primary_key), "record": rec} for rec in records]
         except KeyError:
-            raise ValueError(f"Not all input records had a primary key field {pKey}.")
+            raise ValueError(f"Not all input records had a primary key field {primary_key}.")
     else:  # use integers as recordId
         json_records = [
             {"recordId": str(offset + k), "record": rec} for k, rec in enumerate(records)

@@ -36,7 +36,7 @@ MATCH_TEST_DATA = [
 
 
 @pytest.mark.parametrize(
-    "type, batch_size, pKey",
+    "type, batch_size, primary_key",
     [
         ("records", 1000, None),
         ("clusters", 1000, None),
@@ -49,13 +49,13 @@ MATCH_TEST_DATA = [
     ],
 )
 @mock_api()
-def test_llm_query_with_match(type: str, batch_size: int, pKey: Optional[str]):
+def test_llm_query_with_match(type: str, batch_size: int, primary_key: Optional[str]):
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
 
     data = (
         MATCH_TEST_DATA
-        if pKey is None
-        else [{**d, pKey: f"rec{k}"} for k, d in enumerate(MATCH_TEST_DATA)]
+        if primary_key is None
+        else [{**d, primary_key: f"rec{k}"} for k, d in enumerate(MATCH_TEST_DATA)]
     )
 
     result = llm_query(
@@ -64,27 +64,27 @@ def test_llm_query_with_match(type: str, batch_size: int, pKey: Optional[str]):
         records=data,
         type=type,
         batch_size=batch_size,
-        pKey=pKey,
+        primary_key=primary_key,
     )
 
     if type == "records":
         assert {"7279808247767404449", "8878137442375545950"} == {
-            x["matchedRecordId"] for x in result["rec0" if pKey else 0]
+            x["matchedRecordId"] for x in result["rec0" if primary_key else 0]
         }
         assert {"-198958353428908929", "1134804050832671496"} == {
-            x["matchedRecordId"] for x in result["rec1" if pKey else 1]
+            x["matchedRecordId"] for x in result["rec1" if primary_key else 1]
         }
     else:
         assert {"218c3f66-b240-3b08-b688-2c8d0506f12f"} == {
-            x["clusterId"] for x in result["rec0" if pKey else 0]
+            x["clusterId"] for x in result["rec0" if primary_key else 0]
         }
         assert {
             "565e03e5-9349-34ef-a779-c4bcd9dcc49c",
             "8762d70e-b8a5-39f8-a387-8c9148e8254f",
-        } == {x["clusterId"] for x in result["rec1" if pKey else 1]}
-    assert result["rec2" if pKey else 2]
-    assert result["rec3" if pKey else 3]
-    assert result["rec4" if pKey else 4] == []  # testing that we don't got an index error
+        } == {x["clusterId"] for x in result["rec1" if primary_key else 1]}
+    assert result["rec2" if primary_key else 2]
+    assert result["rec3" if primary_key else 3]
+    assert result["rec4" if primary_key else 4] == []  # testing that we don't got an index error
 
     return None
 
@@ -261,10 +261,10 @@ def test_refresh_and_update():
     return None
 
 
-def test_llm_bad_pKey():
+def test_llm_bad_primary_key():
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
     records = MATCH_TEST_DATA[1:3]
-    records[0]["test_pKey"] = "samplekey"
+    records[0]["test_primary_key"] = "samplekey"
 
     with pytest.raises(ValueError, match="Not all input records had a primary key"):
         llm_query(
@@ -272,6 +272,6 @@ def test_llm_bad_pKey():
             project_name="minimal_mastering",
             records=records,
             type="records",
-            pKey="test_pKey",
+            primary_key="test_primary_key",
         )
     return None
