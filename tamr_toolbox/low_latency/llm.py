@@ -1,20 +1,19 @@
-from typing import List, Dict, Optional, Union
 import json
-from collections import defaultdict
 import logging
 import time
+from collections import defaultdict
+from typing import Dict, List, Optional, Union
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
 
 from tamr_toolbox.models.data_type import JsonDict
 
-
 LOGGER = logging.getLogger(__name__)
 
 
 def update_llm_data(
-    tamr_client: Client,
+    client: Client,
     *,
     project_name: str,
     do_update_clusters: bool = True,
@@ -24,7 +23,7 @@ def update_llm_data(
     Updates data for LLM query if needed, based on latest published clusters.
 
     Args:
-        tamr_client: Tamr client object
+        client: Tamr client object (connected to primary Tamr port , i.e. 9100)
         project_name: name of the project to be updated
         do_update_clusters: whether to update clusters, default True
         do_use_manual_clustering: whether to use externally managed clustering, default False
@@ -34,7 +33,7 @@ def update_llm_data(
         f"projects/{project_name}:updateLLM?updateClusters={do_update_clusters}"
         f"&useManualClustering={do_use_manual_clustering}"
     )
-    response = tamr_client.post(url)
+    response = client.post(url)
     if not response.ok:
         message = (
             f"LLM update for {project_name} failed at submission time: "
@@ -46,7 +45,7 @@ def update_llm_data(
 
     # An operation id of '-1' is returned when LLM is already up to date
     if operation_id != "-1":
-        operation = Operation.from_resource_id(tamr_client, operation_id)
+        operation = Operation.from_resource_id(client, operation_id)
         operation.wait()
     return None
 
