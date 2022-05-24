@@ -1,7 +1,6 @@
 import tempfile
 import os
 import tarfile
-import shutil
 
 # Google examples
 
@@ -12,7 +11,7 @@ def gcs_upload(
     destination_filepath="path_to_my_file_on_google_bucket",
     bucket_name="my_google_bucket",
     tar_file=True,
-    return_uploaded_file=False,
+    return_uploaded_file=None,
 ):
     """Upload data to a google storage bucket
     Args:
@@ -21,7 +20,7 @@ def gcs_upload(
         cloud_client: google storage client with user credentials
         bucket_name: name of google bucket
         tar_file: Tar file before upload
-        return_uploaded_file: If True, returns path to Tempfile with uploaded file
+        return_uploaded_file: If filepath is given, downloads copy of file being uploaded to filepath
 
 
     """
@@ -85,6 +84,7 @@ def s3_upload(
     destination_filepath="path_to_my_file_on_s3_bucket",
     bucket_name="my_google_bucket",
     tar_file=False,
+    return_uploaded_file=None,
 ):
     """Upload data to Amazon AWS bucket
     Args:
@@ -93,20 +93,29 @@ def s3_upload(
         cloud_client: AWS client with user credentials
         bucket_name: name of AWS bucket
         tar_file: Tar file before upload
-    """
-    if tar_file and not tarfile.is_tarfile(source_filepath):
-        temp_dir = tempfile.gettempdir()
-        temp_path = os.path.join(temp_dir, "temp_file")
-        with tarfile.open(temp_path) as tar:
-            tar.add(source_filepath, arcname=os.path.basename(source_filepath))
+        return_uploaded_file: If filepath is given, downloads copy of file being uploaded to filepath
 
-        cloud_client.upload_file(
-            Filename=temp_path, Bucket=bucket_name, Key=destination_filepath,
-        )
+    """
+    if tar_file:
+
+        with tempfile.NamedTemporaryFile() as tmp:
+            with tarfile.open(tmp.name, "w") as tar:
+                tar.add(source_filepath)
+
+            cloud_client.upload_file(
+                Filename=tmp.name, Bucket=bucket_name, Key=destination_filepath,
+            )
+            if return_uploaded_file:
+                with tarfile.open(return_uploaded_file, "w") as tar:
+                    tar.add(source_filepath)
+
     else:
         cloud_client.upload_file(
             Filename=source_filepath, Bucket=bucket_name, Key=destination_filepath,
         )
+        if return_uploaded_file:
+            with tarfile.open(return_uploaded_file, "w") as tar:
+                tar.add(source_filepath)
 
 
 def s3_download(

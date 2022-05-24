@@ -1,14 +1,10 @@
 import boto3
 from tamr_toolbox.data_io import cloud
-from google.cloud.client import Client
 import pytest
 import google
 import botocore
 import tempfile
-import botocore.session
-from moto import mock_s3
 import tarfile
-import os
 from unittest.mock import patch
 
 
@@ -33,37 +29,11 @@ def test_gcs_download():
                 untar=False,
             )
 
-    @patch("google.cloud.client.Client")
-    def test_untar(mock_client):
-        client = mock_client()
-
-        with tempfile.NamedTemporaryFile() as upload_tmp, tempfile.NamedTemporaryFile() as tarred_file, tempfile.NamedTemporaryFile() as download_tmp:
-            with open(upload_tmp.name, "w") as open_tmp:
-                open_tmp.write("test message . . . ")
-
-            bucket = client.get_bucket("test-bucket-a")
-            blob = bucket.blob("path_in_bucket.tar")
-
-            with tarfile.open(tarred_file.name, "w") as tar:
-                tar.add(upload_tmp.name)
-
-            blob.upload_from_filename(tempfile)
-
-            cloud.gcs_download(
-                cloud_client=client,
-                source_filepath="path_in_bucket.tar",
-                destination_filepath=download_tmp.name,
-                bucket_name="test-bucket-a",
-                untar=True,
-            )
-            assert not tarfile.is_tarfile(download_tmp.name)
-
     test_download()
-    test_untar()
 
     # checks to see google download checks for credentials
     with pytest.raises(google.auth.exceptions.DefaultCredentialsError):
-        cloud_client = Client()
+        cloud_client = google.cloud.client.Client()
         cloud.gcs_download(cloud_client=cloud_client)
 
 
@@ -91,9 +61,7 @@ def test_gcs_upload():
             suffix=".tar.gz"
         ) as upload_tmp, tempfile.NamedTemporaryFile(
             "wb", suffix=".tar.gz", delete=False
-        ) as download_tmp, tempfile.NamedTemporaryFile(
-            "wb", suffix=".tar.gz", delete=False
-        ) as destination_untarred_tmp:
+        ) as download_tmp:
 
             with open(upload_tmp.name, "w") as open_tmp:
                 open_tmp.write("test message . . . ")
@@ -107,76 +75,22 @@ def test_gcs_upload():
                 return_uploaded_file=download_tmp.name,
             )
 
-            with open(download_tmp.name, "r") as samp:
-                assert tarfile.is_tarfile(download_tmp.name)
+            # with open(download_tmp.name, "r") as samp:
+            assert tarfile.is_tarfile(download_tmp.name)
 
     test_upload()
     test_gcs_upload_tarring()
 
     # checks to see google download checks for credentials
     with pytest.raises(google.auth.exceptions.DefaultCredentialsError):
-        cloud_client = Client()
+        cloud_client = google.cloud.client.Client()
         cloud.gcs_upload(cloud_client=cloud_client)
 
 
-def test_s3_upload():
-    # should pass correctly - test
-    @mock_s3
-    def test_upload():
-        s3_session = boto3.session.Session()
-        s3_client = s3_session.client("s3")
-        bucket_name = "my_bucket"
-
-        s3_client.create_bucket(Bucket=bucket_name)
-
-        # create tmp file to upload to mock s3
-        with tempfile.NamedTemporaryFile() as tmp:
-            with open(tmp.name, "w") as open_tmp:
-                open_tmp.write("ltest message . . . ")
-
-            cloud.s3_upload(
-                source_filepath=tmp.name,
-                bucket_name=bucket_name,
-                cloud_client=s3_client,
-                destination_filepath="test_file.txt",
-                tar_file=False,
-            )
-
-    @mock_s3
-    def test_tar():
-        s3_session = boto3.session.Session()
-        s3_client = s3_session.client("s3")
-        bucket_name = "my_bucket"
-
-        s3_client.create_bucket(Bucket=bucket_name)
-
-        # create tmp file to upload to mock s3
-        with tempfile.NamedTemporaryFile() as upload_tmp, tempfile.NamedTemporaryFile() as download_tmp:
-            with open(upload_tmp.name, "w") as open_tmp:
-                open_tmp.write("test message . . . ")
-
-            cloud.s3_upload(
-                source_filepath=upload_tmp.name,
-                bucket_name=bucket_name,
-                cloud_client=s3_client,
-                destination_filepath="test_file.tar",
-                tar_file=True,
-            )
-            bucket = s3_client.get_bucket(bucket_name)
-            blob = bucket.blob("test_file.tar")
-            blob.download_to_filename(download_tmp.name)
-
-            assert tarfile.is_tarfile(download_tmp.name)
-
-    with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError)):
-        cloud.s3_upload(cloud_client=boto3.client("s3"), tar_file=False)
-
-
 def test_s3_download():
-    @mock_s3
-    def test_download():
-        s3_session = boto3.session.Session()
-        s3_client = s3_session.client("s3")
+    @patch("boto3.session.Session")
+    def test_download(session):
+        s3_client = session.client("s3")
         bucket_name = "my_bucket"
 
         s3_client.create_bucket(Bucket=bucket_name)
@@ -196,37 +110,60 @@ def test_s3_download():
                 cloud_client=s3_client,
                 bucket_name=bucket_name,
             )
-            with open(download_tmp.name, "rb") as open_tmp:
-                assert open_tmp.read() == "test message . . . "
 
-    @mock_s3
-    def test_tar():
-        s3_session = boto3.session.Session()
-        s3_client = s3_session.client("s3")
+    test_download()
+
+    with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError)):
+        cloud.s3_upload(cloud_client=boto3.client("s3"), tar_file=False)
+
+
+def test_s3_upload():
+    @patch("botocore.session.Session")
+    def test_upload(session):
+
+        s3_client = session.client("s3")
         bucket_name = "my_bucket"
 
         s3_client.create_bucket(Bucket=bucket_name)
 
         # create tmp file to upload to mock s3
-        with tempfile.NamedTemporaryFile() as upload_tmp, tempfile.NamedTemporaryFile() as download_tmp, tempfile.NamedTemporaryFile() as upload_tar_tmp:
+        with tempfile.NamedTemporaryFile() as tmp:
+            with open(tmp.name, "w") as open_tmp:
+                open_tmp.write("ltest message . . . ")
+
+            cloud.s3_upload(
+                source_filepath=tmp.name,
+                bucket_name=bucket_name,
+                cloud_client=s3_client,
+                destination_filepath="test_file.txt",
+                tar_file=False,
+            )
+
+    @patch("boto3.session.Session")
+    def test_tar(session):
+        s3_client = session.client("s3")
+        bucket_name = "my_bucket"
+
+        s3_client.create_bucket(Bucket=bucket_name)
+
+        # create tmp file to upload to mock s3
+        with tempfile.NamedTemporaryFile() as upload_tmp, tempfile.NamedTemporaryFile() as download_tmp:
             with open(upload_tmp.name, "w") as open_tmp:
                 open_tmp.write("test message . . . ")
-            with tarfile.open(upload_tar_tmp) as tar:
-                tar.add(upload_tmp, arcname=os.path.basename(upload_tmp))
 
-            s3_client.upload_file(
-                Filename=upload_tmp.name, Bucket=bucket_name, Key="test_file.tar",
-            )
-
-            cloud.s3_download(
-                source_filepath="test_file.tar",
-                destination_filepath=download_tmp.name,
-                cloud_client=s3_client,
+            cloud.s3_upload(
+                source_filepath=upload_tmp.name,
                 bucket_name=bucket_name,
-                untar=True,
+                cloud_client=s3_client,
+                destination_filepath="test_file.tar",
+                tar_file=True,
+                return_uploaded_file=download_tmp.name,
             )
-            with open(download_tmp.name, "rb") as open_tmp:
-                assert open_tmp.read() == "test message . . . "
+
+            assert tarfile.is_tarfile(download_tmp.name)
+
+    test_upload()
+    test_tar()
 
     with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError)):
         cloud.s3_upload(cloud_client=boto3.client("s3"), tar_file=False)
