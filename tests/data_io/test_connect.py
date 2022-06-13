@@ -40,7 +40,7 @@ def test_create_with_multiple_parameters(protocol: str, port: str, base_path: st
 
 
 def test_create_bad_configuration():
-    """Ensure a bad configuration raises a connection error """
+    """Ensure a bad configuration raises a connection error"""
     with pytest.raises(RuntimeError):
         my_connect = client.create(
             host="localhost",

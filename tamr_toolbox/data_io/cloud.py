@@ -1,26 +1,24 @@
 import tempfile
-import os
 import tarfile
-
-# Google examples
 
 
 def gcs_upload(
     cloud_client,
     source_filepath="path_to_my_local_file",
-    destination_filepath="path_to_my_file_on_google_bucket",
-    bucket_name="my_google_bucket",
+    destination_filepath="path_to_my_file_in_bucket",
+    bucket_name="sample_bucket",
     tar_file=True,
     return_uploaded_file=None,
 ):
-    """Upload data to a google storage bucket
+    """Upload data to a Google storage bucket
     Args:
         source_filepath: file path of source file being uploaded
         destination_filepath: path to google bucket
         cloud_client: google storage client with user credentials
         bucket_name: name of google bucket
         tar_file: Tar file before upload
-        return_uploaded_file: If filepath is given, downloads copy of file being uploaded to filepath
+        return_uploaded_file: If filepath is given,
+        downloads copy of file being uploaded to filepath
 
 
     """
@@ -28,7 +26,7 @@ def gcs_upload(
     blob = bucket.blob(destination_filepath)
 
     if tar_file:
-        with tempfile.NamedTemporaryFile() as tmp:
+        with tempfile.NamedTemporaryFile(delete=False, mode="w") as tmp:
             with tarfile.open(tmp.name, "w") as tar:
                 tar.add(source_filepath)
             blob.upload_from_filename(tmp.name)
@@ -45,14 +43,14 @@ def gcs_upload(
 
 def gcs_download(
     cloud_client,
-    source_filepath="path_to_my_file_on_google_bucket",
+    source_filepath="path_to_my_file_in_bucket",
     destination_filepath="path_to_my_local_file",
-    bucket_name="my_google_bucket",
+    bucket_name="sample_bucket",
     untar=False,
 ):
-    """ Download data to a google storage bucket
+    """ Download data to a Google storage bucket
     Args:
-        source_filepath: Path to file being downloaded on google
+        source_filepath: Path to file being downloaded on Google
         destination_filepath: Destination filepath for file being downloaded
         cloud_client: google storage client with user credentials
         bucket_name: name of google bucket being downloaded from
@@ -60,29 +58,26 @@ def gcs_download(
     """
 
     bucket = cloud_client.get_bucket(bucket_name)
-    blob = bucket.blob(source_filepath)
+    this_blob = bucket.blob(source_filepath)
 
     if untar:
-        with tempfile.NamedTemporaryFile() as temp_path:
-            blob.download_to_filename(temp_path.name)
+        with tempfile.NamedTemporaryFile(delete=False, mode="w") as temp_path:
+            this_blob.download_to_filename(temp_path.name)
 
             if tarfile.is_tarfile(temp_path.name):
                 with tarfile.open(temp_path.name) as tar_file:
                     tar_file.extractall(destination_filepath)
             else:
-                blob.download_to_filename(destination_filepath)
+                this_blob.download_to_filename(destination_filepath)
     else:
-        blob.download_to_filename(destination_filepath)
-
-
-# Amazon S3 examples
+        this_blob.download_to_filename(destination_filepath)
 
 
 def s3_upload(
     cloud_client,
     source_filepath="path_to_my_local_file",
-    destination_filepath="path_to_my_file_on_s3_bucket",
-    bucket_name="my_google_bucket",
+    destination_filepath="path_to_my_file_in_bucket",
+    bucket_name="sample_bucket",
     tar_file=False,
     return_uploaded_file=None,
 ):
@@ -93,12 +88,13 @@ def s3_upload(
         cloud_client: AWS client with user credentials
         bucket_name: name of AWS bucket
         tar_file: Tar file before upload
-        return_uploaded_file: If filepath is given, downloads copy of file being uploaded to filepath
+        return_uploaded_file: If filepath is given,
+        downloads copy of file being uploaded to filepath
 
     """
     if tar_file:
 
-        with tempfile.NamedTemporaryFile() as tmp:
+        with tempfile.NamedTemporaryFile(delete=False, mode="w") as tmp:
             with tarfile.open(tmp.name, "w") as tar:
                 tar.add(source_filepath)
 
@@ -120,9 +116,9 @@ def s3_upload(
 
 def s3_download(
     cloud_client,
-    source_filepath="path_to_my_file_on_s3_bucket",
+    source_filepath="path_to_my_file_in_bucket",
     destination_filepath="path_to_my_local_file",
-    bucket_name="my_google_bucket",
+    bucket_name="sample_bucket",
     untar=False,
 ):
     """ Download data from an Amazon AWS bucket
@@ -135,14 +131,12 @@ def s3_download(
     """
 
     if untar:
-        temp_dir = tempfile.gettempdir()
-        temp_path = os.path.join(temp_dir, "temp_file")
-        cloud_client.download_file(
-            Bucket=bucket_name, Key=source_filepath, Filename=temp_path,
-        )
-        with open(temp_path) as file:
-            if tarfile.is_tarfile(file):
-                with tarfile.open(temp_path) as tar_file:
+        with tempfile.NamedTemporaryFile(delete=False, mode="w") as tmp:
+            cloud_client.download_file(
+                Bucket=bucket_name, Key=source_filepath, Filename=tmp.name,
+            )
+            if tarfile.is_tarfile(tmp.name):
+                with tarfile.open(tmp.name) as tar_file:
                     tar_file.extractall(destination_filepath)
     else:
         cloud_client.download_file(
@@ -151,11 +145,13 @@ def s3_download(
 
 
 def file_upload(
+    client_type,
     cloud_client,
     source_filepath="path_to_my_local_file",
-    destination_filepath="path_to_my_file_on_google_bucket",
-    bucket_name="my_google_bucket",
+    destination_filepath="path_to_my_file_in_bucket",
+    bucket_name="sample_bucket",
     tar_file=True,
+    return_uploaded_file=None,
 ):
     """Function run to upload file to Google Bucket or Amazon AWS bucket
     Args:
@@ -164,30 +160,37 @@ def file_upload(
         cloud_client: client with user credentials, used to select client type
         bucket_name: name of bucket
         tar_file: Tar file before upload
+        return_uploaded_file: If filepath is given,
+        downloads copy of file being uploaded to filepath
+        client_type: enter name of client type ie. 's3' or 'gcs'
+
     """
-    # if cloud_client starts w/ google -> google_upload func >=> else -> S3_upload
-    cloud_client_name = str(cloud_client)
-    if cloud_client_name.startswith("google_storage_client"):
+    if client_type == "gcs":
         gcs_upload(
+            cloud_client=cloud_client,
             source_filepath=source_filepath,
             destination_filepath=destination_filepath,
             bucket_name=bucket_name,
             tar_file=tar_file,
+            return_uploaded_file=return_uploaded_file,
         )
-    if cloud_client_name.startswith("amazon_storage_client"):
+    if client_type == "s3":
         s3_upload(
+            cloud_client=cloud_client,
             source_filepath=source_filepath,
             destination_filepath=destination_filepath,
             bucket_name=bucket_name,
             tar_file=tar_file,
+            return_uploaded_file=return_uploaded_file,
         )
 
 
 def file_download(
+    client_type,
     cloud_client,
-    source_filepath="path_to_my_file_on_s3_bucket",
+    source_filepath="path_to_my_file_in_bucket",
     destination_filepath="path_to_my_local_file",
-    bucket_name="my_google_bucket",
+    bucket_name="sample_bucket",
     untar=True,
 ):
     """Function selection when downloading file from Google Bucket or Amazon AWS bucket
@@ -197,11 +200,9 @@ def file_download(
         cloud_client: client with user credentials used for client type
         bucket_name: name of bucket being downloaded from
         untar: Whether to decompress file being downloaded (Tar)
+        client_type: enter name of client type ie. 's3' or 'gcs'
     """
-    # if cloud_client starts w/ google -> google_download func >=> else -> S3_download
-    cloud_client_name = str(cloud_client)
-
-    if cloud_client_name.startswith("google_storage_client"):
+    if client_type == "gcs":
         gcs_download(
             source_filepath=source_filepath,
             destination_filepath=destination_filepath,
@@ -209,7 +210,7 @@ def file_download(
             cloud_client=cloud_client,
             untar=untar,
         )
-    if cloud_client_name.startswith("amazon_storage_client"):
+    if client_type == "s3":
         s3_download(
             source_filepath=source_filepath,
             destination_filepath=destination_filepath,

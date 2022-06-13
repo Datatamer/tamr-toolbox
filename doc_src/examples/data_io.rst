@@ -92,3 +92,36 @@ Export CSV from taxonomy to a designated filepath
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/data_io/csv/export_from_taxonomy.py
   :language: python
+
+Cloud
+------------------------------------------------------------------------
+
+Download object from passed bucket (GCS / S3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/cloud/file_download.py
+  :language: python
+
+Upload object to passed bucket (GCS / S3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/cloud/file_upload.py
+  :language: python
+
+Upload object to GCS bucket
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/cloud/gcs_upload.py
+  :language: python
+
+Download object from GCS bucket
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/cloud/gcs_download.py
+  :language: python
+
+Upload object to AWS S3 bucket
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/cloud/s3_upload.py
+  :language: python
+
+Download object from AWS S3 bucket
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/cloud/s3_download.py
+  :language: python
