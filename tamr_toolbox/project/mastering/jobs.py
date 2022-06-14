@@ -4,6 +4,7 @@ import logging
 
 from tamr_unify_client.mastering.project import MasteringProject
 from tamr_unify_client.operation import Operation
+from tamr_toolbox.low_latency.llm import update_llm_data
 
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.utils import operation
@@ -22,6 +23,7 @@ def _run_custom(
     run_update_high_impact_pairs: bool = False,
     run_update_cluster_results: bool = False,
     run_publish_clusters: bool = False,
+    run_update_llm: bool = False,
     process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Executes specified steps of a mastering project.
@@ -38,6 +40,7 @@ def _run_custom(
         run_update_cluster_results: Whether refresh should be called on the record clusters dataset
         run_publish_clusters: Whether refresh should be called on the published record clusters
             dataset
+        run_update_llm: Whether to update LLM data with latest published clusters
         process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
@@ -116,6 +119,18 @@ def _run_custom(
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)
+    if run_update_llm:
+        LOGGER.info(
+            f"Updating LLM database for project {project.name} (id={project.resource_id})."
+        )
+        op = update_llm_data(
+            client=project.client,
+            project_name=project.name,
+            process_asynchronously=process_asynchronously,
+        )
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
 
     return completed_operations
 
@@ -125,6 +140,7 @@ def run(
     *,
     run_estimate_pair_counts: bool = False,
     run_apply_feedback: bool = False,
+    run_update_llm: bool = False,
     process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Run the existing pipeline without training
@@ -133,6 +149,7 @@ def run(
         project: Target mastering project
         run_estimate_pair_counts: Whether an estimate pairs job should be run
         run_apply_feedback: Whether train should be called on the pair matching model
+        run_update_llm: Whether to update LLM after publishing clusters
         process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
@@ -149,6 +166,7 @@ def run(
         run_update_high_impact_pairs=True,
         run_update_cluster_results=True,
         run_publish_clusters=True,
+        run_update_llm=run_update_llm,
         process_asynchronously=process_asynchronously,
     )
 
@@ -369,12 +387,16 @@ def update_results_only(
 
 
 def publish_clusters(
-    project: MasteringProject, *, process_asynchronously: bool = False
+    project: MasteringProject,
+    *,
+    run_update_llm: bool = False,
+    process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Publishes the clusters of a mastering project
 
     Args:
         project: Target mastering project
+        run_update_llm: whether to update LLM data after publishing clusters
         process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
@@ -390,5 +412,6 @@ def publish_clusters(
         run_update_pair_results=False,
         run_update_cluster_results=False,
         run_publish_clusters=True,
+        run_update_llm=run_update_llm,
         process_asynchronously=process_asynchronously,
     )

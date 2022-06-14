@@ -18,7 +18,8 @@ def update_llm_data(
     project_name: str,
     do_update_clusters: bool = True,
     do_use_manual_clustering: bool = False,
-) -> None:
+    **options,
+) -> Operation:
     """
     Updates data for LLM query if needed, based on latest published clusters.
 
@@ -27,6 +28,7 @@ def update_llm_data(
         project_name: name of the project to be updated
         do_update_clusters: whether to update clusters, default True
         do_use_manual_clustering: whether to use externally managed clustering, default False
+        options: Options passed to underlying :class:`~tamr_unify_client.operation.Operation`
     """
 
     url = (
@@ -42,12 +44,9 @@ def update_llm_data(
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
+    operation = Operation.from_resource_id(client, operation_id)
 
-    # An operation id of '-1' is returned when LLM is already up to date
-    if operation_id != "-1":
-        operation = Operation.from_resource_id(client, operation_id)
-        operation.wait()
-    return None
+    return operation.apply_options(**options)
 
 
 def poll_llm_status(
