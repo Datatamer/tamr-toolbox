@@ -82,7 +82,7 @@ def test_get_export_config_with_args():
         "mergedArrayValuesDelimiter": ",",
         "limitRecords": 10,
         "columnsExcludeRegex": "(origin).*",
-        "export_delta": True,
+        "exportDelta": True,
         "deltaConfig": {"fromVersion": "100", "toVersion": "102"},
     }
     assert (
