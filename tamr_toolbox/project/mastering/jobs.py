@@ -66,6 +66,88 @@ def _run_custom(
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)
+
+    # Run pair-related operations
+    completed_operations.extend(
+        _run_custom_pair_operations(
+            project,
+            run_estimate_pair_counts=run_estimate_pair_counts,
+            run_generate_pairs=run_generate_pairs,
+            run_apply_feedback=run_apply_feedback,
+            run_update_pair_results=run_update_pair_results,
+            run_update_high_impact_pairs=run_update_high_impact_pairs,
+            process_asynchronously=process_asynchronously,
+        )
+    )
+
+    if run_update_cluster_results:
+        LOGGER.info(
+            f"Updating cluster prediction results for project {project.name} "
+            f"(id={project.resource_id})."
+        )
+        op = project.record_clusters().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
+    if run_publish_clusters:
+        LOGGER.info(f"Publishing clusters for project {project.name} (id={project.resource_id}).")
+        op = project.published_clusters().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
+    if run_update_llm:
+        LOGGER.info(
+            f"Updating LLM database for project {project.name} (id={project.resource_id})."
+        )
+        op = update_llm_data(
+            client=project.client,
+            project_name=project.name,
+            asynchronous=process_asynchronously,
+        )
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
+
+    return completed_operations
+
+
+def _run_custom_pair_operations(
+    project: MasteringProject,
+    *,
+    run_estimate_pair_counts: bool = False,
+    run_generate_pairs: bool = False,
+    run_apply_feedback: bool = False,
+    run_update_pair_results: bool = False,
+    run_update_high_impact_pairs: bool = False,
+    process_asynchronously: bool = False,
+) -> List[Operation]:
+    """Executes specified steps of a mastering project.
+
+    Args:
+        project: The target mastering project
+        run_estimate_pair_counts: Whether an estimate pairs job should be run
+        run_generate_pairs: Whether refresh should be called on the pairs dataset
+        run_apply_feedback: Whether train should be called on the pair matching model
+        run_update_pair_results: Whether predict should be called on the pair matching model
+        run_update_high_impact_pairs: Whether refresh should be called on the high impact pairs
+            dataset
+        process_asynchronously: Whether or not to wait for the job to finish before returning
+            - must be set to True for concurrent workflow
+
+    Returns:
+        The operations that were run
+
+    Raises:
+        TypeError: if the `project` is not a Mastering project
+    """
+    if ProjectType[project.type] != ProjectType.DEDUP:
+        error_msg = f"Cannot use as a mastering project. Project type: {project.type}"
+        LOGGER.error(error_msg)
+        raise TypeError(error_msg)
+    else:
+        project = project.as_mastering()
+
+    completed_operations = []
     if run_estimate_pair_counts:
         LOGGER.info(f"Estimate pair counts for project {project.name} (id={project.resource_id}).")
         op = project.estimate_pairs().refresh(asynchronous=process_asynchronously)
@@ -101,33 +183,6 @@ def _run_custom(
             f"Refreshing high impact pairs for project {project.name} (id={project.resource_id})."
         )
         op = project.high_impact_pairs().refresh(asynchronous=process_asynchronously)
-        if not process_asynchronously:
-            operation.enforce_success(op)
-        completed_operations.append(op)
-    if run_update_cluster_results:
-        LOGGER.info(
-            f"Updating cluster prediction results for project {project.name} "
-            f"(id={project.resource_id})."
-        )
-        op = project.record_clusters().refresh(asynchronous=process_asynchronously)
-        if not process_asynchronously:
-            operation.enforce_success(op)
-        completed_operations.append(op)
-    if run_publish_clusters:
-        LOGGER.info(f"Publishing clusters for project {project.name} (id={project.resource_id}).")
-        op = project.published_clusters().refresh(asynchronous=process_asynchronously)
-        if not process_asynchronously:
-            operation.enforce_success(op)
-        completed_operations.append(op)
-    if run_update_llm:
-        LOGGER.info(
-            f"Updating LLM database for project {project.name} (id={project.resource_id})."
-        )
-        op = update_llm_data(
-            client=project.client,
-            project_name=project.name,
-            asynchronous=process_asynchronously,
-        )
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)

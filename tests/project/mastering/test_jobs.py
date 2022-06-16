@@ -64,7 +64,7 @@ def test_run_with_feedback_and_estimate():
     assert "Publish clusters" == all_ops[7].description
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_run_with_update_llm():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
