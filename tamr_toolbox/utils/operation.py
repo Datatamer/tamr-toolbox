@@ -44,8 +44,8 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
 
 def _dummy_no_op_response(code="job ID -1") -> JsonDict:
     """
-    Operation was successful, but the response contains no content.
-    Create a dummy response to represent this.
+    Create a dict to represent 'no-operation operation', in cases where all results that would be
+    produced by an operation are already up-to-date so there's nothing to do.
 
     Args:
         code: response code include in description, Default 'job ID -1'
