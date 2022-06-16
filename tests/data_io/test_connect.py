@@ -83,7 +83,7 @@ def test_get_export_config_with_args():
         "limitRecords": 10,
         "columnsExcludeRegex": "(origin).*",
         "export_delta": True,
-        "deltaConfig": {"from_version": "100", "to_version": "102"},
+        "deltaConfig": {"fromVersion": "100", "toVersion": "102"},
     }
     assert (
         client._get_export_config(",", 10, "(origin).*", True, "100", "102") == test_export_config
