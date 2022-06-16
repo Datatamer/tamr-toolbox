@@ -149,7 +149,12 @@ def _get_query_config(jdbc_info: jdbc_info.JdbcInfo,) -> Dict:
 
 
 def _get_export_config(
-    multi_value_delimiter: str = "|", limit_records: int = 0, columns_exclude_regex: str = "",
+    multi_value_delimiter: str = "|",
+    limit_records: int = 0,
+    columns_exclude_regex: str = "",
+    export_delta: bool = False,
+    from_version: str = None,
+    to_version: str = None,
 ) -> Dict:
     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
      in form of json dictionary
@@ -169,7 +174,11 @@ def _get_export_config(
         "mergedArrayValuesDelimiter": multi_value_delimiter,
         "limitRecords": limit_records,
         "columnsExcludeRegex": columns_exclude_regex,
+        "exportDelta": export_delta,
     }
+    if from_version and to_version:
+        export_config["deltaConfig"] = {"fromVersion": from_version, "toVersion": to_version}
+
     return export_config
 
 
@@ -315,6 +324,44 @@ def export_dataset(
     r = connect_session.post(export_url, data=json.dumps(export_data))
     r.raise_for_status()
     return r.json()
+
+
+def export_delta_dataset(
+    connect_info: Client,
+    *,
+    dataset_name: str,
+    target_table_name: str,
+    from_version: str = None,
+    to_version: str = None,
+    # truncate_before_load: bool = False, this must be forced as False with delta exp?
+    **kwargs,
+) -> JsonDict:
+    """ Export a dataset-delta via jdbc to a target database.
+
+    Args:
+        dataset_name: the name of the dataset to export
+        target_table_name: the table in the database to update
+        from_version: determines the base version for the delta (optional)
+        to_version: target version for delta export relative to base version
+        connect_info: A Client object for establishing session and loading jdbc parameters
+
+    Returns:
+        JSON response from API call
+
+    Raises: HTTPError if the change between two specified versions or two latest versions
+    of the requested dataset is not incremental (that is, the data is truncated and reloaded)
+    """
+    kwargs["export_delta"] = True
+    kwargs["from_version"] = from_version
+    kwargs["to_version"] = to_version
+
+    return export_dataset(
+        connect_info,
+        dataset_name=dataset_name,
+        target_table_name=target_table_name,
+        truncate_before_load=False,
+        **kwargs,
+    )
 
 
 def execute_statement(connect_info: Client, statement: str) -> JsonDict:
