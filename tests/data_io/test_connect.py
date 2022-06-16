@@ -72,7 +72,7 @@ def test_get_export_config_default():
         "mergedArrayValuesDelimiter": "|",
         "limitRecords": 0,
         "columnsExcludeRegex": "",
-        "export_delta": False,
+        "exportDelta": False,
     }
     assert client._get_export_config() == test_export_config
 
