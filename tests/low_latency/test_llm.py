@@ -157,13 +157,13 @@ def test_llm_query_nonqueryable_project():
         llm_query(
             llm_client,
             project_name="minimal_incomplete_mastering",
-            records={
+            records=[{
                 "ssn": [""],
                 "last_name": ["Cohen"],
                 "first_name": ["Rob"],
                 "all_names": ["", "Rob"],
                 "full_name": ["Rob Cohen"],
-            },
+            }],
             type="records",
         )
     return None
