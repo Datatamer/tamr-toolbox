@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Union
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
+from tamr_toolbox.utils.operation import from_resource_id
 
 from tamr_toolbox.models.data_type import JsonDict
 
@@ -44,7 +45,7 @@ def update_llm_data(
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
-    operation = Operation.from_resource_id(client, operation_id)
+    operation = from_resource_id(client, job_id=operation_id)
 
     return operation.apply_options(**options)
 

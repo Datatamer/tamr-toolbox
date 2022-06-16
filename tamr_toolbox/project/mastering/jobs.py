@@ -126,7 +126,7 @@ def _run_custom(
         op = update_llm_data(
             client=project.client,
             project_name=project.name,
-            process_asynchronously=process_asynchronously,
+            asynchronous=process_asynchronously,
         )
         if not process_asynchronously:
             operation.enforce_success(op)

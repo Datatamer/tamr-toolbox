@@ -94,7 +94,10 @@ def test_llm_query_with_match(type: str, batch_size: int, primary_key: Optional[
 def test_llm_query_with_no_match(type: str):
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
     result = llm_query(
-        llm_client, project_name="minimal_mastering", records=[{"ssn": "0000"}], type=type,
+        llm_client,
+        project_name="minimal_mastering",
+        records=[{"ssn": "0000"}],
+        type=type,
     )
     assert result[0] == []
     return None
@@ -132,7 +135,10 @@ def test_llm_no_input_data():
         expected_warning=warning("No input supplied to llm_query -- returning empty result.")
     ):
         result = llm_query(
-            llm_client, project_name="minimal_mastering", records=[], type="records",
+            llm_client,
+            project_name="minimal_mastering",
+            records=[],
+            type="records",
         )
     assert len(result) == 0
     return None
@@ -229,7 +235,10 @@ def test_llm_min_match_prob(type: str):
     )
 
     full_result = llm_query(
-        llm_client, project_name="minimal_mastering", records=MATCH_TEST_DATA, type=type,
+        llm_client,
+        project_name="minimal_mastering",
+        records=MATCH_TEST_DATA,
+        type=type,
     )
 
     assert full_result[0] == result[0]  # same results for cases with all matches above 0.2 prob
@@ -245,19 +254,9 @@ def test_llm_min_match_prob(type: str):
 
 @mock_api()
 def test_update_llm_data_bad_proj():
-
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     with pytest.raises(RuntimeError, match="DedupInfo was not found"):
         update_llm_data(client, project_name="minimal_categorization")
-    return None
-
-
-@mock_api()
-def test_refresh_and_update():
-    client = utils.client.create(**CONFIG["toolbox_test_instance"])
-    client.post(f"projects/1/publishedClusters:refresh")
-    result = update_llm_data(client, project_name="minimal_mastering")
-    assert result is None
     return None
 
 

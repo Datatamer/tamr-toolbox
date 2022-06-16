@@ -5,6 +5,7 @@ from time import sleep, time as now
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
+from tamr_toolbox.models.data_type import JsonDict
 from tamr_toolbox.models.operation_state import OperationState
 
 LOGGER = logging.getLogger(__name__)
@@ -33,7 +34,43 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
     Returns:
         A Tamr operation
     """
+
+    if str(job_id) == "-1":
+        return Operation.from_json(tamr, _dummy_no_op_response())
+
     return Operation.from_resource_id(tamr, str(job_id))
+
+
+def _dummy_no_op_response(code="job ID -1") -> JsonDict:
+    """
+    Operation was successful, but the response contains no content.
+    Create a dummy response to represent this.
+
+    Args:
+        code: response code include in description, Default 'job ID -1'
+
+    Returns:
+        dict from which dummy operation object can be constructed
+    """
+
+    _never = "0000-00-00T00:00:00.000Z"
+    _description = f"""Tamr returned {code} for this operation, indicating that all
+        results that would be produced by the operation are already up-to-date."""
+    dummy_dict = {
+        "id": "-1",
+        "type": "NOOP",
+        "description": _description,
+        "status": {
+            "state": "SUCCEEDED",
+            "startTime": _never,
+            "endTime": _never,
+            "message": "",
+        },
+        "created": {"username": "", "time": _never, "version": "-1"},
+        "lastModified": {"username": "", "time": _never, "version": "-1"},
+        "relativeId": "operations/-1",
+    }
+    return dummy_dict
 
 
 def get_latest(tamr: Client) -> Operation:
@@ -100,7 +137,10 @@ def get_active(tamr: Client) -> List[Operation]:
 
 
 def wait(
-    operation: Operation, *, poll_interval_seconds: int = 3, timeout_seconds: Optional[int] = None,
+    operation: Operation,
+    *,
+    poll_interval_seconds: int = 3,
+    timeout_seconds: Optional[int] = None,
 ) -> Operation:
     """Continuously polls for this operation's server-side state.
 
@@ -129,7 +169,10 @@ def wait(
 
 
 def monitor(
-    operation: Operation, *, poll_interval_seconds: float = 1, timeout_seconds: float = 300,
+    operation: Operation,
+    *,
+    poll_interval_seconds: float = 1,
+    timeout_seconds: float = 300,
 ) -> Operation:
     """Continuously polls for this operation's server-side state and returns operation
     when there is a state change
