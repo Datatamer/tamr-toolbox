@@ -72,6 +72,9 @@ def test_get_export_config_default():
         "mergedArrayValuesDelimiter": "|",
         "limitRecords": 0,
         "columnsExcludeRegex": "",
+        "export_delta": False,
+        "from_version": None,
+        "to_version": None,
     }
     assert client._get_export_config() == test_export_config
 
@@ -81,8 +84,13 @@ def test_get_export_config_with_args():
         "mergedArrayValuesDelimiter": ",",
         "limitRecords": 10,
         "columnsExcludeRegex": "(origin).*",
+        "export_delta": True,
+        "from_version": "100",
+        "to_version": "102",
     }
-    assert client._get_export_config(",", 10, "(origin).*") == test_export_config
+    assert (
+        client._get_export_config(",", 10, "(origin).*", True, "100", "102") == test_export_config
+    )
 
 
 def test_deployment_parsing():
