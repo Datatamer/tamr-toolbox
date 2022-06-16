@@ -152,7 +152,7 @@ def llm_query(
         response = match_client.post(url, json=json_recs)
 
         # Process responses
-        if response.ok:
+        if response.successful():
             if response.content == b"":  # handle null response
                 continue
 
