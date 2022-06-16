@@ -94,10 +94,7 @@ def test_llm_query_with_match(type: str, batch_size: int, primary_key: Optional[
 def test_llm_query_with_no_match(type: str):
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
     result = llm_query(
-        llm_client,
-        project_name="minimal_mastering",
-        records=[{"ssn": "0000"}],
-        type=type,
+        llm_client, project_name="minimal_mastering", records=[{"ssn": "0000"}], type=type,
     )
     assert result[0] == []
     return None
@@ -135,10 +132,7 @@ def test_llm_no_input_data():
         expected_warning=warning("No input supplied to llm_query -- returning empty result.")
     ):
         result = llm_query(
-            llm_client,
-            project_name="minimal_mastering",
-            records=[],
-            type="records",
+            llm_client, project_name="minimal_mastering", records=[], type="records",
         )
     assert len(result) == 0
     return None
@@ -235,10 +229,7 @@ def test_llm_min_match_prob(type: str):
     )
 
     full_result = llm_query(
-        llm_client,
-        project_name="minimal_mastering",
-        records=MATCH_TEST_DATA,
-        type=type,
+        llm_client, project_name="minimal_mastering", records=MATCH_TEST_DATA, type=type,
     )
 
     assert full_result[0] == result[0]  # same results for cases with all matches above 0.2 prob

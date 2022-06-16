@@ -60,12 +60,7 @@ def _dummy_no_op_response(code="job ID -1") -> JsonDict:
         "id": "-1",
         "type": "NOOP",
         "description": _description,
-        "status": {
-            "state": "SUCCEEDED",
-            "startTime": _never,
-            "endTime": _never,
-            "message": "",
-        },
+        "status": {"state": "SUCCEEDED", "startTime": _never, "endTime": _never, "message": "",},
         "created": {"username": "", "time": _never, "version": "-1"},
         "lastModified": {"username": "", "time": _never, "version": "-1"},
         "relativeId": "operations/-1",
@@ -137,10 +132,7 @@ def get_active(tamr: Client) -> List[Operation]:
 
 
 def wait(
-    operation: Operation,
-    *,
-    poll_interval_seconds: int = 3,
-    timeout_seconds: Optional[int] = None,
+    operation: Operation, *, poll_interval_seconds: int = 3, timeout_seconds: Optional[int] = None,
 ) -> Operation:
     """Continuously polls for this operation's server-side state.
 
@@ -169,10 +161,7 @@ def wait(
 
 
 def monitor(
-    operation: Operation,
-    *,
-    poll_interval_seconds: float = 1,
-    timeout_seconds: float = 300,
+    operation: Operation, *, poll_interval_seconds: float = 1, timeout_seconds: float = 300,
 ) -> Operation:
     """Continuously polls for this operation's server-side state and returns operation
     when there is a state change

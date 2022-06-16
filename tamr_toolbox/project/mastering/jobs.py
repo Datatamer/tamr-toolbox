@@ -100,9 +100,7 @@ def _run_custom(
             f"Updating LLM database for project {project.name} (id={project.resource_id})."
         )
         op = update_llm_data(
-            client=project.client,
-            project_name=project.name,
-            asynchronous=process_asynchronously,
+            client=project.client, project_name=project.name, asynchronous=process_asynchronously,
         )
         if not process_asynchronously:
             operation.enforce_success(op)
