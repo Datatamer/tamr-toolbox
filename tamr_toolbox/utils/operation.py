@@ -34,7 +34,8 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
     Returns:
         A Tamr operation
     """
-
+    # Tamr sometimes returns a job id of -1 if everthing is up-to-date so the requested task
+    # would result in no change -- make a dummy operation in this case
     if str(job_id) == "-1":
         return Operation.from_json(tamr, _dummy_no_op_response())
 
@@ -60,7 +61,7 @@ def _dummy_no_op_response(code="job ID -1") -> JsonDict:
         "id": "-1",
         "type": "NOOP",
         "description": _description,
-        "status": {"state": "SUCCEEDED", "startTime": _never, "endTime": _never, "message": "",},
+        "status": {"state": "SUCCEEDED", "startTime": _never, "endTime": _never, "message": ""},
         "created": {"username": "", "time": _never, "version": "-1"},
         "lastModified": {"username": "", "time": _never, "version": "-1"},
         "relativeId": "operations/-1",
