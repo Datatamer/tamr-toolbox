@@ -138,31 +138,6 @@ def test_llm_no_input_data():
     return None
 
 
-@pytest.mark.parametrize("type", ["records", "clusters"])
-@mock_api()
-def test_llm_query_with_single_record(type: str):
-    llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])
-    result = llm_query(
-        llm_client,
-        project_name="minimal_mastering",
-        records={
-            "ssn": [""],
-            "last_name": ["Cohen"],
-            "first_name": ["Rob"],
-            "all_names": ["", "Rob"],
-            "full_name": ["Rob Cohen"],
-        },
-        type=type,
-    )
-    if type == "records":
-        assert {"7279808247767404449", "8878137442375545950"} == {
-            x["matchedRecordId"] for x in result[0]
-        }
-    else:
-        assert {"218c3f66-b240-3b08-b688-2c8d0506f12f"} == {x["clusterId"] for x in result[0]}
-    return None
-
-
 @mock_api()
 def test_poll_llm_status():
     llm_client = utils.client.create(**CONFIG["toolbox_llm_test_instance"])

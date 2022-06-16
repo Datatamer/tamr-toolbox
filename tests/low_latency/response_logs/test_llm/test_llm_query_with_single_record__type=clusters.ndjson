@@ -1,2 +1,0 @@
-{"method": "POST", "url": "http://ip-00001:9170/api/v1/projects/minimal_mastering:match?type=clusters", "status": 200, "content_type": "application/json", "body": "{\"entityId\":\"0\",\"clusterId\":\"218c3f66-b240-3b08-b688-2c8d0506f12f\",\"avgMatchProb\":0.2}\n"}
-{"method": "POST", "url": "http://ip-00001:9170/api/v1/projects/minimal_mastering:match?type=clusters", "status": 200, "content_type": "application/json", "body": ""}

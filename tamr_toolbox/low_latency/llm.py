@@ -88,7 +88,7 @@ def llm_query(
     match_client: Client,
     *,
     project_name: str,
-    records: Union[JsonDict, List[JsonDict]],
+    records: List[JsonDict],
     type: str,
     primary_key: Optional[str] = None,
     batch_size: Optional[int] = None,
@@ -104,7 +104,7 @@ def llm_query(
     Args:
         match_client: a Tamr client set to use the port of the Match API
         project_name: name of target mastering project
-        records: record or list of records to match
+        records: list of records to match
         type: one of "records" or  "clusters" -- whether to pull record or cluster matches
         primary_key: a primary key for the data; if supplied, this must be a field in input records
         batch_size: split input into this batch size for LLM calls (e.g. to prevent network
@@ -136,10 +136,6 @@ def llm_query(
         prob_key = "avgMatchProb"
     else:
         raise ValueError(f"Unsupported match type {type}.")
-
-    # Convert single record to list for processing
-    if isinstance(records, Dict):
-        records = [records]
 
     # Check batch size and set if not supplied
     if batch_size is None:
