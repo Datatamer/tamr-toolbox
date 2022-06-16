@@ -3,7 +3,7 @@ import tamr_toolbox as tbox
 
 
 # Initialize Tamr Client -- note port must be 9170 for low-latency match service
-client = tbox.utils.client.create(username="user", password="pw", host="localhost", port=9170)
+llm_client = tbox.utils.client.create(username="user", password="pw", host="localhost", port=9170)
 
 # Get source data and rename columns to match project unified dataset as needed
 filename = "/Data/source_data/incoming_employees.csv"
@@ -12,7 +12,7 @@ employee_data.rename(columns={"last_name": "family_name"})
 
 # Get LLM results and add them into the data
 lookup_results = tbox.low_latency.llm.llm_query(
-    client,
+    llm_client,
     project_name="minimal_mastering",
     records=employee_data.to_dict("records"),
     type="clusters",
