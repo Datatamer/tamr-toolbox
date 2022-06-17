@@ -1,5 +1,6 @@
 import json
 import logging
+import requests
 import time
 from collections import defaultdict
 from typing import Dict, List, Optional, Union
@@ -149,32 +150,31 @@ def llm_query(
     # Split into batches and convert to LLM query format
     for j in range(0, len(records), batch_size):
         json_recs = _prepare_json(records[j : j + batch_size], primary_key=primary_key, offset=j)
-        response = match_client.post(url, json=json_recs)
 
-        # Process responses
-        if response.successful():
-            if response.content == b"":  # handle null response
-                continue
-
-            # If data was found, decode, identify source record, and add match to corresponding
-            # list of results in the result dictionary
-            for resp_block in response.content.decode("utf-8").split("\n"):
-                if resp_block:
-                    result = json.loads(resp_block)
-                    index = int(result[record_key]) if primary_key is None else result[record_key]
-
-                    if max_num_matches and len(result_dict[index]) >= max_num_matches:
-                        continue
-
-                    if min_match_prob and result[prob_key] < min_match_prob:
-                        continue
-
-                    result_dict[index].append(result)
-
-        else:
-            message = f"LLM query failed: {response.content}"
+        try:
+            response = match_client.post(url, json=json_recs).successful()
+        except requests.exceptions.HTTPError as e:
+            message = f"LLM query failed: {e}"
             LOGGER.error(message)
             raise RuntimeError(message)
+
+        # Process responses
+        if response.content == b"":  # handle null response
+            continue
+
+        # If data was found, decode, identify source record, and add match to corresponding
+        # list of results in the result dictionary
+        for resp_block in response.content.decode("utf-8").split("\n"):
+            if resp_block:
+                result = json.loads(resp_block)
+                index = int(result[record_key]) if primary_key is None else result[record_key]
+                if max_num_matches and len(result_dict[index]) >= max_num_matches:
+                    continue
+
+                if min_match_prob and result[prob_key] < min_match_prob:
+                    continue
+
+                result_dict[index].append(result)
 
     return result_dict
 
