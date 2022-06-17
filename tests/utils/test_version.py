@@ -1,6 +1,7 @@
 """Tests for tasks related to the version of Tamr instances"""
-import pytest
 from typing import Union, Type
+
+import pytest
 
 from tamr_toolbox.utils import version, config, client
 from tamr_toolbox.utils.testing import mock_api
@@ -56,3 +57,34 @@ def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement
         assert expected_pass_enforcement is True
     except NotImplementedError:
         assert expected_pass_enforcement is False
+
+
+def test_is_version_equal():
+    assert version.is_tamr_version_equal(tamr_version="2022.002.0", exact_version="2022.002.0")
+    assert not version.is_tamr_version_equal(tamr_version="2022.002.0", exact_version="2021.002")
+
+
+def test_is_version_atleast():
+    assert version.is_tamr_version_atleast(tamr_version="2022.003.0",
+                                           min_version="2021.003.0")
+    assert not version.is_tamr_version_atleast(tamr_version="2021.003.0",
+                                               min_version="2022.003.0")
+
+
+def test_is_version_between():
+    assert version.is_tamr_version_between(tamr_version="2021.003.0",
+                                           min_version="2019.003.0",
+                                           max_version="2022.003.0")
+    assert not version.is_tamr_version_between(tamr_version="2019.003.0",
+                                               min_version="2020.001.0",
+                                               max_version="2021.002.0")
+    assert not version.is_tamr_version_between(tamr_version="2022.003.0",
+                                               min_version="2020.001.0",
+                                               max_version="2021.002.0")
+    with pytest.raises(Exception):
+        version.is_tamr_version_between(tamr_version="2022.003.0",
+                                        min_version="2021.001.0",
+                                        max_version="2020.002.0")
+
+def test_raise_warn_tamr_version():
+    pass
