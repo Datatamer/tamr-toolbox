@@ -30,10 +30,12 @@ setup(
             "aiohttp==3.7.4.post0",
             "slackclient==2.7.2",
             "responses==0.10.14",
+            "google>=3.0.0",
             "google-cloud-translate==2.0.1",
+            "google-cloud-storage>=2.4.0",
             "paramiko>=2.8.0",
             "boto3>=1.21.21",
-            "google>=3.0.0",
+            "boto3-stubs-lite[essential]>=1.21.21",
         ],
         # Individual sets of dependencies
         "pandas": ["pandas>=0.21.0"],
