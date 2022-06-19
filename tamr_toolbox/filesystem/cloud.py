@@ -1,10 +1,5 @@
-import os
-
-BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
-if BUILDING_DOCS:
-    # Import relevant optional dependencies
-    from google.cloud.storage import Client as GcsClient
-    from mypy_boto3_s3.client import S3Client
+from google.cloud.storage import Client as GcsClient
+from mypy_boto3_s3.client import S3Client
 
 
 def gcs_upload(
