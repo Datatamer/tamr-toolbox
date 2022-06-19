@@ -3,9 +3,8 @@ import os
 BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
 if BUILDING_DOCS:
     # Import relevant optional dependencies
-    pass
-from google.cloud.storage import Client as GcsClient
-from mypy_boto3_s3.client import S3Client
+    from google.cloud.storage import Client as GcsClient
+    from mypy_boto3_s3.client import S3Client
 
 
 def gcs_upload(
@@ -59,7 +58,9 @@ def s3_upload(
         bucket_name: name of AWS bucket
         downloads copy of file being uploaded to filepath
     """
-    cloud_client.upload_file(Filename=source_filepath, Bucket=bucket_name, Key=destination_filepath)
+    cloud_client.upload_file(
+        Filename=source_filepath, Bucket=bucket_name, Key=destination_filepath
+    )
 
 
 def s3_download(

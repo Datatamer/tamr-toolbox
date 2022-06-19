@@ -31,7 +31,7 @@ setup(
             "slackclient==2.7.2",
             "responses==0.10.14",
             "google>=3.0.0",
-            "google-cloud-translate==2.0.1",
+            "google-cloud-translate>=2.0.1",
             "google-cloud-storage>=2.4.0",
             "paramiko>=2.8.0",
             "boto3>=1.21.21",
