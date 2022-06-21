@@ -39,7 +39,8 @@ def _run_custom(
     Raises:
         TypeError: if the `project` is not a Golden Record project
     """
-    version.raise_warn_tamr_version(tamr_version=version.current(project.client), min_version="2020.004.0")
+    version.raise_warn_tamr_version(tamr_version=version.current(project.client),
+                                    min_version="2020.004.0")
 
     if ProjectType[project.type] != ProjectType.GOLDEN_RECORDS:
         error_msg = f"Cannot use as a golden records project. Project type: {project.type}"
