@@ -7,6 +7,7 @@ from collections.abc import Callable
 
 from packaging.version import parse
 from tamr_unify_client import Client
+from typing import List
 
 LOGGER = logging.getLogger(__name__)
 logging.captureWarnings(True)
@@ -52,7 +53,7 @@ def _as_float(version: str) -> float:
     return (version_split[0] * 1000) + version_split[1] + (version_split[2] / 10)
 
 
-def _get_tamr_versions_from_function_args(*args, **kwargs) -> list[str]:
+def _get_tamr_versions_from_function_args(*args, **kwargs) -> List[str]:
     all_args = locals()
     args = [arg for arg in all_args["args"]]
     kwargs = list(all_args["kwargs"].values())
