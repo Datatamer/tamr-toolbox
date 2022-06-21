@@ -136,12 +136,12 @@ def test_get_tamr_versions_from_function_args():
 
     assert version._get_tamr_versions_from_function_args(5, "words", a=["other_types"]) == []
 
-    assert version._get_tamr_versions_from_function_args(tamr_client) == \
-           [version.current(tamr_client)]
-    assert version._get_tamr_versions_from_function_args(tamr_project) == \
-           [version.current(tamr_client)]
-    assert version._get_tamr_versions_from_function_args(tamr_dataset) == \
-           [version.current(tamr_client)]
+    assert version._get_tamr_versions_from_function_args(
+        tamr_client) == [version.current(tamr_client)]
+    assert version._get_tamr_versions_from_function_args(
+        tamr_project) == [version.current(tamr_client)]
+    assert version._get_tamr_versions_from_function_args(
+        tamr_dataset) == [version.current(tamr_client)]
 
     assert version._get_tamr_versions_from_function_args(tamr_client,
                                                          tamr_project,
