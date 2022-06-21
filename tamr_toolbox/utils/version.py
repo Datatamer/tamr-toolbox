@@ -138,8 +138,9 @@ def is_tamr_version_between(tamr_version: str, min_version: str, max_version: st
     return parse(min_version) <= parse(tamr_version) <= parse(str(max_version))
 
 
-def raise_warn_tamr_version(tamr_version: str, min_version: str, max_version=None,
-                            exact_version=False, response="error") -> None:
+def raise_warn_tamr_version(
+    tamr_version: str, min_version: str, max_version=None, exact_version=False, response="error"
+) -> None:
     """
     Check Tamr version and raise error/warn as appropriate.
     Args:
@@ -172,17 +173,21 @@ def raise_warn_tamr_version(tamr_version: str, min_version: str, max_version=Non
     message = None
     if exact_version:
         if not is_tamr_version_equal(tamr_version, min_version):
-            message = f"Using Tamr version(s) {tamr_version}, " \
-                      f"but must be exactly {min_version}."
+            message = (
+                f"Using Tamr version(s) {tamr_version}, " f"but must be exactly {min_version}."
+            )
 
     elif not max_version:
         if not is_tamr_version_atleast(tamr_version, min_version):
-            message = f"Using Tamr version(s) {tamr_version}, " \
-                      f"but must be at least {min_version}."
+            message = (
+                f"Using Tamr version(s) {tamr_version}, " f"but must be at least {min_version}."
+            )
 
     elif not is_tamr_version_between(tamr_version, min_version, max_version):
-        message = f"Using Tamr version(s) {tamr_version}, " \
-                  f"but must be between {min_version} and {max_version}."
+        message = (
+            f"Using Tamr version(s) {tamr_version}, "
+            f"but must be between {min_version} and {max_version}."
+        )
 
     if message and (response == "error"):
         raise EnvironmentError(message)
@@ -224,9 +229,9 @@ def ensure_tamr_version(min_version: str, max_version=None, exact_version=False)
     def _decorator(func):
         def _inspector(*args, **kwargs):
             for tamr_version in _get_tamr_versions_from_function_args(*args, **kwargs):
-                raise_warn_tamr_version(tamr_version,
-                                        min_version, max_version, exact_version,
-                                        response="error")
+                raise_warn_tamr_version(
+                    tamr_version, min_version, max_version, exact_version, response="error"
+                )
 
             return func(*args, **kwargs)
 
@@ -250,8 +255,7 @@ def enforce_after_or_equal(client: Client, *, compare_version: str) -> None:
         raise_warn_tamr_version
         ensure_tamr_version
     """
-    warnings.warn("Use `raise_warn_tamr_version'",
-                  DeprecationWarning, stacklevel=2)
+    warnings.warn("Use `raise_warn_tamr_version'", DeprecationWarning, stacklevel=2)
 
     current_version = current(client)
     if _as_float(current_version) < _as_float(compare_version):

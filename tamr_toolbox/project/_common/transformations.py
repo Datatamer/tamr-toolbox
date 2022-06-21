@@ -144,8 +144,9 @@ def get_all(project: Project) -> TransformationGroup:
     Returns:
         All input transformations and unified transformations of a project
     """
-    version.raise_warn_tamr_version(tamr_version=version.current(project.client),
-                                    min_version=TX_RELEASE_VERSION)
+    version.raise_warn_tamr_version(
+        tamr_version=version.current(project.client), min_version=TX_RELEASE_VERSION
+    )
 
     LOGGER.info(f"Getting transformations from project {project}")
     r = project.client.get(f"{project.api_path}/transformations")
@@ -172,8 +173,9 @@ def set_all(project: Project, tx: TransformationGroup, *, allow_overwrite=True) 
             in `project`
         ValueError: if provided `tx` are invalid
     """
-    version.raise_warn_tamr_version(tamr_version=version.current(project.client),
-                                    min_version=TX_RELEASE_VERSION)
+    version.raise_warn_tamr_version(
+        tamr_version=version.current(project.client), min_version=TX_RELEASE_VERSION
+    )
 
     if not allow_overwrite:
         # Fail if any transformations already exist
