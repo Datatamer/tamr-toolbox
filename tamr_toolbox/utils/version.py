@@ -123,7 +123,7 @@ def raise_warn_tamr_version(tamr_version: str, min_version: str, max_version=Non
             message = f"Using Tamr version(s) {tamr_version}, " \
                       f"but must be exactly {min_version}."
 
-    elif max_version is not None:
+    elif not max_version:
         if not is_tamr_version_atleast(tamr_version, min_version):
             message = f"Using Tamr version(s) {tamr_version}, " \
                       f"but must be at least {min_version}."
@@ -138,7 +138,7 @@ def raise_warn_tamr_version(tamr_version: str, min_version: str, max_version=Non
         warnings.warn(message)
 
 
-def ensure_tamr_version(min_version: str, max_version="9999", exact_version=False) -> Callable:
+def ensure_tamr_version(min_version: str, max_version=None, exact_version=False) -> Callable:
     """Pie decorator for Tamr version checking
 
     Examples:
