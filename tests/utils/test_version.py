@@ -145,6 +145,7 @@ def test_get_tamr_versions_from_function_args():
     ) == [version.current(tamr_client), version.current(tamr_client), version.current(tamr_client)]
 
 
+@mock_api()
 def test_ensure_tamr_version_decorator():
     tamr_client = client.create(**CONFIG["toolbox_test_instance"])
 
