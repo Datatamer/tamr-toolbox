@@ -146,10 +146,9 @@ def test_get_tamr_versions_from_function_args():
     assert version._get_tamr_versions_from_function_args(tamr_client,
                                                          tamr_project,
                                                          tamr_dataset,
-                                                         "nothing") == \
-           [version.current(tamr_client),
-            version.current(tamr_client),
-            version.current(tamr_client)]
+                                                         "a") == [version.current(tamr_client),
+                                                                  version.current(tamr_client),
+                                                                  version.current(tamr_client)]
 
 
 def test_ensure_tamr_version_decorator():
