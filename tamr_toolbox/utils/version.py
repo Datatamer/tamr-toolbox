@@ -224,7 +224,9 @@ def ensure_tamr_version(min_version: str, max_version=None, exact_version=False)
     def _decorator(func):
         def _inspector(*args, **kwargs):
             for tamr_version in _get_tamr_versions_from_function_args(*args, **kwargs):
-                raise_warn_tamr_version(tamr_version, min_version, max_version, exact_version, response="error")
+                raise_warn_tamr_version(tamr_version,
+                                        min_version, max_version, exact_version,
+                                        response="error")
 
             return func(*args, **kwargs)
 

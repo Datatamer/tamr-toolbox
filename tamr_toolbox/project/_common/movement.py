@@ -1,10 +1,10 @@
 """Tasks related to project movement as part of Tamr projects"""
-from typing import List, Optional
 import logging
+from typing import List, Optional
 from urllib import request
 
-from tamr_unify_client.project.resource import Project
 from tamr_unify_client import Client
+from tamr_unify_client.project.resource import Project
 
 from tamr_toolbox import utils
 from tamr_toolbox.utils.operation import Operation
@@ -13,11 +13,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def export_artifacts(
-    *,
-    project: Project,
-    artifact_directory_path: str,
-    exclude_artifacts: Optional[List[str]] = None,
-    asynchronous: bool = False,
+        *,
+        project: Project,
+        artifact_directory_path: str,
+        exclude_artifacts: Optional[List[str]] = None,
+        asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
 
@@ -39,7 +39,7 @@ def export_artifacts(
 
     # check version compatibility for project movement
     utils.version.raise_warn_tamr_version(tamr_version=utils.version.current(project.client),
-                                    min_version="2021.005.0")
+                                          min_version="2021.005.0")
 
     # make project export api request
     body = {"artifactDirectory": artifact_directory_path, "excludeArtifacts": exclude_artifacts}
@@ -69,18 +69,18 @@ def export_artifacts(
 
 
 def import_artifacts(
-    *,
-    project_artifact_path: str,
-    tamr_client: Client,
-    target_project: Project = None,
-    new_project_name: str = None,
-    new_unified_dataset_name: Optional[str] = None,
-    exclude_artifacts: Optional[List[str]] = None,
-    include_additive_artifacts: Optional[List[str]] = None,
-    include_destructive_artifacts: Optional[List[str]] = None,
-    fail_if_not_present: bool = False,
-    asynchronous: bool = False,
-    overwrite_existing: bool = False,
+        *,
+        project_artifact_path: str,
+        tamr_client: Client,
+        target_project: Project = None,
+        new_project_name: str = None,
+        new_unified_dataset_name: Optional[str] = None,
+        exclude_artifacts: Optional[List[str]] = None,
+        include_additive_artifacts: Optional[List[str]] = None,
+        include_destructive_artifacts: Optional[List[str]] = None,
+        fail_if_not_present: bool = False,
+        asynchronous: bool = False,
+        overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
 
@@ -117,7 +117,7 @@ def import_artifacts(
 
     # check version compatibility for project movement
     utils.version.raise_warn_tamr_version(tamr_version=utils.version.current(tamr_client),
-                                    min_version="2021.005.0")
+                                          min_version="2021.005.0")
 
     # make project import api request
     body = {
