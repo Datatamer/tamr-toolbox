@@ -42,7 +42,7 @@ def from_resource_id(tamr: Client, *, job_id: Union[int, str]) -> Operation:
     return Operation.from_resource_id(tamr, str(job_id))
 
 
-def _dummy_no_op_response(code="job ID -1") -> JsonDict:
+def _dummy_no_op_response(code: str = "job ID -1") -> JsonDict:
     """
     Create a dict to represent 'no-operation operation', in cases where all results that would be
     produced by an operation are already up-to-date so there's nothing to do.

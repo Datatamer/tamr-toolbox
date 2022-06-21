@@ -135,15 +135,7 @@ def _run_custom_pair_operations(
     Returns:
         The operations that were run
 
-    Raises:
-        TypeError: if the `project` is not a Mastering project
     """
-    if ProjectType[project.type] != ProjectType.DEDUP:
-        error_msg = f"Cannot use as a mastering project. Project type: {project.type}"
-        LOGGER.error(error_msg)
-        raise TypeError(error_msg)
-    else:
-        project = project.as_mastering()
 
     completed_operations = []
     if run_estimate_pair_counts:
