@@ -38,7 +38,8 @@ def export_artifacts(
         exclude_artifacts = []
 
     # check version compatibility for project movement
-    utils.version.enforce_after_or_equal(client=project.client, compare_version="2021.005.0")
+    utils.version.raise_warn_tamr_version(tamr_version=utils.version.current(project.client),
+                                    min_version="2021.005.0")
 
     # make project export api request
     body = {"artifactDirectory": artifact_directory_path, "excludeArtifacts": exclude_artifacts}
@@ -115,7 +116,8 @@ def import_artifacts(
         project_artifact_path = request.pathname2url(project_artifact_path)
 
     # check version compatibility for project movement
-    utils.version.enforce_after_or_equal(client=tamr_client, compare_version="2021.005.0")
+    utils.version.raise_warn_tamr_version(tamr_version=utils.version.current(tamr_client),
+                                    min_version="2021.005.0")
 
     # make project import api request
     body = {
