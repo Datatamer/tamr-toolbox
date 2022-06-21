@@ -13,14 +13,14 @@ logging.captureWarnings(True)
 
 
 def current(client: Client) -> str:
-    """Gets the version of Tamr for provided client
+    """
+    Gets the version of Tamr for provided client
 
     Args:
         client: Tamr client
 
     Returns:
         String representation of Tamr version
-
     """
     url = "/api/versioned/service/version"
     response = client.get(url).successful()
@@ -28,7 +28,8 @@ def current(client: Client) -> str:
 
 
 def _as_float(version: str) -> float:
-    """Converts string Tamr version to an orderable numeric representation
+    """
+    Converts string Tamr version to an orderable numeric representation
 
     The numeric representation is designed to allow for the ordering of Tamr versions from oldest
     to newest. The values are not guaranteed to be sequential even if the versions are sequential.
@@ -41,7 +42,6 @@ def _as_float(version: str) -> float:
 
     Returns:
         Numeric representation of Tamr version
-
     """
     version_split = version.split(".")
 
