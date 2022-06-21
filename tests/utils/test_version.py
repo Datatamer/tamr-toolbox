@@ -65,96 +65,91 @@ def test_is_version_equal():
 
 
 def test_is_version_atleast():
-    assert version.is_tamr_version_atleast(tamr_version="2022.003.0",
-                                           min_version="2021.003.0")
+    assert version.is_tamr_version_atleast(tamr_version="2022.003.0", min_version="2021.003.0")
 
-    assert not version.is_tamr_version_atleast(tamr_version="2021.003.0",
-                                               min_version="2022.003.0")
+    assert not version.is_tamr_version_atleast(tamr_version="2021.003.0", min_version="2022.003.0")
 
 
 def test_is_version_between():
-    assert version.is_tamr_version_between(tamr_version="2021.003.0",
-                                           min_version="2019.003.0",
-                                           max_version="2022.003.0")
+    assert version.is_tamr_version_between(
+        tamr_version="2021.003.0", min_version="2019.003.0", max_version="2022.003.0"
+    )
 
-    assert not version.is_tamr_version_between(tamr_version="2019.003.0",
-                                               min_version="2020.001.0",
-                                               max_version="2021.002.0")
+    assert not version.is_tamr_version_between(
+        tamr_version="2019.003.0", min_version="2020.001.0", max_version="2021.002.0"
+    )
 
-    assert not version.is_tamr_version_between(tamr_version="2022.003.0",
-                                               min_version="2020.001.0",
-                                               max_version="2021.002.0")
+    assert not version.is_tamr_version_between(
+        tamr_version="2022.003.0", min_version="2020.001.0", max_version="2021.002.0"
+    )
     with pytest.raises(Exception):
-        version.is_tamr_version_between(tamr_version="2022.003.0",
-                                        min_version="2021.001.0",
-                                        max_version="2020.002.0")
+        version.is_tamr_version_between(
+            tamr_version="2022.003.0", min_version="2021.001.0", max_version="2020.002.0"
+        )
 
 
 def test_raise_warn_tamr_version():
     try:
-        version.raise_warn_tamr_version(tamr_version="2022.002.0",
-                                        min_version="2022.002.0",
-                                        exact_version=True)
+        version.raise_warn_tamr_version(
+            tamr_version="2022.002.0", min_version="2022.002.0", exact_version=True
+        )
     except Exception as exc:
         assert False, f"Raised an exception {exc}"
 
     try:
-        version.raise_warn_tamr_version(tamr_version="2022.003.0",
-                                        min_version="2021.003.0")
+        version.raise_warn_tamr_version(tamr_version="2022.003.0", min_version="2021.003.0")
     except Exception as exc:
         assert False, f"Raised an exception {exc}"
 
     try:
-        version.raise_warn_tamr_version(tamr_version="2021.003.0",
-                                        min_version="2019.003.0",
-                                        max_version="2022.003.0")
+        version.raise_warn_tamr_version(
+            tamr_version="2021.003.0", min_version="2019.003.0", max_version="2022.003.0"
+        )
     except Exception as exc:
         assert False, f"Raised an exception {exc}"
 
     with pytest.raises(ValueError):
-        version.raise_warn_tamr_version(tamr_version="2019.003.0",
-                                        min_version="2021.003.0",
-                                        response="blah")
+        version.raise_warn_tamr_version(
+            tamr_version="2019.003.0", min_version="2021.003.0", response="blah"
+        )
     with pytest.raises(EnvironmentError):
-        version.raise_warn_tamr_version(tamr_version="2019.003.0",
-                                        min_version="2021.003.0",
-                                        response="error")
+        version.raise_warn_tamr_version(
+            tamr_version="2019.003.0", min_version="2021.003.0", response="error"
+        )
     with pytest.warns():
-        version.raise_warn_tamr_version(tamr_version="2019.003.0",
-                                        min_version="2021.003.0",
-                                        response="warn")
+        version.raise_warn_tamr_version(
+            tamr_version="2019.003.0", min_version="2021.003.0", response="warn"
+        )
 
 
 @mock_api()
 def test_get_tamr_versions_from_function_args():
-    tamr_client = client.create(
-        **CONFIG["toolbox_test_instance"])
-    tamr_project = tamr_client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_mastering"])
-    tamr_dataset = tamr_client.datasets.by_resource_id(
-        CONFIG["datasets"]["groceries_tiny"])
+    tamr_client = client.create(**CONFIG["toolbox_test_instance"])
+    tamr_project = tamr_client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    tamr_dataset = tamr_client.datasets.by_resource_id(CONFIG["datasets"]["groceries_tiny"])
 
     assert version._get_tamr_versions_from_function_args(5, "words", a=["other_types"]) == []
 
-    assert version._get_tamr_versions_from_function_args(
-        tamr_client) == [version.current(tamr_client)]
-    assert version._get_tamr_versions_from_function_args(
-        tamr_project) == [version.current(tamr_client)]
-    assert version._get_tamr_versions_from_function_args(
-        tamr_dataset) == [version.current(tamr_client)]
+    assert version._get_tamr_versions_from_function_args(tamr_client) == [
+        version.current(tamr_client)
+    ]
+    assert version._get_tamr_versions_from_function_args(tamr_project) == [
+        version.current(tamr_client)
+    ]
+    assert version._get_tamr_versions_from_function_args(tamr_dataset) == [
+        version.current(tamr_client)
+    ]
 
-    assert version._get_tamr_versions_from_function_args(tamr_client,
-                                                         tamr_project,
-                                                         tamr_dataset,
-                                                         "a") == [version.current(tamr_client),
-                                                                  version.current(tamr_client),
-                                                                  version.current(tamr_client)]
+    assert version._get_tamr_versions_from_function_args(
+        tamr_client, tamr_project, tamr_dataset, "a"
+    ) == [version.current(tamr_client), version.current(tamr_client), version.current(tamr_client)]
 
 
 def test_ensure_tamr_version_decorator():
     tamr_client = client.create(**CONFIG["toolbox_test_instance"])
 
     try:
+
         @version.ensure_tamr_version(min_version="2019.001")
         def test_function_irrelevant_inputs(*args, **kwargs):
             pass
@@ -164,6 +159,7 @@ def test_ensure_tamr_version_decorator():
         assert False, f"Raised an exception {exc}"
 
     try:
+
         @version.ensure_tamr_version(min_version="2019.001")
         def test_function_args_passing(tamr_client, *args, **kwargs):
             pass
@@ -173,6 +169,7 @@ def test_ensure_tamr_version_decorator():
         assert False, f"Raised an exception {exc}"
 
     with pytest.raises(EnvironmentError):
+
         @version.ensure_tamr_version(min_version="2099.001")
         def test_function_args_failing(tamr_client, *args, **kwargs):
             pass
