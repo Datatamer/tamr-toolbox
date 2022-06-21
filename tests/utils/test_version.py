@@ -116,7 +116,7 @@ def test_raise_warn_tamr_version():
         version.raise_warn_tamr_version(
             tamr_version="2019.003.0", min_version="2021.003.0", response="error"
         )
-    with pytest.warns():
+    with pytest.warns(Warning):
         version.raise_warn_tamr_version(
             tamr_version="2019.003.0", min_version="2021.003.0", response="warn"
         )
