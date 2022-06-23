@@ -4,20 +4,20 @@ import requests
 import time
 from collections import defaultdict
 from typing import Dict, List, Optional, Union
+from tamr_client import MasteringProject
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
 from tamr_toolbox.utils.operation import from_resource_id
-
+from tamr_toolbox.utils.project_name import _get_original_project_name
 from tamr_toolbox.models.data_type import JsonDict
 
 LOGGER = logging.getLogger(__name__)
 
 
 def update_llm_data(
-    client: Client,
     *,
-    project_name: str,
+    project: MasteringProject,
     do_update_clusters: bool = True,
     do_use_manual_clustering: bool = False,
     **options,
@@ -26,18 +26,20 @@ def update_llm_data(
     Updates data for LLM query if needed, based on latest published clusters.
 
     Args:
-        client: Tamr client object (connected to primary Tamr port , i.e. 9100)
-        project_name: name of the project to be updated
+        project: project to be updated
         do_update_clusters: whether to update clusters, default True
         do_use_manual_clustering: whether to use externally managed clustering, default False
         options: Options passed to underlying :class:`~tamr_unify_client.operation.Operation`
     """
 
+    # Make sure we have the original name of the project to use with the LLM endpoint
+    project_name = _get_original_project_name(project.client, project_id=project.resource_id)
+
     url = (
         f"projects/{project_name}:updateLLM?updateClusters={do_update_clusters}"
         f"&useManualClustering={do_use_manual_clustering}"
     )
-    response = client.post(url)
+    response = project.client.post(url)
     if not response.ok:
         message = (
             f"LLM update for {project_name} failed at submission time: "
@@ -46,7 +48,7 @@ def update_llm_data(
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
-    operation = from_resource_id(client, job_id=operation_id)
+    operation = from_resource_id(project.client, job_id=operation_id)
 
     return operation.apply_options(**options)
 

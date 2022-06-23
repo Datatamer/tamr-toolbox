@@ -99,9 +99,7 @@ def _run_custom(
         LOGGER.info(
             f"Updating LLM database for project {project.name} (id={project.resource_id})."
         )
-        op = update_llm_data(
-            client=project.client, project_name=project.name, asynchronous=process_asynchronously,
-        )
+        op = update_llm_data(project=project, asynchronous=process_asynchronously,)
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)

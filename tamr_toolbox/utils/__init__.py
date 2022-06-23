@@ -1,20 +1,23 @@
 """Tasks related to scripting"""
+from . import _project_name
 from . import client
 from . import config
+from . import downstream
 from . import logger
 from . import operation
-from . import version
 from . import testing
 from . import upstream
-from . import downstream
+from . import version
+
 
 __all__ = [
-    "config",
-    "logger",
+    "_project_name",
     "client",
-    "version",
+    "config",
+    "downstream",
+    "logger",
     "operation",
     "testing",
     "upstream",
-    "downstream",
+    "version",
 ]

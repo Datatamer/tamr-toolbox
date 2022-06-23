@@ -223,8 +223,9 @@ def test_llm_min_match_prob(type: str):
 @mock_api()
 def test_update_llm_data_bad_proj():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_categorization")
     with pytest.raises(RuntimeError, match="DedupInfo was not found"):
-        update_llm_data(client, project_name="minimal_categorization")
+        update_llm_data(project=project)
     return None
 
 
