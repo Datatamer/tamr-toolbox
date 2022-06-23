@@ -211,9 +211,9 @@ def ensure_tamr_version(min_version: str, max_version=None, exact_version=False)
             Set to True to only support one release of Tamr. Default is False
 
     Examples:
-        @ensure_tamr_version(min_version=2021.002)
-        def refresh_dataset(tamr_dataset, *args, **kwargs):
-            return tamr_dataset.refresh()
+        >>> @ensure_tamr_version(min_version="2021.002")
+        >>> def refresh_dataset(tamr_dataset, *args, **kwargs):
+        >>>     return tamr_dataset.refresh()
 
     Notes:
         This decorator only inspects the Tamr version of arguments going into the
