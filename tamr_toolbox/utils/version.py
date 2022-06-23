@@ -144,6 +144,7 @@ def raise_warn_tamr_version(
 ) -> None:
     """
     Check Tamr version and raise error/warn as appropriate.
+
     Args:
         tamr_version (str):
             The version of Tamr being considered
