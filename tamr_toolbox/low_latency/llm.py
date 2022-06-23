@@ -4,12 +4,12 @@ import requests
 import time
 from collections import defaultdict
 from typing import Dict, List, Optional, Union
-from tamr_client import MasteringProject
 
 from tamr_unify_client import Client
+from tamr_unify_client.mastering.project import MasteringProject
 from tamr_unify_client.operation import Operation
 from tamr_toolbox.utils.operation import from_resource_id
-from tamr_toolbox.utils.project_name import _get_original_project_name
+from tamr_toolbox.utils._project_name import _get_original_project_name
 from tamr_toolbox.models.data_type import JsonDict
 
 LOGGER = logging.getLogger(__name__)
