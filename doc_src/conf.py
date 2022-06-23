@@ -52,8 +52,9 @@ autodoc_member_order = "bysource"
 autosectionlabel_prefix_document = True
 intersphinx_mapping = {
     "https://docs.python.org/": None,
-    "requests": ("https://requests.readthedocs.io/en/master/", None),
+    "requests": ("https://requests.readthedocs.io/en/latest/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
+    "tamr_client": ("https://tamr-client.readthedocs.io/en/stable/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
