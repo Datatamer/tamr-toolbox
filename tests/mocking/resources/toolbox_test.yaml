@@ -1,54 +1,54 @@
 toolbox_test_instance:
-  host: $TAMR_TOOLBOX_HOST
-  protocol: 'http'
-  port: '9100'
-  username: 'admin'
-  password: $TAMR_TOOLBOX_PASSWORD
+    host: $TAMR_TOOLBOX_HOST
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_TOOLBOX_PASSWORD
 
 toolbox_realtime_match_instance:
-  host: $TAMR_TOOLBOX_HOST
-  protocol: 'http'
-  port: '9170'
-  username: 'admin'
-  password: $TAMR_TOOLBOX_PASSWORD
+    host: $TAMR_TOOLBOX_HOST
+    protocol: 'http'
+    port: '9170'
+    username: 'admin'
+    password: $TAMR_TOOLBOX_PASSWORD
 
 toolbox_backup_test_instance:
-  host: $TAMR_TOOLBOX_BACKUP_HOST
-  protocol: 'http'
-  port: '9100'
-  username: 'admin'
-  password: $TAMR_TOOLBOX_PASSWORD
+    host: $TAMR_TOOLBOX_BACKUP_HOST
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_TOOLBOX_PASSWORD
 
 projects:
-  minimal_mastering: '1'
-  minimal_golden_records: '2'
-  minimal_categorization: '3'
-  minimal_schema_mapping: '4'
-  schema_mapping_with_spaces_in_name: '19'
-  categorization_no_taxonomy: '45'
+    minimal_mastering: "1"
+    minimal_golden_records: "2"
+    minimal_categorization: "3"
+    minimal_schema_mapping: "4"
+    schema_mapping_with_spaces_in_name: "19"
+    categorization_no_taxonomy: "45"
 
 datasets:
-  minimal_golden_records_golden_records: '47'
-  groceries_tiny: '51'
-  minimal_categorization_unified_dataset_classifications_average_confidences: '61'
-  minimal_schema_mapping_unified_dataset: '65'
-  broken_schema_mapping_unified_dataset: '69'
-  people_tiny_copy: '70'
-  people_0_records: '97'
-  dictionary_auto_to_fr.json: '99'
-  minimal_mastering_unified_dataset: '5'
-  people_tiny.csv: '3'
-  bad_encoding: '162'
+    minimal_golden_records_golden_records: "47"
+    groceries_tiny: "51"
+    minimal_categorization_unified_dataset_classifications_average_confidences: "61"
+    minimal_schema_mapping_unified_dataset: "65"
+    broken_schema_mapping_unified_dataset: "69"
+    people_tiny_copy: "70"
+    people_0_records: "97"
+    dictionary_auto_to_fr.json: "99"
+    minimal_mastering_unified_dataset: "5"
+    people_tiny.csv: "3"
+    bad_encoding: "162"
 
 df_connect:
-  host: $TAMR_TOOLBOX_HOST
-  protocol: 'http'
-  port: '9030'
-  tamr_username: 'admin'
-  tamr_password: $TAMR_TOOLBOX_PASSWORD
-  jdbc:
-    ingest:
-      jdbc_url: $CONNECT_TOOLBOX_POSTGRES_JDBC
-      db_user: 'tamr'
-      db_password: $CONNECT_TOOLBOX_DB_PASSWORD
-      fetch_size: 10000
+    host: $TAMR_TOOLBOX_HOST
+    protocol: "http"
+    port: "9030"
+    tamr_username: "admin"
+    tamr_password: $TAMR_TOOLBOX_PASSWORD
+    jdbc:
+        ingest:
+            jdbc_url: $CONNECT_TOOLBOX_POSTGRES_JDBC
+            db_user: "tamr"
+            db_password: $CONNECT_TOOLBOX_DB_PASSWORD
+            fetch_size: 10000
