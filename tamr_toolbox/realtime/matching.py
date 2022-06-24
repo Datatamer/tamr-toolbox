@@ -56,7 +56,7 @@ def poll_realtime_match_status(
     match_client: Client, *, project_name: str, num_tries: int = 10, wait_sec: int = 1
 ) -> bool:
     """
-    Check if match service is queryable. Try up to num_tries times at 1s (or user-specified)
+    Check if match service is queryable. Try up to `num_tries` times at 1 sec (or user-specified)
     interval.
 
     Args:
@@ -97,12 +97,12 @@ def match_query(
     batch_size: Optional[int] = None,
     min_match_prob: Optional[float] = None,
     max_num_matches: Optional[int] = None,
-) -> Dict[int, List[JsonDict]]:
+) -> Dict[Union[int, str], List[JsonDict]]:
     """
     Find the best matching clusters or records for each supplied record. Returns a dictionary where
     each key correpsonds to an input record and the value is a list of the RealTime match results
     for that record. An empty result list indicates a null response from matching (or no responses
-    above the min_match_prob, if that parameter was supplied).
+    above the `min_match_prob`, if that parameter was supplied).
 
     Args:
         match_client: a Tamr client set to use the port of the Match API
@@ -118,11 +118,11 @@ def match_query(
             records, default None
 
     Returns:
-        Dict keyed by integers (indices of inputs), or by primary_key if primary_key is supplied,
-            with value a list containing matched data
+        Dict keyed by integers (indices of inputs), or by `primary_key` if `primary_key` is
+        supplied, with value a list containing matched data
 
     Raises:
-        ValueError: if match type is not "records" or "clusters", or if batch_size is non-positive
+        ValueError: if match `type` is not "records" or "clusters", or if `batch_size` is invalid
         RuntimeError: if query fails
     """
 
