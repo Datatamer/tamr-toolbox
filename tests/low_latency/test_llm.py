@@ -1,14 +1,15 @@
 """Tests for LLM utilities"""
 from logging import warning
 from typing import Optional
+
 import pytest
 
 from tamr_toolbox import utils
+from tamr_toolbox.low_latency.llm import (_get_internal_project_name,
+                                          llm_query, poll_llm_status,
+                                          update_llm_data)
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.low_latency.llm import llm_query, poll_llm_status, update_llm_data
-
 from tests._common import get_toolbox_root_dir
-
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
@@ -242,4 +243,12 @@ def test_llm_bad_primary_key():
             type="records",
             primary_key="test_primary_key",
         )
+    return None
+
+
+@mock_api()
+def test_bad_project_internal_name():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    with pytest.raises(RuntimeError, match="Unable to retrieve project data"):
+        _get_internal_project_name(client, project_id=1000000)
     return None
