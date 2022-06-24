@@ -3,7 +3,7 @@
 * [Dataset](examples/dataset.rst)
 * [Enrichment](examples/enrichment.rst)
 * [Filesystem](examples/filesystem.rst)
-* [Low Latency](examples/low_latency.rst)
+* [RealTime](examples/realtime.rst)
 * [Notifications](examples/notifications.md)
 * [Project](examples/project.rst)
 * [Sysadmin](examples/sysadmin.rst)

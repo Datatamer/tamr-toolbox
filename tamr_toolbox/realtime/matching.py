@@ -14,7 +14,7 @@ from tamr_toolbox.models.data_type import JsonDict
 LOGGER = logging.getLogger(__name__)
 
 
-def update_llm_data(
+def update_realtime_match_data(
     *,
     project: MasteringProject,
     do_update_clusters: bool = True,
@@ -22,7 +22,7 @@ def update_llm_data(
     **options,
 ) -> Operation:
     """
-    Updates data for LLM query if needed, based on latest published clusters.
+    Updates data for RealTime match queries if needed, based on latest published clusters.
 
     Args:
         project: project to be updated
@@ -31,7 +31,7 @@ def update_llm_data(
         options: Options passed to underlying :class:`~tamr_unify_client.operation.Operation`
     """
 
-    # Make sure we have the original name of the project to use with the LLM endpoint
+    # Make sure we have the original name of the project to use with the match endpoint
     project_name = _get_internal_project_name(project.client, project_id=project.resource_id)
 
     url = (
@@ -41,7 +41,7 @@ def update_llm_data(
     response = project.client.post(url)
     if not response.ok:
         message = (
-            f"LLM update for {project_name} failed at submission time: "
+            f"Match data update for {project_name} failed at submission time: "
             + response.json()["message"]
         )
         LOGGER.error(message)
@@ -52,11 +52,12 @@ def update_llm_data(
     return operation.apply_options(**options)
 
 
-def poll_llm_status(
+def poll_realtime_match_status(
     match_client: Client, *, project_name: str, num_tries: int = 10, wait_sec: int = 1
 ) -> bool:
     """
-    Check if LLM is queryable. Try up to num_tries times at 1s (or user-specified) interval.
+    Check if match service is queryable. Try up to num_tries times at 1s (or user-specified)
+    interval.
 
     Args:
         match_client: a Tamr client set to use the port of the Match API
@@ -86,7 +87,7 @@ def poll_llm_status(
     return queryable
 
 
-def llm_query(
+def match_query(
     match_client: Client,
     *,
     project_name: str,
@@ -99,9 +100,9 @@ def llm_query(
 ) -> Dict[int, List[JsonDict]]:
     """
     Find the best matching clusters or records for each supplied record. Returns a dictionary where
-    each key correpsonds to an input record and the value is a list of the LLM results for that
-    record. An empty result list indicates a null response from LLM (or no responses above the
-    min_match_prob, if that parameter was supplied).
+    each key correpsonds to an input record and the value is a list of the RealTime match results
+    for that record. An empty result list indicates a null response from matching (or no responses
+    above the min_match_prob, if that parameter was supplied).
 
     Args:
         match_client: a Tamr client set to use the port of the Match API
@@ -109,8 +110,8 @@ def llm_query(
         records: list of records to match
         type: one of "records" or  "clusters" -- whether to pull record or cluster matches
         primary_key: a primary key for the data; if supplied, this must be a field in input records
-        batch_size: split input into this batch size for LLM calls (e.g. to prevent network
-            timeouts), default None sends a single LLM call with all records
+        batch_size: split input into this batch size for match query calls (e.g. to prevent network
+            timeouts), default None sends a single query with all records
         min_match_prob: if set, only matches with probability above minimum will be returned,
             default None
         max_num_matches: if set, at most max_num_matches will be returned for each input record in
@@ -143,19 +144,19 @@ def llm_query(
     if batch_size is None:
         batch_size = len(records)
         if batch_size == 0:
-            LOGGER.warn("No input supplied to llm_query -- returning empty result.")
+            LOGGER.warn("No input supplied to match_query -- returning empty result.")
             return result_dict
     elif batch_size <= 0:
         raise ValueError(f"Batch size must be non-negative: received {batch_size}")
 
-    # Split into batches and convert to LLM query format
+    # Split into batches and convert to match query format
     for j in range(0, len(records), batch_size):
         json_recs = _prepare_json(records[j : j + batch_size], primary_key=primary_key, offset=j)
 
         try:
             response = match_client.post(url, json=json_recs).successful()
         except requests.exceptions.HTTPError as e:
-            message = f"LLM query failed: {e}"
+            message = f"RealTime match query failed: {e}"
             LOGGER.error(message)
             raise RuntimeError(message)
 
@@ -184,7 +185,7 @@ def _prepare_json(
     records: List[JsonDict], *, primary_key: Union[str, None], offset: int
 ) -> List[JsonDict]:
     """
-    Put records into JSON format expected by LLM endpoint
+    Put records into JSON format expected by RealTime match endpoint
 
     Args:
         records: list of records to match

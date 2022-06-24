@@ -65,11 +65,11 @@ def test_run_with_feedback_and_estimate():
 
 
 @mock_api()
-def test_run_with_update_llm():
+def test_run_with_update_realtime_match():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
     project = project.as_mastering()
-    all_ops = mastering.jobs.run(project, run_update_llm=True)
+    all_ops = mastering.jobs.run(project, run_update_realtime_match=True)
 
     for op in all_ops:
         assert op.succeeded()
@@ -87,13 +87,13 @@ def test_run_with_update_llm():
     assert "Publish clusters" == all_ops[5].description
     assert "Update LLM datasets" == all_ops[6].description
 
-    # Test updating LLM when it's already up-to-date
-    llm_op = mastering.jobs._run_custom(project, run_update_llm=True)
-    assert len(llm_op) == 1
-    llm_op = llm_op[0]
+    # Test updating match data when it's already up-to-date
+    ops = mastering.jobs._run_custom(project, run_update_realtime_match=True)
+    assert len(ops) == 1
+    op = ops[0]
 
-    assert llm_op.succeeded()
-    assert "already up-to-date." in llm_op.description
+    assert op.succeeded()
+    assert "already up-to-date." in op.description
 
 
 @mock_api()
