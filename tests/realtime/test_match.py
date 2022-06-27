@@ -6,7 +6,6 @@ import pytest
 
 from tamr_toolbox import utils
 from tamr_toolbox.realtime.matching import (
-    _get_internal_project_name,
     match_query,
     poll_realtime_match_status,
     update_realtime_match_data,
@@ -248,12 +247,4 @@ def test_match_bad_primary_key():
             type="records",
             primary_key="test_primary_key",
         )
-    return None
-
-
-@mock_api()
-def test_bad_project_internal_name():
-    client = utils.client.create(**CONFIG["toolbox_test_instance"])
-    with pytest.raises(RuntimeError, match="Unable to retrieve project data"):
-        _get_internal_project_name(client, project_id=1000000)
     return None

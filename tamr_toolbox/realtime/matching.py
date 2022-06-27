@@ -32,7 +32,7 @@ def update_realtime_match_data(
     """
 
     # Make sure we have the original name of the project to use with the match endpoint
-    project_name = _get_internal_project_name(project.client, project_id=project.resource_id)
+    project_name = _get_internal_project_name(project)
 
     url = (
         f"projects/{project_name}:updateLLM?updateClusters={do_update_clusters}"
@@ -213,25 +213,17 @@ def _prepare_json(
     return json_records
 
 
-def _get_internal_project_name(tamr_client: Client, *, project_id: Union[str, int]) -> str:
+def _get_internal_project_name(project: MasteringProject) -> str:
     """Get project's internal name (as opposed to the `displayName`, which can be changed by users)
 
     Args:
-        tamr_client: a Tamr client
-        project_id: Tamr project's numerical identifier
+        project: the mastering project of which to retrieve the internal name
 
     Returns:
-        the project's original name
+        the project's internal name
     """
-
-    url = f"/api/versioned/v1/projects/{project_id}/unifiedDataset/usage"
-    try:
-        resp = tamr_client.get(url).successful()
-    except requests.exceptions.HTTPError as e:
-        message = f"Unable to retrieve project data: {e}."
-        LOGGER.error(message)
-        raise RuntimeError(message)
-
-    name = json.loads(resp.content)["usage"]["outputFromProjectSteps"][0]["projectName"]
-
+    # Get usage data for unified dataset of input project
+    usage_resp = project.unified_dataset().usage()
+    # Get project internal name from first output_from_project_step of unified dataset useage
+    name = usage_resp.usage.output_from_project_steps[0].project_name
     return name
