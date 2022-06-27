@@ -9,7 +9,7 @@ from tamr_unify_client.dataset.resource import Dataset
 from tamr_unify_client.project.resource import Project
 
 from tamr_toolbox.models.data_type import JsonDict
-from tamr_toolbox.utils import version
+from tamr_toolbox.utils.version import func_requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
@@ -132,6 +132,7 @@ def _to_json(tx: TransformationGroup) -> JsonDict:
     }
 
 
+@func_requires_tamr_version(min_version=TX_RELEASE_VERSION)
 def get_all(project: Project) -> TransformationGroup:
     """Get the transformations of a Project
 
@@ -144,9 +145,6 @@ def get_all(project: Project) -> TransformationGroup:
     Returns:
         All input transformations and unified transformations of a project
     """
-    version.raise_warn_tamr_version(
-        tamr_version=version.current(project.client), min_version=TX_RELEASE_VERSION
-    )
 
     LOGGER.info(f"Getting transformations from project {project}")
     r = project.client.get(f"{project.api_path}/transformations")
@@ -154,6 +152,7 @@ def get_all(project: Project) -> TransformationGroup:
     return _from_json(project.client, r.json())
 
 
+@func_requires_tamr_version(min_version=TX_RELEASE_VERSION)
 def set_all(project: Project, tx: TransformationGroup, *, allow_overwrite=True) -> Response:
     """Set the transformations of a Project
 
@@ -173,9 +172,6 @@ def set_all(project: Project, tx: TransformationGroup, *, allow_overwrite=True) 
             in `project`
         ValueError: if provided `tx` are invalid
     """
-    version.raise_warn_tamr_version(
-        tamr_version=version.current(project.client), min_version=TX_RELEASE_VERSION
-    )
 
     if not allow_overwrite:
         # Fail if any transformations already exist
