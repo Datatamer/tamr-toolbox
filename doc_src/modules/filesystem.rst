@@ -7,4 +7,4 @@ Bash
 
 Cloud
 ------------------------
-.. automodule:: tamr_toolbox.data_io.cloud
+.. automodule:: tamr_toolbox.filesystem.cloud
