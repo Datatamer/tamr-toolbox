@@ -7,9 +7,7 @@ from tamr_toolbox.utils import version, config, client
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
-CONFIG = config.from_yaml(
-    get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
-)
+CONFIG = config.from_yaml(get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml")
 
 
 @pytest.mark.parametrize(
@@ -29,9 +27,7 @@ def test__as_float(version_string: str, expected_output: float):
         (43, AttributeError),
     ],
 )
-def test__as_float_invalid_input(
-    version_string: Union[str, int], error_class: Type["Exception"]
-):
+def test__as_float_invalid_input(version_string: Union[str, int], error_class: Type["Exception"]):
     with pytest.raises(error_class):
         version._as_float(version_string)
 
@@ -75,9 +71,7 @@ def test_is_version_condition_met():
         tamr_version="2022.002.0", min_version="2021.002.0", exact_version=True
     )
 
-    assert version.is_version_condition_met(
-        tamr_version="2022.002.0", min_version="2021.002.0"
-    )
+    assert version.is_version_condition_met(tamr_version="2022.002.0", min_version="2021.002.0")
     assert not version.is_version_condition_met(
         tamr_version="2022.002.0", min_version="2023.002.0"
     )
@@ -111,17 +105,10 @@ def test_is_version_condition_met():
 @mock_api()
 def test_get_tamr_versions_from_function_args():
     tamr_client = client.create(**CONFIG["toolbox_test_instance"])
-    tamr_project = tamr_client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_mastering"]
-    )
-    tamr_dataset = tamr_client.datasets.by_resource_id(
-        CONFIG["datasets"]["groceries_tiny"]
-    )
+    tamr_project = tamr_client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    tamr_dataset = tamr_client.datasets.by_resource_id(CONFIG["datasets"]["groceries_tiny"])
 
-    assert (
-        version._get_tamr_versions_from_function_args(5, "words", a=["other_types"])
-        == []
-    )
+    assert version._get_tamr_versions_from_function_args(5, "words", a=["other_types"]) == []
 
     assert version._get_tamr_versions_from_function_args(tamr_client) == [
         version.current(tamr_client)
