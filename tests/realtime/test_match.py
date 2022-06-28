@@ -246,7 +246,7 @@ def test_match_min_match_prob(type: str):
 def test_update_match_data_bad_proj():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_name("minimal_categorization")
-    with pytest.raises(RuntimeError, match="DedupInfo was not found"):
+    with pytest.raises(RuntimeError, match="failed at submission time"):
         update_realtime_match_data(project=project)
     return None
 

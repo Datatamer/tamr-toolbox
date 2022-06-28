@@ -29,6 +29,12 @@ def update_realtime_match_data(
         do_update_clusters: whether to update clusters, default True
         do_use_manual_clustering: whether to use externally managed clustering, default False
         options: Options passed to underlying :class:`~tamr_unify_client.operation.Operation`
+
+    Returns:
+        an operation object describing the update operation
+
+    Raises:
+        RuntimeError: if update API call fails
     """
 
     # Make sure we have the original name of the project to use with the match endpoint
@@ -38,12 +44,11 @@ def update_realtime_match_data(
         f"projects/{project_name}:updateLLM?updateClusters={do_update_clusters}"
         f"&useManualClustering={do_use_manual_clustering}"
     )
-    response = project.client.post(url)
-    if not response.ok:
-        message = (
-            f"Match data update for {project_name} failed at submission time: "
-            + response.json()["message"]
-        )
+
+    try:
+        response = project.client.post(url).successful()
+    except requests.exceptions.HTTPError as e:
+        message = f"Match data update for {project_name} failed at submission time: {e}"
         LOGGER.error(message)
         raise RuntimeError(message)
     operation_id = response.content.decode("latin1")
