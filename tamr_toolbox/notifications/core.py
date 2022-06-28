@@ -11,6 +11,21 @@ from tamr_toolbox.utils.operation import monitor
 
 @dataclass
 class _BaseNotifier(object):
+    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
+        """
+        Sends a notification
+
+        Args:
+            message: The message to send
+            title: The title of the message to send
+
+        Raises:
+            NotImplementedError: If called directly from the `_BaseNotifier' class,
+                instead of a pre-defined notification type
+        """
+        raise NotImplementedError("Do not call `_BaseNotifier` directly. "
+                                  "Use e.g. `EmailNotifier` instead.")
+
     def monitor_job(self,
                     tamr: Client,
                     operation: Union[int, str, Operation],
@@ -69,7 +84,3 @@ class _BaseNotifier(object):
                     f"than {timeout_seconds} seconds to resolve."
                 )
                 self.send_message(message=timeout_message, subject_line=f"Job {op.resource_id}: Timeout", **kwargs)
-
-    def send_message(self, message, title, *args, **kwargs):
-        raise NotImplementedError("Do not call `_BaseNotifier` directly. "
-                                  "Use e.g. `EmailNotifier` instead.")
