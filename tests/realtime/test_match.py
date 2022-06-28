@@ -107,6 +107,7 @@ def test_match_query_with_no_match(type: str):
     return None
 
 
+@mock_api()
 def test_match_bad_batch_size():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_name("minimal_mastering")
@@ -122,6 +123,7 @@ def test_match_bad_batch_size():
     return None
 
 
+@mock_api()
 def test_match_bad_request_type():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_name("minimal_mastering")
@@ -136,6 +138,7 @@ def test_match_bad_request_type():
     return None
 
 
+@mock_api()
 def test_match_no_input_data():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_name("minimal_mastering")
@@ -251,6 +254,7 @@ def test_update_match_data_bad_proj():
     return None
 
 
+@mock_api()
 def test_match_bad_primary_key():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_name("minimal_mastering")

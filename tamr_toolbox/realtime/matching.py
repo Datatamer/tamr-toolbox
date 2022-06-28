@@ -1,15 +1,16 @@
 import json
 import logging
-import requests
 import time
 from collections import defaultdict
 from typing import Dict, List, Optional, Union
 
+import requests
 from tamr_unify_client import Client
 from tamr_unify_client.mastering.project import MasteringProject
 from tamr_unify_client.operation import Operation
-from tamr_toolbox.utils.operation import from_resource_id
+
 from tamr_toolbox.models.data_type import JsonDict
+from tamr_toolbox.utils.operation import from_resource_id
 
 LOGGER = logging.getLogger(__name__)
 
