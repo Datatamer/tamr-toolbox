@@ -5,7 +5,7 @@ from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
 
 from tamr_toolbox.models.operation_state import OperationState
-from tamr_toolbox.utils.operation import from_resource_id
+from tamr_toolbox.utils.operation import from_resource_id, get_details
 from tamr_toolbox.utils.operation import monitor
 
 
@@ -31,13 +31,6 @@ class _BaseNotifier(object):
         Returns:
             A list of messages with their response codes
         """
-
-        def get_op_details(operation: Operation) -> str:
-            return (
-                f"Host: {operation.client.host} \n Job: {operation.resource_id} \n "
-                f"Description: {operation.description} \n Status: {operation.state} "
-            )
-
         if not notify_states:
             notify_states = [
                 OperationState.SUCCEEDED,
@@ -54,7 +47,7 @@ class _BaseNotifier(object):
         # Send message for initial state
         status = OperationState[op.state]
         if status in notify_states:
-            self.send_message(message=get_op_details(op), title=f"Job {operation.resource_id}: {status}")
+            self.send_message(message=get_details(op), title=f"Job {operation.resource_id}: {status}")
 
         while status not in [
             OperationState.SUCCEEDED,
@@ -69,7 +62,7 @@ class _BaseNotifier(object):
                     timeout_seconds=timeout_seconds)
 
                 status = OperationState[op.state]
-                self.send_message(message=get_op_details(op), title=f"Job {operation.resource_id}: {status}")
+                self.send_message(message=get_details(op), title=f"Job {operation.resource_id}: {status}")
             except TimeoutError:
                 timeout_message = (
                     f"The job {op.resource_id}: {op.description} took longer "
