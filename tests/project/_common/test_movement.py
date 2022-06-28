@@ -342,10 +342,10 @@ def test_export():
     "project_to_export, new_project_name, "
     "include_additive_artifacts, include_destructive_artifacts",
     [
-        (CONFIG["projects"]["minimal_categorization"], "new_categorization_1", None, None,),
-        (CONFIG["projects"]["minimal_mastering"], "new_mastering_1", None, None,),
-        (CONFIG["projects"]["minimal_golden_records"], "new_golden_records_1", None, None,),
-        (CONFIG["projects"]["minimal_schema_mapping"], "new_schema_mapping_1", None, None,),
+        (CONFIG["projects"]["minimal_categorization"], "new_categorization_1", None, None),
+        (CONFIG["projects"]["minimal_mastering"], "new_mastering_1", None, None),
+        (CONFIG["projects"]["minimal_golden_records"], "new_golden_records_1", None, None),
+        (CONFIG["projects"]["minimal_schema_mapping"], "new_schema_mapping_1", None, None),
         (
             CONFIG["projects"]["schema_mapping_with_spaces_in_name"],
             "new_sm_with_spaces",
@@ -450,7 +450,7 @@ def test_import_new(
             None,
             None,
         ),
-        (CONFIG["projects"]["minimal_mastering"], "minimal_incomplete_mastering", None, None,),
+        (CONFIG["projects"]["minimal_mastering"], "minimal_incomplete_mastering", None, None),
         (
             CONFIG["projects"]["minimal_golden_records"],
             "minimal_incomplete_golden_records",

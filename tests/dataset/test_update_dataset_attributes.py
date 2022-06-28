@@ -30,9 +30,7 @@ def test_update_attribute_descriptions():
     }
 
     tbox.dataset.manage.edit_attributes(
-        dataset=dataset,
-        attribute_descriptions=attribute_description,
-        override_existing_types=True,
+        dataset=dataset, attribute_descriptions=attribute_description, override_existing_types=True
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -51,15 +49,10 @@ def test_remove_attribute_descriptions():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset = client.datasets.by_name(DATASET_NAME)
     attribute_names = ["address", "user_id"]
-    attribute_description = {
-        "user_id": "",
-        "address": "",
-    }
+    attribute_description = {"user_id": "", "address": ""}
 
     tbox.dataset.manage.edit_attributes(
-        dataset=dataset,
-        attribute_descriptions=attribute_description,
-        override_existing_types=True,
+        dataset=dataset, attribute_descriptions=attribute_description, override_existing_types=True
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -79,9 +72,7 @@ def test_remove_attribute_by_name():
     dataset = client.datasets.by_name(DATASET_NAME)
     attribute_name = "user_id"
 
-    tbox.dataset.manage.delete_attributes(
-        dataset=dataset, attributes=[attribute_name],
-    )
+    tbox.dataset.manage.delete_attributes(dataset=dataset, attributes=[attribute_name])
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     target_dataset_attributes = updated_dataset.attributes

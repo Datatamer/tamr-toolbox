@@ -1,6 +1,5 @@
 """Defines useful development functions, available using the invoke command"""
 from pathlib import Path
-
 from invoke import task
 
 
@@ -38,7 +37,7 @@ def format(c, fix=False, diff=False):
         else:
             arg = "--check"
 
-        c.run(f"black {arg} --line-length=99 .", echo=True, pty=True)
+        c.run(f"black {arg} --line-length=99 --skip-magic-trailing-comma .", echo=True, pty=True)
 
 
 @task

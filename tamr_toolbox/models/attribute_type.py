@@ -86,7 +86,7 @@ GEOSPATIAL: AttributeType = Record(
         SubAttribute(name="multiLineString", is_nullable=True, type=Array(Array(Array(DOUBLE)))),
         SubAttribute(name="polygon", is_nullable=True, type=Array(Array(Array(DOUBLE)))),
         SubAttribute(
-            name="multiPolygon", is_nullable=True, type=Array(Array(Array(Array(DOUBLE)))),
+            name="multiPolygon", is_nullable=True, type=Array(Array(Array(Array(DOUBLE))))
         ),
     )
 )
@@ -146,10 +146,7 @@ def to_json(attr_type: AttributeType) -> JsonDict:
     if isinstance(attr_type, PrimitiveType):
         return {"baseType": attr_type.name}
     elif isinstance(attr_type, (Array, Map)):
-        return {
-            "baseType": type(attr_type)._tag,
-            "innerType": to_json(attr_type.inner_type),
-        }
+        return {"baseType": type(attr_type)._tag, "innerType": to_json(attr_type.inner_type)}
     elif isinstance(attr_type, Record):
 
         return {

@@ -139,7 +139,7 @@ def test_create_dataframe_unstreamable():
     input_dataset = client.datasets.by_resource_id(INPUT_DATASET_ID)
     df_input = dataframe.from_dataset(input_dataset)
     input_dataset.upsert_from_dataframe(
-        df_input.head(1), primary_key_name=input_dataset.key_attribute_names[0],
+        df_input.head(1), primary_key_name=input_dataset.key_attribute_names[0]
     )
     dataset = client.datasets.by_resource_id(UNSTREAMABLE_DATASET_ID)
     with pytest.raises(RuntimeError):
@@ -152,7 +152,7 @@ def test_create_dataframe_refresh():
     input_dataset = client.datasets.by_resource_id(INPUT_DATASET_ID)
     df_input = dataframe.from_dataset(input_dataset)
     input_dataset.upsert_from_dataframe(
-        df_input.head(1), primary_key_name=input_dataset.key_attribute_names[0],
+        df_input.head(1), primary_key_name=input_dataset.key_attribute_names[0]
     )
     dataset = client.datasets.by_resource_id(UNSTREAMABLE_DATASET_ID)
     df = dataframe.from_dataset(dataset, allow_dataset_refresh=True)

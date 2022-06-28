@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     # Load the configuration from the file path provided or the default file path specified
     CONFIG = tbox.utils.config.from_yaml(
-        path_to_file=args.config, default_path_to_file="/path/to/my/conf/project.config.yaml",
+        path_to_file=args.config, default_path_to_file="/path/to/my/conf/project.config.yaml"
     )
     # Use the configuration to create a global logger
     LOGGER = tbox.utils.logger.create(__name__, log_directory=CONFIG["logging_dir"])

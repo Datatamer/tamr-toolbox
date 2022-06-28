@@ -44,5 +44,5 @@ for ds in datasets:
     else:
         primary_keys = source_dataset.spec().to_dict()["keyAttributeNames"]
         tbox.dataset.manage.create(
-            client=target_client, primary_keys=primary_keys, dataset=source_dataset,
+            client=target_client, primary_keys=primary_keys, dataset=source_dataset
         )
