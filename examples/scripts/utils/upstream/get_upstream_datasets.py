@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     # Load the configuration from the file path provided or the default file path specified
     CONFIG = tbox.utils.config.from_yaml(
-        path_to_file=args.config, default_path_to_file="/path/to/my/conf/dataset.config.yaml",
+        path_to_file=args.config, default_path_to_file="/path/to/my/conf/dataset.config.yaml"
     )
 
     # Use the configuration to create a global logger

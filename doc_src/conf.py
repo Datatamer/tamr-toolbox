@@ -143,9 +143,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, "TamrToolbox.tex", "Tamr Toolbox Documentation", "Tamr", "manual",)
-]
+latex_documents = [(master_doc, "TamrToolbox.tex", "Tamr Toolbox Documentation", "Tamr", "manual")]
 
 
 # -- Options for manual page output ------------------------------------------
@@ -196,6 +194,6 @@ def setup(app):
     https://recommonmark.readthedocs.io/en/latest/auto_structify.html#configuring-autostructify
     """
     app.add_config_value(
-        "recommonmark_config", {"enable_auto_toc_tree": True, "auto_toc_maxdepth": 2}, True,
+        "recommonmark_config", {"enable_auto_toc_tree": True, "auto_toc_maxdepth": 2}, True
     )
     app.add_transform(AutoStructify)

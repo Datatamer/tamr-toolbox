@@ -38,7 +38,7 @@ def get_backup_by_id(client: Client, backup_id: str) -> JsonDict:
 
     Raises:
         ValueError: Raised if GET request to Tamr fails
-        """
+    """
     api_string = f"backups/{backup_id}"
     response = client.get(api_string)
 
@@ -113,7 +113,7 @@ def initiate_restore(
     Raises:
         ValueError: Raised if the target backup contains errors
         RuntimeError: Raised if the restore fails to start
-        """
+    """
     backup = get_backup_by_id(client=client, backup_id=backup_id)
     backup_state = backup["state"]
     if not backup_state == "SUCCEEDED":
@@ -251,7 +251,7 @@ def classify_backups(
 
     Raises:
         ValueError: if target backup file contains an error message
-        """
+    """
     if not isinstance(backup_directory, Path):
         backup_directory = Path(backup_directory)
     backups = os.listdir(backup_directory)

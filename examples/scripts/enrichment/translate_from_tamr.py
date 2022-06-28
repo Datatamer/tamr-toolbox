@@ -59,7 +59,7 @@ def main(
 
     # update dictionary on Tamr
     dataset_name = tbox.enrichment.dictionary.to_dataset(
-        dictionary=dictionary, dataset=dictionary_dataset,
+        dictionary=dictionary, dataset=dictionary_dataset
     )
     LOGGER.info(f"Tamr dataset {dataset_name} updated with new translation data")
     LOGGER.info("Script complete.")

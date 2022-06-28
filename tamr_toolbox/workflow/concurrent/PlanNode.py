@@ -6,10 +6,7 @@ import logging
 
 from tamr_unify_client.project.resource import Project
 from tamr_unify_client.operation import Operation
-from tamr_toolbox.workflow.concurrent.PlanNodeStatus import (
-    PlanNodeStatus,
-    from_plan_node,
-)
+from tamr_toolbox.workflow.concurrent.PlanNodeStatus import PlanNodeStatus, from_plan_node
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.models.project_steps import (
     SchemaMappingSteps,

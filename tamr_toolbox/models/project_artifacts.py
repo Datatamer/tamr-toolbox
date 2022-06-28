@@ -113,11 +113,11 @@ class GoldenRecordsArtifacts:
 class ProjectArtifacts:
     """A dataclass representing the project artifact codes in Tamr
 
-     Args:
-        SCHEMA_MAPPING: SchemaMappingArtifacts dataclass instance
-        MASTERING: MasteringArtifacts dataclass instance
-        CATEGORIZATION: MasteringArtifacts dataclass instance
-        GOLDEN_RECORDS: MasteringArtifacts dataclass instance
+    Args:
+       SCHEMA_MAPPING: SchemaMappingArtifacts dataclass instance
+       MASTERING: MasteringArtifacts dataclass instance
+       CATEGORIZATION: MasteringArtifacts dataclass instance
+       GOLDEN_RECORDS: MasteringArtifacts dataclass instance
     """
 
     SCHEMA_MAPPING = SchemaMappingArtifacts()
