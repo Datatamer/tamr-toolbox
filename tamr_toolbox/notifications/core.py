@@ -9,8 +9,10 @@ from tamr_toolbox.utils.operation import from_resource_id, get_details
 from tamr_toolbox.utils.operation import monitor
 
 
-@dataclass
 class _BaseNotifier(object):
+    def __init__(self):
+        self.sent_messages = []
+
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
         """
         Sends a notification
@@ -29,9 +31,9 @@ class _BaseNotifier(object):
     def monitor_job(self,
                     tamr: Client,
                     operation: Union[int, str, Operation],
-                    poll_interval_seconds: float = 1,
-                    timeout_seconds: Optional[float] = None,
                     notify_states: Optional[List[OperationState]] = None,
+                    poll_interval: Optional[float] = 1,
+                    timeout: Optional[float] = None,
                     *args,
                     **kwargs) -> None:
         """Monitors a Tamr Operation and sends a message when the job status is updated
@@ -39,9 +41,9 @@ class _BaseNotifier(object):
         Args:
             tamr: A Tamr client
             operation: A job ID or a Tamr operation
-            poll_interval_seconds: Time interval (in seconds) between subsequent polls
-            timeout_seconds: Time (in seconds) to wait
             notify_states : States for which notifications should be sent, use None for all states
+            poll_interval: Time interval (in seconds) between subsequent polls
+            timeout: Time (in seconds) to wait before timing out
 
         Returns:
             A list of messages with their response codes
@@ -73,14 +75,14 @@ class _BaseNotifier(object):
             try:
                 op = monitor(
                     operation=op,
-                    poll_interval_seconds=poll_interval_seconds,
-                    timeout_seconds=timeout_seconds)
+                    poll_interval_seconds=poll_interval,
+                    timeout_seconds=timeout)
 
                 status = OperationState[op.state]
                 self.send_message(message=get_details(op), title=f"Job {operation.resource_id}: {status}")
             except TimeoutError:
                 timeout_message = (
                     f"The job {op.resource_id}: {op.description} took longer "
-                    f"than {timeout_seconds} seconds to resolve."
+                    f"than {timeout} seconds to resolve."
                 )
                 self.send_message(message=timeout_message, subject_line=f"Job {op.resource_id}: Timeout", **kwargs)

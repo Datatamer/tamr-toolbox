@@ -41,3 +41,6 @@ class SlackNotifier(_BaseNotifier, ABC):
             response = self.slack.chat_postMessage(channel=self.channel, text=message)
         except SlackApiError as e:
             LOGGER.error(f"Error posting message: {e}.")
+
+        self.sent_messages += [message]
+

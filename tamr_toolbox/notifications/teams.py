@@ -3,7 +3,6 @@ from abc import ABC
 from dataclasses import dataclass
 
 import pymsteams
-from slack.errors import SlackApiError
 
 from tamr_toolbox.notifications.core import _BaseNotifier
 
@@ -22,9 +21,11 @@ class TeamsNotifier(_BaseNotifier, ABC):
     """
 
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
-        message = pymsteams.connectorcard(self.webhook_url)
-        message.text(message)
-        message.title(title)
+        message_card = pymsteams.connectorcard(self.webhook_url)
+        message_card.text(message)
+        message_card.title(title)
 
         LOGGER.info(f"Sending a Teams notification to webhook {self.webhook_url}")
-        message.send()
+        message_card.send()
+
+        self.sent_messages += [message]

@@ -70,3 +70,5 @@ class EmailNotifier(_BaseNotifier, ABC):
             LOGGER.info("Email sent successfully")
         else:
             LOGGER.error(f"Email failed to send, with reason {response}")
+
+        self.sent_messages += [message]
