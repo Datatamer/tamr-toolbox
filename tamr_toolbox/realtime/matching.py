@@ -53,15 +53,15 @@ def update_realtime_match_data(
 
 
 def poll_realtime_match_status(
-    match_client: Client, *, project_name: str, num_tries: int = 10, wait_sec: int = 1
+    *, project: MasteringProject, match_client: Client, num_tries: int = 10, wait_sec: int = 1,
 ) -> bool:
     """
     Check if match service is queryable. Try up to `num_tries` times at 1 sec (or user-specified)
     interval.
 
     Args:
+        project: the mastering project whose status to check
         match_client: a Tamr client set to use the port of the Match API
-        project_name: name of target mastering project
         num_tries: max number of times to poll endpoint, default 10
         wait_sec: number of seconds to wait between tries, default 1
 
@@ -69,6 +69,7 @@ def poll_realtime_match_status(
         bool indicating whether project is queryable
     """
 
+    project_name = _get_internal_project_name(project)
     url = f"/api/v1/projects/{project_name}:isQueryable"
     counter = 0
 
@@ -88,9 +89,9 @@ def poll_realtime_match_status(
 
 
 def match_query(
-    match_client: Client,
     *,
-    project_name: str,
+    project: MasteringProject,
+    match_client: Client,
     records: List[JsonDict],
     type: str,
     primary_key: Optional[str] = None,
@@ -105,8 +106,8 @@ def match_query(
     above the `min_match_prob`, if that parameter was supplied).
 
     Args:
+        project: the mastering project to query for matches
         match_client: a Tamr client set to use the port of the Match API
-        project_name: name of target mastering project
         records: list of records to match
         type: one of "records" or  "clusters" -- whether to pull record or cluster matches
         primary_key: a primary key for the data; if supplied, this must be a field in input records
@@ -128,6 +129,7 @@ def match_query(
 
     result_dict = defaultdict(lambda: [])  # dict which defaults to empty list to hold results
 
+    project_name = _get_internal_project_name(project)
     url = f"/api/v1/projects/{project_name}:match?type={type}"
 
     # Set up keys to read results
