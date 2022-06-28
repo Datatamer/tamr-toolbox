@@ -9,5 +9,5 @@ my_config = tbox.utils.config.from_yaml("examples/resources/conf/connect.config.
 my_connect = tbox.data_io.df_connect.client.from_config(my_config)
 
 tbox.data_io.df_connect.client.export_dataset(
-    my_connect, dataset_name="example_dataset", target_table_name="example_target_table",
+    my_connect, dataset_name="example_dataset", target_table_name="example_target_table"
 )

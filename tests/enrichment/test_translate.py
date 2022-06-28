@@ -77,7 +77,7 @@ TEST_TRANSLATION_DICTIONARY_TRANSLATED = {
 
 
 def _mock_translate_response(
-    target_language: str, source_language: str, model: str, values: List[str],
+    target_language: str, source_language: str, model: str, values: List[str]
 ) -> List[Dict[str, str]]:
     """
     A simulated response for the Google Translate Client get_languages() call
@@ -279,7 +279,7 @@ def test_translate_get_phrases_to_translate():
     expected_to_translate = ["whole chicken"]
 
     to_translate = enrichment.translate.get_phrases_to_translate(
-        original_phrases=phrases_to_translate, translation_dictionary=TEST_TRANSLATION_DICTIONARY,
+        original_phrases=phrases_to_translate, translation_dictionary=TEST_TRANSLATION_DICTIONARY
     )
 
     assert expected_to_translate == to_translate

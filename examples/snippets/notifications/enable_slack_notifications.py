@@ -13,12 +13,12 @@ slack_client = WebClient(token=slack_api_token)
 
 # Send any texts to a Slack channel
 tbox.notifications.slack.send_message(
-    slack_client=slack_client, channel="#test_tbox_messaging", message="This is a test message.",
+    slack_client=slack_client, channel="#test_tbox_messaging", message="This is a test message."
 )
 
 # Use case 1: Track the status updates for a specific job using its job id
 tbox.notifications.slack.monitor_job(
-    tamr=tamr, slack_client=slack_client, channel="#test_tbox_messaging", operation="my_job_id",
+    tamr=tamr, slack_client=slack_client, channel="#test_tbox_messaging", operation="my_job_id"
 )
 
 # Use case 2: Track the status updates for a job kicked off by the tamr-unify-client

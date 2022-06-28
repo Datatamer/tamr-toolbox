@@ -180,9 +180,7 @@ def test_failure_to_create_directory_that_already_exists():
         top_level_directory = (
             Path(tempdir) / "test_failure_to_create_directory_that_already_exists"
         )
-        directories = [
-            top_level_directory / "test1",
-        ]
+        directories = [top_level_directory / "test1"]
 
         for directory in directories:
             assert not path.exists(directory), f"Directory {directory} already exists"
@@ -212,9 +210,7 @@ def test_failure_to_remove_directory_that_does_not_exist():
         top_level_directory = (
             Path(tempdir) / "test_failure_to_remove_directory_that_does_not_exist"
         )
-        directories = [
-            top_level_directory / "test1",
-        ]
+        directories = [top_level_directory / "test1"]
 
         for directory in directories:
             assert not path.exists(directory), f"Directory {directory} already exists"

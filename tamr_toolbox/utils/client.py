@@ -125,7 +125,7 @@ def poll_endpoint(
 
     Returns:
         A response object from API request.
-        """
+    """
 
     started = now()
     op = get_with_connection_retry(

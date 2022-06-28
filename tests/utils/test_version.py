@@ -10,8 +10,7 @@ CONFIG = config.from_yaml(get_toolbox_root_dir() / "tests/mocking/resources/tool
 
 
 @pytest.mark.parametrize(
-    "version_string, expected_output",
-    [("0.43.0", 0 + 43.0), ("2020.015.0", (2020 * 1000) + 15.0)],
+    "version_string, expected_output", [("0.43.0", 0 + 43.0), ("2020.015.0", (2020 * 1000) + 15.0)]
 )
 def test__as_float(version_string: str, expected_output: float):
     assert version._as_float(version_string) == expected_output

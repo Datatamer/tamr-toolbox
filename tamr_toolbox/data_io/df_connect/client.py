@@ -112,7 +112,7 @@ def _get_url(connect_info: Client, api_path: str) -> str:
 
     Returns:
         url: A string of the request url formatted correctly for that instance of df_connect.
-     """
+    """
     # handle port:
     if connect_info.port != "":
         port = ":" + connect_info.port
@@ -128,7 +128,7 @@ def _get_url(connect_info: Client, api_path: str) -> str:
     return url
 
 
-def _get_query_config(jdbc_info: jdbc_info.JdbcInfo,) -> Dict:
+def _get_query_config(jdbc_info: jdbc_info.JdbcInfo) -> Dict:
     """Packages configuration info into relevant query configuration json (dict) which is used
     for multiple df_connect API calls.
 
@@ -149,7 +149,7 @@ def _get_query_config(jdbc_info: jdbc_info.JdbcInfo,) -> Dict:
 
 
 def _get_export_config(
-    multi_value_delimiter: str = "|", limit_records: int = 0, columns_exclude_regex: str = "",
+    multi_value_delimiter: str = "|", limit_records: int = 0, columns_exclude_regex: str = ""
 ) -> Dict:
     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
      in form of json dictionary

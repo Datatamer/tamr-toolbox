@@ -4,12 +4,7 @@ import pytest
 import tamr_toolbox as tbox
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.models.attribute_type import (
-    Array,
-    STRING,
-    INT,
-    DOUBLE,
-)
+from tamr_toolbox.models.attribute_type import Array, STRING, INT, DOUBLE
 
 from tests._common import get_toolbox_root_dir
 
@@ -32,9 +27,7 @@ def test_add_default_attribute():
     attributes = ["unique_id", "name", "address", "phone"]
     dataset = client.datasets.by_name(DATASET_NAME)
 
-    tbox.dataset.manage.update(
-        dataset=dataset, attributes=attributes,
-    )
+    tbox.dataset.manage.update(dataset=dataset, attributes=attributes)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
 
@@ -51,9 +44,7 @@ def test_update_description():
     dataset = client.datasets.by_name(DATASET_NAME)
     description = "My test dataset with phone"
 
-    tbox.dataset.manage.update(
-        dataset=dataset, description=description,
-    )
+    tbox.dataset.manage.update(dataset=dataset, description=description)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     assert updated_dataset.description == description
@@ -86,19 +77,14 @@ def test_add_non_default_attribute():
 
     attribute_names = ["unique_id", "name", "address", "user_id"]
 
-    attribute_types = [
-        STRING,
-        Array(STRING),
-        Array(STRING),
-        Array(INT),
-    ]
+    attribute_types = [STRING, Array(STRING), Array(STRING), Array(INT)]
 
     attr_type_dict = {}
     for i in range(len(attribute_names)):
         attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -140,20 +126,14 @@ def test_add_primitive_attribute():
 
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
 
-    attribute_types = [
-        STRING,
-        Array(STRING),
-        Array(STRING),
-        Array(INT),
-        INT,
-    ]
+    attribute_types = [STRING, Array(STRING), Array(STRING), Array(INT), INT]
 
     attr_type_dict = {}
     for i in range(len(attribute_names)):
         attr_type_dict[attribute_names[i]] = attribute_types[i]
 
     tbox.dataset.manage.update(
-        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict,
+        dataset=dataset, attributes=attribute_names, attribute_types=attr_type_dict
     )
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
@@ -194,7 +174,7 @@ def test_update_ud():
     dataset = client.datasets.by_name("minimal_mastering_unified_dataset")
 
     with pytest.raises(ValueError):
-        tbox.dataset.manage.update(dataset=dataset,)
+        tbox.dataset.manage.update(dataset=dataset)
 
 
 @mock_api(enforce_online_test=enforce_online_test)
@@ -203,9 +183,7 @@ def test_update_tags():
     dataset = client.datasets.by_name(DATASET_NAME)
     tags = ["testing"]
 
-    tbox.dataset.manage.update(
-        dataset=dataset, tags=tags,
-    )
+    tbox.dataset.manage.update(dataset=dataset, tags=tags)
 
     updated_dataset = client.datasets.by_name(DATASET_NAME)
     assert updated_dataset.tags == tags
@@ -217,13 +195,7 @@ def test_change_attribute_type():
     dataset = client.datasets.by_name(DATASET_NAME)
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
 
-    attribute_types = [
-        STRING,
-        Array(STRING),
-        Array(STRING),
-        Array(INT),
-        DOUBLE,
-    ]
+    attribute_types = [STRING, Array(STRING), Array(STRING), Array(INT), DOUBLE]
 
     attr_type_dict = {}
     for i in range(len(attribute_names)):
@@ -274,13 +246,7 @@ def test_partially_define_types():
     dataset = client.datasets.by_name(DATASET_NAME)
     attribute_names = ["unique_id", "name", "address", "user_id", "sales_count"]
 
-    attribute_types = [
-        STRING,
-        Array(STRING),
-        Array(STRING),
-        Array(INT),
-        Array(STRING),
-    ]
+    attribute_types = [STRING, Array(STRING), Array(STRING), Array(INT), Array(STRING)]
 
     attr_type_dict = {}
     for i in range(len(attribute_names)):

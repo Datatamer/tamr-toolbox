@@ -15,7 +15,7 @@ remote_client.connect(
 
 # Get all user defined configs from a local instance as the current user
 user_defined_configs = tbox.sysadmin.instance.get_configs(
-    user_defined_only=True, tamr_install_dir="/data/tamr-home",
+    user_defined_only=True, tamr_install_dir="/data/tamr-home"
 )
 print(f"Use defined config: {user_defined_configs}")
 # Example print output

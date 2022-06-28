@@ -405,7 +405,7 @@ def validate(
     for custom_check in custom_checks:
         failed_checks_dict.update(
             _check_custom(
-                df, check_function=custom_check[0], columns_to_check=custom_check[1],
+                df, check_function=custom_check[0], columns_to_check=custom_check[1]
             ).details
         )
 

@@ -139,7 +139,7 @@ def _log_response(
 
 
 def _build_response_log_path(
-    *, test_func: Callable, response_logs_dir: Optional[Union[str, Path]], **kwargs,
+    *, test_func: Callable, response_logs_dir: Optional[Union[str, Path]], **kwargs
 ) -> Path:
     """Returns a file path for API response logs for a given test and test parameters
 
@@ -196,7 +196,7 @@ def mock_api(
         def wrapped(**kwargs):
 
             response_log_path = _build_response_log_path(
-                test_func=test_function, response_logs_dir=response_logs_dir, **kwargs,
+                test_func=test_function, response_logs_dir=response_logs_dir, **kwargs
             )
 
             if response_log_path.exists() and enforce_online_test:
@@ -207,7 +207,7 @@ def mock_api(
                 try:
                     LOGGER.info(f"Running offline test based on file at {response_log_path}")
                     _run_offline_test(
-                        response_log_path=response_log_path, test_function=test_function, **kwargs,
+                        response_log_path=response_log_path, test_function=test_function, **kwargs
                     )
                 except ConnectionError as e:
                     msg = (
@@ -326,7 +326,6 @@ try:
         # Reset passthru to default
         responses.mock.passthru_prefixes = ()
         responses._default_mock.passthru_prefixes = ()
-
 
 except ModuleNotFoundError as err:
     # Ensure exception is due to responses package being missing

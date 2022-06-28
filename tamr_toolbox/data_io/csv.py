@@ -122,16 +122,14 @@ def from_dataset(
     func = partial(common._flatten_list, delimiter=flatten_delimiter, force=True)
 
     full_column_name_dict = common._get_column_mapping_dict(
-        dataset_attribute_names=attribute_names,
-        column_name_dict=column_name_dict,
-        columns=columns,
+        dataset_attribute_names=attribute_names, column_name_dict=column_name_dict, columns=columns
     )
 
     # Open CSV file and use newline='' as recommended by
     # https://docs.python.org/3/library/csv.html#csv.writer
     with open(export_file_path, "w", newline="", encoding=encoding) as csv_file:
         csv_writer = csv.writer(
-            csv_file, delimiter=csv_delimiter, quotechar=quote_character, quoting=quoting,
+            csv_file, delimiter=csv_delimiter, quotechar=quote_character, quoting=quoting
         )
         buffer = []
         header = None
@@ -288,7 +286,7 @@ def from_taxonomy(
     else:
         try:
             csv_writer = csv.writer(
-                f, delimiter=csv_delimiter, quotechar=quote_character, quoting=quoting,
+                f, delimiter=csv_delimiter, quotechar=quote_character, quoting=quoting
             )
             csv_writer.writerows(taxonomy_list)
         except csv.Error as e:

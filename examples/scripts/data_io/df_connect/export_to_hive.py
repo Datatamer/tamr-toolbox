@@ -52,9 +52,9 @@ import click
 )
 @click.option("--hdfs_base_path", help="the location in hdfs to use to stream the data/schema")
 def main(
-    config_file_path: str, dataset_name: str, table_name: str, hdfs_base_path: str,
+    config_file_path: str, dataset_name: str, table_name: str, hdfs_base_path: str
 ) -> List[JsonDict]:
-    """"Takes a config file (to setup df connect client), locations for both where to put the avro
+    """ "Takes a config file (to setup df connect client), locations for both where to put the avro
      file and where to put the avro schema file, along with the hive statement to execute
      for creating a table.
 

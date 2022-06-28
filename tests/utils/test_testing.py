@@ -33,7 +33,7 @@ def test__build_response_log_path():
     )
 
     path_input_type = utils.testing._build_response_log_path(
-        test_func=utils.client.create, response_logs_dir=Path("/home/my/dir/response_logs"),
+        test_func=utils.client.create, response_logs_dir=Path("/home/my/dir/response_logs")
     )
     assert path_input_type == Path("/home/my/dir/response_logs/create.ndjson")
 
@@ -209,14 +209,14 @@ def test__run_offline_test():
     # When called with the ip in the log file,
     # the function should complete without errors and run our test function exactly once
     utils.testing._run_offline_test(
-        response_log_path=manual_response_file_path, test_function=example_requests, op="545",
+        response_log_path=manual_response_file_path, test_function=example_requests, op="545"
     )
     example_requests.assert_called_once()
 
     # When called with a operation value NOT in the file, a connection error is expected
     with pytest.raises(requests.exceptions.ConnectionError):
         utils.testing._run_offline_test(
-            response_log_path=manual_response_file_path, test_function=example_requests, op="7",
+            response_log_path=manual_response_file_path, test_function=example_requests, op="7"
         )
 
 
