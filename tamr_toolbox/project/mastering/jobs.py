@@ -99,7 +99,7 @@ def _run_custom(
         LOGGER.info(
             f"Updating match database for project {project.name} (id={project.resource_id})."
         )
-        op = update_realtime_match_data(project=project, asynchronous=process_asynchronously,)
+        op = update_realtime_match_data(project=project, asynchronous=process_asynchronously)
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)

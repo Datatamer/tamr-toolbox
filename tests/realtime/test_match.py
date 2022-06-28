@@ -101,7 +101,7 @@ def test_match_query_with_no_match(type: str):
     project = client.projects.by_name("minimal_mastering")
     match_client = utils.client.create(**CONFIG["toolbox_realtime_match_instance"])
     result = match_query(
-        match_client=match_client, project=project, records=[{"ssn": "0000"}], type=type,
+        match_client=match_client, project=project, records=[{"ssn": "0000"}], type=type
     )
     assert result[0] == []
     return None
@@ -148,7 +148,7 @@ def test_match_no_input_data():
         expected_warning=warning("No input supplied to match_query -- returning empty result.")
     ):
         result = match_query(
-            match_client=match_client, project=project, records=[], type="records",
+            match_client=match_client, project=project, records=[], type="records"
         )
     assert len(result) == 0
     return None
@@ -231,7 +231,7 @@ def test_match_min_match_prob(type: str):
     )
 
     full_result = match_query(
-        match_client=match_client, project=project, records=MATCH_TEST_DATA, type=type,
+        match_client=match_client, project=project, records=MATCH_TEST_DATA, type=type
     )
 
     assert full_result[0] == result[0]  # same results for cases with all matches above 0.2 prob

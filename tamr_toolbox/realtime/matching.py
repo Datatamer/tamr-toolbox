@@ -59,7 +59,7 @@ def update_realtime_match_data(
 
 
 def poll_realtime_match_status(
-    *, project: MasteringProject, match_client: Client, num_tries: int = 10, wait_sec: int = 1,
+    *, project: MasteringProject, match_client: Client, num_tries: int = 10, wait_sec: int = 1
 ) -> bool:
     """
     Check if match service is queryable. Try up to `num_tries` times at 1 sec (or user-specified)
