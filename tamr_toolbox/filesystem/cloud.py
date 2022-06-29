@@ -1,6 +1,7 @@
 from google.cloud.storage import Client as GcsClient
 from mypy_boto3_s3.client import S3Client
 
+
 def gcs_upload(
     cloud_client: GcsClient,
     source_filepath="path_to_my_local_file",
