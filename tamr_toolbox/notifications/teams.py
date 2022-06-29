@@ -20,6 +20,9 @@ class TeamsNotifier(_BaseNotifier, ABC):
         for setup instructions
     """
 
+    def __post_init__(self):
+        super().__init__()
+
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
         message_card = pymsteams.connectorcard(self.webhook_url)
         message_card.text(message)

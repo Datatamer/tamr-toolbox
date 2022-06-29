@@ -30,6 +30,7 @@ class SlackNotifier(_BaseNotifier, ABC):
     """
 
     def __post_init__(self):
+        super().__init__()
         LOGGER.info("Connecting with the Slack API")
         self.slack = slack.WebClient(token=self.token, base_url=self.base_url,
                                      timeout=self.timeout, proxy=self.proxies)

@@ -17,17 +17,17 @@ class EmailNotifier(_BaseNotifier, ABC):
     sender_address: str
     sender_password: str
     smtp_server: str
-    smtp_port: int = 465
-    use_tls: bool = False
+    smtp_port: int
+    use_tls: Optional[bool] = False
     keyfile: Optional[str] = None
     certfile: Optional[str] = None
     """
     Send emails based on Tamr eventing.
     
     Attributes:
+        recipient_addresses: List of emails to send messages to
         sender_address: Email address to send messages from, such as my_pipeline@gmail.com
         sender_password: Password for sending email address 
-        recipient_addresses: List of emails to send messages to
         smtp_server: Outbound smtp server address
         smtp_port: Port to send email from, such as 465 for SSL (default)
         use_tls: If True, use TLS protocol. False by default.
@@ -42,11 +42,13 @@ class EmailNotifier(_BaseNotifier, ABC):
     """
 
     def __post_init__(self):
+        super().__init__()
         self.server = None
         self._setup_server()
 
     def _setup_server(self):
         context = ssl.create_default_context()
+
         if self.use_tls:
             self.server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             self.server.starttls(keyfile=self.keyfile, certfile=self.certfile, context=context)
@@ -58,14 +60,18 @@ class EmailNotifier(_BaseNotifier, ABC):
         self.server.login(self.sender_address, self.sender_password)
         LOGGER.info("Logged in to the email server successfully")
 
-    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
+    def _build_message(self, message: str, title: str):
         msg = MIMEText(message)
         msg["Subject"] = "Tamr System: " + title
         msg["From"] = self.sender_address
         msg["To"] = ", ".join(self.recipient_addresses)
+        return msg.as_string()
 
-        LOGGER.info(f"Sending an email with payload {msg.as_string()}")
-        response = self.server.sendmail(self.sender_address, self.recipient_addresses, msg.as_string())
+    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
+        msg = self._build_message(message, title)
+
+        LOGGER.info(f"Sending an email with payload {msg}")
+        response = self.server.sendmail(self.sender_address, self.recipient_addresses, msg)
         if response:
             LOGGER.info("Email sent successfully")
         else:
