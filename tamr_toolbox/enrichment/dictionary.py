@@ -404,7 +404,5 @@ def to_dataset(
                 raise RuntimeError(error_message)
 
     LOGGER.info("Ingesting toolbox translation dictionary to Tamr")
-    dataset.upsert_records(
-        records=to_dict(dictionary), primary_key_name="standardized_phrase",
-    )
+    dataset.upsert_records(records=to_dict(dictionary), primary_key_name="standardized_phrase")
     return dataset.name

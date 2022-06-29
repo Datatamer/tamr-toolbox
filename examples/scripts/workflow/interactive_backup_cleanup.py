@@ -13,9 +13,9 @@ def main(
     *, backup_directory: Union[Path, str], backup_datetime_format: str = "%Y-%m-%d_%H-%M-%S-%f"
 ) -> None:
     """Provides prompts to delete or keep files/directories in backup_directory
-        Args:
-            backup_directory: Path to backup directory
-            backup_datetime_format: String datetime format in backup folder name
+    Args:
+        backup_directory: Path to backup directory
+        backup_datetime_format: String datetime format in backup folder name
 
     """
     if not isinstance(backup_directory, Path):
@@ -86,5 +86,5 @@ if __name__ == "__main__":
 
     # Run the main function
     main(
-        backup_directory=args.backup_directory, backup_datetime_format=args.backup_datetime_format,
+        backup_directory=args.backup_directory, backup_datetime_format=args.backup_datetime_format
     )

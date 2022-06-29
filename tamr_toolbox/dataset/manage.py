@@ -438,7 +438,7 @@ def edit_attributes(
     return dataset
 
 
-def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None,) -> Dataset:
+def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None) -> Dataset:
     """Remove attributes from dataset by attribute name
 
     Args:

@@ -28,16 +28,16 @@ def _run_remote_command(
 ) -> (int, str, str):
     """Runs the provided command in a remote environment using the provided ssh client
 
-        Args:
-            command: The command to run
-            remote_client: An ssh client providing a remote connection
-            command_input: Content to send to stdin after command is started
-            verbose: Whether the full command, stdout, and stderr should be logged at INFO level
+    Args:
+        command: The command to run
+        remote_client: An ssh client providing a remote connection
+        command_input: Content to send to stdin after command is started
+        verbose: Whether the full command, stdout, and stderr should be logged at INFO level
 
-        Returns:
-            (exit code of command, stdout of command, stderr of command)
+    Returns:
+        (exit code of command, stdout of command, stderr of command)
 
-        """
+    """
 
     command_details_message = (
         f"Running command [{command}] on "

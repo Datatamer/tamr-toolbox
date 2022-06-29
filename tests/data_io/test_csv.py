@@ -188,11 +188,11 @@ def test_dataset_overwrite_file(overwrite: bool):
 
 
 @pytest.mark.parametrize(
-    "buffer_size, nrows, columns", [(None, None, None), (None, None, ["id", "ssn", "last_name"])],
+    "buffer_size, nrows, columns", [(None, None, None), (None, None, ["id", "ssn", "last_name"])]
 )
 @mock_api()
 def test_dataset_export_csv_empty_dataset(
-    buffer_size: Optional[int], nrows: Optional[int], columns: Optional[List[str]],
+    buffer_size: Optional[int], nrows: Optional[int], columns: Optional[List[str]]
 ):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     empty_dataset_id = CONFIG["datasets"]["people_0_records"]
@@ -365,9 +365,7 @@ def test_dataset_bad_encoding():
     ],
 )
 @mock_api()
-def test_dataset_renaming_csv_columns(
-    columns: List[str], column_name_dict: Dict[str, str],
-):
+def test_dataset_renaming_csv_columns(columns: List[str], column_name_dict: Dict[str, str]):
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     sm_dataset_id = CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
     dataset = client.datasets.by_resource_id(sm_dataset_id)
@@ -375,7 +373,7 @@ def test_dataset_renaming_csv_columns(
     with tempfile.TemporaryDirectory() as tempdir:
         filename = Path(tempdir) / f"test_export_csv_{timestamp}.csv"
         records_written = csv.from_dataset(
-            dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict,
+            dataset, filename, overwrite=True, columns=columns, column_name_dict=column_name_dict
         )
 
         # Load raw export data and sort for comparison.
