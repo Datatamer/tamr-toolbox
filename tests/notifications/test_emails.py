@@ -66,7 +66,7 @@ def test_build_message(mock_smtp):
 
     msg = notifier._build_message(test_message, test_subject_line)
 
-    assert msg == expected_msg
+    assert expected_msg == msg
 
 
 @patch("smtplib.SMTP", autospec=True)
@@ -83,8 +83,12 @@ def test_send_message(mock_smtp):
         use_tls=True)
 
     context = mock_smtp.return_value
+    msg = notifier._build_message(test_message, test_subject_line)
+
     notifier.send_message(test_message, test_subject_line)
     context.sendmail.assert_called_with(
         CONFIG["my_email_notification"]["sender_address"],
         CONFIG["my_email_notification"]["recipient_addresses"],
-        notifier._build_message(test_message, test_subject_line))
+        msg)
+
+    assert notifier.sent_messages == [msg]

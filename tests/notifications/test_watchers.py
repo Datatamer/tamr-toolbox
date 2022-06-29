@@ -1,7 +1,4 @@
 """Tests for tasks related to task watchers"""
-
-import pytest
-
 from tamr_toolbox import utils
 from tamr_toolbox.notifications.core import _BaseNotifier
 from tamr_toolbox.utils.testing import mock_api
@@ -14,7 +11,7 @@ CONFIG = utils.config.from_yaml(
 
 class BaseNotifierSkipNotImplementedError(_BaseNotifier):
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
-        pass
+        self.sent_messages += [message]
 
 
 @mock_api()
@@ -44,7 +41,7 @@ def test_monitor_job_succeeded():
         ),
     ]
 
-    assert expected_messages == [resp["message"] for resp in notifier.sent_messages]
+    assert notifier.sent_messages == expected_messages
 
 
 @mock_api()
@@ -53,8 +50,22 @@ def test_monitor_job_timeout():
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
 
-    timeout_seconds = 0.0002
+    timeout_seconds = 0.2
+    poll_interval = 0.1
 
     notifier = BaseNotifierSkipNotImplementedError()
-    with pytest.raises(TimeoutError):
-        notifier.monitor_job(tamr=client, operation=op, timeout_seconds=timeout_seconds)
+    notifier.monitor_job(tamr=client, operation=op, timeout=timeout_seconds, poll_interval=poll_interval)
+
+    expected_messages = [
+        (
+            f"Host: {client.host} \n Job: {op.resource_id} \n "
+            f"Description: Materialize views "
+            f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
+        ),
+        (
+            f"The job {op.resource_id}: {op.description} took longer "
+            f"than {timeout_seconds} seconds to resolve."
+        )
+    ]
+
+    assert notifier.sent_messages[:2] == expected_messages

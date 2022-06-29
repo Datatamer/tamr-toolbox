@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Union, List, Optional
 
 from tamr_unify_client import Client
@@ -85,4 +84,4 @@ class _BaseNotifier(object):
                     f"The job {op.resource_id}: {op.description} took longer "
                     f"than {timeout} seconds to resolve."
                 )
-                self.send_message(message=timeout_message, subject_line=f"Job {op.resource_id}: Timeout", **kwargs)
+                self.send_message(message=timeout_message, title=f"Job {op.resource_id}: Timeout")
