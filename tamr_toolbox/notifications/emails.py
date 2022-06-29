@@ -69,14 +69,9 @@ class EmailNotifier(_BaseNotifier, ABC):
 
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
         msg = self._build_message(message, title)
-        #TODO print(msg)
 
-        LOGGER.info(f"Sending an email with payload {msg}")
-        response = self.server.sendmail(self.sender_address, self.recipient_addresses, msg)
-        print(response)
-        if response:
-            LOGGER.info("Email sent successfully")
-        else:
-            LOGGER.error(f"Email failed to send, with reason {response}")
+        LOGGER.info(f"Sending an email to {self.recipient_addresses} with payload {msg}")
+        self.server.sendmail(self.sender_address, self.recipient_addresses, msg)
+        LOGGER.info("Email sent successfully")
 
         self.sent_messages += [msg]
