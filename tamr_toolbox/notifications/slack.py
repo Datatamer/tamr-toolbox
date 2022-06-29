@@ -15,14 +15,14 @@ LOGGER = logging.getLogger(__name__)
 class SlackNotifier(_BaseNotifier, ABC):
     channel: str
     token: str
-    proxies: Optional[Union[None, Dict[str: str]]] = None
+    proxies: Optional[Union[None, Dict[str, str]]] = None
     base_url: Optional[str] = "https://www.slack.com/api/"
     timeout: Optional[int] = 30
     """Send slack messages based on Tamr eventing.
 
     Args:
         channel: The (public) Slack channel to send notifications to
-        token: A string specifying an xoxp or xoxb access token.
+        token: An xoxp or xoxb access token.
         proxies: A dict of proxy configs if needed. Default is None.
         base_url: The base URL of the Slack API. Default is 'https://www.slack.com/api/'
         timeout: The maximum number of seconds the client will wait
@@ -39,9 +39,10 @@ class SlackNotifier(_BaseNotifier, ABC):
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
         LOGGER.info(f"Sending a slack message to {self.channel}")
         try:
-            response = self.slack.chat_postMessage(channel=self.channel, text=message)
+            self.slack.chat_postMessage(channel=self.channel, text=message,
+                                        username="Tamr Notifications Bot",
+                                        icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png")    # noqa
         except SlackApiError as e:
             LOGGER.error(f"Error posting message: {e}.")
 
         self.sent_messages += [message]
-
