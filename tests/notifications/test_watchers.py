@@ -1,4 +1,6 @@
 """Tests for tasks related to task watchers"""
+import pytest
+
 from tamr_toolbox import utils
 from tamr_toolbox.notifications.core import _BaseNotifier
 from tamr_toolbox.utils.testing import mock_api
@@ -69,3 +71,9 @@ def test_monitor_job_timeout():
     ]
 
     assert notifier.sent_messages[:2] == expected_messages
+
+
+def test_notimplemented():
+    notifier = _BaseNotifier()
+    with pytest.raises(NotImplementedError):
+        notifier.send_message("message", "title")

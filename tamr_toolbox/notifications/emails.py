@@ -23,20 +23,18 @@ class EmailNotifier(_BaseNotifier, ABC):
     certfile: Optional[str] = None
     """
     Send emails based on Tamr eventing.
-    
+
     Attributes:
         recipient_addresses: List of emails to send messages to
         sender_address: Email address to send messages from, such as my_pipeline@gmail.com
-        sender_password: Password for sending email address 
+        sender_password: Password for sending email address
         smtp_server: Outbound smtp server address
         smtp_port: Port to send email from, such as 465 for SSL (default)
         use_tls: If True, use TLS protocol. False by default.
         keyfile: Path to a TLS/SSL private key, (typically .pem). Default is None.
-        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format. 
+        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format.
             Default is None
-        
-    Examples:
-    
+
     Raises:
         SMTPException: If email server login fails
     """
@@ -54,7 +52,12 @@ class EmailNotifier(_BaseNotifier, ABC):
             self.server.starttls(keyfile=self.keyfile, certfile=self.certfile, context=context)
         else:
             self.server = smtplib.SMTP_SSL(
-                self.smtp_server, self.smtp_port, keyfile=self.keyfile, certfile=self.certfile, context=context)
+                self.smtp_server,
+                self.smtp_port,
+                keyfile=self.keyfile,
+                certfile=self.certfile,
+                context=context,
+            )
 
         LOGGER.info("Trying to connect to the email server")
         self.server.login(self.sender_address, self.sender_password)

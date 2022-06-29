@@ -32,16 +32,20 @@ class SlackNotifier(_BaseNotifier, ABC):
     def __post_init__(self):
         super().__init__()
         LOGGER.info("Connecting with the Slack API")
-        self.slack = slack.WebClient(token=self.token, base_url=self.base_url,
-                                     timeout=self.timeout, proxy=self.proxies)
+        self.slack = slack.WebClient(
+            token=self.token, base_url=self.base_url, timeout=self.timeout, proxy=self.proxies
+        )
         LOGGER.info("Successfully authenticated with the Slack API")
 
     def send_message(self, message: str, title: str, *args, **kwargs) -> None:
         LOGGER.info(f"Sending a slack message to {self.channel}")
         try:
-            self.slack.chat_postMessage(channel=self.channel, text=message,
-                                        username="Tamr Notifications Bot",
-                                        icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png")    # noqa
+            self.slack.chat_postMessage(
+                channel=self.channel,
+                text=message,
+                username="Tamr Notifications Bot",
+                icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
+            )
         except SlackApiError as e:
             LOGGER.error(f"Error posting message: {e}.")
 

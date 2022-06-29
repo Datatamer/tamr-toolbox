@@ -20,6 +20,9 @@ class _BaseNotifier(object):
             message: The message to send
             title: The title of the message to send
 
+        Examples:
+            .. literalinclude:: ../../examples/notifications/enable_email_notifications.py
+
         Raises:
             NotImplementedError: If called directly from the `_BaseNotifier' class,
                 instead of a pre-defined notification type
