@@ -95,7 +95,12 @@ def test_s3_upload():
 
     test_upload()
 
-    with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError,)):
+    with pytest.raises(
+        (
+            botocore.exceptions.NoCredentialsError,
+            FileNotFoundError,
+        )
+    ):
         cloud.s3_upload(cloud_client=boto3.client("s3"))
 
 
@@ -123,9 +128,15 @@ def test_file_upload():
 
     test_upload()
 
-    with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError,)):
+    with pytest.raises(
+        (
+            botocore.exceptions.NoCredentialsError,
+            FileNotFoundError,
+        )
+    ):
         cloud.file_upload(
-            client_type="s3", cloud_client=boto3.client("s3"),
+            client_type="s3",
+            cloud_client=boto3.client("s3"),
         )
 
 
@@ -149,7 +160,13 @@ def test_file_download():
 
     test_download()
 
-    with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError,)):
+    with pytest.raises(
+        (
+            botocore.exceptions.NoCredentialsError,
+            FileNotFoundError,
+        )
+    ):
         cloud.file_download(
-            client_type="s3", cloud_client=boto3.client("s3"),
+            client_type="s3",
+            cloud_client=boto3.client("s3"),
         )

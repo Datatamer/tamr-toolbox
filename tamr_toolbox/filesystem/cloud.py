@@ -26,7 +26,7 @@ def gcs_download(
     destination_filepath="path_to_my_local_file",
     bucket_name="sample_bucket",
 ):
-    """ Download data to a Google storage bucket
+    """Download data to a Google storage bucket
     Args:
         source_filepath: Path to file being downloaded on Google
         destination_filepath: Destination filepath for file being downloaded
@@ -64,7 +64,7 @@ def s3_download(
     destination_filepath="path_to_my_local_file",
     bucket_name="sample_bucket",
 ):
-    """ Download data from an Amazon AWS bucket
+    """Download data from an Amazon AWS bucket
     Args:
         source_filepath: Path to file being downloaded on AWS
         destination_filepath: Destination filepath for file being downloaded
@@ -72,7 +72,9 @@ def s3_download(
         bucket_name: name of AWS bucket being downloaded from
     """
     cloud_client.download_file(
-        Bucket=bucket_name, Key=source_filepath, Filename=destination_filepath,
+        Bucket=bucket_name,
+        Key=source_filepath,
+        Filename=destination_filepath,
     )
 
 
