@@ -72,9 +72,7 @@ def s3_download(
         bucket_name: name of AWS bucket being downloaded from
     """
     cloud_client.download_file(
-        Bucket=bucket_name,
-        Key=source_filepath,
-        Filename=destination_filepath,
+        Bucket=bucket_name, Key=source_filepath, Filename=destination_filepath
     )
 
 
@@ -108,6 +106,8 @@ def file_upload(
             destination_filepath=destination_filepath,
             bucket_name=bucket_name,
         )
+    else:
+        raise Exception("Invalid Input for `client_type`")
 
 
 def file_download(
