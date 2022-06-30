@@ -1,4 +1,4 @@
 """Tasks related to creation of notifications"""
-from . import slack, emails, teams, core
+from . import common, emails, slack, teams
 
-__all__ = ["slack", "emails", "teams", "core"]
+__all__ = ["common", "emails", "slack", "teams"]

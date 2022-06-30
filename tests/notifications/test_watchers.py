@@ -2,7 +2,7 @@
 import pytest
 
 from tamr_toolbox import utils
-from tamr_toolbox.notifications.core import _BaseNotifier
+from tamr_toolbox.notifications.common import _BaseNotifier
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
@@ -56,7 +56,9 @@ def test_monitor_job_timeout():
     poll_interval = 0.1
 
     notifier = BaseNotifierSkipNotImplementedError()
-    notifier.monitor_job(tamr=client, operation=op, timeout=timeout_seconds, poll_interval=poll_interval)
+    notifier.monitor_job(
+        tamr=client, operation=op, timeout=timeout_seconds, poll_interval=poll_interval
+    )
 
     expected_messages = [
         (
@@ -67,7 +69,7 @@ def test_monitor_job_timeout():
         (
             f"The job {op.resource_id}: {op.description} took longer "
             f"than {timeout_seconds} seconds to resolve."
-        )
+        ),
     ]
 
     assert notifier.sent_messages[:2] == expected_messages

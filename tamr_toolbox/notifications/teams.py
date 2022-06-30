@@ -1,10 +1,12 @@
 import logging
 from abc import ABC
 from dataclasses import dataclass
+from tamr_toolbox.notifications.common import _BaseNotifier
 
-import pymsteams
-
-from tamr_toolbox.notifications.core import _BaseNotifier
+try:
+    import pymsteams
+except ImportError:
+    pass
 
 LOGGER = logging.getLogger(__name__)
 

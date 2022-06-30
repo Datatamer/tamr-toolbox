@@ -12,8 +12,7 @@ from tamr_unify_client.operation import Operation
 
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_toolbox.models.operation_state import OperationState
-from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
-from tamr_toolbox.notifications.core import _BaseNotifier
+from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common, _BaseNotifier
 from tamr_toolbox.utils.operation import get_details
 
 LOGGER = logging.getLogger(__name__)
@@ -32,7 +31,7 @@ class EmailNotifier(_BaseNotifier, ABC):
     """
     Send emails based on Tamr eventing.
 
-    Attributes:
+    Args:
         recipient_addresses: List of emails to send messages to
         sender_address: Email address to send messages from, such as my_pipeline@gmail.com
         sender_password: Password for sending email address
@@ -111,17 +110,17 @@ def _build_message(*, message: str, subject_line: str, sender: str, recipients: 
 
 
 def send_email(
-        *,
-        message: str,
-        subject_line: str,
-        sender_address: str,
-        sender_password: str,
-        recipient_addresses: List[str],
-        smtp_server: str,
-        smtp_port: str,
-        use_tls: bool = True,
-        keyfile: Optional[str] = None,
-        certfile: Optional[str] = None,
+    *,
+    message: str,
+    subject_line: str,
+    sender_address: str,
+    sender_password: str,
+    recipient_addresses: List[str],
+    smtp_server: str,
+    smtp_port: str,
+    use_tls: bool = True,
+    keyfile: Optional[str] = None,
+    certfile: Optional[str] = None,
 ) -> JsonDict:
     """Sends a message via email to list of recipients
 
@@ -146,8 +145,11 @@ def send_email(
     Raises:
         SMTPException. The base exception class used by the smtplib module
     """
-    warnings.warn("'This function will be deprecated in a future release. "
-                  "Use EmailNotifier().send_message() instead.'", DeprecationWarning)
+    warnings.warn(
+        "'This function will be deprecated in a future release. "
+        "Use EmailNotifier().send_message() instead.'",
+        DeprecationWarning,
+    )
 
     # build email
     msg = _build_message(
@@ -161,7 +163,7 @@ def send_email(
 
     context = ssl.create_default_context()
     with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
-            smtp_server, smtp_port, keyfile=keyfile, certfile=certfile, context=context
+        smtp_server, smtp_port, keyfile=keyfile, certfile=certfile, context=context
     ) as server:
         if use_tls:
             server.starttls(keyfile=keyfile, certfile=certfile, context=context)
@@ -175,17 +177,17 @@ def send_email(
 
 
 def _send_job_status_message(
-        *,
-        sender_address: str,
-        sender_password: str,
-        recipient_addresses: List[str],
-        smtp_server: str,
-        smtp_port: str,
-        operation: Operation,
-        notify_states: List[OperationState],
-        use_tls: bool = False,
-        keyfile: Optional[str] = None,
-        certfile: Optional[str] = None,
+    *,
+    sender_address: str,
+    sender_password: str,
+    recipient_addresses: List[str],
+    smtp_server: str,
+    smtp_port: str,
+    operation: Operation,
+    notify_states: List[OperationState],
+    use_tls: bool = False,
+    keyfile: Optional[str] = None,
+    certfile: Optional[str] = None,
 ) -> JsonDict:
     """Checks operation state and if in `notify_states` sends the message.
 
@@ -207,8 +209,11 @@ def _send_job_status_message(
         Each entry contains a tuple of the SMTP error code and the accompanying error
         message sent by the server. A successful response will contain an empty dict.
     """
-    warnings.warn("'This function will be deprecated in a future release. "
-                  "Use EmailNotifier().monitor_job() instead.'", DeprecationWarning)
+    warnings.warn(
+        "'This function will be deprecated in a future release. "
+        "Use EmailNotifier().monitor_job() instead.'",
+        DeprecationWarning,
+    )
     state = OperationState[operation.state]
     message, resp = None, None
     if state in notify_states:
@@ -229,20 +234,20 @@ def _send_job_status_message(
 
 
 def monitor_job(
-        tamr: Client,
-        *,
-        sender_address: str,
-        sender_password: str,
-        recipient_addresses: List[str],
-        smtp_server: str,
-        smtp_port: str,
-        operation: Union[int, str, Operation],
-        poll_interval_seconds: float = 1,
-        timeout_seconds: Optional[float] = None,
-        notify_states: Optional[List[OperationState]] = None,
-        use_tls: bool = False,
-        keyfile: Optional[str] = None,
-        certfile: Optional[str] = None,
+    tamr: Client,
+    *,
+    sender_address: str,
+    sender_password: str,
+    recipient_addresses: List[str],
+    smtp_server: str,
+    smtp_port: str,
+    operation: Union[int, str, Operation],
+    poll_interval_seconds: float = 1,
+    timeout_seconds: Optional[float] = None,
+    notify_states: Optional[List[OperationState]] = None,
+    use_tls: bool = False,
+    keyfile: Optional[str] = None,
+    certfile: Optional[str] = None,
 ) -> List[Tuple[str, JsonDict]]:
     """Monitors a Tamr Operation and sends an email when the job status is updated
 
@@ -267,8 +272,11 @@ def monitor_job(
         Each entry contains a tuple of the SMTP error code and the accompanying error
         message sent by the server. A successful response will contain an empty dict.
     """
-    warnings.warn("'This function will be deprecated in a future release. "
-                  "Use EmailNotifier().monitor_job() instead.'", DeprecationWarning)
+    warnings.warn(
+        "'This function will be deprecated in a future release. "
+        "Use EmailNotifier().monitor_job() instead.'",
+        DeprecationWarning,
+    )
     list_responses = monitor_job_common(
         tamr=tamr,
         send_message=send_email,

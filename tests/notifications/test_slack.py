@@ -21,7 +21,7 @@ CONFIG = utils.config.from_yaml(
 
 @patch("slack.WebClient", autospec=True)
 def test_slack_creation(mock_slack):
-    notifier = SlackNotifier(token=mock_slack, channel="#test_tbox_messaging")
+    _ = SlackNotifier(token=mock_slack, channel="#test_tbox_messaging")
     mock_slack.assert_called()
 
 
@@ -35,10 +35,12 @@ def test_send_message(mock_slack):
 
     context = mock_slack.return_value
     context.chat_postMessage.assert_called()
-    context.chat_postMessage.assert_called_with(channel=notifier.channel,
-                                                text=test_message,
-                                                username="Tamr Notifications Bot",
-                                                icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png")  # noqa
+    context.chat_postMessage.assert_called_with(
+        channel=notifier.channel,
+        text=test_message,
+        username="Tamr Notifications Bot",
+        icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
+    )
     assert notifier.sent_messages == [test_message]
 
 
@@ -109,8 +111,8 @@ def test_deprecated_monitor_job_succeed():
             "bot_id": "BOT_ID",
             "type": "message",
             "text": f"Host: {client.host} \n Job: {op.resource_id} \n "
-                    f"Description: Materialize views"
-                    f" [minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING ",
+            f"Description: Materialize views"
+            f" [minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING ",
             "user": "USER",
             "team": "TEAM",
             "bot_profile": {
@@ -131,8 +133,8 @@ def test_deprecated_monitor_job_succeed():
             "bot_id": "BOT_ID",
             "type": "message",
             "text": f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize "
-                    f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
-                    f"Status: RUNNING ",
+            f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
+            f"Status: RUNNING ",
             "user": "USER",
             "team": "TEAM",
             "bot_profile": {
@@ -153,8 +155,8 @@ def test_deprecated_monitor_job_succeed():
             "bot_id": "BOT_ID",
             "type": "message",
             "text": f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize "
-                    f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
-                    f"Status: SUCCEEDED ",
+            f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
+            f"Status: SUCCEEDED ",
             "user": "USER",
             "team": "TEAM",
             "bot_profile": {
@@ -242,8 +244,8 @@ def test_deprecated_monitor_job_timeout():
             "bot_id": "BOT_ID",
             "type": "message",
             "text": f"Host: {client.host} \n Job: {op.resource_id} \n "
-                    f"Description: Materialize views [minimal_schema_mapping_unified_dataset] "
-                    f"to Elastic \n Status: PENDING ",
+            f"Description: Materialize views [minimal_schema_mapping_unified_dataset] "
+            f"to Elastic \n Status: PENDING ",
             "user": "USER",
             "team": "TEAM",
             "bot_profile": {
@@ -264,8 +266,8 @@ def test_deprecated_monitor_job_timeout():
             "bot_id": "BOT_ID",
             "type": "message",
             "text": f"The job {op.resource_id}: Materialize views [minimal_schema_mapping_"
-                    f"unified_dataset] to Elastic "
-                    f"took longer than {timeout_seconds} seconds to resolve.",
+            f"unified_dataset] to Elastic "
+            f"took longer than {timeout_seconds} seconds to resolve.",
             "user": "USER",
             "team": "TEAM",
             "bot_profile": {
