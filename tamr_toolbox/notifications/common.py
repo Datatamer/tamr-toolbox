@@ -1,4 +1,5 @@
 """Tasks related to creation of Email notifications"""
+import warnings
 from typing import Union, List, Optional, Callable
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client import Client
@@ -35,6 +36,8 @@ def _monitor_job(
     Returns:
         A list of messages with their response codes
     """
+    warnings.warn("'This function will be deprecated in a future release. "
+                  "Use e.g. SlackNotifier().monitor_job() instead.'", DeprecationWarning)
     if notify_states is None:
         notify_states = [
             OperationState.SUCCEEDED,
