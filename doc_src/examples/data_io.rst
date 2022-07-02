@@ -75,3 +75,19 @@ Validate a Dataframe before upserting records to a Tamr Dataset
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/data_io/dataframe/validate_dataframe.py
  :language: python
+
+CSV
+------------------------------------------------------------------------
+
+Export CSV from Tamr Dataset to a designated filepath
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/resources/conf/dataset.config.yaml
+  :language: yaml
+.. literalinclude :: ../../examples/scripts/data_io/csv/export_from_dataset.py
+  :language: python
+
+
+Export CSV from taxonomy to a designated filepath
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/data_io/csv/export_from_taxonomy.py
+  :language: python

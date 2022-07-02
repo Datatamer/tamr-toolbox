@@ -14,16 +14,6 @@ Clean old files recursively from a directory
 Cloud
 ------------------------------------------------------------------------
 
-Download object from passed bucket (GCS / S3)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. literalinclude:: ../../examples/snippets/filesystem/cloud/file_download.py
-  :language: python
-
-Upload object to passed bucket (GCS / S3)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. literalinclude:: ../../examples/snippets/filesystem/cloud/file_upload.py
-  :language: python
-
 Upload object to GCS bucket
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/filesystem/cloud/gcs_upload.py
