@@ -91,7 +91,6 @@ def test_is_version_condition_met():
         version.does_tamr_version_meet_requirement(
             tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0",
         )
-
     with pytest.raises(EnvironmentError):
         version.does_tamr_version_meet_requirement(
             tamr_version="2022.002.0",
@@ -141,7 +140,6 @@ def test_ensure_tamr_version_decorator():
         test_function_irrelevant_inputs(1, "2", three="stuff")
     except Exception as exc:
         assert False, f"Raised an exception {exc}"
-
     try:
 
         @version.requires_tamr_version(min_version="2019.001")
@@ -151,7 +149,6 @@ def test_ensure_tamr_version_decorator():
         test_function_args_passing(tamr_client)
     except Exception as exc:
         assert False, f"Raised an exception {exc}"
-
     with pytest.raises(EnvironmentError):
 
         @version.requires_tamr_version(min_version="2099.001")
