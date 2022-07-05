@@ -1,3 +1,4 @@
+import os
 # Building our documentation requires access to all dependencies, including optional ones
 # This environments variable is set automatically when `invoke docs` is used
 BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
