@@ -1,5 +1,10 @@
-from google.cloud import storage
-from mypy_boto3_s3.client import S3Client
+# Building our documentation requires access to all dependencies, including optional ones
+# This environments variable is set automatically when `invoke docs` is used
+BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
+if BUILDING_DOCS:
+    # Import relevant optional dependencies
+    from google.cloud import storage
+    from mypy_boto3_s3.client import S3Client
 
 
 def gcs_upload(
