@@ -44,6 +44,7 @@ def _as_float(version: str) -> float:
     Returns:
         Numeric representation of Tamr version
     """
+    warnings.warn("Use `packaging.version.parse() instead.'", DeprecationWarning)
     version_split = version.split(".")
 
     if len(version_split) != 3:
@@ -54,6 +55,17 @@ def _as_float(version: str) -> float:
 
 
 def _get_tamr_versions_from_function_args(*args, **kwargs) -> List[str]:
+    """
+    Gets the Tamr version of any/all relevant inputs
+
+    Args:
+        *args: Any argument that may/may not be linkable to a versioned Tamr client
+        **kwargs: Any argument that may/may not be linkable to a versioned Tamr client
+
+    Returns:
+        List of all Tamr versions inputted to the function
+
+    """
     all_args = locals()
     args = [arg for arg in all_args["args"]]
     kwargs = list(all_args["kwargs"].values())
@@ -71,7 +83,7 @@ def _get_tamr_versions_from_function_args(*args, **kwargs) -> List[str]:
     return response
 
 
-def is_version_condition_met(
+def does_tamr_version_meet_requirement(
     tamr_version: str,
     min_version: str,
     max_version: Optional[str] = None,
@@ -79,15 +91,15 @@ def is_version_condition_met(
     raise_error: bool = False,
 ) -> bool:
     """
-    Check Tamr version (and raise error if appropriate).
+    Check if Tamr version is valid .
 
     Args:
         tamr_version:
             The version of Tamr being considered
         min_version:
-            The minimum version of Tamr to test against
+            The earliest version of Tamr
         max_version:
-            The maximum version of Tamr to test against.
+            The latest version of Tamr.
             Default None, in which case no max version is tested for.
         exact_version:
             Compare against only one release of Tamr. Default is False
@@ -123,10 +135,10 @@ def is_version_condition_met(
     if error_str and raise_error:
         raise EnvironmentError(f"Using Tamr version(s) {tamr_version}, but " + error_str)
     else:
-        return not bool(error_str)
+        return not error_str
 
 
-def func_requires_tamr_version(
+def requires_tamr_version(
     min_version: str, max_version: Optional[str] = None, exact_version: bool = False
 ) -> Callable:
     """
@@ -134,15 +146,15 @@ def func_requires_tamr_version(
 
     Args:
         min_version:
-            The earliest (known) version of Tamr that supports the function
+            The earliest version of Tamr that supports the function
         max_version:
-            The latest (known) version of Tamr that supports the function.
+            The latest version of Tamr that supports the function.
             Default None, supporting all latest releases of Tamr
         exact_version:
             If True, only support one release of Tamr. Default is False
 
     Examples:
-        >>> @func_requires_tamr_version(min_version="2021.002")
+        >>> @requires_tamr_version(min_version="2021.002")
         >>> def refresh_dataset(tamr_dataset, *args, **kwargs):
         >>>     return tamr_dataset.refresh()
 
@@ -161,9 +173,8 @@ def func_requires_tamr_version(
     def _decorator(func):
         def _inspector(*args, **kwargs):
             for tamr_version in _get_tamr_versions_from_function_args(*args, **kwargs):
-                is_version_condition_met(
-                    tamr_version, min_version, max_version, exact_version, raise_error=True
-                )
+                does_tamr_version_meet_requirement(tamr_version, min_version, max_version, exact_version,
+                                                   raise_error=True)
 
             return func(*args, **kwargs)
 
@@ -208,9 +219,9 @@ def _deprecated_warning(func: Callable, *, message: str) -> Callable:
     Returns:
         The decorated function
     """
-    raise DeprecationWarning(
-        "Use warnings.warn with `DeprecationWarning', ensuring" "`logging.captureWarnings' is True"
-    )
+    warnings.warn("Use warnings.warn with `DeprecationWarning', ensuring" 
+                  "`logging.captureWarnings' is True",
+        DeprecationWarning)
 
     def warning(*args, **kwargs):
         try:

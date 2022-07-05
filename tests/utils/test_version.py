@@ -47,7 +47,7 @@ def test__as_float_ordering(smaller: str, larger: str):
 
 
 @pytest.mark.parametrize(
-    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)],
+    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)]
 )
 @mock_api()
 def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement: bool):
@@ -60,43 +60,30 @@ def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement
 
 
 def test_is_version_condition_met():
-    assert version.is_version_condition_met(
-        tamr_version="2022.002.0", min_version="2022.002.0", exact_version=True
-    )
-    assert not version.is_version_condition_met(
-        tamr_version="2022.002.0", min_version="2023.002.0", exact_version=True
-    )
-    assert not version.is_version_condition_met(
-        tamr_version="2022.002.0", min_version="2021.002.0", exact_version=True
-    )
+    assert version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2022.002.0",
+                                                      exact_version=True)
+    assert not version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2023.002.0",
+                                                          exact_version=True)
+    assert not version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2021.002.0",
+                                                          exact_version=True)
 
-    assert version.is_version_condition_met(tamr_version="2022.002.0", min_version="2021.002.0")
-    assert not version.is_version_condition_met(
-        tamr_version="2022.002.0", min_version="2023.002.0"
-    )
+    assert version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2021.002.0")
+    assert not version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2023.002.0")
 
-    assert version.is_version_condition_met(
-        tamr_version="2022.002.0", min_version="2021.002.0", max_version="2023.002.0"
-    )
-    assert not version.is_version_condition_met(
-        tamr_version="2020.002.0", min_version="2021.002.0", max_version="2023.002.0"
-    )
-    assert not version.is_version_condition_met(
-        tamr_version="2024.002.0", min_version="2021.002.0", max_version="2023.002.0"
-    )
+    assert version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2021.002.0",
+                                                      max_version="2023.002.0")
+    assert not version.does_tamr_version_meet_requirement(tamr_version="2020.002.0", min_version="2021.002.0",
+                                                          max_version="2023.002.0")
+    assert not version.does_tamr_version_meet_requirement(tamr_version="2024.002.0", min_version="2021.002.0",
+                                                          max_version="2023.002.0")
 
     with pytest.raises(ValueError):
-        version.is_version_condition_met(
-            tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0",
-        )
+        version.does_tamr_version_meet_requirement(tamr_version="2019.003.0", min_version="2021.003.0",
+                                                   max_version="2019.003.0")
 
     with pytest.raises(EnvironmentError):
-        version.is_version_condition_met(
-            tamr_version="2022.002.0",
-            min_version="2021.002.0",
-            exact_version=True,
-            raise_error=True,
-        )
+        version.does_tamr_version_meet_requirement(tamr_version="2022.002.0", min_version="2021.002.0",
+                                                   exact_version=True, raise_error=True)
 
 
 @mock_api()
@@ -132,7 +119,7 @@ def test_ensure_tamr_version_decorator():
 
     try:
 
-        @version.func_requires_tamr_version(min_version="2019.001")
+        @version.requires_tamr_version(min_version="2019.001")
         def test_function_irrelevant_inputs(*args, **kwargs):
             pass
 
@@ -142,7 +129,7 @@ def test_ensure_tamr_version_decorator():
 
     try:
 
-        @version.func_requires_tamr_version(min_version="2019.001")
+        @version.requires_tamr_version(min_version="2019.001")
         def test_function_args_passing(tamr_client, *args, **kwargs):
             pass
 
@@ -152,7 +139,7 @@ def test_ensure_tamr_version_decorator():
 
     with pytest.raises(EnvironmentError):
 
-        @version.func_requires_tamr_version(min_version="2099.001")
+        @version.requires_tamr_version(min_version="2099.001")
         def test_function_args_failing(tamr_client, *args, **kwargs):
             pass
 

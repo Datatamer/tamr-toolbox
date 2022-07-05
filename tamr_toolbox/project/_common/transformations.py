@@ -9,7 +9,7 @@ from tamr_unify_client.dataset.resource import Dataset
 from tamr_unify_client.project.resource import Project
 
 from tamr_toolbox.models.data_type import JsonDict
-from tamr_toolbox.utils.version import func_requires_tamr_version
+from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
@@ -132,7 +132,7 @@ def _to_json(tx: TransformationGroup) -> JsonDict:
     }
 
 
-@func_requires_tamr_version(min_version=TX_RELEASE_VERSION)
+@requires_tamr_version(min_version=TX_RELEASE_VERSION)
 def get_all(project: Project) -> TransformationGroup:
     """Get the transformations of a Project
 
@@ -152,7 +152,7 @@ def get_all(project: Project) -> TransformationGroup:
     return _from_json(project.client, r.json())
 
 
-@func_requires_tamr_version(min_version=TX_RELEASE_VERSION)
+@requires_tamr_version(min_version=TX_RELEASE_VERSION)
 def set_all(project: Project, tx: TransformationGroup, *, allow_overwrite=True) -> Response:
     """Set the transformations of a Project
 

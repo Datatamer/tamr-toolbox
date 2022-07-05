@@ -7,12 +7,12 @@ from tamr_unify_client.project.resource import Project
 
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.utils import operation
-from tamr_toolbox.utils.version import func_requires_tamr_version
+from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
 
-@func_requires_tamr_version(min_version="2020.004.0")
+@requires_tamr_version(min_version="2020.004.0")
 def _run_custom(
     project: Project,
     *,

@@ -8,12 +8,12 @@ from tamr_unify_client import Client
 
 from tamr_toolbox import utils
 from tamr_toolbox.utils.operation import Operation
-from tamr_toolbox.utils.version import func_requires_tamr_version
+from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
 
-@func_requires_tamr_version(min_version="2021.005.0")
+@requires_tamr_version(min_version="2021.005.0")
 def export_artifacts(
     *,
     project: Project,
@@ -63,7 +63,7 @@ def export_artifacts(
     return operation
 
 
-@func_requires_tamr_version(min_version="2021.005.0")
+@requires_tamr_version(min_version="2021.005.0")
 def import_artifacts(
     *,
     project_artifact_path: str,
