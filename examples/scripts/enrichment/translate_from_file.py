@@ -35,7 +35,7 @@ def main(
     # load dictionary
     LOGGER.info(f"Starting translation from french to english")
     dictionary = tbox.enrichment.dictionary.load(
-        dictionary_folder=dictionary_folder, target_language="en", source_language="fr",
+        dictionary_folder=dictionary_folder, target_language="en", source_language="fr"
     )
 
     # translate attribute by attribute

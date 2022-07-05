@@ -4,11 +4,7 @@ import pytest
 import tamr_toolbox as tbox
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.models.attribute_type import (
-    Array,
-    STRING,
-    DOUBLE,
-)
+from tamr_toolbox.models.attribute_type import Array, STRING, DOUBLE
 
 from tamr_unify_client import Client
 
@@ -92,18 +88,14 @@ def test_create_new_dataset_no_attr():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     dataset_name = DATASET_NAME + "_no_attr"
 
-    tbox.dataset.manage.create(
-        client=client, dataset_name=dataset_name, primary_keys=PRIMARY_KEYS,
-    )
+    tbox.dataset.manage.create(client=client, dataset_name=dataset_name, primary_keys=PRIMARY_KEYS)
 
     dataset = client.datasets.by_name(dataset_name)
 
     dataset_attributes = dataset.attributes
     attribute_types = [attribute.type for attribute in dataset_attributes.stream()]
 
-    expected_attribute_types = [
-        {"baseType": "STRING", "attributes": []},
-    ]
+    expected_attribute_types = [{"baseType": "STRING", "attributes": []}]
     for idx in range(len(expected_attribute_types)):
         assert attribute_types[idx].spec().to_dict() == expected_attribute_types[idx]
 
@@ -167,9 +159,7 @@ def test_no_dataset_or_pk():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
 
     with pytest.raises(ValueError):
-        tbox.dataset.manage.create(
-            client=client, dataset_name=DATASET_NAME,
-        )
+        tbox.dataset.manage.create(client=client, dataset_name=DATASET_NAME)
 
 
 @mock_api(enforce_online_test=enforce_online_test)

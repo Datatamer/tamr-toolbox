@@ -36,7 +36,7 @@ def _add_handler(logger: logging.Logger, log_directory: Optional[str] = None, **
         log_directory: Optional log directory to pass. If not None a FileHandler is added,
             otherwise a StreamHandler
         **kwargs: Keyword arguments for the _get_log_filename
-     """
+    """
     if log_directory is None:
         handler = logging.StreamHandler()
     else:

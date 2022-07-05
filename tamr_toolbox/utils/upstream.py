@@ -14,18 +14,18 @@ def _find_projects(
     project_list: Optional[List[str]] = None,
     upstream_projects: Optional[List[str]] = None,
 ) -> List[Project]:
-    """ Check for upstream projects that have source datasets that require
-        updating
-        Args:
-            project: a tamr project
-            track of projects that need to be checked for upstream dependencies
-            all_projects: list of all projects that exist within Tamr
-            project_list: keeps track of projects that have yet to be checked
-            for upstream dependencies.
-            upstream_projects: list to keep track of projects within a chain of projects
-        Returns:
-            List of tamr projects in a chained workflow
-        """
+    """Check for upstream projects that have source datasets that require
+    updating
+    Args:
+        project: a tamr project
+        track of projects that need to be checked for upstream dependencies
+        all_projects: list of all projects that exist within Tamr
+        project_list: keeps track of projects that have yet to be checked
+        for upstream dependencies.
+        upstream_projects: list to keep track of projects within a chain of projects
+    Returns:
+        List of tamr projects in a chained workflow
+    """
     # Obtain the name of project to be updated and initiate the list of
     # projects (project_list) that are maintained within the check_for_upstream_project
     # function to check for upstream dependencies
@@ -100,10 +100,10 @@ def _find_projects(
 def _find_datasets(dataset: Dataset) -> List[Dataset]:
     """Returns a dataset's upstream datasets.
 
-        Args:
-            dataset: a Tamr Dataset Object
-        Returns:
-            List of upstream datasets
+    Args:
+        dataset: a Tamr Dataset Object
+    Returns:
+        List of upstream datasets
 
     """
 
@@ -141,12 +141,12 @@ def _find_datasets(dataset: Dataset) -> List[Dataset]:
 
 def _request_upstream_datasets(dataset: Dataset) -> Dataset:
 
-    """ Returns a dataset's upstream dataset
+    """Returns a dataset's upstream dataset
 
-        Args:
-            dataset: a Tamr Dataset Object
-        Returns:
-            The upstream datasets
+    Args:
+        dataset: a Tamr Dataset Object
+    Returns:
+        The upstream datasets
     """
     # Find upstream datasets, output is a DatasetURI
     upstream = dataset.upstream_datasets()
@@ -158,7 +158,7 @@ def _request_upstream_datasets(dataset: Dataset) -> Dataset:
 
 
 def datasets(dataset: Dataset) -> List[Dataset]:
-    """ Check for upstream datasets associated with a specified dataset
+    """Check for upstream datasets associated with a specified dataset
 
     Args:
         dataset: the Tamr dataset for which associated upstream datasets are retrieved
@@ -171,7 +171,7 @@ def datasets(dataset: Dataset) -> List[Dataset]:
 
 
 def projects(project: Project) -> List[Project]:
-    """ Check for upstream projects associated with a specified project
+    """Check for upstream projects associated with a specified project
 
     Args:
         project: the tamr project for which associated upstream projects are retrieved

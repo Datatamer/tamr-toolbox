@@ -145,14 +145,10 @@ def _monitor_job(
     # send message for initial state
     status = OperationState[op.state]
     if status in notify_states:
-        response = send_status_function(operation=op, notify_states=notify_states, **kwargs,)
+        response = send_status_function(operation=op, notify_states=notify_states, **kwargs)
         list_responses.append(response)
 
-    while status not in [
-        OperationState.SUCCEEDED,
-        OperationState.FAILED,
-        OperationState.CANCELED,
-    ]:
+    while status not in [OperationState.SUCCEEDED, OperationState.FAILED, OperationState.CANCELED]:
         try:
             op = monitor(
                 operation=op,
@@ -161,7 +157,7 @@ def _monitor_job(
             )
             status = OperationState[op.state]
             # send message on state change
-            response = send_status_function(operation=op, notify_states=notify_states, **kwargs,)
+            response = send_status_function(operation=op, notify_states=notify_states, **kwargs)
             list_responses.append(response)
         except TimeoutError:
             timeout_message = (
@@ -169,7 +165,7 @@ def _monitor_job(
                 f"than {timeout_seconds} seconds to resolve."
             )
             response = send_message(
-                message=timeout_message, subject_line=f"Job {op.resource_id}: Timeout", **kwargs,
+                message=timeout_message, subject_line=f"Job {op.resource_id}: Timeout", **kwargs
             )
             list_responses.append(response)
             return list_responses

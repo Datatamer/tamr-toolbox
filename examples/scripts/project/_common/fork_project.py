@@ -21,7 +21,7 @@ from tamr_toolbox.utils.client import Client
 from tamr_toolbox.utils.operation import Operation
 
 
-def export_from_tamr(client: Client, *, project_name: str, export_path: str,) -> Operation:
+def export_from_tamr(client: Client, *, project_name: str, export_path: str) -> Operation:
     """
     This function sets path for project artifacts export from Tamr and makes the call to execute
     the export action.
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "--new_name", default=None, help="raise to explicitly specify the name of the new project",
+        "--new_name", default=None, help="raise to explicitly specify the name of the new project"
     )
     group.add_argument(
         "--postfix",

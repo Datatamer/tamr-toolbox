@@ -53,7 +53,7 @@ def test_operation_by_id_details():
 )
 @tbox.utils.testing.mock_api()
 def test_operation_by_id(
-    operation_id: str, expected_description: str, expected_state: str,
+    operation_id: str, expected_description: str, expected_state: str
 ) -> None:
     """
     In this test, we get operations by their ids and test that their description and status
