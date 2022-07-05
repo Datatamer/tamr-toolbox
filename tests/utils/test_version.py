@@ -7,7 +7,9 @@ from tamr_toolbox.utils import version, config, client
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
-CONFIG = config.from_yaml(get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml")
+CONFIG = config.from_yaml(
+    get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
+)
 
 
 @pytest.mark.parametrize(
@@ -27,7 +29,9 @@ def test__as_float(version_string: str, expected_output: float):
         (43, AttributeError),
     ],
 )
-def test__as_float_invalid_input(version_string: Union[str, int], error_class: Type["Exception"]):
+def test__as_float_invalid_input(
+    version_string: Union[str, int], error_class: Type["Exception"]
+):
     with pytest.raises(error_class):
         version._as_float(version_string)
 
@@ -47,7 +51,8 @@ def test__as_float_ordering(smaller: str, larger: str):
 
 
 @pytest.mark.parametrize(
-    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)],
+    "required_version, expected_pass_enforcement",
+    [("0.40.0", True), ("2050.001.0", False)],
 )
 @mock_api()
 def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement: bool):
@@ -89,7 +94,9 @@ def test_is_version_condition_met():
 
     with pytest.raises(ValueError):
         version.does_tamr_version_meet_requirement(
-            tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0",
+            tamr_version="2019.003.0",
+            min_version="2021.003.0",
+            max_version="2019.003.0",
         )
 
     with pytest.raises(EnvironmentError):
@@ -104,10 +111,17 @@ def test_is_version_condition_met():
 @mock_api()
 def test_get_tamr_versions_from_function_args():
     tamr_client = client.create(**CONFIG["toolbox_test_instance"])
-    tamr_project = tamr_client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
-    tamr_dataset = tamr_client.datasets.by_resource_id(CONFIG["datasets"]["groceries_tiny"])
+    tamr_project = tamr_client.projects.by_resource_id(
+        CONFIG["projects"]["minimal_mastering"]
+    )
+    tamr_dataset = tamr_client.datasets.by_resource_id(
+        CONFIG["datasets"]["groceries_tiny"]
+    )
 
-    assert version._get_tamr_versions_from_function_args(5, "words", a=["other_types"]) == []
+    assert (
+        version._get_tamr_versions_from_function_args(5, "words", a=["other_types"])
+        == []
+    )
 
     assert version._get_tamr_versions_from_function_args(tamr_client) == [
         version.current(tamr_client)
