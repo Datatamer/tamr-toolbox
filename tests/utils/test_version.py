@@ -47,7 +47,7 @@ def test__as_float_ordering(smaller: str, larger: str):
 
 
 @pytest.mark.parametrize(
-    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)]
+    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)],
 )
 @mock_api()
 def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement: bool):
@@ -89,7 +89,7 @@ def test_is_version_condition_met():
 
     with pytest.raises(ValueError):
         version.does_tamr_version_meet_requirement(
-            tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0"
+            tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0",
         )
 
     with pytest.raises(EnvironmentError):
