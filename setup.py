@@ -23,7 +23,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     python_requires=">=3.6",
     install_requires=required,
-    extras_require={
+    extras_rwequire={
         # Super set including all optional dependencies
         "all": [
             "pandas>=0.21.0",
@@ -32,7 +32,7 @@ setup(
             "responses==0.10.14",
             "google>=3.0.0",
             "google-cloud-translate==3.7.4",
-            "google-cloud-storage>=2.4.0",
+            "google-cloud-storage>=2.0  .0",
             "paramiko>=2.8.0",
             "boto3>=1.21.21",
             "boto3-stubs-lite[essential]>=1.21.21",
