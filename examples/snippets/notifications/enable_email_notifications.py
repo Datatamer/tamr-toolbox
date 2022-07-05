@@ -25,16 +25,10 @@ notifier = tbox.notifications.emails.EmailNotifier(
 )
 
 # Example 1: Send any email message
-notifier.send_message(
-    message="This is a test message.",
-    title="Subject",
-)
+notifier.send_message(message="This is a test message.", title="Subject")
 
 # Example 2: Track the status updates for a specific job using its job id
-notifier.monitor_job(
-    tamr=tamr,
-    operation="my_job_id",
-)
+notifier.monitor_job(tamr=tamr, operation="my_job_id")
 
 # Example 3: Track the status updates for a job kicked off by the tamr-unify-client
 project = tamr.projects.by_name("Project_1")

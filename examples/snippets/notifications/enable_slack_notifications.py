@@ -11,21 +11,14 @@ tamr = tbox.utils.client.create(username="user", password="pw", host="localhost"
 
 # Make Email notifier
 notifier = tbox.notifications.slack.SlackNotifier(
-    channel=config["slack_channel"],
-    token=config["slack_api_token"],
+    channel=config["slack_channel"], token=config["slack_api_token"]
 )
 
 # Example 1: Send any slack message
-notifier.send_message(
-    message="This is a test message.",
-    title="Subject",
-)
+notifier.send_message(message="This is a test message.", title="Subject")
 
 # Example 2: Track the status updates for a specific job using its job id
-notifier.monitor_job(
-    tamr=tamr,
-    operation="my_job_id",
-)
+notifier.monitor_job(tamr=tamr, operation="my_job_id")
 
 # Example 3: Track the status updates for a job kicked off by the tamr-unify-client
 project = tamr.projects.by_name("Project_1")
