@@ -11,8 +11,7 @@ CONFIG = config.from_yaml(get_toolbox_root_dir() / "tests/mocking/resources/tool
 
 
 @pytest.mark.parametrize(
-    "version_string, expected_output",
-    [("0.43.0", 0 + 43.0), ("2020.015.0", (2020 * 1000) + 15.0)],
+    "version_string, expected_output", [("0.43.0", 0 + 43.0), ("2020.015.0", (2020 * 1000) + 15.0)]
 )
 def test__as_float(version_string: str, expected_output: float):
     assert version._as_float(version_string) == expected_output
@@ -47,7 +46,7 @@ def test__as_float_ordering(smaller: str, larger: str):
 
 
 @pytest.mark.parametrize(
-    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)],
+    "required_version, expected_pass_enforcement", [("0.40.0", True), ("2050.001.0", False)]
 )
 @mock_api()
 def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement: bool):
@@ -89,7 +88,7 @@ def test_is_version_condition_met():
 
     with pytest.raises(ValueError):
         version.does_tamr_version_meet_requirement(
-            tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0",
+            tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0"
         )
     with pytest.raises(EnvironmentError):
         version.does_tamr_version_meet_requirement(
@@ -120,11 +119,7 @@ def test_get_tamr_versions_from_function_args():
 
     assert version._get_tamr_versions_from_function_args(
         tamr_client, tamr_project, tamr_dataset, "a"
-    ) == [
-        version.current(tamr_client),
-        version.current(tamr_client),
-        version.current(tamr_client),
-    ]
+    ) == [version.current(tamr_client), version.current(tamr_client), version.current(tamr_client)]
 
 
 @mock_api()
