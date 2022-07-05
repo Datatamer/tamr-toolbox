@@ -130,7 +130,7 @@ def does_tamr_version_meet_requirement(
             error_str = f"must be between {min_version} and {max_version}."
 
     elif not parse(min_version) <= parse(tamr_version):
-        error_str = f"but must be at least {min_version}."
+        error_str = f"must be at least {min_version}."
 
     if error_str and raise_error:
         raise EnvironmentError(f"Using Tamr version(s) {tamr_version}, but " + error_str)
