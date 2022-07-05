@@ -173,8 +173,9 @@ def requires_tamr_version(
     def _decorator(func):
         def _inspector(*args, **kwargs):
             for tamr_version in _get_tamr_versions_from_function_args(*args, **kwargs):
-                does_tamr_version_meet_requirement(tamr_version, min_version, max_version, exact_version,
-                                                   raise_error=True)
+                does_tamr_version_meet_requirement(
+                    tamr_version, min_version, max_version, exact_version, raise_error=True
+                )
 
             return func(*args, **kwargs)
 
@@ -219,9 +220,11 @@ def _deprecated_warning(func: Callable, *, message: str) -> Callable:
     Returns:
         The decorated function
     """
-    warnings.warn("Use warnings.warn with `DeprecationWarning', ensuring" 
-                  "`logging.captureWarnings' is True",
-        DeprecationWarning)
+    warnings.warn(
+        "Use warnings.warn with `DeprecationWarning', ensuring"
+        "`logging.captureWarnings' is True",
+        DeprecationWarning,
+    )
 
     def warning(*args, **kwargs):
         try:
