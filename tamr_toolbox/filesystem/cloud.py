@@ -27,7 +27,7 @@ def gcs_upload(
 
 
 def gcs_download(
-    cloud_client: storage.Client,
+    cloud_client: "storage.Client",
     source_filepath="path_to_my_file_in_bucket",
     destination_filepath="path_to_my_local_file",
     bucket_name="sample_bucket",
@@ -46,7 +46,7 @@ def gcs_download(
 
 
 def s3_upload(
-    cloud_client: S3Client,
+    cloud_client: "S3Client",
     source_filepath="path_to_my_local_file",
     destination_filepath="path_to_my_file_in_bucket",
     bucket_name="sample_bucket",
@@ -65,7 +65,7 @@ def s3_upload(
 
 
 def s3_download(
-    cloud_client: S3Client,
+    cloud_client: "S3Client",
     source_filepath="path_to_my_file_in_bucket",
     destination_filepath="path_to_my_local_file",
     bucket_name="sample_bucket",

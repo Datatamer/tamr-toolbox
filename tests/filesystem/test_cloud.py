@@ -96,4 +96,4 @@ def test_s3_upload():
     test_upload()
 
     with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError)):
-        cloud.s3_upload(cloud_client=boto3.client("s3"))
+        cloud.s3_upload(cloud_client=boto3.session.Session().client("s3"))
