@@ -24,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class SlackNotifier(_BaseNotifier, ABC):
-    channel: str
+    channels: Union[str, List[str], Dict[str, str]]
     token: str
     proxies: Optional[Union[None, Dict[str, str]]] = None
     base_url: Optional[str] = "https://www.slack.com/api/"
@@ -32,7 +32,8 @@ class SlackNotifier(_BaseNotifier, ABC):
     """Send slack messages based on Tamr eventing.
 
     Args:
-        channel: The (public) Slack channel to send notifications to
+        channels: A single, list of, or dict connecting Tamr users to,
+            Slack channels to message. 
         token: An xoxp or xoxb access token.
         proxies: A dict of proxy configs if needed. Default is None.
         base_url: The base URL of the Slack API. Default is 'https://www.slack.com/api/'
@@ -42,25 +43,30 @@ class SlackNotifier(_BaseNotifier, ABC):
 
     def __post_init__(self):
         super().__init__()
+        self.recipients = self.channels
         LOGGER.info("Connecting with the Slack API")
         self.slack = slack.WebClient(
             token=self.token, base_url=self.base_url, timeout=self.timeout, proxy=self.proxies
         )
         LOGGER.info("Successfully authenticated with the Slack API")
 
-    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
-        LOGGER.info(f"Sending a slack message to {self.channel}")
-        try:
-            self.slack.chat_postMessage(
-                channel=self.channel,
-                text=message,
-                username="Tamr Notifications Bot",
-                icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
-            )
-        except SlackApiError as e:
-            LOGGER.error(f"Error posting message: {e}.")
+    def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
+        recipients = self._parse_recipients(tamr_user)
 
-        self.sent_messages += [message]
+        for tamr_user in recipients:
+            LOGGER.info(f"Sending a Slack message to {tamr_user}")
+            try:
+                self.slack.chat_postMessage(
+                    channel=tamr_user,
+                    text=message,
+                    username="Tamr Notifications Bot",
+                    icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
+                )
+            except SlackApiError as e:
+                LOGGER.error(f"Error posting message: {e}.")
+
+            self.sent_messages += [message]
+            self.sent_message_recipients += [tamr_user]
 
 
 def send_message(

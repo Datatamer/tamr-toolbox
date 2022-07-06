@@ -1,25 +1,31 @@
 """Tasks related to creation of Email notifications"""
 import warnings
 from typing import Union, List, Optional, Callable
-from tamr_toolbox.models.data_type import JsonDict
+
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
-from tamr_toolbox.utils.operation import monitor, from_resource_id, get_details
 
+from tamr_toolbox.models.data_type import JsonDict
 from tamr_toolbox.models.operation_state import OperationState
+from tamr_toolbox.utils.operation import monitor, from_resource_id, get_details
 
 
 class _BaseNotifier(object):
     def __init__(self):
         self.sent_messages = []
+        self.sent_message_recipients = []
+        self.recipients = None
 
-    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
+    def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> None:
         """
         Sends a notification
 
         Args:
             message: The message to send
             title: The title of the message to send
+            tamr_user:
+                An optional single user to send the message to.
+                If None (default), message everybody
 
         Raises:
             NotImplementedError: If called directly from the `_BaseNotifier` class,
@@ -36,8 +42,6 @@ class _BaseNotifier(object):
         notify_states: Optional[List[OperationState]] = None,
         poll_interval: Optional[float] = 1,
         timeout: Optional[float] = None,
-        *args,
-        **kwargs,
     ) -> None:
         """Monitors a Tamr Operation and sends a message when the job status is updated
 
@@ -94,6 +98,28 @@ class _BaseNotifier(object):
                     f"than {timeout} seconds to resolve."
                 )
                 self.send_message(message=timeout_message, title=f"Job {op.resource_id}: Timeout")
+
+    def _parse_recipients(self, tamr_user: str) -> List[str]:
+        """Look up Tamr users & parse recipients into an iterable list"""
+        if type(self.recipients) in [str, list]:
+            if tamr_user:
+                raise ValueError(
+                    "If specifying a Tamr user, the recipients class input"
+                    " must take the form of a lookup dictionary"
+                    " relating Tamr usernames to message destinations"
+                )
+            else:
+                if type(self.recipients) == str:
+                    return [self.recipients]
+                else:
+                    return self.recipients
+        elif type(self.recipients) == dict:
+            if tamr_user:
+                return [self.recipients[tamr_user]]
+            else:
+                return list(self.recipients.values())
+        else:
+            return []
 
 
 def _monitor_job(

@@ -16,7 +16,7 @@ def test_send_message(mock_teams):
     test_message = "This is a test email."
     test_subject_line = "Test 123"
 
-    notifier = TeamsNotifier(webhook_url="test_webhook")
+    notifier = TeamsNotifier(webhooks="test_webhook")
     notifier.send_message(test_message, test_subject_line)
 
     context = mock_teams.return_value

@@ -1,6 +1,8 @@
 import logging
 from abc import ABC
 from dataclasses import dataclass
+from typing import Optional, Dict, List, Union
+
 from tamr_toolbox.notifications.common import _BaseNotifier
 
 try:
@@ -13,24 +15,33 @@ LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class TeamsNotifier(_BaseNotifier, ABC):
-    webhook_url: str
+    webhooks: Union[str, List[str], Dict[str, str]]
     """Send Microsoft Teams messages based on Tamr eventing.
 
     Args:
-        webhook_url: An incoming webhook for a Teams channel. See 
-        `https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook` # noqa
-        for setup instructions
+        webhooks: A single, list of, or dict connecting Tamr users to,
+            incoming webhooks to message. 
+            See `https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook` # noqa
+            for setup instructions
     """
 
     def __post_init__(self):
         super().__init__()
+        self.recipients = self.webhooks
 
-    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
-        message_card = pymsteams.connectorcard(self.webhook_url)
-        message_card.text(message)
-        message_card.title(title)
+    def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
+        recipients = self._parse_recipients(tamr_user)
 
-        LOGGER.info(f"Sending a Teams notification to webhook {self.webhook_url}")
-        message_card.send()
+        for tamr_user in recipients:
+            message_card = pymsteams.connectorcard(tamr_user)
+            message_card.text(message)
+            message_card.title(title)
 
-        self.sent_messages += [message]
+            LOGGER.info(f"Sending a Teams message to {tamr_user}")
+            try:
+                message_card.send()
+            except pymsteams.TeamsWebhookException as e:
+                LOGGER.error(f"Error posting message: {e}.")
+
+            self.sent_messages += [message]
+            self.sent_message_recipients += [tamr_user]

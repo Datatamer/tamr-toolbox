@@ -5,7 +5,7 @@ import warnings
 from abc import ABC
 from dataclasses import dataclass
 from email.mime.text import MIMEText
-from typing import Union, List, Optional, Tuple
+from typing import Union, List, Optional, Tuple, Dict
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class EmailNotifier(_BaseNotifier, ABC):
-    recipient_addresses: List[str]
+    email_recipients: Union[str, List[str], Dict[str, str]]
     sender_address: str
     sender_password: str
     smtp_server: str
@@ -32,7 +32,8 @@ class EmailNotifier(_BaseNotifier, ABC):
     Send emails based on Tamr eventing.
 
     Args:
-        recipient_addresses: List of emails to send messages to
+        recipients: A single, list of, or dict connecting Tamr users to, 
+            email addresses to message. 
         sender_address: Email address to send messages from, such as my_pipeline@gmail.com
         sender_password: Password for sending email address
         smtp_server: Outbound smtp server address
@@ -48,6 +49,7 @@ class EmailNotifier(_BaseNotifier, ABC):
 
     def __post_init__(self):
         super().__init__()
+        self.recipients = self.email_recipients
         self.server = None
         self._setup_server()
 
@@ -70,21 +72,23 @@ class EmailNotifier(_BaseNotifier, ABC):
         self.server.login(self.sender_address, self.sender_password)
         LOGGER.info("Logged in to the email server successfully")
 
-    def _build_message(self, message: str, title: str):
-        msg = MIMEText(message)
-        msg["Subject"] = "Tamr System: " + title
-        msg["From"] = self.sender_address
-        msg["To"] = ", ".join(self.recipient_addresses)
-        return msg.as_string()
+    def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
+        recipients = self._parse_recipients(tamr_user)
 
-    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
-        msg = self._build_message(message, title)
+        for tamr_user in recipients:
+            msg = MIMEText(message)
+            msg["Subject"] = "Tamr System: " + title
+            msg["From"] = self.sender_address
+            msg["To"] = tamr_user
+            msg = msg.as_string()
 
-        LOGGER.info(f"Sending an email to {self.recipient_addresses} with payload {msg}")
-        self.server.sendmail(self.sender_address, self.recipient_addresses, msg)
-        LOGGER.info("Email sent successfully")
+            LOGGER.info(f"Sending an email to {tamr_user} with payload {msg}")
+            response = self.server.sendmail(self.sender_address, tamr_user, msg)
+            if len(response):
+                LOGGER.info(f"Error posting message: {response}")
 
-        self.sent_messages += [msg]
+            self.sent_messages += [message]
+            self.sent_message_recipients += [tamr_user]
 
 
 def _build_message(*, message: str, subject_line: str, sender: str, recipients: List[str]) -> str:

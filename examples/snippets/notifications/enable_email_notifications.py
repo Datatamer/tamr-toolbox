@@ -19,7 +19,7 @@ tamr = tbox.utils.client.create(username="user", password="pw", host="localhost"
 notifier = tbox.notifications.emails.EmailNotifier(
     sender_address=config["sender_address"],
     sender_password=config["sender_password"],
-    recipient_addresses=config["recipient_addresses"],
+    email_recipients=config["recipient_addresses"],
     smtp_server=config["smtp_server"],
     smtp_port=config["smtp_port"],
 )

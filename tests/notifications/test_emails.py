@@ -1,4 +1,5 @@
 """Tests for tasks related to creation of Email notifications"""
+from email.mime.text import MIMEText
 from unittest.mock import patch
 
 import tamr_toolbox as tbox
@@ -17,7 +18,7 @@ def test_tls_login(mock_smtp):
     _ = EmailNotifier(
         sender_address=CONFIG["my_email_notification"]["sender_address"],
         sender_password=CONFIG["my_email_notification"]["sender_password"],
-        recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+        email_recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         smtp_server=CONFIG["my_email_notification"]["smtp_server"],
         smtp_port=CONFIG["my_email_notification"]["smtp_port"],
         use_tls=True,
@@ -35,7 +36,7 @@ def test_non_tls_login(mock_smtp):
     _ = EmailNotifier(
         sender_address=CONFIG["my_email_notification"]["sender_address"],
         sender_password=CONFIG["my_email_notification"]["sender_password"],
-        recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+        email_recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         smtp_server=CONFIG["my_email_notification"]["smtp_server"],
         smtp_port=CONFIG["my_email_notification"]["smtp_port"],
         use_tls=False,
@@ -49,32 +50,6 @@ def test_non_tls_login(mock_smtp):
 
 
 @patch("smtplib.SMTP", autospec=True)
-def test_build_message(mock_smtp):
-    test_message = "This is a test email."
-    test_subject_line = "Test 123"
-    expected_msg = (
-        'Content-Type: text/plain; charset="us-ascii"\nMIME-Version: '
-        + "1.0\nContent-Transfer-Encoding: 7bit\n"
-        + f'Subject: Tamr System: Test 123\nFrom: {CONFIG["my_email_notification"]["sender_address"]}\n'  # noqa
-        + f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}\n'
-        + "\nThis is a test email."
-    )
-
-    notifier = EmailNotifier(
-        sender_address=CONFIG["my_email_notification"]["sender_address"],
-        sender_password=CONFIG["my_email_notification"]["sender_password"],
-        recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
-        smtp_server=CONFIG["my_email_notification"]["smtp_server"],
-        smtp_port=CONFIG["my_email_notification"]["smtp_port"],
-        use_tls=True,
-    )
-
-    msg = notifier._build_message(test_message, test_subject_line)
-
-    assert expected_msg == msg
-
-
-@patch("smtplib.SMTP", autospec=True)
 def test_send_message(mock_smtp):
     test_message = "This is a test email."
     test_subject_line = "Test 123"
@@ -82,23 +57,44 @@ def test_send_message(mock_smtp):
     notifier = EmailNotifier(
         sender_address=CONFIG["my_email_notification"]["sender_address"],
         sender_password=CONFIG["my_email_notification"]["sender_password"],
-        recipient_addresses=CONFIG["my_email_notification"]["recipient_addresses"],
+        email_recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         smtp_server=CONFIG["my_email_notification"]["smtp_server"],
         smtp_port=CONFIG["my_email_notification"]["smtp_port"],
         use_tls=True,
     )
 
-    context = mock_smtp.return_value
-    msg = notifier._build_message(test_message, test_subject_line)
-
     notifier.send_message(test_message, test_subject_line)
-    context.sendmail.assert_called_with(
-        CONFIG["my_email_notification"]["sender_address"],
-        CONFIG["my_email_notification"]["recipient_addresses"],
-        msg,
+
+    assert notifier.sent_messages == [test_message]
+
+
+@patch("smtplib.SMTP", autospec=True)
+def test_message_format(mock_smtp):
+    test_message = "This is a test email."
+    test_subject_line = "Test 123"
+
+    expected_msg = MIMEText(test_message)
+    expected_msg["Subject"] = "Tamr System: " + test_subject_line
+    expected_msg["From"] = CONFIG["my_email_notification"]["sender_address"]
+    expected_msg["To"] = CONFIG["my_email_notification"]["recipient_addresses"][0]
+
+    notifier = EmailNotifier(
+        sender_address=CONFIG["my_email_notification"]["sender_address"],
+        sender_password=CONFIG["my_email_notification"]["sender_password"],
+        email_recipients=CONFIG["my_email_notification"]["recipient_addresses"],
+        smtp_server=CONFIG["my_email_notification"]["smtp_server"],
+        smtp_port=CONFIG["my_email_notification"]["smtp_port"],
+        use_tls=True,
     )
 
-    assert notifier.sent_messages == [msg]
+    notifier.send_message(test_message, test_subject_line)
+
+    context = mock_smtp.return_value
+    context.sendmail.assert_called_with(
+        from_addr=CONFIG["my_email_notification"]["sender_address"],
+        to_addrs=CONFIG["my_email_notification"]["recipient_addresses"][0],
+        msg=expected_msg.as_string(),
+    )
 
 
 def test_deprecated_build_message():

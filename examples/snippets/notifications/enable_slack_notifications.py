@@ -11,7 +11,7 @@ tamr = tbox.utils.client.create(username="user", password="pw", host="localhost"
 
 # Make Email notifier
 notifier = tbox.notifications.slack.SlackNotifier(
-    channel=config["slack_channel"], token=config["slack_api_token"]
+    channels=config["slack_channel"], token=config["slack_api_token"]
 )
 
 # Example 1: Send any slack message

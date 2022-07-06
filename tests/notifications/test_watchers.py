@@ -1,4 +1,7 @@
 """Tests for tasks related to task watchers"""
+from typing import Optional
+from unittest.mock import patch
+
 import pytest
 
 from tamr_toolbox import utils
@@ -12,8 +15,13 @@ CONFIG = utils.config.from_yaml(
 
 
 class BaseNotifierSkipNotImplementedError(_BaseNotifier):
-    def send_message(self, message: str, title: str, *args, **kwargs) -> None:
-        self.sent_messages += [message]
+    def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> int:
+        times_called = 0
+        for times_called, tamr_user in enumerate(self._parse_recipients(tamr_user)):
+            self.sent_messages += [message]
+            self.sent_message_recipients += [tamr_user]
+
+        return times_called + 1
 
 
 @mock_api()
@@ -23,6 +31,7 @@ def test_monitor_job_succeeded():
     op = project.unified_dataset().refresh(asynchronous=True)
 
     notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = ["test_recipient"]
     notifier.monitor_job(tamr=client, operation=op)
 
     expected_messages = [
@@ -56,6 +65,7 @@ def test_monitor_job_timeout():
     poll_interval = 0.1
 
     notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = ["test_recipient"]
     notifier.monitor_job(
         tamr=client, operation=op, timeout=timeout_seconds, poll_interval=poll_interval
     )
@@ -73,6 +83,56 @@ def test_monitor_job_timeout():
     ]
 
     assert notifier.sent_messages[:2] == expected_messages
+
+
+def test_message_single_recipient():
+    notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = "test_recipient"
+    messages_sent = notifier.send_message("test_message", "test_title")
+
+    assert messages_sent == 1
+    assert notifier.sent_message_recipients == ["test_recipient"]
+    assert notifier.sent_messages == ["test_message"]
+
+
+def test_message_list_recipient():
+    notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = ["test_recipient"]
+    messages_sent = notifier.send_message("test_message", "test_title")
+
+    assert messages_sent == 1
+    assert notifier.sent_message_recipients == ["test_recipient"]
+    assert notifier.sent_messages == ["test_message"]
+
+
+def test_message_longer_list_recipient():
+    notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = ["test_recipient", "test_recipient_2"]
+    messages_sent = notifier.send_message("test_message", "test_title")
+
+    assert messages_sent == 2
+    assert notifier.sent_message_recipients == ["test_recipient", "test_recipient_2"]
+    assert notifier.sent_messages == ["test_message", "test_message"]
+
+
+def test_message_dict_recipient():
+    notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = {"tamr_user": "test_recipient"}
+    messages_sent = notifier.send_message("test_message", "test_title")
+
+    assert messages_sent == 1
+    assert notifier.sent_message_recipients == ["test_recipient"]
+    assert notifier.sent_messages == ["test_message"]
+
+
+def test_message_longer_dict_recipient():
+    notifier = BaseNotifierSkipNotImplementedError()
+    notifier.recipients = {"tamr_user": "test_recipient", "tamr_user_2": "test_recipient_2"}
+    messages_sent = notifier.send_message("test_message", "test_title")
+
+    assert messages_sent == 2
+    assert notifier.sent_message_recipients == ["test_recipient", "test_recipient_2"]
+    assert notifier.sent_messages == ["test_message", "test_message"]
 
 
 def test_notimplemented():
