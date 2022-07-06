@@ -32,13 +32,13 @@ class SlackNotifier(_BaseNotifier, ABC):
     """Send slack messages based on Tamr eventing.
 
     Args:
-        channels: 
+        channels:
             A single, list of, or dict connecting Tamr users to,
             Slack channels to message.
         token: An xoxp or xoxb access token.
         proxies: A dict of proxy configs if needed. Default is None.
         base_url: The base URL of the Slack API. Default is 'https://www.slack.com/api/'
-        timeout: 
+        timeout:
             The maximum number of seconds the client will wait
             to connect and receive a response from Slack. Default is 30 seconds.
     """
