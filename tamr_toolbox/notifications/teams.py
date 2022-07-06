@@ -1,7 +1,7 @@
 import logging
 from abc import ABC
 from dataclasses import dataclass
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Union
 
 from tamr_toolbox.notifications.common import _BaseNotifier
 
