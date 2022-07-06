@@ -11,7 +11,7 @@ S3Client = Session("credentials").client("s3")
 # download a file on GCS "s3://my-bucket/path-to-file" to "my_local_directory/my_file.txt"
 tbox.filesystem.cloud.s3_download(
     cloud_client=S3Client,
-    source_filepath="path-to-file",
+    source_filepath="s3://my-bucket/path-to-file",
     destination_filepath="my_local_directory/my_file.txt",
     bucket_name="my-bucket",
 )

@@ -23,7 +23,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*"]),
     python_requires=">=3.6",
     install_requires=required,
-    extras_rwequire={
+    extras_require={
         # Super set including all optional dependencies
         "all": [
             "pandas>=0.21.0",

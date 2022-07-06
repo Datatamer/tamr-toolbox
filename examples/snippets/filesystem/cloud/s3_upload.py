@@ -12,6 +12,6 @@ S3Client = Session("credentials").client("s3")
 tbox.filesystem.cloud.s3_upload(
     cloud_client=S3Client,
     source_filepath="my_local_directory/my_file.txt",
-    destination_filepath="path-to-file",
+    destination_filepath="s3://my-bucket/path-to-file",
     bucket_name="my-bucket",
 )
