@@ -1,5 +1,6 @@
 """
-An example script to demonstrate the use of the s3_download function to download file from an S3 bucket.
+An example script to demonstrate the use of the s3_download function to download file,
+from an S3 bucket.
 """
 
 import tamr_toolbox as tbox

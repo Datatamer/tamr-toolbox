@@ -17,7 +17,7 @@ def test_gcs_download():
                 cloud_client=client,
                 source_filepath="path_in_bucket.txt",
                 destination_filepath=download_tmp.name,
-                bucket_name="test-bucket-a",
+                bucket_name="test-bucket",
             )
 
     test_download()
@@ -40,6 +40,7 @@ def test_gcs_upload():
                 cloud_client=client,
                 source_filepath=upload_tmp.name,
                 destination_filepath="path_in_bucket.txt",
+                bucket_name="test-bucket",
             )
 
     test_upload()
@@ -69,7 +70,12 @@ def test_s3_download():
     test_download()
 
     with pytest.raises((botocore.exceptions.NoCredentialsError)):
-        cloud.s3_download(cloud_client=boto3.session.Session().client("s3"))
+        cloud.s3_download(
+            cloud_client=boto3.session.Session().client("s3"),
+            source_filepath="test_file.txt",
+            destination_filepath="download_path",
+            bucket_name="my_bucket",
+        )
 
 
 def test_s3_upload():
@@ -96,4 +102,9 @@ def test_s3_upload():
     test_upload()
 
     with pytest.raises((botocore.exceptions.NoCredentialsError, FileNotFoundError)):
-        cloud.s3_upload(cloud_client=boto3.session.Session().client("s3"))
+        cloud.s3_upload(
+            cloud_client=boto3.session.Session().client("s3"),
+            source_filepath="test_file.txt",
+            destination_filepath="download_path",
+            bucket_name="my_bucket",
+        )

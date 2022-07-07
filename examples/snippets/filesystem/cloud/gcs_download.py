@@ -1,5 +1,6 @@
 """
-An example script to demonstrate the use of the gcs_download function to download file from a GCS bucket.
+An example script to demonstrate the use of the gcs_download function to download file,
+from a GCS bucket.
 """
 
 import tamr_toolbox as tbox
