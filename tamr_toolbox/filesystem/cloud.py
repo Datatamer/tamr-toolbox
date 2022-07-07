@@ -50,9 +50,10 @@ def gcs_download(
 
 def s3_upload(
     cloud_client: "S3Client",
-    source_filepath="path_to_my_local_file",
-    destination_filepath="path_to_my_file_in_bucket",
-    bucket_name="sample_bucket",
+    *,
+    source_filepath: str,
+    destination_filepath: str,
+    bucket_name: str,
 ):
     """Upload data to Amazon AWS bucket
     Args:
