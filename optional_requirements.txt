@@ -4,7 +4,7 @@ slackclient==2.7.2
 responses==0.10.14
 paramiko>=2.8.0
 google>=3.0.0
-google-cloud-translate>=3.7.4
+google-cloud-translate==3.7.4
 google-cloud-storage>=2.0.0
 boto3>=1.21.21
 boto3-stubs-lite[essential]>=1.21.21
