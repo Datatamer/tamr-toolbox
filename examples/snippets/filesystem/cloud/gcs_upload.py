@@ -3,9 +3,9 @@ An example script to demonstrate the use of the gcs_upload function to upload fi
 """
 
 import tamr_toolbox as tbox
-from google.cloud.client import Client as GcsClient
+from google.cloud import storage
 
-gcs_client = GcsClient()
+gcs_client = storage.Client()
 
 # uploads file to gcs
 # upload a local file "my_local_directory/my_file.txt" to "gs://my-bucket/path-to-file"
