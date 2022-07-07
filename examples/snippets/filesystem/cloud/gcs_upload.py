@@ -12,6 +12,6 @@ gcs_client = storage.Client()
 tbox.filesystem.cloud.gcs_upload(
     cloud_client=gcs_client,
     source_filepath="my_local_directory/my_file.txt",
-    destination_filepath="gs://my-bucket/path-to-file",
+    destination_filepath="path-to-file",
     bucket_name="my-bucket",
 )
