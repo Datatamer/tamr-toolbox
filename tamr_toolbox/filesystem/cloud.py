@@ -70,9 +70,10 @@ def s3_upload(
 
 def s3_download(
     cloud_client: "S3Client",
-    source_filepath="path_to_my_file_in_bucket",
-    destination_filepath="path_to_my_local_file",
-    bucket_name="sample_bucket",
+    *,
+    source_filepath: str,
+    destination_filepath: str,
+    bucket_name: str,
 ):
     """Download data from an Amazon AWS bucket
     Args:
