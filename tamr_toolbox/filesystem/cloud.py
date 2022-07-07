@@ -11,9 +11,10 @@ if BUILDING_DOCS:
 
 def gcs_upload(
     cloud_client: "storage.Client",
-    source_filepath="path_to_my_local_file",
-    destination_filepath="path_to_my_file_in_bucket",
-    bucket_name="sample_bucket",
+    *,
+    source_filepath: str,
+    destination_filepath: str,
+    bucket_name: str,
 ):
     """Upload data to a Google storage bucket
     Args:
