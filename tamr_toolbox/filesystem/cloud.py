@@ -49,11 +49,7 @@ def gcs_download(
 
 
 def s3_upload(
-    cloud_client: "S3Client",
-    *,
-    source_filepath: str,
-    destination_filepath: str,
-    bucket_name: str,
+    cloud_client: "S3Client", *, source_filepath: str, destination_filepath: str, bucket_name: str
 ):
     """Upload data to Amazon AWS bucket
     Args:
@@ -69,11 +65,7 @@ def s3_upload(
 
 
 def s3_download(
-    cloud_client: "S3Client",
-    *,
-    source_filepath: str,
-    destination_filepath: str,
-    bucket_name: str,
+    cloud_client: "S3Client", *, source_filepath: str, destination_filepath: str, bucket_name: str
 ):
     """Download data from an Amazon AWS bucket
     Args:
