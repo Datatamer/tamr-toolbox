@@ -133,10 +133,10 @@ def is_version_condition_met(
         if min_version_sub > max_version_sub:
             raise ValueError("min_version must be smaller than max_version")
 
-        if not min_version <= tamr_version <= max_version:
+        if not min_version_sub <= tamr_version_sub <= max_version_sub:
             error_str = f"must be between {min_version} and {max_version}."
 
-    elif not min_version <= tamr_version:
+    elif not min_version_sub <= tamr_version_sub:
         error_str = f"must be at least {min_version}."
 
     if error_str and raise_error:
