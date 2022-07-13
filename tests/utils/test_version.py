@@ -59,39 +59,37 @@ def test_enforce_after_or_equal(required_version: str, expected_pass_enforcement
 
 
 def test_is_version_condition_met():
-    assert version.does_tamr_version_meet_requirement(
+    assert version.is_version_condition_met(
         tamr_version="2022.002.0", min_version="2022.002.0", exact_version=True
     )
-    assert not version.does_tamr_version_meet_requirement(
+    assert not version.is_version_condition_met(
         tamr_version="2022.002.0", min_version="2023.002.0", exact_version=True
     )
-    assert not version.does_tamr_version_meet_requirement(
+    assert not version.is_version_condition_met(
         tamr_version="2022.002.0", min_version="2021.002.0", exact_version=True
     )
 
-    assert version.does_tamr_version_meet_requirement(
-        tamr_version="2022.002.0", min_version="2021.002.0"
-    )
-    assert not version.does_tamr_version_meet_requirement(
+    assert version.is_version_condition_met(tamr_version="2022.002.0", min_version="2021.002.0")
+    assert not version.is_version_condition_met(
         tamr_version="2022.002.0", min_version="2023.002.0"
     )
 
-    assert version.does_tamr_version_meet_requirement(
+    assert version.is_version_condition_met(
         tamr_version="2022.002.0", min_version="2021.002.0", max_version="2023.002.0"
     )
-    assert not version.does_tamr_version_meet_requirement(
+    assert not version.is_version_condition_met(
         tamr_version="2020.002.0", min_version="2021.002.0", max_version="2023.002.0"
     )
-    assert not version.does_tamr_version_meet_requirement(
+    assert not version.is_version_condition_met(
         tamr_version="2024.002.0", min_version="2021.002.0", max_version="2023.002.0"
     )
 
     with pytest.raises(ValueError):
-        version.does_tamr_version_meet_requirement(
+        version.is_version_condition_met(
             tamr_version="2019.003.0", min_version="2021.003.0", max_version="2019.003.0"
         )
     with pytest.raises(EnvironmentError):
-        version.does_tamr_version_meet_requirement(
+        version.is_version_condition_met(
             tamr_version="2022.002.0",
             min_version="2021.002.0",
             exact_version=True,

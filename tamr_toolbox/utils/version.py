@@ -83,7 +83,8 @@ def _get_tamr_versions_from_function_args(*args, **kwargs) -> List[str]:
     return response
 
 
-def does_tamr_version_meet_requirement(
+def is_version_condition_met(
+    *,
     tamr_version: str,
     min_version: str,
     max_version: Optional[str] = None,
@@ -91,7 +92,7 @@ def does_tamr_version_meet_requirement(
     raise_error: bool = False,
 ) -> bool:
     """
-    Check if Tamr version is valid .
+    Check if Tamr version is valid.
 
     Args:
         tamr_version:
@@ -111,6 +112,7 @@ def does_tamr_version_meet_requirement(
         EnvironmentError: if `raise_error` is True, and the condition is not met
 
     Notes:
+        Patch versions (major.minor.patch) are excluded from the comparison
         If exact_version is True, max_version will be ignored
 
     See Also:
@@ -118,18 +120,23 @@ def does_tamr_version_meet_requirement(
     """
 
     error_str = None
+
+    tamr_version_sub = parse(tamr_version).release[:2]
+    min_version_sub = parse(min_version).release[:2]
+
     if exact_version:
-        if not parse(min_version) == parse(tamr_version):
+        if not min_version_sub == tamr_version_sub:
             error_str = f"must be exactly {min_version}."
 
     elif max_version:
-        if parse(min_version) > parse(max_version):
+        max_version_sub = parse(max_version).release[:2]
+        if min_version_sub > max_version_sub:
             raise ValueError("min_version must be smaller than max_version")
 
-        if not parse(min_version) <= parse(tamr_version) <= parse(max_version):
+        if not min_version <= tamr_version <= max_version:
             error_str = f"must be between {min_version} and {max_version}."
 
-    elif not parse(min_version) <= parse(tamr_version):
+    elif not min_version <= tamr_version:
         error_str = f"must be at least {min_version}."
 
     if error_str and raise_error:
@@ -166,6 +173,8 @@ def requires_tamr_version(
         This decorator only inspects the Tamr version of arguments going into the
         function, and not new instances of Tamr referred to within functional code
 
+        Patch versions (major.minor.patch) are excluded from the comparison
+
     See Also:
         utils.version.is_version_condition_met
     """
@@ -173,8 +182,12 @@ def requires_tamr_version(
     def _decorator(func):
         def _inspector(*args, **kwargs):
             for tamr_version in _get_tamr_versions_from_function_args(*args, **kwargs):
-                does_tamr_version_meet_requirement(
-                    tamr_version, min_version, max_version, exact_version, raise_error=True
+                is_version_condition_met(
+                    tamr_version=tamr_version,
+                    min_version=min_version,
+                    max_version=max_version,
+                    exact_version=exact_version,
+                    raise_error=True,
                 )
 
             return func(*args, **kwargs)
