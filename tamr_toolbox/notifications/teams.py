@@ -32,16 +32,16 @@ class TeamsNotifier(_BaseNotifier, ABC):
     def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
         recipients = self._parse_recipients(tamr_user)
 
-        for tamr_user in recipients:
-            message_card = pymsteams.connectorcard(tamr_user)
+        for recipient in recipients:
+            message_card = pymsteams.connectorcard(recipient)
             message_card.text(message)
             message_card.title(title)
 
-            LOGGER.info(f"Sending a Teams message to {tamr_user}")
+            LOGGER.info(f"Sending a Teams message to {recipient}")
             try:
                 message_card.send()
             except pymsteams.TeamsWebhookException as e:
                 LOGGER.error(f"Error posting message: {e}.")
 
             self.sent_messages += [message]
-            self.sent_message_recipients += [tamr_user]
+            self.sent_message_recipients += [recipient]
