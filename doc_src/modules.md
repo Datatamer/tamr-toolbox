@@ -3,6 +3,7 @@
 * [Dataset](modules/dataset.md)
 * [Enrichment](modules/enrichment.md)
 * [Filesystem](modules/filesystem.rst)
+* [RealTime](modules/realtime.rst)
 * [Models](modules/models.rst)
 * [Notifications](modules/notifications.md)
 * [Project](modules/project.md)

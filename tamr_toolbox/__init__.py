@@ -1,6 +1,7 @@
 """A python library for building data pipelines with Tamr"""
 from . import data_io
 from . import filesystem
+from . import realtime
 from . import models
 from . import project
 from . import utils
@@ -19,6 +20,7 @@ __all__ = [
     "dataset",
     "models",
     "filesystem",
+    "realtime",
     "project",
     "utils",
     "workflow",

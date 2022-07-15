@@ -4,6 +4,7 @@ import logging
 
 from tamr_unify_client.mastering.project import MasteringProject
 from tamr_unify_client.operation import Operation
+from tamr_toolbox.realtime.matching import update_realtime_match_data
 
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.utils import operation
@@ -22,6 +23,7 @@ def _run_custom(
     run_update_high_impact_pairs: bool = False,
     run_update_cluster_results: bool = False,
     run_publish_clusters: bool = False,
+    run_update_realtime_match: bool = False,
     process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Executes specified steps of a mastering project.
@@ -38,6 +40,7 @@ def _run_custom(
         run_update_cluster_results: Whether refresh should be called on the record clusters dataset
         run_publish_clusters: Whether refresh should be called on the published record clusters
             dataset
+        run_update_realtime_match: Whether to update match data with latest published clusters
         process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
@@ -63,6 +66,76 @@ def _run_custom(
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)
+
+    # Run pair-related operations
+    completed_operations.extend(
+        _run_custom_pair_operations(
+            project,
+            run_estimate_pair_counts=run_estimate_pair_counts,
+            run_generate_pairs=run_generate_pairs,
+            run_apply_feedback=run_apply_feedback,
+            run_update_pair_results=run_update_pair_results,
+            run_update_high_impact_pairs=run_update_high_impact_pairs,
+            process_asynchronously=process_asynchronously,
+        )
+    )
+
+    if run_update_cluster_results:
+        LOGGER.info(
+            f"Updating cluster prediction results for project {project.name} "
+            f"(id={project.resource_id})."
+        )
+        op = project.record_clusters().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
+    if run_publish_clusters:
+        LOGGER.info(f"Publishing clusters for project {project.name} (id={project.resource_id}).")
+        op = project.published_clusters().refresh(asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
+    if run_update_realtime_match:
+        LOGGER.info(
+            f"Updating match database for project {project.name} (id={project.resource_id})."
+        )
+        op = update_realtime_match_data(project=project, asynchronous=process_asynchronously)
+        if not process_asynchronously:
+            operation.enforce_success(op)
+        completed_operations.append(op)
+
+    return completed_operations
+
+
+def _run_custom_pair_operations(
+    project: MasteringProject,
+    *,
+    run_estimate_pair_counts: bool = False,
+    run_generate_pairs: bool = False,
+    run_apply_feedback: bool = False,
+    run_update_pair_results: bool = False,
+    run_update_high_impact_pairs: bool = False,
+    process_asynchronously: bool = False,
+) -> List[Operation]:
+    """Executes specified steps of a mastering project.
+
+    Args:
+        project: The target mastering project
+        run_estimate_pair_counts: Whether an estimate pairs job should be run
+        run_generate_pairs: Whether refresh should be called on the pairs dataset
+        run_apply_feedback: Whether train should be called on the pair matching model
+        run_update_pair_results: Whether predict should be called on the pair matching model
+        run_update_high_impact_pairs: Whether refresh should be called on the high impact pairs
+            dataset
+        process_asynchronously: Whether or not to wait for the job to finish before returning
+            - must be set to True for concurrent workflow
+
+    Returns:
+        The operations that were run
+
+    """
+
+    completed_operations = []
     if run_estimate_pair_counts:
         LOGGER.info(f"Estimate pair counts for project {project.name} (id={project.resource_id}).")
         op = project.estimate_pairs().refresh(asynchronous=process_asynchronously)
@@ -101,21 +174,6 @@ def _run_custom(
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)
-    if run_update_cluster_results:
-        LOGGER.info(
-            f"Updating cluster prediction results for project {project.name} "
-            f"(id={project.resource_id})."
-        )
-        op = project.record_clusters().refresh(asynchronous=process_asynchronously)
-        if not process_asynchronously:
-            operation.enforce_success(op)
-        completed_operations.append(op)
-    if run_publish_clusters:
-        LOGGER.info(f"Publishing clusters for project {project.name} (id={project.resource_id}).")
-        op = project.published_clusters().refresh(asynchronous=process_asynchronously)
-        if not process_asynchronously:
-            operation.enforce_success(op)
-        completed_operations.append(op)
 
     return completed_operations
 
@@ -125,6 +183,7 @@ def run(
     *,
     run_estimate_pair_counts: bool = False,
     run_apply_feedback: bool = False,
+    run_update_realtime_match: bool = False,
     process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Run the existing pipeline without training
@@ -133,6 +192,7 @@ def run(
         project: Target mastering project
         run_estimate_pair_counts: Whether an estimate pairs job should be run
         run_apply_feedback: Whether train should be called on the pair matching model
+        run_update_realtime_match: Whether to update RealTime match data after publishing clusters
         process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
@@ -149,6 +209,7 @@ def run(
         run_update_high_impact_pairs=True,
         run_update_cluster_results=True,
         run_publish_clusters=True,
+        run_update_realtime_match=run_update_realtime_match,
         process_asynchronously=process_asynchronously,
     )
 
@@ -369,12 +430,16 @@ def update_results_only(
 
 
 def publish_clusters(
-    project: MasteringProject, *, process_asynchronously: bool = False
+    project: MasteringProject,
+    *,
+    run_update_realtime_match: bool = False,
+    process_asynchronously: bool = False,
 ) -> List[Operation]:
     """Publishes the clusters of a mastering project
 
     Args:
         project: Target mastering project
+        run_update_realtime_match: whether to update RealTime match data after publishing clusters
         process_asynchronously: Whether or not to wait for the job to finish before returning
             - must be set to True for concurrent workflow
 
@@ -390,5 +455,6 @@ def publish_clusters(
         run_update_pair_results=False,
         run_update_cluster_results=False,
         run_publish_clusters=True,
+        run_update_realtime_match=run_update_realtime_match,
         process_asynchronously=process_asynchronously,
     )

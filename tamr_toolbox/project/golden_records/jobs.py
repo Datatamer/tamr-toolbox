@@ -7,11 +7,12 @@ from tamr_unify_client.project.resource import Project
 
 from tamr_toolbox.models.project_type import ProjectType
 from tamr_toolbox.utils import operation
-from tamr_toolbox.utils import version
+from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
 
+@requires_tamr_version(min_version="2020.004.0")
 def _run_custom(
     project: Project,
     *,
@@ -39,8 +40,6 @@ def _run_custom(
     Raises:
         TypeError: if the `project` is not a Golden Record project
     """
-    version.enforce_after_or_equal(project.client, compare_version="2020.004.0")
-
     if ProjectType[project.type] != ProjectType.GOLDEN_RECORDS:
         error_msg = f"Cannot use as a golden records project. Project type: {project.type}"
         LOGGER.error(error_msg)
