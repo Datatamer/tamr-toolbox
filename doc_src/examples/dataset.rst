@@ -29,3 +29,11 @@ Remove an attribute from a dataset
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude :: ../../examples/snippets/dataset/manage/delete_attribute.py
  :language: python
+ 
+Dataset Profiles
+------------------------------------------------------------------------
+ 
+Create and retrieve a profile for a dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/snippets/dataset/_profile/create_retrieve_profile.py
+ :language: python

@@ -18,8 +18,9 @@ def get_profile(dataset: Dataset, allow_create_or_refresh: bool = False) -> Data
         allow_create_or_refresh: optional bool to allow creation/refreshing of profile info
     Returns:
         DatasetProfile object
+        Warning if profile information is out of date and allow_create_or_refresh is False
     Raises:
-        RuntimeError: if profile information is out-of-date and allow_create_or_refresh is False
+        RuntimeError: if profile has not been created and allow_create_or_refresh is False
     """
     try:
         profile = dataset.profile()

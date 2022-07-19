@@ -1,5 +1,4 @@
 """Tests for tasks related creating and updating datasets in Tamr"""
-import pytest
 import pandas as pd
 
 import tamr_toolbox as tbox
@@ -18,9 +17,7 @@ CONFIG = utils.config.from_yaml(
 
 # Create some mock data to upsert into a Tamr dataset:
 DATASET_NAME = "mock_data_profile"
-test_data = {'id': ['0', '1'],
-             'first_name': ['John', 'Jane'],
-             'last_name': ['Doe', 'Doe']}
+test_data = {"id": ["0", "1"], "first_name": ["John", "Jane"], "last_name": ["Doe", "Doe"]}
 test_data_df = pd.DataFrame(test_data)
 dataframe.validate(test_data_df)
 
