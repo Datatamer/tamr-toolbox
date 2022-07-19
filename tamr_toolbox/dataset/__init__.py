@@ -2,4 +2,4 @@
 from . import manage
 from tamr_toolbox.dataset._profile import get_profile
 
-__all__ = ["manage"]
+__all__ = ["manage", "get_profile"]
