@@ -211,9 +211,7 @@ def from_list(
 
             if (ix % intermediate_save_every_n_chunks) == 0:
                 LOGGER.info("Saving intermediate outputs")
-                update(
-                    main_dictionary=dictionary, tmp_dictionary=tmp_dictionary,
-                )
+                update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
                 if intermediate_save_to_disk:
                     save(
                         translation_dictionary=dictionary,
@@ -225,8 +223,6 @@ def from_list(
                 tmp_dictionary = {}
 
         # update dictionary
-        update(
-            main_dictionary=dictionary, tmp_dictionary=tmp_dictionary,
-        )
+        update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
 
     return dictionary

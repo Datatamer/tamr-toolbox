@@ -41,7 +41,7 @@ class Planner:
 
 
 def from_graph(
-    graph: Graph, *, tamr_client: Client, starting_tier: int = 0, train=False,
+    graph: Graph, *, tamr_client: Client, starting_tier: int = 0, train=False
 ) -> Planner:
     """
     Creates a Planner class from a Graph. The plan object is a json dict specifying how

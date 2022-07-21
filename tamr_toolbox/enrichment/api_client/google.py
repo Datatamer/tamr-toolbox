@@ -53,7 +53,7 @@ def _check_valid_translation_language(
 
 
 def _check_valid_translation_languages(
-    client: "GoogleTranslateClient", source_language: str, target_language: str,
+    client: "GoogleTranslateClient", source_language: str, target_language: str
 ) -> None:
     """
     Checks that the provided target and source language combination is an accepted translation

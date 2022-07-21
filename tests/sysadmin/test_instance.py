@@ -268,15 +268,13 @@ def test_restart_tamr(run_command):
 @mock.patch("tamr_toolbox.sysadmin.instance._run_command", return_value=(0, "", ""))
 def test_get_configs(run_command):
     # test get all
-    tbox.sysadmin.instance.get_configs(tamr_install_dir="/data",)
+    tbox.sysadmin.instance.get_configs(tamr_install_dir="/data")
     run_command_args = run_command.mock_calls[0][2]
     assert run_command_args["command"] == "/data/tamr/utils/unify-admin.sh config:get"
     run_command.reset_mock()
 
     # test get list of names
-    tbox.sysadmin.instance.get_configs(
-        config_names=["EXAMPLE", "other"], tamr_install_dir="/data",
-    )
+    tbox.sysadmin.instance.get_configs(config_names=["EXAMPLE", "other"], tamr_install_dir="/data")
     run_command_args = run_command.mock_calls[0][2]
     assert (
         run_command_args["command"] == "/data/tamr/utils/unify-admin.sh config:get EXAMPLE other"

@@ -97,7 +97,7 @@ def test_run_many_training():
     project2 = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
     project3 = client.projects.by_resource_id(CONFIG["projects"]["minimal_golden_records"])
     all_ops = workflow.jobs.run(
-        [project1, project2, project3], run_apply_feedback=True, run_estimate_pair_counts=True,
+        [project1, project2, project3], run_apply_feedback=True, run_estimate_pair_counts=True
     )
 
     for op in all_ops:

@@ -296,9 +296,7 @@ def test_send_message():
     mock_client.chat_postMessage = MagicMock(side_effect=_mock_response)
 
     response = notifications.slack.send_message(
-        slack_client=mock_client,
-        channel="#test_tbox_messaging",
-        message="This is a test message.",
+        slack_client=mock_client, channel="#test_tbox_messaging", message="This is a test message."
     )
 
     saved_response = {
@@ -358,7 +356,7 @@ def test_send_message_raise_error_false():
     )
     mock_client.chat_postMessage = MagicMock(return_value=mock_response)
     response = notifications.slack.send_message(
-        slack_client=mock_client, channel=channel, message=message, raise_error=False,
+        slack_client=mock_client, channel=channel, message=message, raise_error=False
     )
     assert response == {
         "type": "SlackError",

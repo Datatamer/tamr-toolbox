@@ -40,7 +40,7 @@ def test_create_with_multiple_parameters(protocol: str, port: str, base_path: st
 
 
 def test_create_bad_configuration():
-    """Ensure a bad configuration raises a connection error """
+    """Ensure a bad configuration raises a connection error"""
     with pytest.raises(RuntimeError):
         my_connect = client.create(
             host="localhost",
@@ -121,14 +121,14 @@ def test_https_deployment_processing():
 
 
 def test_oracle_parsing():
-    my_connect = client.from_config(CONFIG_MULTI_EXPORT, jdbc_key="oracle",)
+    my_connect = client.from_config(CONFIG_MULTI_EXPORT, jdbc_key="oracle")
     assert my_connect.jdbc_info.jdbc_url == "jdbc::oracle_db"
     assert my_connect.jdbc_info.db_user == "oracle_user"
     assert my_connect.jdbc_info.db_password == "oracle_pw"
 
 
 def test_postgres_parsing():
-    my_connect = client.from_config(CONFIG_MULTI_EXPORT, jdbc_key="postgres",)
+    my_connect = client.from_config(CONFIG_MULTI_EXPORT, jdbc_key="postgres")
     assert my_connect.jdbc_info.jdbc_url == "jdbc::postgres_db"
     assert my_connect.jdbc_info.db_user == "postgres_user"
     assert my_connect.jdbc_info.db_password == "postgres_pw"

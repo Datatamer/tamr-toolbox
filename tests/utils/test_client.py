@@ -9,9 +9,7 @@ from tests._common import get_toolbox_root_dir
 
 
 # Provide dummy default for offline tests
-os.environ.setdefault(
-    "TAMR_TOOLBOX_PASSWORD", "none_provided",
-)
+os.environ.setdefault("TAMR_TOOLBOX_PASSWORD", "none_provided")
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/utils.config.yaml"
@@ -25,7 +23,7 @@ def test_client_create():
     assert my_client.port == int(CONFIG["my_instance_name"]["port"])
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
-    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
+    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"])
 
 
 @mock_api()
@@ -54,7 +52,7 @@ def test_client_enforce_healthy():
     assert my_client.port == int(CONFIG["my_instance_name"]["port"])
     assert my_client.protocol == CONFIG["my_instance_name"]["protocol"]
     assert my_client.base_path == "/api/versioned/v1/"
-    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"],)
+    assert my_client.auth == UsernamePasswordAuth("admin", os.environ["TAMR_TOOLBOX_PASSWORD"])
 
 
 @mock_api()

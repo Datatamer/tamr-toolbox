@@ -87,7 +87,7 @@ def _create_leaf_node_set(taxonomy: Taxonomy) -> set:
     Returns:
         Set of all leaf nodes in taxonomy, where node paths are joined by '|' if taxonomy is
         multi-level
-   """
+    """
     all_set = set()
     parent_set = set()
     for category in taxonomy.categories().stream():

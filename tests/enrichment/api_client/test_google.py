@@ -13,10 +13,10 @@ import pytest
 # Raw export of minimal_schema_mapping_unified_dataset
 TEST_TRANSLATION_DICTIONARY = {
     "cheddar cheese": TranslationDictionary(
-        standardized_phrase="cheddar cheese", translated_phrase="fromage cheddar",
+        standardized_phrase="cheddar cheese", translated_phrase="fromage cheddar"
     ),
     "ground beef": TranslationDictionary(
-        standardized_phrase="ground beef", translated_phrase="boeuf haché",
+        standardized_phrase="ground beef", translated_phrase="boeuf haché"
     ),
 }
 
@@ -27,13 +27,13 @@ TEST_AUTO_TRANSLATION_DICTIONARY = {
         detected_language="en",
     ),
     "ground beef": TranslationDictionary(
-        standardized_phrase="ground beef", translated_phrase="boeuf haché", detected_language="en",
+        standardized_phrase="ground beef", translated_phrase="boeuf haché", detected_language="en"
     ),
 }
 
 
 def _mock_translate_response(
-    target_language: str, source_language: str, model: str, values: List[str],
+    target_language: str, source_language: str, model: str, values: List[str]
 ) -> List[Dict[str, str]]:
 
     if sum(len(value) for value in values) > 100000:
