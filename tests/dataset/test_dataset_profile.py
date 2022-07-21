@@ -21,8 +21,6 @@ test_data = {"id": ["0", "1"], "first_name": ["John", "Jane"], "last_name": ["Do
 test_data_df = pd.DataFrame(test_data)
 dataframe.validate(test_data_df)
 
-# Note that some test cases are dependent on previous ones
-# So all tests must be set to enforce_online_test = True or all to False
 enforce_online_test = False
 
 
@@ -63,12 +61,6 @@ def test_get_profile():
     assert profile.dataset_name == DATASET_NAME
     assert profile.is_up_to_date is True
 
-
-@mock_api(enforce_online_test=enforce_online_test)
-def test_refresh_profile():
-    client = utils.client.create(**CONFIG["toolbox_test_instance"])
-    dataset = client.datasets.by_name(DATASET_NAME)
-
     # Upsert mock data into the dataset from the dataframe:
     dataset.upsert_from_dataframe(test_data_df, primary_key_name="id")
 
@@ -83,3 +75,6 @@ def test_refresh_profile():
 
     # Check that profile is again up-to-date:
     assert profile.is_up_to_date is True
+
+    # Reset test datasets to maintain state of test instance:
+    remove_test_datasets(client=client)
