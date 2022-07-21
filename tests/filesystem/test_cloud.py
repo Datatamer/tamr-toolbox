@@ -22,11 +22,6 @@ def test_gcs_download():
 
     test_download()
 
-    # checks to see google download checks for credentials
-    with pytest.raises(google.auth.exceptions.DefaultCredentialsError):
-        cloud_client = google.cloud.client.Client()
-        cloud.gcs_download(cloud_client=cloud_client)
-
 
 def test_gcs_upload():
     @patch("google.cloud.client.Client")
