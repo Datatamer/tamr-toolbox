@@ -7,5 +7,5 @@ Manage
 
 Profile
 ------------------------
-.. automodule:: tamr_toolbox.dataset._profile
+.. automodule:: tamr_toolbox.dataset._dataset
 
