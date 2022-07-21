@@ -64,14 +64,6 @@ def test_s3_download():
 
     test_download()
 
-    with pytest.raises((botocore.exceptions.NoCredentialsError)):
-        cloud.s3_download(
-            cloud_client=boto3.session.Session().client("s3"),
-            source_filepath="test_file.txt",
-            destination_filepath="download_path",
-            bucket_name="my_bucket",
-        )
-
 
 def test_s3_upload():
     @patch("botocore.session.Session")
