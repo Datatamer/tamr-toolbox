@@ -42,5 +42,7 @@ setup(
         "testing": ["responses==0.10.14"],
         "translation": ["google-cloud-translate==3.7.4"],
         "ssh": ["paramiko>=2.8.0"],
+        "gcs": ["google-cloud-storage>=2.0.0"],
+        "s3": ["boto3>=1.21.21", "boto3-stubs-lite[essential]>=1.21.21"],
     },
 )
