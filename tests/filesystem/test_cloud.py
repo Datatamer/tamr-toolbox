@@ -1,8 +1,4 @@
-import boto3
 from tamr_toolbox.filesystem import cloud
-import pytest
-import google
-import botocore
 import tempfile
 from unittest.mock import patch
 
