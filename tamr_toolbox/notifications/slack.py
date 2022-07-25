@@ -55,11 +55,11 @@ class SlackNotifier(_BaseNotifier, ABC):
     def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> None:
         recipients = self._parse_recipients(tamr_user)
 
-        for tamr_user in recipients:
-            LOGGER.info(f"Sending a Slack message to {tamr_user}")
+        for recipient in recipients:
+            LOGGER.info(f"Sending a Slack message to {recipient}")
             try:
                 self.slack.chat_postMessage(
-                    channel=tamr_user,
+                    channel=recipient,
                     text=message,
                     username="Tamr Notifications Bot",
                     icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
