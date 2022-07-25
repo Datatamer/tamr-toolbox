@@ -69,9 +69,11 @@ def test_build_message(mock_smtp):
         use_tls=True,
     )
 
-    message = notifier._build_message(test_message,
-                                      test_subject_line,
-                                      recipient=CONFIG["my_email_notification"]["recipient_addresses"][0])
+    message = notifier._build_message(
+        test_message,
+        test_subject_line,
+        recipient=CONFIG["my_email_notification"]["recipient_addresses"][0],
+    )
 
     assert message == expected_msg
 
@@ -100,21 +102,25 @@ def test_send_message(mock_smtp):
 
     context = mock_smtp.return_value
     assert context.sendmail.call_count == 2
-    assert context.sendmail.call_args_list[-1] == [{"from_addr":CONFIG["my_email_notification"]["sender_address"],
-                                                    "to_addrs": CONFIG["my_email_notification"]["recipient_addresses"][1],
-                                                    "msg": expected_msg}]
+    assert context.sendmail.call_args_list[-1] == [
+        {
+            "from_addr": CONFIG["my_email_notification"]["sender_address"],
+            "to_addrs": CONFIG["my_email_notification"]["recipient_addresses"][1],
+            "msg": expected_msg,
+        }
+    ]
 
 
 def test_deprecated_build_message():
     test_message = "This is a test email."
     subject_line = "Test 123"
     test_response = (
-            'Content-Type: text/plain; charset="us-ascii"\nMIME-Version: '
-            + "1.0\nContent-Transfer-Encoding: 7bit\n"
-            + f'Subject: Test 123\nFrom: {CONFIG["my_email_notification"]["sender_address"]}\n'
-            + f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}, '
-              f'{CONFIG["my_email_notification"]["recipient_addresses"][1]}\n'
-            + "\nThis is a test email."
+        'Content-Type: text/plain; charset="us-ascii"\nMIME-Version: '
+        + "1.0\nContent-Transfer-Encoding: 7bit\n"
+        + f'Subject: Test 123\nFrom: {CONFIG["my_email_notification"]["sender_address"]}\n'
+        + f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}, '
+        f'{CONFIG["my_email_notification"]["recipient_addresses"][1]}\n'
+        + "\nThis is a test email."
     )
 
     msg = tbox.notifications.emails._build_message(
