@@ -90,7 +90,7 @@ def test_monitor_job_timeout():
                 f"than {timeout_seconds} seconds to resolve."
             ),
             "title": f"Job {op.resource_id}: Timeout",
-        }
+        },
     ]
 
     for i in range(2):
