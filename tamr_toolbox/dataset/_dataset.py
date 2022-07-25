@@ -34,7 +34,7 @@ def get_profile(dataset: Dataset, allow_create_or_refresh: bool = False) -> Data
             else:
                 raise RuntimeError(
                     f"Profile information for {dataset.name} does not exist. If you would like "
-                    f"to create one, set allow_create_or_refresh to True"
+                    f"to create one, set allow_create_or_refresh to True."
                 )
         # other status codes: re-raise error
         else:
@@ -49,9 +49,9 @@ def get_profile(dataset: Dataset, allow_create_or_refresh: bool = False) -> Data
         else:
             # Return profile information with a staleness warning:
             print(
-                f"WARNING: Profile information for {dataset.name} is out-of-date, "
+                f"WARNING: Profile information for {dataset.name} is out-of-date "
                 f"and allow_create_or_refresh is False. If you would like an up-to-date "
-                f"profile, rerun with allow_create_or_refresh set to True "
+                f"profile, rerun with allow_create_or_refresh set to True."
             )
 
     return profile
