@@ -12,8 +12,6 @@ from tamr_toolbox.utils.operation import monitor, from_resource_id, get_details
 
 class _BaseNotifier(object):
     def __init__(self):
-        self.sent_messages = []
-        self.sent_message_recipients = []
         self.recipients = None
 
     def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> None:
@@ -99,7 +97,7 @@ class _BaseNotifier(object):
                 )
                 self.send_message(message=timeout_message, title=f"Job {op.resource_id}: Timeout")
 
-    def _parse_recipients(self, tamr_user: str) -> List[str]:
+    def _parse_recipients(self, tamr_user: Optional[str] = None) -> List[str]:
         """Look up Tamr users & parse recipients into an iterable list"""
         if type(self.recipients) in [str, list]:
             if tamr_user:

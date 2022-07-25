@@ -50,26 +50,7 @@ def test_non_tls_login(mock_smtp):
 
 
 @patch("smtplib.SMTP", autospec=True)
-def test_send_message(mock_smtp):
-    test_message = "This is a test email."
-    test_subject_line = "Test 123"
-
-    notifier = EmailNotifier(
-        sender_address=CONFIG["my_email_notification"]["sender_address"],
-        sender_password=CONFIG["my_email_notification"]["sender_password"],
-        email_recipients=CONFIG["my_email_notification"]["recipient_addresses"],
-        smtp_server=CONFIG["my_email_notification"]["smtp_server"],
-        smtp_port=CONFIG["my_email_notification"]["smtp_port"],
-        use_tls=True,
-    )
-
-    notifier.send_message(test_message, test_subject_line)
-
-    assert notifier.sent_messages == [test_message]
-
-
-@patch("smtplib.SMTP", autospec=True)
-def test_message_format(mock_smtp):
+def test_build_message(mock_smtp):
     test_message = "This is a test email."
     test_subject_line = "Test 123"
 
@@ -77,6 +58,34 @@ def test_message_format(mock_smtp):
     expected_msg["Subject"] = "Tamr System: " + test_subject_line
     expected_msg["From"] = CONFIG["my_email_notification"]["sender_address"]
     expected_msg["To"] = CONFIG["my_email_notification"]["recipient_addresses"][0]
+    expected_msg = expected_msg.as_string()
+
+    notifier = EmailNotifier(
+        sender_address=CONFIG["my_email_notification"]["sender_address"],
+        sender_password=CONFIG["my_email_notification"]["sender_password"],
+        email_recipients=CONFIG["my_email_notification"]["recipient_addresses"][0],
+        smtp_server=CONFIG["my_email_notification"]["smtp_server"],
+        smtp_port=CONFIG["my_email_notification"]["smtp_port"],
+        use_tls=True,
+    )
+
+    message = notifier._build_message(test_message,
+                                      test_subject_line,
+                                      recipient=CONFIG["my_email_notification"]["recipient_addresses"][0])
+
+    assert message == expected_msg
+
+
+@patch("smtplib.SMTP", autospec=True)
+def test_send_message(mock_smtp):
+    test_message = "This is a test email."
+    test_subject_line = "Test 123"
+
+    expected_msg = MIMEText(test_message)
+    expected_msg["Subject"] = "Tamr System: " + test_subject_line
+    expected_msg["From"] = CONFIG["my_email_notification"]["sender_address"]
+    expected_msg["To"] = CONFIG["my_email_notification"]["recipient_addresses"][1]
+    expected_msg = expected_msg.as_string()
 
     notifier = EmailNotifier(
         sender_address=CONFIG["my_email_notification"]["sender_address"],
@@ -90,22 +99,22 @@ def test_message_format(mock_smtp):
     notifier.send_message(test_message, test_subject_line)
 
     context = mock_smtp.return_value
-    context.sendmail.assert_called_with(
-        from_addr=CONFIG["my_email_notification"]["sender_address"],
-        to_addrs=CONFIG["my_email_notification"]["recipient_addresses"][0],
-        msg=expected_msg.as_string(),
-    )
+    assert context.sendmail.call_count == 2
+    assert context.sendmail.call_args_list[-1] == [{"from_addr":CONFIG["my_email_notification"]["sender_address"],
+                                                    "to_addrs": CONFIG["my_email_notification"]["recipient_addresses"][1],
+                                                    "msg": expected_msg}]
 
 
 def test_deprecated_build_message():
     test_message = "This is a test email."
     subject_line = "Test 123"
     test_response = (
-        'Content-Type: text/plain; charset="us-ascii"\nMIME-Version: '
-        + "1.0\nContent-Transfer-Encoding: 7bit\n"
-        + f'Subject: Test 123\nFrom: {CONFIG["my_email_notification"]["sender_address"]}\n'
-        + f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}\n'
-        + "\nThis is a test email."
+            'Content-Type: text/plain; charset="us-ascii"\nMIME-Version: '
+            + "1.0\nContent-Transfer-Encoding: 7bit\n"
+            + f'Subject: Test 123\nFrom: {CONFIG["my_email_notification"]["sender_address"]}\n'
+            + f'To: {CONFIG["my_email_notification"]["recipient_addresses"][0]}, '
+              f'{CONFIG["my_email_notification"]["recipient_addresses"][1]}\n'
+            + "\nThis is a test email."
     )
 
     msg = tbox.notifications.emails._build_message(

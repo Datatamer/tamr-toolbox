@@ -73,23 +73,26 @@ class EmailNotifier(_BaseNotifier, ABC):
         self.server.login(self.sender_address, self.sender_password)
         LOGGER.info("Logged in to the email server successfully")
 
-    def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
+    def _build_message(self, message, title, recipient):
+        msg = MIMEText(message)
+        msg["Subject"] = "Tamr System: " + title
+        msg["From"] = self.sender_address
+        msg["To"] = recipient
+
+        return msg.as_string()
+
+    def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> None:
         recipients = self._parse_recipients(tamr_user)
 
-        for tamr_user in recipients:
-            msg = MIMEText(message)
-            msg["Subject"] = "Tamr System: " + title
-            msg["From"] = self.sender_address
-            msg["To"] = tamr_user
-            msg = msg.as_string()
+        for recipient in recipients:
+            msg = self._build_message(message, title, recipient)
 
-            LOGGER.info(f"Sending an email to {tamr_user} with payload {msg}")
-            response = self.server.sendmail(self.sender_address, tamr_user, msg)
+            LOGGER.info(f"Sending an email to {recipient} with payload {msg}")
+            response = self.server.sendmail(
+                from_addr=self.sender_address, to_addrs=recipient, msg=msg
+            )
             if len(response):
                 LOGGER.info(f"Error posting message: {response}")
-
-            self.sent_messages += [message]
-            self.sent_message_recipients += [tamr_user]
 
 
 def _build_message(*, message: str, subject_line: str, sender: str, recipients: List[str]) -> str:

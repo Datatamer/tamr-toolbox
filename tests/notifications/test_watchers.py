@@ -1,5 +1,5 @@
 """Tests for tasks related to task watchers"""
-from typing import Optional
+from unittest.mock import Mock
 
 import pytest
 
@@ -13,45 +13,49 @@ CONFIG = utils.config.from_yaml(
 )
 
 
-class BaseNotifierSkipNotImplementedError(_BaseNotifier):
-    def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> int:
-        times_called = 0
-        for times_called, tamr_user in enumerate(self._parse_recipients(tamr_user)):
-            self.sent_messages += [message]
-            self.sent_message_recipients += [tamr_user]
-
-        return times_called + 1
-
-
 @mock_api()
 def test_monitor_job_succeeded():
     client = utils.client.create(**CONFIG["my_instance_name"])
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
 
-    notifier = BaseNotifierSkipNotImplementedError()
+    notifier = _BaseNotifier()
     notifier.recipients = ["test_recipient"]
+
+    notifier.send_message = Mock()
+
     notifier.monitor_job(tamr=client, operation=op)
 
-    expected_messages = [
-        (
-            f"Host: {client.host} \n Job: {op.resource_id} \n "
-            f"Description: Materialize views "
-            f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
-        ),
-        (
-            f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize "
-            f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
-            f"Status: RUNNING "
-        ),
-        (
-            f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize "
-            f"views [minimal_schema_mapping_unified_dataset] to Elastic \n "
-            f"Status: SUCCEEDED "
-        ),
+    expected = [
+        {
+            "message": (
+                f"Host: {client.host} \n Job: {op.resource_id} \n "
+                f"Description: Materialize views "
+                f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
+            ),
+            "title": f"Job {op.resource_id}: OperationState.PENDING",
+        },
+        {
+            "message": (
+                f"Host: {client.host} \n Job: {op.resource_id} \n "
+                f"Description: Materialize views "
+                f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: RUNNING "
+            ),
+            "title": f"Job {op.resource_id}: OperationState.RUNNING",
+        },
+        {
+            "message": (
+                f"Host: {client.host} \n Job: {op.resource_id} \n "
+                f"Description: Materialize views "
+                f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: SUCCEEDED "
+            ),
+            "title": f"Job {op.resource_id}: OperationState.SUCCEEDED",
+        },
     ]
 
-    assert notifier.sent_messages == expected_messages
+    assert notifier.send_message.call_count == 3
+    for i in range(3):
+        assert notifier.send_message.call_args_list[i] == [expected[i]]
 
 
 @mock_api()
@@ -63,78 +67,81 @@ def test_monitor_job_timeout():
     timeout_seconds = 0.2
     poll_interval = 0.1
 
-    notifier = BaseNotifierSkipNotImplementedError()
+    notifier = _BaseNotifier()
     notifier.recipients = ["test_recipient"]
+    notifier.send_message = Mock()
+
     notifier.monitor_job(
         tamr=client, operation=op, timeout=timeout_seconds, poll_interval=poll_interval
     )
 
-    expected_messages = [
-        (
-            f"Host: {client.host} \n Job: {op.resource_id} \n "
-            f"Description: Materialize views "
-            f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
-        ),
-        (
-            f"The job {op.resource_id}: {op.description} took longer "
-            f"than {timeout_seconds} seconds to resolve."
-        ),
+    expected = [
+        {
+            "message": (
+                f"Host: {client.host} \n Job: {op.resource_id} \n "
+                f"Description: Materialize views "
+                f"[minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
+            ),
+            "title": f"Job {op.resource_id}: OperationState.PENDING",
+        },
+        {
+            "message": (
+                f"The job {op.resource_id}: {op.description} took longer "
+                f"than {timeout_seconds} seconds to resolve."
+            ),
+            "title": f"Job {op.resource_id}: Timeout",
+        }
     ]
 
-    assert notifier.sent_messages[:2] == expected_messages
+    for i in range(2):
+        assert notifier.send_message.call_args_list[i] == [expected[i]]
 
 
-def test_message_single_recipient():
-    notifier = BaseNotifierSkipNotImplementedError()
+def test_parse_single_recipients():
+    notifier = _BaseNotifier()
     notifier.recipients = "test_recipient"
-    messages_sent = notifier.send_message("test_message", "test_title")
 
-    assert messages_sent == 1
-    assert notifier.sent_message_recipients == ["test_recipient"]
-    assert notifier.sent_messages == ["test_message"]
+    recipients = notifier._parse_recipients()
 
-
-def test_message_list_recipient():
-    notifier = BaseNotifierSkipNotImplementedError()
-    notifier.recipients = ["test_recipient"]
-    messages_sent = notifier.send_message("test_message", "test_title")
-
-    assert messages_sent == 1
-    assert notifier.sent_message_recipients == ["test_recipient"]
-    assert notifier.sent_messages == ["test_message"]
+    assert recipients == ["test_recipient"]
 
 
-def test_message_longer_list_recipient():
-    notifier = BaseNotifierSkipNotImplementedError()
-    notifier.recipients = ["test_recipient", "test_recipient_2"]
-    messages_sent = notifier.send_message("test_message", "test_title")
+def test_parse_list_recipient():
+    notifier = _BaseNotifier()
+    notifier.recipients = ["test_recipient_1", "test_recipient_2"]
 
-    assert messages_sent == 2
-    assert notifier.sent_message_recipients == ["test_recipient", "test_recipient_2"]
-    assert notifier.sent_messages == ["test_message", "test_message"]
+    recipients = notifier._parse_recipients()
 
-
-def test_message_dict_recipient():
-    notifier = BaseNotifierSkipNotImplementedError()
-    notifier.recipients = {"tamr_user": "test_recipient"}
-    messages_sent = notifier.send_message("test_message", "test_title")
-
-    assert messages_sent == 1
-    assert notifier.sent_message_recipients == ["test_recipient"]
-    assert notifier.sent_messages == ["test_message"]
+    assert recipients == ["test_recipient_1", "test_recipient_2"]
 
 
-def test_message_longer_dict_recipient():
-    notifier = BaseNotifierSkipNotImplementedError()
+def test_parse_dict_recipient():
+    notifier = _BaseNotifier()
+    notifier.recipients = {"tamr_user": "test_recipient", "tamr_user2": "test_recipient_2"}
+
+    recipients = notifier._parse_recipients()
+
+    assert recipients == ["test_recipient", "test_recipient_2"]
+
+
+def test_parse_longer_dict_recipient():
+    notifier = _BaseNotifier()
     notifier.recipients = {"tamr_user": "test_recipient", "tamr_user_2": "test_recipient_2"}
-    messages_sent = notifier.send_message("test_message", "test_title")
 
-    assert messages_sent == 2
-    assert notifier.sent_message_recipients == ["test_recipient", "test_recipient_2"]
-    assert notifier.sent_messages == ["test_message", "test_message"]
+    recipients = notifier._parse_recipients("tamr_user")
+
+    assert recipients == ["test_recipient"]
 
 
-def test_notimplemented():
+def test_parse_user_without_lookup_dict_raises_error():
+    notifier = _BaseNotifier()
+    notifier.recipients = ["test_recipient_1", "test_recipient_2"]
+
+    with pytest.raises(ValueError):
+        notifier._parse_recipients("tamr_user")
+
+
+def test_call_direct_notimplemented():
     notifier = _BaseNotifier()
     with pytest.raises(NotImplementedError):
         notifier.send_message("message", "title")

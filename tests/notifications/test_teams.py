@@ -13,15 +13,13 @@ CONFIG = utils.config.from_yaml(
 
 @patch("pymsteams.connectorcard", autospec=True)
 def test_send_message(mock_teams):
-    test_message = "This is a test email."
+    test_message = "This is a test message."
     test_subject_line = "Test 123"
 
-    notifier = TeamsNotifier(webhooks="test_webhook")
+    notifier = TeamsNotifier(webhooks=CONFIG["my_teams_notification"]["teams_webhook"])
     notifier.send_message(test_message, test_subject_line)
 
     context = mock_teams.return_value
     assert context.text.call_args[0][0] == test_message
     assert context.title.call_args[0][0] == test_subject_line
     context.send.assert_called_once()
-
-    assert notifier.sent_messages == [test_message]

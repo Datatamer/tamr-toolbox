@@ -27,21 +27,20 @@ def test_slack_creation(mock_slack):
 
 @patch("slack.WebClient", autospec=True)
 def test_send_message(mock_slack):
-    test_message = "This is a test email."
+    test_message = "This is a test message."
     test_subject_line = "Test 123"
 
     notifier = SlackNotifier(token=mock_slack, channels="#test_tbox_messaging")
     notifier.send_message(test_message, test_subject_line)
 
     context = mock_slack.return_value
-    context.chat_postMessage.assert_called()
+    context.chat_postMessage.assert_called_once()
     context.chat_postMessage.assert_called_with(
         channel=notifier.recipients,
         text=test_message,
         username="Tamr Notifications Bot",
         icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
     )
-    assert notifier.sent_messages == [test_message]
 
 
 def _deprecated_mock_response(channel: str, text: str) -> SlackResponse:

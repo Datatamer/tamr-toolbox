@@ -52,7 +52,7 @@ class SlackNotifier(_BaseNotifier, ABC):
         )
         LOGGER.info("Successfully authenticated with the Slack API")
 
-    def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
+    def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> None:
         recipients = self._parse_recipients(tamr_user)
 
         for tamr_user in recipients:
@@ -66,9 +66,6 @@ class SlackNotifier(_BaseNotifier, ABC):
                 )
             except SlackApiError as e:
                 LOGGER.error(f"Error posting message: {e}.")
-
-            self.sent_messages += [message]
-            self.sent_message_recipients += [tamr_user]
 
 
 def send_message(

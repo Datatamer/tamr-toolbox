@@ -1,7 +1,7 @@
 import logging
 from abc import ABC
 from dataclasses import dataclass
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from tamr_toolbox.notifications.common import _BaseNotifier
 
@@ -29,7 +29,7 @@ class TeamsNotifier(_BaseNotifier, ABC):
         super().__init__()
         self.recipients = self.webhooks
 
-    def send_message(self, message: str, title: str, tamr_user: str = None) -> None:
+    def send_message(self, message: str, title: str, tamr_user: Optional[str] = None) -> None:
         recipients = self._parse_recipients(tamr_user)
 
         for recipient in recipients:
@@ -42,6 +42,3 @@ class TeamsNotifier(_BaseNotifier, ABC):
                 message_card.send()
             except pymsteams.TeamsWebhookException as e:
                 LOGGER.error(f"Error posting message: {e}.")
-
-            self.sent_messages += [message]
-            self.sent_message_recipients += [recipient]

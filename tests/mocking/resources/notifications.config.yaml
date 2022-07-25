@@ -17,7 +17,10 @@ my_slack_notification:
 my_email_notification:
     sender_address: "sender@mail.com"
     sender_password: "sender_password"
-    recipient_addresses: ["recipient@mail.com"]
+    recipient_addresses: ["recipient@mail.com", "recipient2@mail.com"]
     smtp_server: "smtp.mail.com"
     smtp_port: 465
     tls_port: 587
+
+my_teams_notification:
+    teams_webhook: "test_webhook"
