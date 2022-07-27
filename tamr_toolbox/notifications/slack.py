@@ -2,8 +2,7 @@ import logging
 import warnings
 from abc import ABC
 from dataclasses import dataclass
-from typing import Dict
-from typing import Union, List, Optional
+from typing import Union, List, Dict, Optional
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
@@ -62,7 +61,7 @@ class SlackNotifier(_BaseNotifier, ABC):
                     channel=recipient,
                     text=message,
                     username="Tamr Notifications Bot",
-                    icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
+                    icon_url="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1421991855/dl6uwnstafo0yjncqwzn.png",  # noqa   # adds the Tamr logo as the profile pic of the sender
                 )
             except SlackApiError as e:
                 LOGGER.error(f"Error posting message: {e}.")

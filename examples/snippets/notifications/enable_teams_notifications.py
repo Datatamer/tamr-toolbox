@@ -1,4 +1,4 @@
-"""Example script for generating Slack notifications based on Tamr jobs"""
+"""Example script for generating Teams notifications based on Tamr jobs"""
 import tamr_toolbox as tbox
 
 from tamr_toolbox.models.operation_state import OperationState

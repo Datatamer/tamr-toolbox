@@ -32,7 +32,7 @@ class EmailNotifier(_BaseNotifier, ABC):
     Send emails based on Tamr eventing.
 
     Args:
-        recipients:
+        email_recipients:
             A single, list of, or dict connecting Tamr users to,
             email addresses to message.
         sender_address: Email address to send messages from, such as my_pipeline@gmail.com

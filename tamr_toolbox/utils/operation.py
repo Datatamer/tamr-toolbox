@@ -49,7 +49,7 @@ def get_latest(tamr: Client) -> Operation:
     return op
 
 
-def get_details(operation: Operation) -> str:
+def get_details(*, operation: Operation) -> str:
     """Return a text describing the information of a job
 
     Args:

@@ -1,4 +1,4 @@
-"""Tasks related to creation of Email notifications"""
+"""Tasks related to creation of notifications"""
 import warnings
 from typing import Union, List, Optional, Callable
 
