@@ -71,7 +71,7 @@ class _BaseNotifier(object):
         status = OperationState[op.state]
         if status in notify_states:
             self.send_message(
-                message=get_details(op), title=f"Job {operation.resource_id}: {status}"
+                message=get_details(operation=op), title=f"Job {operation.resource_id}: {status}"
             )
 
         while status not in [
@@ -88,7 +88,8 @@ class _BaseNotifier(object):
 
                 status = OperationState[op.state]
                 self.send_message(
-                    message=get_details(op), title=f"Job {operation.resource_id}: {status}"
+                    message=get_details(operation=op),
+                    title=f"Job {operation.resource_id}: {status}",
                 )
             except TimeoutError:
                 timeout_message = (

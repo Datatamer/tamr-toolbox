@@ -39,7 +39,7 @@ def test_send_message(mock_slack):
         channel=notifier.recipients,
         text=test_message,
         username="Tamr Notifications Bot",
-        icon_url="https://jdp491bprdv1ar3uk2puw37i-wpengine.netdna-ssl.com/wp-content/uploads/2020/08/Tamr-Square-Dark.png",  # noqa
+        icon_url="https://avatars.githubusercontent.com/u/3476145?s=200&v=4",  # noqa
     )
 
 
