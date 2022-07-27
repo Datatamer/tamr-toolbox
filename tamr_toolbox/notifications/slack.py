@@ -61,7 +61,7 @@ class SlackNotifier(_BaseNotifier, ABC):
                     channel=recipient,
                     text=message,
                     username="Tamr Notifications Bot",
-                    icon_url="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco,dpr_1/v1421991855/dl6uwnstafo0yjncqwzn.png",  # noqa   # adds the Tamr logo as the profile pic of the sender
+                    icon_url="https://avatars.githubusercontent.com/u/3476145?s=200&v=4",  # noqa   # adds the Tamr logo as the profile pic of the sender
                 )
             except SlackApiError as e:
                 LOGGER.error(f"Error posting message: {e}.")
