@@ -4,17 +4,15 @@ import tamr_toolbox as tbox
 from tamr_toolbox.models.operation_state import OperationState
 
 # Make Slack config object with your own slack api token, a Bot User that starts with "xoxb-"
-config = {"slack_api_token": "xoxb-12345-12345-A1b2C3d4E5", "slack_channel": "#my_slack_channel"}
+config = {"webhooks": ["1234512345A1b2C3d4E5", "1234512345A1b2C3d4E6"]}
 
 # Make Tamr Client
 tamr = tbox.utils.client.create(username="user", password="pw", host="localhost")
 
-# Make Slack notifier
-notifier = tbox.notifications.slack.SlackNotifier(
-    channels=config["slack_channel"], token=config["slack_api_token"]
-)
+# Make Teams notifier
+notifier = tbox.notifications.teams.TeamsNotifier(webhooks=config["webhooks"])
 
-# Example 1: Send any Slack message
+# Example 1: Send any Teams message
 notifier.send_message(message="This is a test message.", title="Subject")
 
 # Example 2: Track the status updates for a specific job using its job id
