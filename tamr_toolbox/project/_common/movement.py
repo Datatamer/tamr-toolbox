@@ -22,8 +22,9 @@ def export_artifacts(
     asynchronous: bool = False,
 ) -> Operation:
     """Export project artifacts for project movement
-    Version:
-        Requires Tamr 2021.005.0 or later
+
+    Requires Tamr 2021.005.0 or later
+
     Args:
         project: a tamr project object
         artifact_directory_path: export directory for project artifacts
@@ -79,8 +80,9 @@ def import_artifacts(
     overwrite_existing: bool = False,
 ) -> Operation:
     """Import project artifacts into a tamr instance
-    Version:
-        Requires Tamr 2021.005.0 or later
+
+    Requires Tamr 2021.005.0 or later
+
     Args:
         tamr_client: a tamr client
         project_artifact_path: project artifacts zip filepath
