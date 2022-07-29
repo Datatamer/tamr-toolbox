@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -100,6 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../project.html">Project</a><ul class="current">
@@ -198,20 +199,21 @@
 <p>Tasks related to running jobs for Tamr Mastering projects</p>
 <dl class="py function">
 <dt id="tamr_toolbox.project.mastering.jobs.run">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_estimate_pair_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/mastering/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.mastering.jobs.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_estimate_pair_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_update_realtime_match</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/mastering/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.mastering.jobs.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the existing pipeline without training</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>run_estimate_pair_counts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether an estimate pairs job should be run</p></li>
 <li><p><strong>run_apply_feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether train should be called on the pair matching model</p></li>
+<li><p><strong>run_update_realtime_match</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether to update RealTime match data after publishing clusters</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -226,13 +228,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -247,13 +249,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -268,13 +270,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -289,13 +291,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -310,13 +312,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -331,13 +333,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -353,13 +355,13 @@ a mastering project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -375,13 +377,13 @@ of a mastering project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -391,18 +393,19 @@ of a mastering project</p>
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.mastering.jobs.publish_clusters">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.jobs.</span></code><code class="sig-name descname"><span class="pre">publish_clusters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/mastering/jobs.html#publish_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.mastering.jobs.publish_clusters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.jobs.</span></code><code class="sig-name descname"><span class="pre">publish_clusters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_update_realtime_match</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/mastering/jobs.html#publish_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.mastering.jobs.publish_clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Publishes the clusters of a mastering project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code>) – Target mastering project</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/mastering.html#tamr_unify_client.mastering.project.MasteringProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MasteringProject</span></code></a>) – Target mastering project</p></li>
+<li><p><strong>run_update_realtime_match</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether to update RealTime match data after publishing clusters</p></li>
 <li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
 - must be set to True for concurrent workflow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
@@ -425,11 +428,11 @@ a warning and return the existing AttributeMapping from the project’s collecti
 <li><p><strong>source_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Source attribute name to map</p></li>
 <li><p><strong>source_dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Source dataset containing the source attribute</p></li>
 <li><p><strong>unified_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Unified attribute to which to map the source attribute</p></li>
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – The project in which to perform the mapping</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – The project in which to perform the mapping</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.attribute_mapping.resource.AttributeMapping" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The created AttributeMapping</p>
@@ -453,7 +456,7 @@ a warning and return the existing AttributeMapping from the project’s collecti
 <li><p><strong>source_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the source attribute to unmap</p></li>
 <li><p><strong>source_dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the source dataset containing that source attribute</p></li>
 <li><p><strong>unified_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the unified attribute from which to unmap</p></li>
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – the project in which to unmap the attribute</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project in which to unmap the attribute</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -472,14 +475,14 @@ a warning and return the existing AttributeMapping from the project’s collecti
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source_dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – the source dataset (a Dataset object not a string)</p></li>
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – the project to do the mapping ing</p></li>
+<li><p><strong>source_dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – the source dataset (a Dataset object not a string)</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project to do the mapping ing</p></li>
 <li><p><strong>force_add_dataset_to_project</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean whether to add the dataset to the project
 if it is not already a part of it</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.attribute_mapping.resource.AttributeMapping" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of the AttributeMappings generated</p>
@@ -498,8 +501,8 @@ if it is not already a part of it</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source_dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – the source dataset (Dataset object not a string) to unmap</p></li>
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – the project in which to unmap the dataset</p></li>
+<li><p><strong>source_dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – the source dataset (Dataset object not a string) to unmap</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project in which to unmap the dataset</p></li>
 <li><p><strong>remove_dataset_from_project</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean to also remove the dataset from the project</p></li>
 <li><p><strong>skip_if_missing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean to skip if dataset is not in project. If set to false and
 dataset is not in project will raise a RuntimeError</p></li>
@@ -532,7 +535,7 @@ dataset is not in project will raise a RuntimeError</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>transformation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The text of a transformations script</p></li>
-<li><p><strong>datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>]) – The list of input datasets that the script should be applied to</p></li>
+<li><p><strong>datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]) – The list of input datasets that the script should be applied to</p></li>
 </ul>
 </dd>
 </dl>
@@ -558,56 +561,13 @@ dataset is not in project will raise a RuntimeError</p></li>
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.mastering.transformations.get_all">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.mastering.transformations.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the transformations of a Project</p>
-<dl class="simple">
-<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – Project containing transformations</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformationGroup</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>All input transformations and unified transformations of a project</p>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.mastering.transformations.get_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.mastering.transformations.set_all">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.mastering.transformations.set_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the transformations of a Project</p>
-<dl class="simple">
-<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – Project to place transformations within</p></li>
-<li><p><strong>tx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TransformationGroup</span></code>) – Transformations to put into project</p></li>
-<li><p><strong>allow_overwrite</strong> – Whether existing transformations can be overwritten</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.10)"><strong>RuntimeError</strong></a> – if <cite>allow_overwrite</cite> is set to False but transformations already exists
-    in <cite>project</cite></p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – if provided <cite>tx</cite> are invalid</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.mastering.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.mastering.transformations.set_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="tamr_toolbox.project.mastering.transformations.get_all_unified">
@@ -619,7 +579,7 @@ dataset is not in project will raise a RuntimeError</p></li>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – Project containing transformations</p>
+<dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project containing transformations</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
@@ -642,13 +602,13 @@ Any input transformations will not be altered</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – Project to place transformations within</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project to place transformations within</p></li>
 <li><p><strong>tx</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Unified transformations to put into project</p></li>
 <li><p><strong>allow_overwrite</strong> – Whether existing unified transformations can be overwritten</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.28.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>

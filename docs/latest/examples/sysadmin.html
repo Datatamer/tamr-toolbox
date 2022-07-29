@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -99,6 +99,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Sysadmin</a><ul>
@@ -240,7 +241,7 @@
 
 <span class="c1"># Get all user defined configs from a local instance as the current user</span>
 <span class="n">user_defined_configs</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">get_configs</span><span class="p">(</span>
-    <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span>
+    <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use defined config: </span><span class="si">{</span><span class="n">user_defined_configs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="c1"># Example print output</span>

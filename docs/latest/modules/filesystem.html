@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Models" href="models.html" />
+    <link rel="next" title="RealTime" href="realtime.html" />
     <link rel="prev" title="Translation" href="enrichment/translation.html" /> 
 </head>
 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -101,8 +101,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Filesystem</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.filesystem.bash">Bash</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.filesystem.cloud">Cloud</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
@@ -261,6 +263,66 @@ folders to exclude</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-tamr_toolbox.filesystem.cloud">
+<span id="cloud"></span><h2>Cloud<a class="headerlink" href="#module-tamr_toolbox.filesystem.cloud" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tamr_toolbox.filesystem.cloud.gcs_upload">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">gcs_upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#gcs_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.gcs_upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload data to a Google storage bucket
+:type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param source_filepath: file path of source file being uploaded
+:type destination_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param destination_filepath: path to google bucket
+:type cloud_client: <code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>
+:param cloud_client: google storage client with user credentials
+:type bucket_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param bucket_name: name of google bucket</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.filesystem.cloud.gcs_download">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">gcs_download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#gcs_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.gcs_download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download data to a Google storage bucket
+:type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param source_filepath: Path to file being downloaded on Google
+:type destination_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param destination_filepath: Destination filepath for file being downloaded
+:type cloud_client: <code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>
+:param cloud_client: google storage client with user credentials
+:type bucket_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param bucket_name: name of google bucket being downloaded from</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.filesystem.cloud.s3_upload">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">s3_upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#s3_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.s3_upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload data to Amazon AWS bucket
+:type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param source_filepath: file path of source file being uploaded
+:type destination_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param destination_filepath: path to AWS bucket
+:type cloud_client: <code class="xref py py-class docutils literal notranslate"><span class="pre">S3Client</span></code>
+:param cloud_client: AWS client with user credentials
+:type bucket_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param bucket_name: name of AWS bucket
+:param downloads copy of file being uploaded to filepath:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.filesystem.cloud.s3_download">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">s3_download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#s3_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.s3_download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download data from an Amazon AWS bucket
+:type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param source_filepath: Path to file being downloaded on AWS
+:type destination_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param destination_filepath: Destination filepath for file being downloaded
+:type cloud_client: <code class="xref py py-class docutils literal notranslate"><span class="pre">S3Client</span></code>
+:param cloud_client: AWS client with user credentials
+:type bucket_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param bucket_name: name of AWS bucket being downloaded from</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -269,7 +331,7 @@ folders to exclude</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="models.html" class="btn btn-neutral float-right" title="Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="realtime.html" class="btn btn-neutral float-right" title="RealTime" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="enrichment/translation.html" class="btn btn-neutral float-left" title="Translation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -108,6 +108,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../project.html">Project</a></li>
@@ -201,7 +202,7 @@ pandas.DataFrame and writing to CSV.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – Tamr Dataset object</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – Tamr Dataset object</p></li>
 <li><p><strong>export_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Path to the csv file where the dataset will be saved</p></li>
 <li><p><strong>csv_delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Delimiter of the csv file</p></li>
 <li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – Optional, Ordered list of columns to write. If None, write all columns in
@@ -252,7 +253,7 @@ given buffer size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>) – Tamr Project object</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Tamr Project object</p></li>
 <li><p><strong>export_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Path to the csv file where the dataset will be saved</p></li>
 <li><p><strong>csv_delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Delimiter of the csv file</p></li>
 <li><p><strong>flatten_delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Flatten list types to strings by concatenating with this delimiter</p></li>

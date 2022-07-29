@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -176,18 +176,18 @@
     <span class="n">project_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">upstream_projects</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Check for upstream projects that have source datasets that require</span>
-<span class="sd">        updating</span>
-<span class="sd">        Args:</span>
-<span class="sd">            project: a tamr project</span>
-<span class="sd">            track of projects that need to be checked for upstream dependencies</span>
-<span class="sd">            all_projects: list of all projects that exist within Tamr</span>
-<span class="sd">            project_list: keeps track of projects that have yet to be checked</span>
-<span class="sd">            for upstream dependencies.</span>
-<span class="sd">            upstream_projects: list to keep track of projects within a chain of projects</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            List of tamr projects in a chained workflow</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check for upstream projects that have source datasets that require</span>
+<span class="sd">    updating</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project: a tamr project</span>
+<span class="sd">        track of projects that need to be checked for upstream dependencies</span>
+<span class="sd">        all_projects: list of all projects that exist within Tamr</span>
+<span class="sd">        project_list: keeps track of projects that have yet to be checked</span>
+<span class="sd">        for upstream dependencies.</span>
+<span class="sd">        upstream_projects: list to keep track of projects within a chain of projects</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List of tamr projects in a chained workflow</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Obtain the name of project to be updated and initiate the list of</span>
     <span class="c1"># projects (project_list) that are maintained within the check_for_upstream_project</span>
     <span class="c1"># function to check for upstream dependencies</span>
@@ -262,10 +262,10 @@
 <span class="k">def</span> <span class="nf">_find_datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Returns a dataset&#39;s upstream datasets.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            dataset: a Tamr Dataset Object</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            List of upstream datasets</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: a Tamr Dataset Object</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List of upstream datasets</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -303,12 +303,12 @@
 
 <span class="k">def</span> <span class="nf">_request_upstream_datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 
-    <span class="sd">&quot;&quot;&quot; Returns a dataset&#39;s upstream dataset</span>
+    <span class="sd">&quot;&quot;&quot;Returns a dataset&#39;s upstream dataset</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            dataset: a Tamr Dataset Object</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            The upstream datasets</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: a Tamr Dataset Object</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The upstream datasets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Find upstream datasets, output is a DatasetURI</span>
     <span class="n">upstream</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">upstream_datasets</span><span class="p">()</span>
@@ -320,7 +320,7 @@
 
 
 <div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.upstream.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Check for upstream datasets associated with a specified dataset</span>
+    <span class="sd">&quot;&quot;&quot;Check for upstream datasets associated with a specified dataset</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset: the Tamr dataset for which associated upstream datasets are retrieved</span>
@@ -333,7 +333,7 @@
 
 
 <div class="viewcode-block" id="projects"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.upstream.projects">[docs]</a><span class="k">def</span> <span class="nf">projects</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Check for upstream projects associated with a specified project</span>
+    <span class="sd">&quot;&quot;&quot;Check for upstream projects associated with a specified project</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project: the tamr project for which associated upstream projects are retrieved</span>

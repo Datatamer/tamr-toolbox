@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -104,10 +104,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#remove-an-attribute-from-a-dataset">Remove an attribute from a dataset</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#dataset-profiles">Dataset Profiles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-and-retrieve-a-profile-for-a-dataset">Create and retrieve a profile for a dataset</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
@@ -344,7 +349,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">primary_keys</span> <span class="o">=</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">]</span>
         <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-            <span class="n">client</span><span class="o">=</span><span class="n">target_client</span><span class="p">,</span> <span class="n">primary_keys</span><span class="o">=</span><span class="n">primary_keys</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">source_dataset</span><span class="p">,</span>
+            <span class="n">client</span><span class="o">=</span><span class="n">target_client</span><span class="p">,</span> <span class="n">primary_keys</span><span class="o">=</span><span class="n">primary_keys</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">source_dataset</span>
         <span class="p">)</span>
 </pre></div>
 </div>
@@ -409,6 +414,36 @@
 <span class="n">updated_dataset</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">delete_attributes</span><span class="p">(</span>
     <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dataset-profiles">
+<h2>Dataset Profiles<a class="headerlink" href="#dataset-profiles" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-and-retrieve-a-profile-for-a-dataset">
+<h3>Create and retrieve a profile for a dataset<a class="headerlink" href="#create-and-retrieve-a-profile-for-a-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to create and/or retrieve a dataset profile</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># load example config</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/migrate_dataset.config.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the source tamr client</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;source_migration_instance&quot;</span><span class="p">])</span>
+
+<span class="c1"># Get dataset from Tamr instance</span>
+<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;your dataset name&gt;&quot;</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Setting the optional second argument to True below ensures that</span>
+<span class="sd">    - A new profile is created if it does not exist or is in an inconsistent state</span>
+<span class="sd">    - The profile is refreshed if it is out-of-date</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_profile</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">allow_create_or_refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

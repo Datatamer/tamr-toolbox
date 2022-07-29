@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Notifications" href="notifications.html" />
+    <link rel="next" title="RealTime" href="realtime.html" />
     <link rel="prev" title="Enrichment" href="enrichment.html" /> 
 </head>
 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -101,8 +101,16 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Filesystem</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#create-a-list-of-directories-from-a-config-file">Create a list of directories from a config file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clean-old-files-recursively-from-a-directory">Clean old files recursively from a directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cloud">Cloud</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#upload-object-to-gcs-bucket">Upload object to GCS bucket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#download-object-from-gcs-bucket">Download object from GCS bucket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upload-object-to-aws-s3-bucket">Upload object to AWS S3 bucket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#download-object-from-aws-s3-bucket">Download object from AWS S3 bucket</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
@@ -207,6 +215,99 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="cloud">
+<h2>Cloud<a class="headerlink" href="#cloud" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="upload-object-to-gcs-bucket">
+<h3>Upload object to GCS bucket<a class="headerlink" href="#upload-object-to-gcs-bucket" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to demonstrate the use of the gcs_upload function to upload file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
+
+<span class="n">gcs_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+
+<span class="c1"># uploads file to gcs</span>
+<span class="c1"># upload a local file &quot;my_local_directory/my_file.txt&quot; to &quot;gs://my-bucket/path-to-file&quot;</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">gcs_upload</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="o">=</span><span class="n">gcs_client</span><span class="p">,</span>
+    <span class="n">source_filepath</span><span class="o">=</span><span class="s2">&quot;my_local_directory/my_file.txt&quot;</span><span class="p">,</span>
+    <span class="n">destination_filepath</span><span class="o">=</span><span class="s2">&quot;path-to-file&quot;</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="o">=</span><span class="s2">&quot;my-bucket&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="download-object-from-gcs-bucket">
+<h3>Download object from GCS bucket<a class="headerlink" href="#download-object-from-gcs-bucket" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to demonstrate the use of the gcs_download function to download file,</span>
+<span class="sd">from a GCS bucket.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
+
+<span class="n">gcs_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+
+<span class="c1"># download file from gcs</span>
+<span class="c1"># download a file on GCS &quot;gs://my-bucket/path-to-file&quot; to &quot;my_local_directory/my_file.txt&quot;</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">gcs_download</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="o">=</span><span class="n">gcs_client</span><span class="p">,</span>
+    <span class="n">source_filepath</span><span class="o">=</span><span class="s2">&quot;path-to-file&quot;</span><span class="p">,</span>
+    <span class="n">destination_filepath</span><span class="o">=</span><span class="s2">&quot;my_local_directory/my_file.txt&quot;</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="o">=</span><span class="s2">&quot;my-bucket&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="upload-object-to-aws-s3-bucket">
+<h3>Upload object to AWS S3 bucket<a class="headerlink" href="#upload-object-to-aws-s3-bucket" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to demonstrate the use of the s3 function to upload file</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">import</span> <span class="nn">boto3</span>
+
+<span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+
+<span class="c1"># uploads file to AWS S3</span>
+<span class="c1"># upload a local file &quot;my_local_directory/my_file.txt&quot; to &quot;s3://my-bucket/path-to-file&quot;</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">s3_upload</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="o">=</span><span class="n">s3_client</span><span class="p">,</span>
+    <span class="n">source_filepath</span><span class="o">=</span><span class="s2">&quot;my_local_directory/my_file.txt&quot;</span><span class="p">,</span>
+    <span class="n">destination_filepath</span><span class="o">=</span><span class="s2">&quot;path-to-file&quot;</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="o">=</span><span class="s2">&quot;my-bucket&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="download-object-from-aws-s3-bucket">
+<h3>Download object from AWS S3 bucket<a class="headerlink" href="#download-object-from-aws-s3-bucket" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to demonstrate the use of the s3_download function to download file,</span>
+<span class="sd">from an S3 bucket.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">import</span> <span class="nn">boto3</span>
+
+<span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+
+<span class="c1"># download file from AWS S3</span>
+<span class="c1"># download a file on GCS &quot;s3://my-bucket/path-to-file&quot; to &quot;my_local_directory/my_file.txt&quot;</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">s3_download</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="o">=</span><span class="n">s3_client</span><span class="p">,</span>
+    <span class="n">source_filepath</span><span class="o">=</span><span class="s2">&quot;path-to-file&quot;</span><span class="p">,</span>
+    <span class="n">destination_filepath</span><span class="o">=</span><span class="s2">&quot;my_local_directory/my_file.txt&quot;</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="o">=</span><span class="s2">&quot;my-bucket&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -215,7 +316,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="notifications.html" class="btn btn-neutral float-right" title="Notifications" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="realtime.html" class="btn btn-neutral float-right" title="RealTime" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="enrichment.html" class="btn btn-neutral float-left" title="Enrichment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -107,6 +107,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
@@ -230,7 +231,7 @@ These translation capabilities can be applied to a Tamr dataset or a Pandas Data
     <span class="c1"># load dictionary</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting translation from french to english&quot;</span><span class="p">)</span>
     <span class="n">dictionary</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-        <span class="n">dictionary_folder</span><span class="o">=</span><span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="s2">&quot;fr&quot;</span><span class="p">,</span>
+        <span class="n">dictionary_folder</span><span class="o">=</span><span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="s2">&quot;fr&quot;</span>
     <span class="p">)</span>
 
     <span class="c1"># translate attribute by attribute</span>
@@ -358,7 +359,7 @@ These translation capabilities can be applied to a Tamr dataset or a Pandas Data
 
     <span class="c1"># update dictionary on Tamr</span>
     <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
-        <span class="n">dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dictionary_dataset</span><span class="p">,</span>
+        <span class="n">dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dictionary_dataset</span>
     <span class="p">)</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tamr dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> updated with new translation data&quot;</span><span class="p">)</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Script complete.&quot;</span><span class="p">)</span>

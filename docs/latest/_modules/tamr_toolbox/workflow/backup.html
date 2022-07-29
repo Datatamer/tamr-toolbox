@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -200,7 +200,7 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: Raised if GET request to Tamr fails</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">api_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;backups/</span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_string</span><span class="p">)</span>
 
@@ -275,7 +275,7 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: Raised if the target backup contains errors</span>
 <span class="sd">        RuntimeError: Raised if the restore fails to start</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">backup</span> <span class="o">=</span> <span class="n">get_backup_by_id</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">backup_id</span><span class="o">=</span><span class="n">backup_id</span><span class="p">)</span>
     <span class="n">backup_state</span> <span class="o">=</span> <span class="n">backup</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">backup_state</span> <span class="o">==</span> <span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">:</span>
@@ -413,7 +413,7 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: if target backup file contains an error message</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">backup_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
     <span class="n">backups</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>

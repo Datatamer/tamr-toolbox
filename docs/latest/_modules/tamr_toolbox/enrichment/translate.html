@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -373,9 +373,7 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="n">ix</span> <span class="o">%</span> <span class="n">intermediate_save_every_n_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving intermediate outputs&quot;</span><span class="p">)</span>
-                <span class="n">update</span><span class="p">(</span>
-                    <span class="n">main_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">tmp_dictionary</span><span class="o">=</span><span class="n">tmp_dictionary</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="n">update</span><span class="p">(</span><span class="n">main_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">tmp_dictionary</span><span class="o">=</span><span class="n">tmp_dictionary</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">intermediate_save_to_disk</span><span class="p">:</span>
                     <span class="n">save</span><span class="p">(</span>
                         <span class="n">translation_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span>
@@ -387,9 +385,7 @@
                 <span class="n">tmp_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># update dictionary</span>
-        <span class="n">update</span><span class="p">(</span>
-            <span class="n">main_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">tmp_dictionary</span><span class="o">=</span><span class="n">tmp_dictionary</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">main_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">tmp_dictionary</span><span class="o">=</span><span class="n">tmp_dictionary</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dictionary</span></div>
 </pre></div>

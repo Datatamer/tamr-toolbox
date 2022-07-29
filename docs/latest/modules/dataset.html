@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -99,10 +99,12 @@
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Dataset</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.dataset.manage">Manage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.dataset._dataset">Profile</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models.html">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
@@ -219,7 +221,7 @@ dictionary.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – TUC client object</p></li>
 <li><p><strong>dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – name for the new dataset being created</p></li>
-<li><p><strong>dataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>]) – optional dataset TUC object to use as a template for the new dataset</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]) – optional dataset TUC object to use as a template for the new dataset</p></li>
 <li><p><strong>primary_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – one or more attributes for primary key(s) of the new dataset</p></li>
 <li><p><strong>attributes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – a list of attribute names to create in the new dataset</p></li>
 <li><p><strong>attribute_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveType</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code>, <a class="reference internal" href="models.html#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]]]) – dictionary for non-default types, attribute name is the key and
@@ -232,14 +234,14 @@ and the attribute description is the value</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Dataset created in Tamr</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.HTTPError" title="(in Requests v2.26.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.28.1)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If both dataset and primary_keys are not defined</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If the dataset already exists</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.10)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
@@ -275,7 +277,7 @@ logged.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – An existing TUC dataset</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – An existing TUC dataset</p></li>
 <li><p><strong>attributes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – Complete list of attribute names that should exist in the updated dataset</p></li>
 <li><p><strong>attribute_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveType</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code>, <a class="reference internal" href="models.html#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]]]) – dictionary for non-default types, attribute name is the key and
 AttributeType is the value</p></li>
@@ -287,14 +289,14 @@ key and the attribute description is the value</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Updated Dataset</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.HTTPError" title="(in Requests v2.26.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.28.1)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If the dataset is not a source dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.10)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
 </ul>
@@ -326,7 +328,7 @@ the attribute_descriptions dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – An existing TUC dataset</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – An existing TUC dataset</p></li>
 <li><p><strong>attributes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – list of attribute names to be added to dataset</p></li>
 <li><p><strong>attribute_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveType</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code>, <a class="reference internal" href="models.html#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]]]) – dictionary for non-default types, attribute name is the key and
 AttributeType is the value</p></li>
@@ -335,14 +337,14 @@ key and the attribute description is the value</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Updated Dataset</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.HTTPError" title="(in Requests v2.26.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.28.1)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.10)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If the dataset is a unified dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If an attribute passed in already exists in the dataset</p></li>
@@ -364,7 +366,7 @@ defined, the attribute type will not be updated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – An existing TUC dataset</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – An existing TUC dataset</p></li>
 <li><p><strong>attribute_types</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PrimitiveType</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code>, <a class="reference internal" href="models.html#tamr_toolbox.models.attribute_type.Record" title="tamr_toolbox.models.attribute_type.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]]]) – dictionary for non-default types, attribute name is the key and
 AttributeType is the value</p></li>
 <li><p><strong>attribute_descriptions</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – dictionary for attribute descriptions, attribute name is the
@@ -373,14 +375,14 @@ key and the attribute description is the value</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Updated Dataset</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.HTTPError" title="(in Requests v2.26.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.28.1)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If the dataset is not a source dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If a passed attribute does not exist in the dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If a passed attribute is a primary key and can’t be removed</p></li>
@@ -398,12 +400,12 @@ key and the attribute description is the value</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code>) – An existing TUC dataset</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – An existing TUC dataset</p></li>
 <li><p><strong>attributes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – list of attribute names to delete from dataset</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Updated Dataset</p>
@@ -415,6 +417,33 @@ key and the attribute description is the value</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If a passed attribute is a primary key and can’t be removed</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.10)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tamr_toolbox.dataset._dataset">
+<span id="profile"></span><h2>Profile<a class="headerlink" href="#module-tamr_toolbox.dataset._dataset" title="Permalink to this headline">¶</a></h2>
+<p>Additional functions to manipulate the profile of the dataset.</p>
+<dl class="py function">
+<dt id="tamr_toolbox.dataset._dataset.get_profile">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset._dataset.</span></code><code class="sig-name descname"><span class="pre">get_profile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_create_or_refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/_dataset.html#get_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset._dataset.get_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dataset profile object.  Optionally can refresh or create profile if missing or
+out-of-date.
+:type dataset: <a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>
+:param dataset: Tamr dataset object
+:type allow_create_or_refresh: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>
+:param allow_create_or_refresh: optional bool to allow creation/refreshing of profile info</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.profile.DatasetProfile" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetProfile</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DatasetProfile object
+Warning if profile information is out of date and allow_create_or_refresh is False</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.10)"><strong>RuntimeError</strong></a> – if profile has not been created and allow_create_or_refresh is False</p>
 </dd>
 </dl>
 </dd></dl>
