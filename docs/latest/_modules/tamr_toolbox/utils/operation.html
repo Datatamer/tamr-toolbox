@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -167,6 +167,7 @@
 
 <span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
 <span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
 <span class="kn">from</span> <span class="nn">tamr_toolbox.models.operation_state</span> <span class="kn">import</span> <span class="n">OperationState</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -195,7 +196,39 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A Tamr operation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Tamr sometimes returns a job id of -1 if everthing is up-to-date so the requested task</span>
+    <span class="c1"># would result in no change -- make a dummy operation in this case</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">tamr</span><span class="p">,</span> <span class="n">_dummy_no_op_response</span><span class="p">())</span>
+
     <span class="k">return</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_resource_id</span><span class="p">(</span><span class="n">tamr</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_dummy_no_op_response</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;job ID -1&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a dict to represent &#39;no-operation operation&#39;, in cases where all results that would be</span>
+<span class="sd">    produced by an operation are already up-to-date so there&#39;s nothing to do.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        code: response code include in description, Default &#39;job ID -1&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict from which dummy operation object can be constructed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_never</span> <span class="o">=</span> <span class="s2">&quot;0000-00-00T00:00:00.000Z&quot;</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Tamr returned </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2"> for this operation, indicating that all</span>
+<span class="s2">        results that would be produced by the operation are already up-to-date.&quot;&quot;&quot;</span>
+    <span class="n">dummy_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;NOOP&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">_description</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">,</span> <span class="s2">&quot;startTime&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;endTime&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;created&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;lastModified&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;relativeId&quot;</span><span class="p">:</span> <span class="s2">&quot;operations/-1&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dummy_dict</span>
 
 
 <div class="viewcode-block" id="get_latest"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_latest">[docs]</a><span class="k">def</span> <span class="nf">get_latest</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
@@ -262,7 +295,7 @@
 
 
 <div class="viewcode-block" id="wait"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.wait">[docs]</a><span class="k">def</span> <span class="nf">wait</span><span class="p">(</span>
-    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Continuously polls for this operation&#39;s server-side state.</span>
 
@@ -291,7 +324,7 @@
 
 
 <div class="viewcode-block" id="monitor"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.monitor">[docs]</a><span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span>
-    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Continuously polls for this operation&#39;s server-side state and returns operation</span>
 <span class="sd">    when there is a state change</span>

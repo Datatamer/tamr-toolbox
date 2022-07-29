@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -190,16 +190,16 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs the provided command in a remote environment using the provided ssh client</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            command: The command to run</span>
-<span class="sd">            remote_client: An ssh client providing a remote connection</span>
-<span class="sd">            command_input: Content to send to stdin after command is started</span>
-<span class="sd">            verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+<span class="sd">    Args:</span>
+<span class="sd">        command: The command to run</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        command_input: Content to send to stdin after command is started</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            (exit code of command, stdout of command, stderr of command)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (exit code of command, stdout of command, stderr of command)</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">command_details_message</span> <span class="o">=</span> <span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Running command [</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">] on &quot;</span>

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -248,7 +248,7 @@
         <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiLineString&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">)))),</span>
         <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">)))),</span>
         <span class="n">SubAttribute</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiPolygon&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">)))),</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiPolygon&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">))))</span>
         <span class="p">),</span>
     <span class="p">)</span>
 <span class="p">)</span>
@@ -308,10 +308,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="n">PrimitiveType</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="n">attr_type</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="p">(</span><span class="n">Array</span><span class="p">,</span> <span class="n">Map</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_type</span><span class="p">)</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span>
-            <span class="s2">&quot;innerType&quot;</span><span class="p">:</span> <span class="n">to_json</span><span class="p">(</span><span class="n">attr_type</span><span class="o">.</span><span class="n">inner_type</span><span class="p">),</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_type</span><span class="p">)</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span> <span class="s2">&quot;innerType&quot;</span><span class="p">:</span> <span class="n">to_json</span><span class="p">(</span><span class="n">attr_type</span><span class="o">.</span><span class="n">inner_type</span><span class="p">)}</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="n">Record</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="p">{</span>

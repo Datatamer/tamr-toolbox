@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -274,7 +274,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        url: A string of the request url formatted correctly for that instance of df_connect.</span>
-<span class="sd">     &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># handle port:</span>
     <span class="k">if</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">port</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
         <span class="n">port</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">port</span>
@@ -290,7 +290,7 @@
     <span class="k">return</span> <span class="n">url</span>
 
 
-<span class="k">def</span> <span class="nf">_get_query_config</span><span class="p">(</span><span class="n">jdbc_info</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">JdbcInfo</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_query_config</span><span class="p">(</span><span class="n">jdbc_info</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">JdbcInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Packages configuration info into relevant query configuration json (dict) which is used</span>
 <span class="sd">    for multiple df_connect API calls.</span>
 
@@ -311,7 +311,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_export_config</span><span class="p">(</span>
-    <span class="n">multi_value_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">limit_records</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">columns_exclude_regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">multi_value_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">limit_records</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">columns_exclude_regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export</span>
 <span class="sd">     in form of json dictionary</span>

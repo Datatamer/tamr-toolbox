@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0 - Knife
+                1.8.0 - Lathe
               </div>
             
           
@@ -122,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
@@ -329,7 +330,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 <span class="n">my_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">)</span>
 
 <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
-    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;example_dataset&quot;</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;example_target_table&quot;</span><span class="p">,</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;example_dataset&quot;</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;example_target_table&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -461,9 +462,9 @@ The easiest way to generate such an object is via reading in a configuration fil
 <span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--hdfs_base_path&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the location in hdfs to use to stream the data/schema&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
-    <span class="n">config_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hdfs_base_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">config_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hdfs_base_path</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;&quot;Takes a config file (to setup df connect client), locations for both where to put the avro</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Takes a config file (to setup df connect client), locations for both where to put the avro</span>
 <span class="sd">     file and where to put the avro schema file, along with the hive statement to execute</span>
 <span class="sd">     for creating a table.</span>
 
@@ -558,7 +559,7 @@ The easiest way to generate such an object is via reading in a configuration fil
     <span class="n">op</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
     <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
-    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_table&quot;</span><span class="p">,</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_table&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
