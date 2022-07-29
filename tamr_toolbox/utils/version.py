@@ -1,4 +1,5 @@
 """Tasks related to the version of Tamr instances"""
+from functools import wraps
 import inspect
 import json
 import logging
@@ -180,6 +181,7 @@ def requires_tamr_version(
     """
 
     def _decorator(func):
+        @wraps(func)
         def _inspector(*args, **kwargs):
             for tamr_version in _get_tamr_versions_from_function_args(*args, **kwargs):
                 is_version_condition_met(
