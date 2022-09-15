@@ -79,7 +79,7 @@ def main(
 
     ## preparing for the import
     # finding the path to export file from op JSON response
-    zipfile_path = re.findall(r':\s?(.+\.zip)',op.description)[0]
+    zipfile_path = re.findall(r':\s?(.+\.zip)', op.description)[0]
 
     # constructing the new project name and respective unified dataset name to be imported to tamr
     new_project_name = new_name if new_name else f"{project_name}{postfix}"
