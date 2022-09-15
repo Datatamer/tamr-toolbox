@@ -77,13 +77,8 @@ def main(
     LOGGER.info(op)
 
     ## preparing for the import
-    # finding the path to export file
-    zipfile_name = [
-        f
-        for f in os.listdir(export_path)
-        if (os.path.isfile(os.path.join(export_path, f)) and f.endswith(".zip"))
-    ][0]
-    zipfile_path = f"{export_path}/{zipfile_name}"
+    # finding the path to export file from operation JSON response
+    zipfile_path = op.description.split(":")[-1].strip()
 
     # constructing the new project name and respective unified dataset name to be imported to tamr
     new_project_name = new_name if new_name else f"{project_name}{postfix}"
