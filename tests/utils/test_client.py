@@ -44,14 +44,12 @@ def test_store_auth_cookie():
     assert my_client.session.auth is None
 
 
-@mock_api()
 def test_passing_base_path():
     base_path = "/api/testing/base/path/"
     my_client = utils.client.create(**CONFIG["my_instance_name"], base_path=base_path)
     assert my_client.base_path == base_path
 
 
-@mock_api()
 def test_passing_session():
     my_client = utils.client.create(**CONFIG["my_instance_name"])
     session = my_client.session
