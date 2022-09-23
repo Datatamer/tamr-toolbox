@@ -46,6 +46,8 @@ def create(
     host: str,
     port: Optional[Union[str, int]] = 9100,
     protocol: str = "http",
+    base_path: str = "/api/versioned/v1/",
+    session: Optional[requests.Session] = None,
     store_auth_cookie: bool = False,
     enforce_healthy: bool = False,
 ) -> Client:
@@ -57,6 +59,8 @@ def create(
         host: The ip address of Tamr
         port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port
         protocol: https or http
+        base_path: Optional argument to specify a different base path
+        session: Optional argument to pass an existing requests Session
         store_auth_cookie: If true will allow Tamr authentication cookie to be stored and reused
         enforce_healthy: If true will enforce a healthy state upon creation
 
@@ -70,6 +74,8 @@ def create(
         host=host,
         port=int(port) if port is not None else None,
         protocol=protocol,
+        base_path=base_path,
+        session=session,
         store_auth_cookie=store_auth_cookie,
     )
     if enforce_healthy:

@@ -44,6 +44,19 @@ def test_store_auth_cookie():
     assert my_client.session.auth is None
 
 
+def test_passing_base_path():
+    base_path = "/api/testing/base/path/"
+    my_client = utils.client.create(**CONFIG["my_instance_name"], base_path=base_path)
+    assert my_client.base_path == base_path
+
+
+def test_passing_session():
+    my_client = utils.client.create(**CONFIG["my_instance_name"])
+    session = my_client.session
+    my_other_client = utils.client.create(**CONFIG["my_portless_instance"], session=session)
+    assert my_other_client.session == session
+
+
 @mock_api()
 def test_client_enforce_healthy():
     my_client = utils.client.create(**CONFIG["my_instance_name"], enforce_healthy=True)
