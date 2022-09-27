@@ -7,7 +7,6 @@ from tamr_unify_client.project.resource import Project
 from tamr_toolbox.models.project_type import ProjectType
 
 from tamr_toolbox.project import mastering, categorization, golden_records, schema_mapping
-from tamr_toolbox.dataset import get_profile
 from requests import HTTPError
 
 LOGGER = logging.getLogger(__name__)
@@ -70,7 +69,7 @@ def run(
             if run_profile_unified_datasets:
                 try:
                     profile = project.unified_dataset().profile()
-                except HTTPError as e:
+                except HTTPError:
                     project.unified_dataset().create_profile()
                     profile = project.unified_dataset().profile()
                 operations.append(profile.refresh())
