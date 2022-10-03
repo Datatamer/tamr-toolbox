@@ -154,11 +154,12 @@ def test_run_with_profile():
     assert len(all_ops) == 2
 
     if all_ops[1].relative_id.split("/")[-1] == "-1":
-        assert all_ops[1].description == "Tamr returned HTTP 204 for this operation, indicating " \
-                                         "that all\n                results that would be " \
-                                         "produced by the operation are already up-to-date."
+        assert (
+            all_ops[1].description == "Tamr returned HTTP 204 for this operation, indicating "
+            "that all\n                results that would be "
+            "produced by the operation are already up-to-date."
+        )
     else:
         assert (
-                f"Profiling [{project.unified_dataset().name}] attributes."
-                == all_ops[1].description
+            f"Profiling [{project.unified_dataset().name}] attributes." == all_ops[1].description
         )

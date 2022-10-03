@@ -65,8 +65,11 @@ def run(
 
         # Excluding GOLDEN_RECORDS as profile information is refreshed as part of job:
         # breakpoint()
-        if (target_type == ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS) | \
-                (target_type == ProjectType.CATEGORIZATION) | (target_type == ProjectType.DEDUP):
+        if (
+            (target_type == ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS)
+            | (target_type == ProjectType.CATEGORIZATION)
+            | (target_type == ProjectType.DEDUP)
+        ):
             if run_profile_unified_datasets:
                 try:
                     profile = project.unified_dataset().profile()
