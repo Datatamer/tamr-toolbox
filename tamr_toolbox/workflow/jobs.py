@@ -71,11 +71,17 @@ def run(
             | (target_type == ProjectType.DEDUP)
         ):
             if run_profile_unified_datasets:
+                LOGGER.info(f"Checking for profile for {project.unified_dataset().name}")
                 try:
                     profile = project.unified_dataset().profile()
                 except HTTPError:
+                    LOGGER.info(
+                        f"Profile not found for {project.unified_dataset().name}. Creating"
+                        f" a profile."
+                    )
                     project.unified_dataset().create_profile()
                     profile = project.unified_dataset().profile()
+                LOGGER.info(f"Refreshing profile for {project.unified_dataset().name}")
                 operations.append(profile.refresh())
 
     return operations
