@@ -140,3 +140,26 @@ def test_run_error():
 
     with pytest.raises(KeyError):
         workflow.jobs.run([project])
+
+
+@mock_api()
+def test_run_with_profile():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
+    all_ops = workflow.jobs.run([project], run_profile_unified_datasets=True)
+
+    for op in all_ops:
+        assert op.succeeded()
+
+    assert len(all_ops) == 2
+
+    if all_ops[1].relative_id.split("/")[-1] == "-1":
+        assert (
+            all_ops[1].description == "Tamr returned HTTP 204 for this operation, indicating "
+            "that all\n                results that would be "
+            "produced by the operation are already up-to-date."
+        )
+    else:
+        assert (
+            f"Profiling [{project.unified_dataset().name}] attributes." == all_ops[1].description
+        )

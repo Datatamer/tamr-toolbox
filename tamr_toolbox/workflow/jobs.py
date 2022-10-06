@@ -7,6 +7,7 @@ from tamr_unify_client.project.resource import Project
 from tamr_toolbox.models.project_type import ProjectType
 
 from tamr_toolbox.project import mastering, categorization, golden_records, schema_mapping
+from requests import HTTPError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ def run(
     *,
     run_apply_feedback: bool = False,
     run_estimate_pair_counts: bool = False,
+    run_profile_unified_datasets: bool = False,
 ) -> List[Operation]:
     """Run multiple projects in order
 
@@ -24,6 +26,7 @@ def run(
         run_apply_feedback: Whether train should be called on the pair matching model
             or categorization model (based on project type)
         run_estimate_pair_counts: Whether an estimate pairs job should be run
+        run_profile_unified_datasets: Whether unified datasets should be re-profiled
 
     Returns:
         The operations that were run
@@ -59,6 +62,27 @@ def run(
             )
             LOGGER.error(error_msg)
             raise NotImplementedError(error_msg)
+
+        # Excluding GOLDEN_RECORDS as profile information is refreshed as part of job:
+        # breakpoint()
+        if (
+            (target_type == ProjectType.SCHEMA_MAPPING_RECOMMENDATIONS)
+            | (target_type == ProjectType.CATEGORIZATION)
+            | (target_type == ProjectType.DEDUP)
+        ):
+            if run_profile_unified_datasets:
+                LOGGER.info(f"Checking for profile for {project.unified_dataset().name}")
+                try:
+                    profile = project.unified_dataset().profile()
+                except HTTPError:
+                    LOGGER.info(
+                        f"Profile not found for {project.unified_dataset().name}. Creating"
+                        f" a profile."
+                    )
+                    project.unified_dataset().create_profile()
+                    profile = project.unified_dataset().profile()
+                LOGGER.info(f"Refreshing profile for {project.unified_dataset().name}")
+                operations.append(profile.refresh())
 
     return operations
 
