@@ -1,6 +1,7 @@
 """Tasks related to running jobs for groups of Tamr projects"""
 from typing import List, Optional
 import logging
+import json
 
 from tamr_unify_client.operation import Operation
 from tamr_unify_client.project.resource import Project
@@ -188,3 +189,29 @@ def get_upstream_projects(project: Project) -> List[Project]:
     upstream_projects = _find_upstream_projects(project)
 
     return upstream_projects
+
+
+def get_enrichment_project_output_dataset(project: Project) -> str:
+    """Check for the output dataset for a specified enrichment project
+
+    Args:
+        project: the tamr enrichment project for which associated output dataset name is retrieved
+    """
+    if project.type == "ENRICHMENT":
+        input_dataset_id = [d for d in project.input_datasets()][0].relative_id.split("/")[-1]
+        usage_json = project.client.get(
+            endpoint=f"/api/versioned/v1/datasets/{input_dataset_id}/usage",
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
+        )
+        usage_json.raise_for_status()
+        output_dataset_name = [
+            dep["datasetName"]
+            for dep in json.loads(usage_json.text)["dependencies"]
+            if "outputFromProjectSteps" in dep
+            and dep["outputFromProjectSteps"]
+            and "projectName" in dep["outputFromProjectSteps"][0]
+            and dep["outputFromProjectSteps"][0]["projectName"] == project.name
+        ][0]
+        return output_dataset_name
+
+    return None
