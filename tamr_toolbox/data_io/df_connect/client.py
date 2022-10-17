@@ -8,7 +8,7 @@ from tamr_toolbox.data_io.df_connect import jdbc_info
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_toolbox.data_io.file_system_type import FileSystemType
 from tamr_unify_client.auth import UsernamePasswordAuth
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,6 +25,7 @@ class Client:
         tamr_username: the tamr account to use
         tamr_password: the password for the tamr account to use
         jbdc_info: configuration information for the jdbc connection
+        cert: optional path to a certfile for authentication
     """
 
     host: str
@@ -34,6 +35,7 @@ class Client:
     tamr_username: str
     tamr_password: str
     jdbc_info: jdbc_info.JdbcInfo
+    cert: Optional[str]
 
 
 def from_config(
@@ -55,6 +57,12 @@ def from_config(
     base_path = config[config_key].get("base_path", "")
     port = config[config_key].get("port", "")
 
+    # Optional cert may or may not be present in config file (back-compat from TBOX-295)
+    if "cert" in config[config_key].keys():
+        cert = config[config_key]["cert"]
+    else:
+        cert = None
+
     return Client(
         host=config[config_key]["host"],
         port=port,
@@ -63,6 +71,7 @@ def from_config(
         tamr_username=config[config_key]["tamr_username"],
         tamr_password=config[config_key]["tamr_password"],
         jdbc_info=jdbc_info.from_config(config, config_key=config_key, jdbc_key=jdbc_key),
+        cert=cert,
     )
 
 
@@ -75,6 +84,7 @@ def create(
     tamr_username: str,
     tamr_password: str,
     jdbc_dict: JsonDict,
+    cert: Optional[str] = None,
 ) -> Client:
     """
     Simple wrapper for creating an instance of `Client` dataclass object.
@@ -87,6 +97,7 @@ def create(
         tamr_username: the tamr account to use
         tamr_password: the password for the tamr account to use
         jdbc_dict: configuration information for the jdbc connection
+        cert: optional path to a certfile for authentication
 
     Returns:
         An instance of `tamr_toolbox.data_io.df_connect.Client`
@@ -100,6 +111,7 @@ def create(
         tamr_username=tamr_username,
         tamr_password=tamr_password,
         jdbc_info=jdbc_information,
+        cert=cert,
     )
 
 
@@ -202,6 +214,7 @@ def get_connect_session(connect_info: Client) -> requests.Session:
     s.auth = auth
     s.headers.update({"Content-type": "application/json"})
     s.headers.update({"Accept": "application/json"})
+    s.cert = connect_info.cert
 
     # test that df_connect is running properly
     url = _get_url(connect_info, "/api/service/health")
