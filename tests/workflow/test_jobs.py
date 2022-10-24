@@ -163,3 +163,22 @@ def test_run_with_profile():
         assert (
             f"Profiling [{project.unified_dataset().name}] attributes." == all_ops[1].description
         )
+
+
+@mock_api()
+def test_enrichment_project_output():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    enrichment_project = client.projects.by_resource_id(
+        CONFIG["projects"]["minimal_phone_enrichment"]
+    )
+    non_enrichment_project = client.projects.by_resource_id(
+        CONFIG["projects"]["minimal_schema_mapping"]
+    )
+
+    assert workflow.get_enrichment_project_output_dataset(
+        enrichment_project
+    ) == client.datasets.by_resource_id(
+        CONFIG["datasets"]["validated_phone_numbers_enriched_dataset"]
+    )
+
+    assert not workflow.get_enrichment_project_output_dataset(non_enrichment_project)
