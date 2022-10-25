@@ -175,10 +175,11 @@ def test_enrichment_project_output():
         CONFIG["projects"]["minimal_schema_mapping"]
     )
 
-    assert workflow.jobs.get_enrichment_project_output_dataset(
-        enrichment_project
-    ) == client.datasets.by_resource_id(
-        CONFIG["datasets"]["validated_phone_numbers_enriched_dataset"]
-    ).name
+    assert (
+        workflow.jobs.get_enrichment_project_output_dataset(enrichment_project)
+        == client.datasets.by_resource_id(
+            CONFIG["datasets"]["validated_phone_numbers_enriched_dataset"]
+        ).name
+    )
 
     assert not workflow.jobs.get_enrichment_project_output_dataset(non_enrichment_project)
