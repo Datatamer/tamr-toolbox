@@ -197,21 +197,23 @@ def get_enrichment_project_output_dataset(project: Project) -> str:
     Args:
         project: the tamr enrichment project for which associated output dataset name is retrieved
     """
-    if project.type == "ENRICHMENT":
-        input_dataset_id = [d for d in project.input_datasets()][0].relative_id.split("/")[-1]
-        usage_json = project.client.get(
-            endpoint=f"/api/versioned/v1/datasets/{input_dataset_id}/usage",
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
-        )
-        usage_json.raise_for_status()
-        output_dataset_name = [
-            dep["datasetName"]
-            for dep in json.loads(usage_json.text)["dependencies"]
-            if "outputFromProjectSteps" in dep
-            and dep["outputFromProjectSteps"]
-            and "projectName" in dep["outputFromProjectSteps"][0]
-            and dep["outputFromProjectSteps"][0]["projectName"] == project.name
-        ][0]
-        return output_dataset_name
+    if project.type != "ENRICHMENT":
+        raise ValueError(f"{project.name} is not an enrichment project")
 
-    return None
+    input_dataset_id = [d for d in project.input_datasets()][0].relative_id.split("/")[-1]
+    usage_json = project.client.get(
+        endpoint=f"/api/versioned/v1/datasets/{input_dataset_id}/usage",
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+    )
+    usage_json.raise_for_status()
+    output_dataset_name = [
+        dep["datasetName"]
+        for dep in json.loads(usage_json.text)["dependencies"]
+        if dep.get("outputFromProjectSteps", [{}])[0].get("projectName") == project.name
+    ]
+    if len(output_dataset_name) == 1:
+        output_dataset_name = output_dataset_name[0]
+    else:
+        raise RuntimeError(f"An output for project {project.name} was not identified.")
+
+    return output_dataset_name
