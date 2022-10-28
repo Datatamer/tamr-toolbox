@@ -166,20 +166,34 @@ def test_run_with_profile():
 
 
 @mock_api()
-def test_enrichment_project_output():
+def test_get_project_output_datasets():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    schema_mapping_project = client.projects.by_resource_id(
+        CONFIG["projects"]["minimal_schema_mapping"]
+    )
+    mastering_project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    golden_records_project = client.projects.by_resource_id(
+        CONFIG["projects"]["minimal_golden_records"]
+    )
+    categorization_project = client.projects.by_resource_id(
+        CONFIG["projects"]["minimal_categorization"]
+    )
     enrichment_project = client.projects.by_resource_id(
         CONFIG["projects"]["minimal_phone_enrichment"]
     )
-    non_enrichment_project = client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_schema_mapping"]
-    )
 
     assert (
-        workflow.jobs.get_enrichment_project_output_dataset(enrichment_project)
+        workflow.jobs.get_project_output_datasets(schema_mapping_project)[0].name
+        == client.datasets.by_resource_id(
+            CONFIG["datasets"]["minimal_schema_mapping_unified_dataset"]
+        ).name
+    )
+    assert len(workflow.jobs.get_project_output_datasets(mastering_project)) == 36
+    assert len(workflow.jobs.get_project_output_datasets(golden_records_project)) == 7
+    assert len(workflow.jobs.get_project_output_datasets(categorization_project)) == 8
+    assert (
+        workflow.jobs.get_project_output_datasets(enrichment_project)[0].name
         == client.datasets.by_resource_id(
             CONFIG["datasets"]["validated_phone_numbers_enriched_dataset"]
         ).name
     )
-
-    assert not workflow.jobs.get_enrichment_project_output_dataset(non_enrichment_project)

@@ -1,10 +1,9 @@
 """Tasks related to running jobs for groups of Tamr projects"""
 from typing import List, Optional
 import logging
-import json
 
 from tamr_unify_client.operation import Operation
-from tamr_unify_client.project.resource import Project
+from tamr_unify_client.project.resource import Project, Dataset
 from tamr_toolbox.models.project_type import ProjectType
 
 from tamr_toolbox.project import mastering, categorization, golden_records, schema_mapping
@@ -191,29 +190,23 @@ def get_upstream_projects(project: Project) -> List[Project]:
     return upstream_projects
 
 
-def get_enrichment_project_output_dataset(project: Project) -> str:
-    """Check for the output dataset for a specified enrichment project
+def get_project_output_datasets(project: Project) -> List[Dataset]:
+    """Returns a list of output datasets for a given Tamr project
 
     Args:
-        project: the tamr enrichment project for which associated output dataset name is retrieved
+        project: the Tamr project for which associated output datasets are retrieved
     """
-    if project.type != "ENRICHMENT":
-        raise ValueError(f"{project.name} is not an enrichment project")
-
-    input_dataset_id = [d for d in project.input_datasets()][0].relative_id.split("/")[-1]
-    usage_json = project.client.get(
-        endpoint=f"/api/versioned/v1/datasets/{input_dataset_id}/usage",
-        headers={"Content-Type": "application/json", "Accept": "application/json"},
-    )
-    usage_json.raise_for_status()
-    output_dataset_name = [
-        dep["datasetName"]
-        for dep in json.loads(usage_json.text)["dependencies"]
-        if dep.get("outputFromProjectSteps", [{}])[0].get("projectName") == project.name
+    input_datasets_dependencies = [
+        dep
+        for ds in {input_ds for input_ds in project.input_datasets()}
+        for dep in ds.usage().dependencies
     ]
-    if len(output_dataset_name) == 1:
-        output_dataset_name = output_dataset_name[0]
-    else:
-        raise RuntimeError(f"An output for project {project.name} was not identified.")
+    output_dataset_names = {
+        dep.dataset_name
+        for dep in input_datasets_dependencies
+        if dep.output_from_project_steps
+        and project.name == dep.output_from_project_steps[0].project_name
+    }
+    output_datasets = [ds for ds in project.client.datasets if ds.name in output_dataset_names]
 
-    return output_dataset_name
+    return output_datasets
