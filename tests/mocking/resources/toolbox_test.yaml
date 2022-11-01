@@ -26,6 +26,7 @@ projects:
     minimal_schema_mapping: "4"
     schema_mapping_with_spaces_in_name: "19"
     categorization_no_taxonomy: "45"
+    first_pairs_estimate: "51"
     minimal_phone_enrichment: "52"
 
 datasets:
