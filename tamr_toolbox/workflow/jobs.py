@@ -3,7 +3,7 @@ from typing import List, Optional
 import logging
 
 from tamr_unify_client.operation import Operation
-from tamr_unify_client.project.resource import Project
+from tamr_unify_client.project.resource import Project, Dataset
 from tamr_toolbox.models.project_type import ProjectType
 
 from tamr_toolbox.project import mastering, categorization, golden_records, schema_mapping
@@ -188,3 +188,26 @@ def get_upstream_projects(project: Project) -> List[Project]:
     upstream_projects = _find_upstream_projects(project)
 
     return upstream_projects
+
+
+def get_project_output_datasets(project: Project) -> List[Dataset]:
+    """Retrieves datasets produced by a given Tamr project
+
+    Args:
+        project: the Tamr project for which associated output datasets are retrieved
+
+    Returns:
+        The list of Tamr datasets output from the project"""
+    input_datasets_dependencies = [
+        dep
+        for ds in {input_ds for input_ds in project.input_datasets()}
+        for dep in ds.usage().dependencies
+    ]
+    output_dataset_names = {
+        dep.dataset_name
+        for dep in input_datasets_dependencies
+        if dep.output_from_project_steps
+        and project.name == dep.output_from_project_steps[0].project_name
+    }
+
+    return [ds for ds in project.client.datasets if ds.name in output_dataset_names]
