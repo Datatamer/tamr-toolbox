@@ -192,6 +192,7 @@ def get_upstream_projects(project: Project) -> List[Project]:
 
 def get_project_output_datasets(project: Project) -> List[Dataset]:
     """Retrieves datasets produced by a given Tamr project
+
     Args:
         project: the Tamr project for which associated output datasets are retrieved
 
@@ -208,6 +209,5 @@ def get_project_output_datasets(project: Project) -> List[Dataset]:
         if dep.output_from_project_steps
         and project.name == dep.output_from_project_steps[0].project_name
     }
-    output_datasets = [ds for ds in project.client.datasets if ds.name in output_dataset_names]
 
-    return output_datasets
+    return [ds for ds in project.client.datasets if ds.name in output_dataset_names]

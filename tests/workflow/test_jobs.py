@@ -178,6 +178,7 @@ def test_run_with_profile():
 )
 def test_get_project_output_datasets(project_name, expected_number_of_output_datasets):
     reference_postfix_dict = {
+        # an empty string "" item tests the reference root string , as is, for dataset name
         "SCHEMA_MAPPING_RECOMMENDATIONS": [""],
         "DEDUP": [
             "",
@@ -204,18 +205,13 @@ def test_get_project_output_datasets(project_name, expected_number_of_output_dat
     if expected_number_of_output_datasets:
         assert len(output_dataset_names) == expected_number_of_output_datasets
     # spot-checking to assert expected datasets are within the returned list
-    if test_project.type != "ENRICHMENT":
-        reference_dataset_name = (
-            test_project.unified_dataset().name
-            if not test_project.type == "GOLDEN_RECORDS"
-            else test_project.name
-        )
-        list_of_expected_output_dataset_names = [
-            f"{reference_dataset_name}{postfix}"
-            for postfix in reference_postfix_dict.get(test_project.type, [])
-        ]
+    postfixes = reference_postfix_dict.get(test_project.type, [])
+    if test_project.type == "ENRICHMENT":
+        expected_dataset_names = ["validated_phone_numbers_enriched_dataset"]
+    elif test_project.type == "GOLDEN_RECORDS":
+        expected_dataset_names = [f"{test_project.name}{pf}" for pf in postfixes]
     else:
-        list_of_expected_output_dataset_names = ["validated_phone_numbers_enriched_dataset"]
+        expected_dataset_names = [f"{test_project.unified_dataset().name}{pf}" for pf in postfixes]
 
-    for expected_dataset_name in list_of_expected_output_dataset_names:
+    for expected_dataset_name in expected_dataset_names:
         assert expected_dataset_name in output_dataset_names
