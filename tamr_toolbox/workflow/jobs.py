@@ -191,11 +191,12 @@ def get_upstream_projects(project: Project) -> List[Project]:
 
 
 def get_project_output_datasets(project: Project) -> List[Dataset]:
-    """Returns a list of output datasets for a given Tamr project
-
+    """Retrieves datasets produced by a given Tamr project
     Args:
         project: the Tamr project for which associated output datasets are retrieved
-    """
+
+    Returns:
+        The list of Tamr datasets output from the project"""
     input_datasets_dependencies = [
         dep
         for ds in {input_ds for input_ds in project.input_datasets()}
