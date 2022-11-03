@@ -124,6 +124,8 @@ def test_safe_generate_pairs():
     assert op.succeeded()
 
     count = project.client.get(
-        f"/api/versioned/v1/projects/{estimate_project_id}/estimatedPairCounts").json()
-    assert int(count['totalEstimate']['candidatePairCount']) >= int(
-        count['totalEstimate']['generatedPairCount'])
+        f"/api/versioned/v1/projects/{estimate_project_id}/estimatedPairCounts"
+    ).json()
+    assert int(count["totalEstimate"]["candidatePairCount"]) >= int(
+        count["totalEstimate"]["generatedPairCount"]
+    )
