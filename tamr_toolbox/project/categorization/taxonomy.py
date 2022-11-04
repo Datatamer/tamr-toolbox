@@ -4,7 +4,6 @@ import logging
 from tamr_unify_client import Client
 import pandas as pd
 
-
 LOGGER = logging.getLogger(__name__)
 
 
