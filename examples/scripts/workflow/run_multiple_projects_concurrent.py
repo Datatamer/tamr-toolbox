@@ -22,7 +22,7 @@ def main(*, instance_connection_info: Dict[str, str], project_ids: List[str]) ->
     # Retrieve the projects
     my_projects = [tamr_client.projects.by_resource_id(p_id) for p_id in project_ids]
     LOGGER.info(f"About to run build graph for projects: {[p.name for p in my_projects]}")
-    my_graph = tbox.workflow.concurrent.Graph.from_project_list(my_projects)
+    my_graph = tbox.workflow.concurrent.Graph.from_project_list(my_projects, tamr_client)
 
     LOGGER.info(f"Building planner object")
     my_planner = tbox.workflow.concurrent.Planner.from_graph(my_graph, tamr_client=tamr_client)
