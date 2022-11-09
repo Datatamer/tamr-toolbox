@@ -3,8 +3,38 @@ import logging
 
 from tamr_unify_client import Client
 import pandas as pd
+import json
 
 LOGGER = logging.getLogger(__name__)
+
+def edit_taxonomy():
+    return
+
+
+def create_node(client: Client, project_id: str, path: list):
+    """
+    Creates a category with the specified path in the project taxonomy.
+
+    Args:
+        client: Tamr client connected to target instance
+        project_id: ID of the categorization project
+        path: Full path of the new category to be added
+
+    Returns:
+        None
+    """
+    body = {
+        "name": path[-1],
+        "path": path
+    }
+    LOGGER.info(f"Creating new category {path[-1]} in project {project_id}")
+    response = client.post(f"projects/{project_id}/taxonomy/categories", json=body)
+    if not response.ok:
+        content = json.loads(response.content)
+        create_node_error = f"Creating node {path[-1]} failed with message {content['message']}"
+        LOGGER.error(create_node_error)
+        raise RuntimeError(create_node_error)
+    return
 
 
 def get_taxonomy_as_dataframe(client: Client, project_id: str) -> pd.DataFrame:
@@ -21,6 +51,7 @@ def get_taxonomy_as_dataframe(client: Client, project_id: str) -> pd.DataFrame:
     Raises:
         RuntimeError: if project is not a categorization project or if the taxonomy does not exist
     """
+    LOGGER.info(f"Retrieving taxonomy for project ID {project_id}")
     response = client.get(f"projects/{project_id}/taxonomy/categories")
     # Check for bad or empty response:
     if not response.ok or (response.text == "[]"):
