@@ -52,7 +52,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6
+          python-version: 3.7
       - name: Set requirements to minimum
         run: sed -i 's/>=/==/g' requirements.txt
       - name: Set optional_requirements to minimum
@@ -65,7 +65,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python_version: [3.6, 3.7, 3.8, 3.9]
+        python_version: [3.7, 3.8, 3.9]
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
@@ -85,7 +85,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6
+          python-version: 3.7
       - name: Install requirements
         run: |
           python -m pip install --upgrade pip==20.0.2
