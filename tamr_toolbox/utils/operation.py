@@ -198,7 +198,6 @@ def safe_estimate_counts(project) -> Operation:
         An operation object for the estimate pairs job
     """
     project = project.as_mastering()
-    response = project.client.post(
-        f"/api/versioned/v1/projects/{project.resource_id}/estimatedPairCounts:refresh"
-    )
+    response = project.client.post(f"{project.api_path}/estimatedPairCounts:refresh")
+
     return Operation.from_response(project.client, response).wait()
