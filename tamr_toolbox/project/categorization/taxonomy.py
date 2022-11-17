@@ -59,21 +59,32 @@ def delete_node(client: Client, project_id: str, path: list, force_delete: bool 
     target_cat_id = target_cat_full_id.split("/")[-1]
 
     # Check if there are any children nodes to the target node:
-    children_nodes = [cat for cat in all_cats if cat["parent"] == target_cat_full_id]
+    children_nodes = get_children_nodes(all_cats, target_cat_full_id)
+    all_children_ids = [cat["id"] for cat in children_nodes]
+    all_children_ids.append(target_cat_full_id)
 
     # Check if there are any records verified to the category to be deleted:
     verified_cats_response = client.get(f"projects/{project_id}/categorizations/labels/records")
     node_records = []
-    for line in verified_cats_response:
+    for line in verified_cats_response.iter_lines():
         record = json.loads(line)
-        if record["verified"]["category"]["categoryId"] == target_cat_full_id:
+        if record["verified"]["category"]["categoryId"] in all_children_ids:
             node_records.append(record)
 
     if len(node_records) == 0:
-        LOGGER.info(f"No records found for node {path}. Deleting node.")
-    if force_delete:
-        LOGGER.info(f"Force Delete is set to true. Deleting node {path}")
-
+        LOGGER.info(f"No records found for node {path} or any children nodes. Deleting node.")
+        client.delete(f"projects/{project_id}/taxonomy/categories/{target_cat_id}")
+    else:
+        LOGGER.info(f"There are verified records under node {path}. Deleting the node without "
+                    f"moving these records will result in loss of work. If you wish to proceed "
+                    f"set force_delete flag to True.")
+        if force_delete:
+            LOGGER.info(f"Force Delete is set to true. Deleting node {path}")
+            client.delete(f"projects/{project_id}/taxonomy/categories/{target_cat_id}")
+        else:
+            delete_node_error = f"Force delete is set to false. Exiting without deletion."
+            LOGGER.error(delete_node_error)
+            raise RuntimeError(delete_node_error)
     return
 
 
