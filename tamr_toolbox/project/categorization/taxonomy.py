@@ -7,7 +7,38 @@ import json
 
 LOGGER = logging.getLogger(__name__)
 
-def edit_taxonomy():
+
+def rename_node(client: Client, project_id: str, new_name: str, path: list):
+    """
+    Renames an existing node in the taxonomy.
+
+    Args:
+        client: Tamr client connected to target instance
+        project_id: ID of the categorization project
+        new_name: New name to assign to the leaf node
+        path: Full path of the existing leaf node to rename
+
+    Returns: None
+    """
+    body = {
+        "path": path,
+        "name": new_name
+    }
+    # Get all categories to extract category ID:
+    cat_response = client.get(f"projects/{project_id}/taxonomy/categories")
+    all_cats = json.loads(cat_response.content)
+    target_cat = [cat for cat in all_cats if cat["path"] == path][0]
+    target_cat_id = target_cat["id"].split("/")[-1]
+    LOGGER.info(f"Renaming category id {target_cat_id} in project {project_id} to {new_name}")
+    response = client.put(f"projects/{project_id}/taxonomy/categories/{target_cat_id}",
+                          json=body)
+    # Log an error if the operation failed:
+    if not response.ok:
+        content = json.loads(response.content)
+        rename_node_error = f"Renaming node {target_cat_id} failed with message " \
+                            f"{content['message']}"
+        LOGGER.error(rename_node_error)
+        raise RuntimeError(rename_node_error)
     return
 
 
@@ -20,8 +51,7 @@ def create_node(client: Client, project_id: str, path: list):
         project_id: ID of the categorization project
         path: Full path of the new category to be added
 
-    Returns:
-        None
+    Returns: None
     """
     body = {
         "name": path[-1],
@@ -29,6 +59,7 @@ def create_node(client: Client, project_id: str, path: list):
     }
     LOGGER.info(f"Creating new category {path[-1]} in project {project_id}")
     response = client.post(f"projects/{project_id}/taxonomy/categories", json=body)
+    # Log an error if the operation failed:
     if not response.ok:
         content = json.loads(response.content)
         create_node_error = f"Creating node {path[-1]} failed with message {content['message']}"
