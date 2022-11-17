@@ -8,6 +8,75 @@ import json
 LOGGER = logging.getLogger(__name__)
 
 
+def get_children_nodes(all_categories: list, target_node: str):
+    """
+    Gets all the children nodes for a given node ID from the full taxonomy
+
+    Args:
+        all_categories: List of all categories of the taxonomy returned by categories API
+        target_node: Full internal ID of target node to get children for
+
+    Returns: List of children nodes including non-leaf nodes under the given target node
+    """
+    first_pass_children = [cat for cat in all_categories if cat["parent"] == target_node]
+    if len(first_pass_children) == 0:
+        children_nodes = []
+    else:
+        children_nodes = first_pass_children
+        while True:
+            new_children_all = []
+            for node in first_pass_children:
+                new_children = [cat for cat in all_categories if cat["parent"] == node["id"]]
+                if len(new_children) > 0:
+                    children_nodes.extend(new_children)
+                    new_children_all.extend(new_children)
+            if len(new_children_all) == 0:
+                break
+            else:
+                first_pass_children = new_children_all
+
+    return children_nodes
+
+
+def delete_node(client: Client, project_id: str, path: list, force_delete: bool = False):
+    """
+    Deletes a node from a taxonomy.
+
+    Args:
+        client: Tamr client connected to target instance
+        project_id: ID of the categorization project
+        path: Full path of the node to be deleted
+        force_delete: Optional flag. Default is false. If true, deletes even if there are still
+        records assigned to that category. If false, the operation fails with an error.
+
+    Returns: None
+    """
+    # Get all categories to extract category ID:
+    cat_response = client.get(f"projects/{project_id}/taxonomy/categories")
+    all_cats = json.loads(cat_response.content)
+    target_cat = [cat for cat in all_cats if cat["path"] == path][0]
+    target_cat_full_id = target_cat["id"]
+    target_cat_id = target_cat_full_id.split("/")[-1]
+
+    # Check if there are any children nodes to the target node:
+    children_nodes = [cat for cat in all_cats if cat["parent"] == target_cat_full_id]
+
+    # Check if there are any records verified to the category to be deleted:
+    verified_cats_response = client.get(f"projects/{project_id}/categorizations/labels/records")
+    node_records = []
+    for line in verified_cats_response:
+        record = json.loads(line)
+        if record["verified"]["category"]["categoryId"] == target_cat_full_id:
+            node_records.append(record)
+
+    if len(node_records) == 0:
+        LOGGER.info(f"No records found for node {path}. Deleting node.")
+    if force_delete:
+        LOGGER.info(f"Force Delete is set to true. Deleting node {path}")
+
+    return
+
+
 def rename_node(client: Client, project_id: str, new_name: str, path: list):
     """
     Renames an existing node in the taxonomy.
