@@ -80,9 +80,11 @@ def delete_node(client: Client, project_id: str, path: list, force_delete: bool 
         LOGGER.info(f"No records found for node {path} or any children nodes. Deleting node.")
         client.delete(f"projects/{project_id}/taxonomy/categories/{target_cat_id}")
     else:
-        LOGGER.info(f"There are verified records under node {path}. Deleting the node without "
-                    f"moving these records will result in loss of work. If you wish to proceed "
-                    f"set force_delete flag to True.")
+        LOGGER.info(
+            f"There are verified records under node {path}. Deleting the node without "
+            f"moving these records will result in loss of work. If you wish to proceed "
+            f"set force_delete flag to True."
+        )
         if force_delete:
             LOGGER.info(f"Force Delete is set to true. Deleting node {path}")
             client.delete(f"projects/{project_id}/taxonomy/categories/{target_cat_id}")
@@ -105,23 +107,20 @@ def rename_node(client: Client, project_id: str, new_name: str, path: list):
 
     Returns: None
     """
-    body = {
-        "path": path,
-        "name": new_name
-    }
+    body = {"path": path, "name": new_name}
     # Get all categories to extract category ID:
     cat_response = client.get(f"projects/{project_id}/taxonomy/categories")
     all_cats = json.loads(cat_response.content)
     target_cat = [cat for cat in all_cats if cat["path"] == path][0]
     target_cat_id = target_cat["id"].split("/")[-1]
     LOGGER.info(f"Renaming category id {target_cat_id} in project {project_id} to {new_name}")
-    response = client.put(f"projects/{project_id}/taxonomy/categories/{target_cat_id}",
-                          json=body)
+    response = client.put(f"projects/{project_id}/taxonomy/categories/{target_cat_id}", json=body)
     # Log an error if the operation failed:
     if not response.ok:
         content = json.loads(response.content)
-        rename_node_error = f"Renaming node {target_cat_id} failed with message " \
-                            f"{content['message']}"
+        rename_node_error = (
+            f"Renaming node {target_cat_id} failed with message " f"{content['message']}"
+        )
         LOGGER.error(rename_node_error)
         raise RuntimeError(rename_node_error)
     return
@@ -138,10 +137,7 @@ def create_node(client: Client, project_id: str, path: list):
 
     Returns: None
     """
-    body = {
-        "name": path[-1],
-        "path": path
-    }
+    body = {"name": path[-1], "path": path}
     LOGGER.info(f"Creating new category {path[-1]} in project {project_id}")
     response = client.post(f"projects/{project_id}/taxonomy/categories", json=body)
     # Log an error if the operation failed:
@@ -224,11 +220,16 @@ def _batch(iterable, n=500):
     """
     total_len = len(iterable)
     for ndx in range(0, total_len, n):
-        yield iterable[ndx: min(ndx + n, total_len)]
+        yield iterable[ndx : min(ndx + n, total_len)]
 
 
-def move_node(client: Client, project_id: str, old_node_path: list, new_node_path: list,
-              move_verifications: bool = True):
+def move_node(
+    client: Client,
+    project_id: str,
+    old_node_path: list,
+    new_node_path: list,
+    move_verifications: bool = True,
+):
     """
     Function to move a node in a taxonomy to a new path. By default, the function will also move
     any verified categorizations under the old node to the new paths.
@@ -266,15 +267,19 @@ def move_node(client: Client, project_id: str, old_node_path: list, new_node_pat
         payload = []
         # First get all the verified records:
         verified_cats_response = client.get(
-            f"projects/{project_id}/categorizations/labels/records")
+            f"projects/{project_id}/categorizations/labels/records"
+        )
         all_records = []
         for line in verified_cats_response.iter_lines():
             all_records.append(json.loads(line))
 
         # Next, for each node, check if there are any verified responses:
         for i in range(len(paths_to_move)):
-            sub_records = [record for record in all_records
-                           if record["verified"]["category"]["path"] == paths_to_move[i]]
+            sub_records = [
+                record
+                for record in all_records
+                if record["verified"]["category"]["path"] == paths_to_move[i]
+            ]
             if len(sub_records) == 0:
                 continue
             else:
@@ -286,8 +291,10 @@ def move_node(client: Client, project_id: str, old_node_path: list, new_node_pat
         # Post verified records in batches:
         LOGGER.info(f"Moving verified records from {old_node_path} to {new_node_path}")
         for batch in _batch(payload):
-            client.post(f"projects/{project_id}/categorizations/labels:updateRecords",
-                        data=(row for row in batch))
+            client.post(
+                f"projects/{project_id}/categorizations/labels:updateRecords",
+                data=(row for row in batch),
+            )
 
     # Finally, delete the original node with force delete since all verifications would either have
     # been moved or were unwanted anyway (all children will also be deleted):
