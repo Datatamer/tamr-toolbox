@@ -4,11 +4,12 @@ import logging
 from tamr_unify_client import Client
 import pandas as pd
 import json
+import copy
 
 LOGGER = logging.getLogger(__name__)
 
 
-def get_children_nodes(all_categories: list, target_node: str):
+def _get_children_nodes(all_categories: list, target_node: str):
     """
     Gets all the children nodes for a given node ID from the full taxonomy
 
@@ -20,9 +21,11 @@ def get_children_nodes(all_categories: list, target_node: str):
     """
     first_pass_children = [cat for cat in all_categories if cat["parent"] == target_node]
     if len(first_pass_children) == 0:
+        # Node is a leaf node:
         children_nodes = []
     else:
         children_nodes = first_pass_children
+        # Iterate to get children at subsequent tiers:
         while True:
             new_children_all = []
             for node in first_pass_children:
@@ -31,8 +34,10 @@ def get_children_nodes(all_categories: list, target_node: str):
                     children_nodes.extend(new_children)
                     new_children_all.extend(new_children)
             if len(new_children_all) == 0:
+                # No deeper tiers found.
                 break
             else:
+                # Look for deeper tiers among the nodes found in the last iteration:
                 first_pass_children = new_children_all
 
     return children_nodes
@@ -59,7 +64,7 @@ def delete_node(client: Client, project_id: str, path: list, force_delete: bool 
     target_cat_id = target_cat_full_id.split("/")[-1]
 
     # Check if there are any children nodes to the target node:
-    children_nodes = get_children_nodes(all_cats, target_cat_full_id)
+    children_nodes = _get_children_nodes(all_cats, target_cat_full_id)
     all_children_ids = [cat["id"] for cat in children_nodes]
     all_children_ids.append(target_cat_full_id)
 
@@ -192,3 +197,101 @@ def get_taxonomy_as_dataframe(client: Client, project_id: str) -> pd.DataFrame:
             taxonomy_dict[tier_name].append(node_name)
 
     return pd.DataFrame(taxonomy_dict)
+
+
+def _create_action(record_id: str, category_path: list):
+    """
+    Internal function to create the actions to POST to the updateRecords API.
+
+    Args:
+        record_id: The ID of the record to be labeled.
+        category_path: The path of the category to assign to the record.
+
+    Returns: Action in correct format.
+    """
+    action = {
+        "action": "CREATE",
+        "recordId": record_id,
+        "record": {"verified": {"category": {"path": category_path}}},
+    }
+    json_row = json.dumps(action).encode("utf-8")
+    return json_row
+
+
+def _batch(iterable, n=500):
+    """
+    Internal function to batch payload to POST categorizations API
+    """
+    total_len = len(iterable)
+    for ndx in range(0, total_len, n):
+        yield iterable[ndx: min(ndx + n, total_len)]
+
+
+def move_node(client: Client, project_id: str, old_node_path: list, new_node_path: list,
+              move_verifications: bool = True):
+    """
+    Function to move a node in a taxonomy to a new path. By default, the function will also move
+    any verified categorizations under the old node to the new paths.
+
+    Args:
+        client: Tamr client connected to the target instance.
+        project_id: Project ID of categorization project.
+        old_node_path: List of the full path for the node to be moved.
+        new_node_path: List of the full path for where the node is to be moved to. Note that the
+        last element in the list should match the name of the node itself.
+        move_verifications: Optional boolean argument to move verifications to the new path.
+        Setting to false may result in loss of work.
+
+    Returns: None
+    """
+    # First we need to get all the paths of nodes to be moved:
+    taxonomy_df = get_taxonomy_as_dataframe(client, project_id)
+    all_paths = taxonomy_df.agg(lambda x: list(x.dropna()), axis=1).tolist()
+    paths_to_move = [path for path in all_paths if all(x in path for x in old_node_path)]
+    paths_to_move.sort()
+
+    # Now we need to generate the new paths:
+    new_paths = copy.deepcopy(paths_to_move)
+    length_to_replace = len(old_node_path)
+    for path in new_paths:
+        path[:length_to_replace] = new_node_path
+
+    # Next we want to create all the new paths. This operation is safe if the paths exist:
+    for path in new_paths:
+        LOGGER.info("Creating the new nodes")
+        create_node(client, project_id, path)
+
+    # Then, we want to move any existing verifications from the old to new paths:
+    if move_verifications:
+        payload = []
+        # First get all the verified records:
+        verified_cats_response = client.get(
+            f"projects/{project_id}/categorizations/labels/records")
+        all_records = []
+        for line in verified_cats_response.iter_lines():
+            all_records.append(json.loads(line))
+
+        # Next, for each node, check if there are any verified responses:
+        for i in range(len(paths_to_move)):
+            sub_records = [record for record in all_records
+                           if record["verified"]["category"]["path"] == paths_to_move[i]]
+            if len(sub_records) == 0:
+                continue
+            else:
+                # If there are records, create actions to move them:
+                for record in sub_records:
+                    action = _create_action(record["recordId"], new_paths[i])
+                    payload.append(action)
+
+        # Post verified records in batches:
+        LOGGER.info(f"Moving verified records from {old_node_path} to {new_node_path}")
+        for batch in _batch(payload):
+            response = client.post(f"projects/{project_id}/categorizations/labels:updateRecords",
+                                   data=(row for row in batch))
+
+    # Finally, delete the original node with force delete since all verifications would either have
+    # been moved or were unwanted anyway (all children will also be deleted):
+    delete_node(client, project_id, old_node_path, force_delete=True)
+    LOGGER.info(f"Successfully moved {old_node_path} to {new_node_path}")
+
+    return
