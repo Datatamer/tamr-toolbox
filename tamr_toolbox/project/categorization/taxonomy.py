@@ -87,7 +87,7 @@ def delete_node(client: Client, project_id: str, path: list, force_delete: bool 
             LOGGER.info(f"Force Delete is set to true. Deleting node {path}")
             client.delete(f"projects/{project_id}/taxonomy/categories/{target_cat_id}")
         else:
-            delete_node_error = f"Force delete is set to false. Exiting without deletion."
+            delete_node_error = "Force delete is set to false. Exiting without deletion."
             LOGGER.error(delete_node_error)
             raise RuntimeError(delete_node_error)
     return
@@ -286,8 +286,8 @@ def move_node(client: Client, project_id: str, old_node_path: list, new_node_pat
         # Post verified records in batches:
         LOGGER.info(f"Moving verified records from {old_node_path} to {new_node_path}")
         for batch in _batch(payload):
-            response = client.post(f"projects/{project_id}/categorizations/labels:updateRecords",
-                                   data=(row for row in batch))
+            client.post(f"projects/{project_id}/categorizations/labels:updateRecords",
+                        data=(row for row in batch))
 
     # Finally, delete the original node with force delete since all verifications would either have
     # been moved or were unwanted anyway (all children will also be deleted):
