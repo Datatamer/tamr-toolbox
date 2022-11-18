@@ -42,7 +42,7 @@ Bootstrap a Categorization Model
 Obtain Average Confidence for a Specific Tier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/project/categorization/get_tier_confidence.py
-    :language: python
+  :language: python
 
 Mastering
 ------------------------------------------------------------------------
