@@ -1,8 +1,6 @@
 """Example script for running a Tamr Categorization project without model training"""
 import argparse
-from typing import List, Dict, Any
-
-from tamr_unify_client.operation import Operation
+from typing import Dict, Any
 
 import tamr_toolbox as tbox
 
