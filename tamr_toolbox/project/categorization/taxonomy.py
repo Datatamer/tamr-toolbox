@@ -73,8 +73,9 @@ def delete_node(client: Client, project_id: str, path: list, force_delete: bool 
     node_records = []
     for line in verified_cats_response.iter_lines():
         record = json.loads(line)
-        if record["verified"]["category"]["categoryId"] in all_children_ids:
-            node_records.append(record)
+        if "verified" in record:
+            if record["verified"]["category"]["categoryId"] in all_children_ids:
+                node_records.append(record)
 
     if len(node_records) == 0:
         LOGGER.info(f"No records found for node {path} or any children nodes. Deleting node.")
@@ -272,28 +273,32 @@ def move_node(
         for line in verified_cats_response.iter_lines():
             all_records.append(json.loads(line))
 
-        # Next, for each node, check if there are any verified responses:
-        for i in range(len(paths_to_move)):
-            sub_records = [
-                record
-                for record in all_records
-                if record["verified"]["category"]["path"] == paths_to_move[i]
-            ]
-            if len(sub_records) == 0:
-                continue
-            else:
-                # If there are records, create actions to move them:
-                for record in sub_records:
-                    action = _create_action(record["recordId"], new_paths[i])
-                    payload.append(action)
+        # Check if there are any verified responses in the stream:
+        verified_recs = [record for record in all_records if "verified" in record]
 
-        # Post verified records in batches:
-        LOGGER.info(f"Moving verified records from {old_node_path} to {new_node_path}")
-        for batch in _batch(payload):
-            client.post(
-                f"projects/{project_id}/categorizations/labels:updateRecords",
-                data=(row for row in batch),
-            )
+        # Next, for each node, check if there are any verified responses:
+        if len(verified_recs) > 0:
+            for i in range(len(paths_to_move)):
+                sub_records = [
+                    record
+                    for record in all_records
+                    if record["verified"]["category"]["path"] == paths_to_move[i]
+                ]
+                if len(sub_records) == 0:
+                    continue
+                else:
+                    # If there are records, create actions to move them:
+                    for record in sub_records:
+                        action = _create_action(record["recordId"], new_paths[i])
+                        payload.append(action)
+
+            # Post verified records in batches:
+            LOGGER.info(f"Moving verified records from {old_node_path} to {new_node_path}")
+            for batch in _batch(payload):
+                client.post(
+                    f"projects/{project_id}/categorizations/labels:updateRecords",
+                    data=(row for row in batch),
+                )
 
     # Finally, delete the original node (all children will also be deleted):
     delete_node(client, project_id, old_node_path)
