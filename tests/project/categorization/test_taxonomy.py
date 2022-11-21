@@ -1,5 +1,4 @@
 """Tests for tasks related to running jobs for Tamr Categorization projects"""
-import pytest
 
 from tamr_toolbox.project import categorization
 from tamr_toolbox import utils
