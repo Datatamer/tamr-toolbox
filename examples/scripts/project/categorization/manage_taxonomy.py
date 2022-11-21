@@ -1,4 +1,33 @@
-"""Example script for running a Tamr Categorization project without model training"""
+"""
+This script provides an example of how to make changes to the taxonomy of a categorization project
+without losing the verified categories already provided. Suppose we had the following taxonomy:
+
+root
+└── Animal & Pet Supplies
+    ├── Cat Supplies
+    ├── Crocodile Supplies
+    └── Dog Supplies
+
+And we wished to edit this taxonomy to the following instead:
+
+root
+└── Supplies
+    ├── Animal Supplies
+    │   └── Crocodile Supplies
+    └── Pet Supplies
+        ├── Cat Supplies
+        └── Dog Supplies
+
+This example makes the changes by doing the following in order:
+1. Creating a new node "Supplies".
+2. Moving node "Animal & Pet Supplies" to the node "Supplies -> Pet Supplies"
+3. Creating a new node "Supplies -> Animal Supplies"
+3. Moving "Supplies -> Pet Supplies -> Crocodile Supplies" to "Supplies -> Animal Supplies ->
+Crocodile Supplies"
+
+For larger scale changes, the required paths can also be provided programmatically.
+
+"""
 import argparse
 from typing import Dict, Any
 
@@ -20,36 +49,32 @@ def main(*, instance_connection_info: Dict[str, Any], categorization_project_id:
     # Create the tamr client
     tamr_client = tbox.utils.client.create(**instance_connection_info)
 
-    # Retrieve the taxonomy of the project as a dataframe
-    taxonomy_df = tbox.project.categorization.taxonomy.get_taxonomy_as_dataframe(
-        tamr_client, categorization_project_id
-    )
-    all_paths = taxonomy_df.agg(lambda x: list(x.dropna()), axis=1).tolist()
-
-    # Create a new node "Test Node" under the first path:
-    new_path = all_paths[0].append("Test Node")
+    # Create a new node "Supplies":
+    new_path = ["Supplies"]
     LOGGER.info(f"Creating new node {new_path}")
     tbox.project.categorization.taxonomy.create_node(
         tamr_client, categorization_project_id, new_path
     )
 
-    # Rename the newly created node to "Renamed Test Node":
-    new_name = "Renamed Test Node"
-    LOGGER.info(f"Renaming node {new_path} to {new_name}")
-    tbox.project.categorization.taxonomy.rename_node(
-        tamr_client, categorization_project_id, new_name, new_path
+    # Move node "Animal & Pet Supplies" to the node "Supplies -> Pet Supplies":
+    old_path = ["Animal & Pet Supplies"]
+    new_path = ["Supplies", "Pet Supplies"]
+    LOGGER.info(f"Moving node {old_path} to {new_path}")
+    tbox.project.categorization.taxonomy.move_node(
+        tamr_client, categorization_project_id, old_path, new_path
     )
 
-    # Delete the last node in the taxonomy:
-    delete_path = all_paths[-1]
-    LOGGER.info(f"Deleting node {delete_path} from the taxonomy")
-    tbox.project.categorization.taxonomy.delete_node(
-        tamr_client, categorization_project_id, delete_path
+    # Create a new node "Supplies -> Animal Supplies"
+    new_path = ["Supplies", "Animal Supplies"]
+    LOGGER.info(f"Creating node {new_path}")
+    tbox.project.categorization.taxonomy.create_node(
+        tamr_client, categorization_project_id, new_path
     )
 
-    # Move the new current last node to be under the newly created "Renamed Test Node":
-    new_path = all_paths[0].append(new_name)
-    node_to_move = all_paths[-1]
+    # Move "Supplies -> Pet Supplies -> Crocodile Supplies" to "Supplies -> Animal Supplies ->
+    # Crocodile Supplies":
+    new_path = ["Supplies", "Animal Supplies", "Crocodile Supplies"]
+    node_to_move = ["Supplies", "Pet Supplies", "Crocodile Supplies"]
     LOGGER.info(f"Moving node {node_to_move} to be under {new_path}")
     tbox.project.categorization.taxonomy.move_node(
         tamr_client, categorization_project_id, node_to_move, new_path

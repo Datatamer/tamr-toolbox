@@ -238,8 +238,7 @@ def move_node(
         client: Tamr client connected to the target instance.
         project_id: Project ID of categorization project.
         old_node_path: List of the full path for the node to be moved.
-        new_node_path: List of the full path for where the node is to be moved to. Note that the
-        last element in the list should match the name of the node itself.
+        new_node_path: List of the full path for where the node is to be moved to.
         move_verifications: Optional boolean argument to move verifications to the new path.
         Setting to false may result in loss of work.
 
@@ -296,9 +295,8 @@ def move_node(
                 data=(row for row in batch),
             )
 
-    # Finally, delete the original node with force delete since all verifications would either have
-    # been moved or were unwanted anyway (all children will also be deleted):
-    delete_node(client, project_id, old_node_path, force_delete=True)
+    # Finally, delete the original node (all children will also be deleted):
+    delete_node(client, project_id, old_node_path)
     LOGGER.info(f"Successfully moved {old_node_path} to {new_node_path}")
 
     return
