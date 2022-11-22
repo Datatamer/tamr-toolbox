@@ -157,7 +157,7 @@ def create_node(client: Client, project_id: str, path: list):
     return
 
 
-def get_taxonomy_as_dataframe(client: Client, project_id: str) -> pd.DataFrame:
+def get_taxonomy_as_dataframe(client: Client, project_id: str) -> "pd.DataFrame":
     """
     Returns the taxonomy for a project given the project ID.
 
