@@ -1,12 +1,19 @@
 """Tasks related to editing the taxonomy for a tamr categorization project"""
 import logging
+import os
 
 from tamr_unify_client import Client
-import pandas as pd
 import json
 import copy
 
 LOGGER = logging.getLogger(__name__)
+
+# Building our documentation requires access to all dependencies, including optional ones
+# This environments variable is set automatically when `invoke docs` is used
+BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
+if BUILDING_DOCS:
+    # Import relevant optional dependencies
+    import pandas as pd
 
 
 def _get_children_nodes(all_categories: list, target_node: str):
@@ -164,6 +171,9 @@ def get_taxonomy_as_dataframe(client: Client, project_id: str) -> pd.DataFrame:
     Raises:
         RuntimeError: if project is not a categorization project or if the taxonomy does not exist
     """
+    # This function requires pandas, an optional dependency
+    import pandas as pd
+
     LOGGER.info(f"Retrieving taxonomy for project ID {project_id}")
     response = client.get(f"projects/{project_id}/taxonomy/categories")
     # Check for bad or empty response:
