@@ -1,4 +1,4 @@
-"""Tests for tasks related to running jobs for Tamr Categorization projects"""
+"""Tests for tasks related to managing the taxonomy for Tamr Categorization projects"""
 
 from tamr_toolbox.project import categorization
 from tamr_toolbox import utils
@@ -64,6 +64,9 @@ def test_move_node():
 
     assert len(target_cat) == 1
     assert target_cat[0]["path"] == new_path
+
+    old_cat = [cat for cat in all_cats if cat["path"] == node_path]
+    assert len(old_cat) == 0
 
 
 @mock_api()
