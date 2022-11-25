@@ -6,6 +6,7 @@ import yaml
 
 LOGGER = logging.getLogger(__name__)
 
+
 def create_redirect_dict(
     *,
     button_id: str,
