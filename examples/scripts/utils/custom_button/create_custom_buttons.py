@@ -2,8 +2,6 @@
 Example script for creating and saving custom button yaml files
 """
 import tamr_toolbox as tbox
-from requests.exceptions import HTTPError
-from typing import Dict, Any
 import argparse
 
 
