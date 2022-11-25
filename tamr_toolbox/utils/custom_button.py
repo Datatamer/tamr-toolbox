@@ -19,7 +19,7 @@ def create_redirect_dict(
     a 'REDIRECT' UI button
 
     Args:
-        button_id: A short identifier for the button to use in the 
+        button_id: A short identifier for the button to use in the
                    body of a POST call or a redirect URL path substitution.
         button_text: The button label to display in the UI.
         page_names: The pages of the UI on which to display the button.
@@ -56,7 +56,7 @@ def create_post_dict(
     a 'POST' UI button
 
     Args:
-        button_id: A short identifier for the button to use in the 
+        button_id: A short identifier for the button to use in the
                    body of a POST call or a redirect URL path substitution.
         button_text: The button label to display in the UI.
         page_names: The pages of the UI on which to display the button.
