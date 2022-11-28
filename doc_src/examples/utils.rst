@@ -89,3 +89,11 @@ How to get a list of datasets and projects downstream from a specified dataset
   :language: yaml
 .. literalinclude:: ../../examples/scripts/utils/downstream/cleanup_downstream_resources.py
   :language: python
+
+
+Custom UI Buttons
+-----------------------------------
+How to create custom UI button yaml files.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/scripts/utils/custom_button/create_custom_buttons.py
+  :language: python
