@@ -7,9 +7,10 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+
 def main(output_dir):
 
-    LOGGER.info('Creating button yaml files...')
+    LOGGER.info("Creating button yaml files...")
     tbox.utils.custom_button.create_redirect_button(
         button_id="redirect_button_1",
         button_text="Google",
@@ -17,7 +18,7 @@ def main(output_dir):
         redirect_url="https://www.google.com",
         open_in_new_tab=True,
         output_dir=output_dir,
-        button_name='redirect_button_1'
+        button_name="redirect_button_1",
     )
 
     tbox.utils.custom_button.create_redirect_button(
@@ -27,7 +28,7 @@ def main(output_dir):
         redirect_url="https://www.yahoo.com",
         open_in_new_tab=True,
         output_dir=output_dir,
-        button_name='redirect_button_2'
+        button_name="redirect_button_2",
     )
 
     tbox.utils.custom_button.create_post_button(
@@ -40,24 +41,20 @@ def main(output_dir):
         fail_message="Project export failed",
         display_response=True,
         output_dir=output_dir,
-        button_name='post_button_1'
+        button_name="post_button_1",
     )
 
     # Register a button individually
-    LOGGER.info(f'Registering individual button')
+    LOGGER.info(f"Registering individual button")
     tbox.utils.custom_button.register_button(
-        button='/home/ubuntu/tamr/redirect_button_1.yaml',
-        tamr_install_dir='/home/ubuntu'
+        button="/home/ubuntu/tamr/redirect_button_1.yaml", tamr_install_dir="/home/ubuntu"
     )
 
-
     # Group multiple buttons into an extension yaml & register it
-    button_list = [f'{output_dir}/redirect_button_2.yaml', f'{output_dir}/post_button_1.yaml']
-    LOGGER.info('Registering extension')
+    button_list = [f"{output_dir}/redirect_button_2.yaml", f"{output_dir}/post_button_1.yaml"]
+    LOGGER.info("Registering extension")
     tbox.utils.custom_button.create_button_extension(
-        extension_name="extension_1",
-        buttons=button_list,
-        output_dir=output_dir
+        extension_name="extension_1", buttons=button_list, output_dir=output_dir
     )
 
 

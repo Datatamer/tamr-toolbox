@@ -18,8 +18,8 @@ def create_redirect_button(
     redirect_url: str,
     open_in_new_tab: bool,
     output_dir: str,
-    button_name: str
-    ) -> dict:
+    button_name: str,
+) -> dict:
     """Create yaml file with all required attributes for
     a 'REDIRECT' UI button
 
@@ -37,8 +37,8 @@ def create_redirect_button(
     """
 
     # Minor url validation
-    if not redirect_url.startswith(('http://', 'https://')):
-        value_error_message = (f"Invalid url. Must begin with http:// or https://")
+    if not redirect_url.startswith(("http://", "https://")):
+        value_error_message = f"Invalid url. Must begin with http:// or https://"
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
 
@@ -54,10 +54,9 @@ def create_redirect_button(
     file = f"{button_name}.yaml"
     filepath = os.path.join(output_dir, file)
 
-    LOGGER.info(f'Saving {file} to {output_dir}')
+    LOGGER.info(f"Saving {file} to {output_dir}")
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(button_dict, yaml_file, sort_keys=False)
-
 
 
 def create_post_button(
@@ -72,7 +71,7 @@ def create_post_button(
     display_response: bool,
     output_dir: str,
     button_name: str,
-    ) -> dict:
+) -> dict:
     """Create yaml file with all required attributes for
     a 'POST' UI button
 
@@ -93,8 +92,8 @@ def create_post_button(
         Dictionary with required attribute names for a POST button
     """
     # Minor url validation
-    if not post_url.startswith(('http://', 'https://')):
-        value_error_message = (f"Invalid url. Must begin with http:// or https://")
+    if not post_url.startswith(("http://", "https://")):
+        value_error_message = f"Invalid url. Must begin with http:// or https://"
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
 
@@ -117,7 +116,6 @@ def create_post_button(
         yaml.dump(button_dict, yaml_file, sort_keys=False)
 
 
-
 def register_buttons(
     *,
     buttons: List[str],
@@ -125,7 +123,7 @@ def register_buttons(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
-    ):
+):
     """Registers a list of buttons in a Tamr instance.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
@@ -147,8 +145,10 @@ def register_buttons(
 
     for button in buttons:
         # Run the register command
-        command = (f"{tamr_install_dir}/tamr/utils/unify-admin.sh ui:config --extensionConfig {button}")
-        
+        command = (
+            f"{tamr_install_dir}/tamr/utils/unify-admin.sh ui:config --extensionConfig {button}"
+        )
+
         LOGGER.info(f"Registering {button}")
         _run_command(
             command=command,
@@ -159,7 +159,6 @@ def register_buttons(
         )
 
 
-
 def register_button(
     *,
     button: str,
@@ -167,7 +166,7 @@ def register_button(
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
-    ):
+):
     """Registers a button in a Tamr instance.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
@@ -192,7 +191,7 @@ def register_button(
         tamr_install_dir=tamr_install_dir,
         remote_client=remote_client,
         impersonation_username=impersonation_username,
-        impersonation_password=impersonation_password
+        impersonation_password=impersonation_password,
     )
 
 
