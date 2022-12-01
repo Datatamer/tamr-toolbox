@@ -1,6 +1,7 @@
 """Tests for tasks related to loading and using csutom button yaml files"""
 import pytest
-from tamr_toolbox.utils.custom_button import create_redirect_button, create_post_button, delete_buttons
+from tamr_toolbox.utils.custom_button import create_redirect_button, \
+    create_post_button, delete_buttons
 from tests._common import get_toolbox_root_dir
 
 

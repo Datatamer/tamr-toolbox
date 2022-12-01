@@ -221,6 +221,56 @@ def create_button_extension(*, extension_name: str, buttons: List[str], output_d
         yaml.dump(output_dict, yaml_file, sort_keys=False)
 
 
+def create_button_extension_from_list(*, extension_name: str, output_dir: str, buttons: List[dict]) -> str:
+    """Given a list of button dictionaries, save it as a grouped extension yaml file
+
+    Args:
+        extension_name: Name of button extension to save
+        output_dir: directory in which to save yaml extension file
+        buttons: List of button dictionaries. Either redirect or post.
+        Format examples:
+        ---
+        redirect:
+        {
+            "buttonType": "redirectButton",
+            "buttonId": button_id,
+            "buttonText": button_text,
+            "pageNames": page_names,
+            "redirectUrl": redirect_url,
+            "openInNewTab": open_in_new_tab
+        }
+        --- 
+        post:    
+        {
+            "buttonType": "postButton",
+            "buttonId": button_id,
+            "buttonText": button_text,
+            "pageNames": page_names,
+            "postUrl": post_url,
+            "postBodyKeys": post_body_keys,
+            "successMessage": success_message,
+            "failMessage": fail_message,
+            "displayResponse": display_response
+        }
+        ---
+
+    Returns:
+        Path to yaml file created
+    """
+    extension_dict = {
+        'extensionName': extension_name,
+        'buttons': buttons
+    }
+
+    file = f"{extension_name}.yaml"
+    filepath = os.path.join(output_dir, file)
+
+    output_dict = {"extensionName": extension_name, "buttons": extension_dict}
+
+    with open(f"{filepath}", "w") as yaml_file:
+        yaml.dump(output_dict, yaml_file, sort_keys=False)
+
+
 def register_buttons(
     *,
     buttons: List[str],
@@ -324,7 +374,8 @@ def delete_buttons(*, button_files: List[str], tamr_install_dir: str):
     path_list = button_files + [button_dir]
 
     if os.path.commonpath(path_list) != button_dir:
-        value_error_message = f"All button files provided must belong to {button_dir} otherwise deletion will not register."
+        value_error_message = f"All button files provided must belong to {button_dir} \
+             otherwise deletion will not register."
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
 
