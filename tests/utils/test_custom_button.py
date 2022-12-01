@@ -1,8 +1,6 @@
 """Tests for tasks related to loading and using configuration files"""
-import os
-from pathlib import Path
 import pytest
-from tamr_toolbox.utils.custom_button import *
+from tamr_toolbox.utils.custom_button import create_redirect_button, create_post_button
 from tests._common import get_toolbox_root_dir
 
 
