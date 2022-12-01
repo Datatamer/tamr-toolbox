@@ -10,7 +10,7 @@ from tamr_toolbox.sysadmin.instance import _run_command
 LOGGER = logging.getLogger(__name__)
 
 
-def _check_valid_page_name(pagename: str):
+def _check_valid_page_name(*, pagename: str):
     """Checks that pagename provided is a valid Tamr button page name
     Args:
         pagename: Name of page provided
