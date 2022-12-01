@@ -221,7 +221,9 @@ def create_button_extension(*, extension_name: str, buttons: List[str], output_d
         yaml.dump(output_dict, yaml_file, sort_keys=False)
 
 
-def create_button_extension_from_list(*, extension_name: str, output_dir: str, buttons: List[dict]) -> str:
+def create_button_extension_from_list(
+    *, extension_name: str, output_dir: str, buttons: List[dict]
+) -> str:
     """Given a list of button dictionaries, save it as a grouped extension yaml file
 
     Args:
@@ -239,8 +241,8 @@ def create_button_extension_from_list(*, extension_name: str, output_dir: str, b
             "redirectUrl": redirect_url,
             "openInNewTab": open_in_new_tab
         }
-        --- 
-        post:    
+        ---
+        post:
         {
             "buttonType": "postButton",
             "buttonId": button_id,
@@ -257,10 +259,7 @@ def create_button_extension_from_list(*, extension_name: str, output_dir: str, b
     Returns:
         Path to yaml file created
     """
-    extension_dict = {
-        'extensionName': extension_name,
-        'buttons': buttons
-    }
+    extension_dict = {"extensionName": extension_name, "buttons": buttons}
 
     file = f"{extension_name}.yaml"
     filepath = os.path.join(output_dir, file)

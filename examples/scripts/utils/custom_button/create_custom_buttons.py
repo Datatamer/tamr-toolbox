@@ -50,9 +50,7 @@ def main(output_dir):
 
     # Register a button individually
     LOGGER.info(f"Registering individual button")
-    tbox.utils.custom_button.register_button(
-        button=button_1, tamr_install_dir="/home/ubuntu"
-    )
+    tbox.utils.custom_button.register_button(button=button_1, tamr_install_dir="/home/ubuntu")
 
     # Group multiple buttons into a new extension yaml file & register it
     button_list = [button_2, button_3]
@@ -62,9 +60,7 @@ def main(output_dir):
         extension_name="extension_1", buttons=button_list, output_dir=output_dir
     )
 
-    tbox.utils.custom_button.register_button(
-        button=extension_1, tamr_install_dir="/home/ubuntu"
-    )
+    tbox.utils.custom_button.register_button(button=extension_1, tamr_install_dir="/home/ubuntu")
 
 
 if __name__ == "__main__":

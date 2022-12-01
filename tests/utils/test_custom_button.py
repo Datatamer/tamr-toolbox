@@ -1,7 +1,10 @@
 """Tests for tasks related to loading and using csutom button yaml files"""
 import pytest
-from tamr_toolbox.utils.custom_button import create_redirect_button, \
-    create_post_button, delete_buttons
+from tamr_toolbox.utils.custom_button import (
+    create_redirect_button,
+    create_post_button,
+    delete_buttons,
+)
 from tests._common import get_toolbox_root_dir
 
 
@@ -11,7 +14,7 @@ def test_create_redirect_button_with_invalid_url():
     # Expect failure when incorrectly formatted url provided
     with pytest.raises(ValueError):
         create_redirect_button(
-            extension_name='extension_1',
+            extension_name="extension_1",
             button_id="redirect_button_1",
             button_text="Google",
             page_names=["Schema Mapping:Dashboard", "Mastering:Dashboard"],
@@ -28,7 +31,7 @@ def test_create_post_button_with_invalid_pagenames():
     # Expect failure when page name(s) provided are invalid
     with pytest.raises(ValueError):
         create_post_button(
-            extension_name='extension_2',
+            extension_name="extension_2",
             button_id="post_button_1",
             button_text="Export Project",
             page_names=["Schema Mapping:Clusters", "Home", "Random Page Name"],
@@ -44,9 +47,6 @@ def test_create_post_button_with_invalid_pagenames():
 
 def test_delete_button_incorrect_path():
 
-    incorrect_button_files = ['/path/to/random_button.yaml']
+    incorrect_button_files = ["/path/to/random_button.yaml"]
     with pytest.raises(FileNotFoundError):
-        delete_buttons(
-            button_files=incorrect_button_files,
-            tamr_install_dir='/home/ubuntu'
-        )
+        delete_buttons(button_files=incorrect_button_files, tamr_install_dir="/home/ubuntu")
