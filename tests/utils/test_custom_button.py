@@ -4,7 +4,7 @@ from tamr_toolbox.utils.custom_button import create_redirect_button, create_post
 from tests._common import get_toolbox_root_dir
 
 
-def test_create_redirect_with_invalid_url():
+def test_create_redirect_button_with_invalid_url():
 
     output_directory = get_toolbox_root_dir()
     # Expect failure when incorrectly formatted url provided
@@ -20,7 +20,7 @@ def test_create_redirect_with_invalid_url():
         )
 
 
-def test_create_post_with_invalid_pagenames():
+def test_create_post_button_with_invalid_pagenames():
 
     output_directory = get_toolbox_root_dir()
     # Expect failure when page name(s) provided are invalid
