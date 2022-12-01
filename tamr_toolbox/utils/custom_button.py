@@ -10,6 +10,50 @@ from tamr_toolbox.sysadmin.instance import _run_command
 LOGGER = logging.getLogger(__name__)
 
 
+def _check_valid_page_name(pagename: str):
+    """Checks that pagename provided is a valid Tamr button page name
+    Args:
+        pagename: Name of page provided
+
+    Returns:
+        True if page name is acceptable
+    """
+    valid_pagenames = [
+        "Dataset Catalog",
+        "Home",
+        "Jobs",
+        "Policies",
+        "Users and Groups",
+        "Categorization:Categorizations",
+        "Categorization:Category Details",
+        "Categorization:Dashboard",
+        "Categorization:Project Datasets",
+        "Categorization:Schema Mapping",
+        "Categorization:Taxonomy",
+        "Categorization:Unified Dataset",
+        "Enrichment:Enrichment",
+        "Golden Records:Golden Records",
+        "Golden Records:Rules",
+        "Mastering:Binning",
+        "Mastering:Clusters",
+        "Mastering:Dashboard",
+        "Mastering:Group Records",
+        "Mastering:Pairs",
+        "Mastering:Project Datasets",
+        "Mastering:Schema Mapping",
+        "Mastering:Unified Dataset",
+        "Schema Mapping:Dashboard",
+        "Schema Mapping:Project Datasets",
+        "Schema Mapping:Schema Mapping",
+        "Schema Mapping:Unified Dataset",
+    ]
+
+    if pagename not in valid_pagenames:
+        return False
+    else:
+        return True
+
+
 def create_redirect_button(
     *,
     button_id: str,
@@ -41,6 +85,13 @@ def create_redirect_button(
         value_error_message = f"Invalid url. Must begin with http:// or https://"
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
+
+    # Page name validation
+    invalid_pages = [p for p in page_names if not _check_valid_page_name(pagename=p)]
+    if len(invalid_pages) > 0:
+        raise ValueError(
+            f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
+        )
 
     button_dict = {
         "buttonType": "redirectButton",
@@ -96,6 +147,13 @@ def create_post_button(
         value_error_message = f"Invalid url. Must begin with http:// or https://"
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
+
+    # Page name validation
+    invalid_pages = [p for p in page_names if not _check_valid_page_name(pagename=p)]
+    if len(invalid_pages) > 0:
+        raise ValueError(
+            f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
+        )
 
     button_dict = {
         "buttonType": "postButton",
@@ -195,7 +253,7 @@ def register_button(
     )
 
 
-def create_button_extension(extension_name: str, buttons: List[str], output_dir: str):
+def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str):
     """Given a list of button yaml files, save it as an extension yaml file
 
     Args:
@@ -208,8 +266,8 @@ def create_button_extension(extension_name: str, buttons: List[str], output_dir:
     # Create dicts from the yaml files
     dict_list = []
     for file in buttons:
-        d = yaml.load(file)
-        dict_list.append(d)
+        button_dict = yaml.load(file)
+        dict_list.append(button_dict)
 
     file = f"{extension_name}.yaml"
     filepath = os.path.join(output_dir, file)
