@@ -56,6 +56,7 @@ def _check_valid_page_name(*, pagename: str):
 
 def create_redirect_button(
     *,
+    extension_name: str,
     button_id: str,
     button_text: str,
     page_names: List[str],
@@ -68,6 +69,7 @@ def create_redirect_button(
     a 'REDIRECT' UI button
 
     Args:
+        extension_name: Name of button extension
         button_id: A short identifier for the button to use in the,
                    body of a POST call or a redirect URL path substitution.
         button_text: The button label to display in the UI.
@@ -89,17 +91,24 @@ def create_redirect_button(
     # Page name validation
     invalid_pages = [p for p in page_names if not _check_valid_page_name(pagename=p)]
     if len(invalid_pages) > 0:
-        raise ValueError(
+        value_error_message = (
             f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
         )
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
 
     button_dict = {
-        "buttonType": "redirectButton",
-        "buttonId": button_id,
-        "buttonText": button_text,
-        "pageNames": page_names,
-        "redirectUrl": redirect_url,
-        "openInNewTab": open_in_new_tab,
+        "extensionName": extension_name,
+        "buttons": [
+            {
+                "buttonType": "redirectButton",
+                "buttonId": button_id,
+                "buttonText": button_text,
+                "pageNames": page_names,
+                "redirectUrl": redirect_url,
+                "openInNewTab": open_in_new_tab,
+            }
+        ],
     }
 
     file = f"{button_name}.yaml"
@@ -112,6 +121,7 @@ def create_redirect_button(
 
 def create_post_button(
     *,
+    extension_name: str,
     button_id: str,
     button_text: str,
     page_names: List[str],
@@ -127,6 +137,7 @@ def create_post_button(
     a 'POST' UI button
 
     Args:
+        extension_name: Name of button extension
         button_id: A short identifier for the button to use in the,
                    body of a POST call or a redirect URL path substitution.
         button_text: The button label to display in the UI.
@@ -140,7 +151,6 @@ def create_post_button(
         button_name: Name of yaml file
 
     Returns:
-        Dictionary with required attribute names for a POST button
     """
     # Minor url validation
     if not post_url.startswith(("http://", "https://")):
@@ -151,20 +161,27 @@ def create_post_button(
     # Page name validation
     invalid_pages = [p for p in page_names if not _check_valid_page_name(pagename=p)]
     if len(invalid_pages) > 0:
-        raise ValueError(
+        value_error_message = (
             f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
         )
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
 
     button_dict = {
-        "buttonType": "postButton",
-        "buttonId": button_id,
-        "buttonText": button_text,
-        "pageNames": page_names,
-        "postUrl": post_url,
-        "postBodyKeys": post_body_keys,
-        "successMessage": success_message,
-        "failMessage": fail_message,
-        "displayResponse": display_response,
+        "extensionName": extension_name,
+        "buttons": [
+            {
+                "buttonType": "postButton",
+                "buttonId": button_id,
+                "buttonText": button_text,
+                "pageNames": page_names,
+                "postUrl": post_url,
+                "postBodyKeys": post_body_keys,
+                "successMessage": success_message,
+                "failMessage": fail_message,
+                "displayResponse": display_response,
+            }
+        ],
     }
 
     file = f"{button_name}.yaml"
@@ -172,6 +189,33 @@ def create_post_button(
 
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(button_dict, yaml_file, sort_keys=False)
+
+
+def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str):
+    """Given a list of button yaml files, save it as a grouped extension yaml file
+
+    Args:
+        extension_name: Name of button extension to save
+        buttons: List of button yaml files (absolute paths)
+        output_dir: directory in which to save yaml extension file
+
+    Returns:
+    """
+    # Create dicts from the yaml files
+    dict_list = []
+    for file in buttons:
+        with open(file, "r") as loaded_file:
+            button_object = yaml.safe_load(loaded_file)
+            button_dict = button_object["buttons"][0]
+            dict_list.append(button_dict)
+
+    file = f"{extension_name}.yaml"
+    filepath = os.path.join(output_dir, file)
+
+    output_dict = {"extensionName": extension_name, "buttons": dict_list}
+
+    with open(f"{filepath}", "w") as yaml_file:
+        yaml.dump(output_dict, yaml_file, sort_keys=False)
 
 
 def register_buttons(
@@ -253,26 +297,35 @@ def register_button(
     )
 
 
-def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str):
-    """Given a list of button yaml files, save it as an extension yaml file
+def delete_buttons(*, button_files: List[str], tamr_install_dir: str):
+    """Given a list of button yaml files, delete them thus removing the button from UI.
+
+       NB: Registered buttons are located in $TAMR_HOME/tamr/auxiliary-sevrices/conf
+           Requires restart of Tamr to register deletion.
 
     Args:
-        extension_name: Name of button extension to save
-        buttons: List of button yaml files (absolute paths)
-        output_dir: directory in which to save yaml extension file
-
+        button_files: List of button yaml files (absolute paths)
+        tamr_install_dir: Full path to directory where Tamr is installed
     Returns:
     """
-    # Create dicts from the yaml files
-    dict_list = []
-    for file in buttons:
-        button_dict = yaml.load(file)
-        dict_list.append(button_dict)
+    # Check all files exist
+    missing_files = [f for f in button_files if not os.path.exists(f)]
+    if len(missing_files) > 0:
+        error_message = f"File(s) {missing_files} not found"
+        LOGGER.error(error_message)
+        raise FileNotFoundError(error_message)
 
-    file = f"{extension_name}.yaml"
-    filepath = os.path.join(output_dir, file)
+    button_dir = os.path.join(tamr_install_dir, "tamr/auxiliary-services/conf")
 
-    output_dict = {"extensionName": extension_name, "buttons": buttons}
+    # Check button files provided reside in correct folder.
+    path_list = button_files + [button_dir]
 
-    with open(f"{filepath}", "w") as yaml_file:
-        yaml.dump(output_dict, yaml_file, sort_keys=False)
+    if os.path.commonpath(path_list) != button_dir:
+        value_error_message = f"All button files provided must belong to {button_dir} otherwise deletion will not register."
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
+
+    LOGGER.info(f"Removing yaml files from {button_dir}")
+    for file in button_files:
+        LOGGER.debug(f"Deleting {file}")
+        os.remove(file)
