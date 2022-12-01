@@ -64,7 +64,7 @@ def create_redirect_button(
     open_in_new_tab: bool,
     output_dir: str,
     button_name: str,
-) -> dict:
+) -> str:
     """Create yaml file with all required attributes for
     a 'REDIRECT' UI button
 
@@ -80,6 +80,7 @@ def create_redirect_button(
         button_name: Name of yaml file
 
     Returns:
+        Path to yaml file created
     """
 
     # Minor url validation
@@ -132,7 +133,7 @@ def create_post_button(
     display_response: bool,
     output_dir: str,
     button_name: str,
-) -> dict:
+) -> str:
     """Create yaml file with all required attributes for
     a 'POST' UI button
 
@@ -151,6 +152,7 @@ def create_post_button(
         button_name: Name of yaml file
 
     Returns:
+        Path to yaml file created
     """
     # Minor url validation
     if not post_url.startswith(("http://", "https://")):
@@ -191,7 +193,7 @@ def create_post_button(
         yaml.dump(button_dict, yaml_file, sort_keys=False)
 
 
-def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str):
+def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str) -> str:
     """Given a list of button yaml files, save it as a grouped extension yaml file
 
     Args:
@@ -200,6 +202,7 @@ def create_button_extension(*, extension_name: str, buttons: List[str], output_d
         output_dir: directory in which to save yaml extension file
 
     Returns:
+        Path to yaml file created
     """
     # Create dicts from the yaml files
     dict_list = []
