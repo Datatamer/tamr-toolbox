@@ -52,7 +52,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6.15
+          python-version: 3.8
       - name: Set requirements to minimum
         run: sed -i 's/>=/==/g' requirements.txt
       - name: Set optional_requirements to minimum
