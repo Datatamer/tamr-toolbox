@@ -23,7 +23,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6
+          python-version: 3.7
       - name: Upgrade wheel
         run: pip install --upgrade wheel==0.34.2 setuptools
       - name: Build wheel file
