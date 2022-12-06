@@ -5,12 +5,15 @@ from tamr_toolbox.utils.custom_button import (
     create_post_button,
     delete_buttons,
 )
-from tests._common import get_toolbox_root_dir
+import tempfile
+from pathlib import Path
 
 
 def test_create_redirect_button_with_invalid_url():
 
-    output_directory = get_toolbox_root_dir()
+    with tempfile.TemporaryDirectory() as tempdir:
+        output_directory = Path(tempdir) / "buttons"
+
     # Expect failure when incorrectly formatted url provided
     with pytest.raises(ValueError):
         create_redirect_button(
@@ -27,7 +30,9 @@ def test_create_redirect_button_with_invalid_url():
 
 def test_create_post_button_with_invalid_pagenames():
 
-    output_directory = get_toolbox_root_dir()
+    with tempfile.TemporaryDirectory() as tempdir:
+        output_directory = Path(tempdir) / "buttons"
+
     # Expect failure when page name(s) provided are invalid
     with pytest.raises(ValueError):
         create_post_button(

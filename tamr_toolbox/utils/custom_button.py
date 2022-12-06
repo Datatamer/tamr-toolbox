@@ -189,6 +189,7 @@ def create_post_button(
     file = f"{button_name}.yaml"
     filepath = os.path.join(output_dir, file)
 
+    LOGGER.info(f"Saving {file} to {output_dir}")
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(button_dict, yaml_file, sort_keys=False)
 
@@ -217,8 +218,11 @@ def create_button_extension(*, extension_name: str, buttons: List[str], output_d
 
     output_dict = {"extensionName": extension_name, "buttons": dict_list}
 
+    LOGGER.info(f"Saving {file} to {output_dir}")
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(output_dict, yaml_file, sort_keys=False)
+
+    return filepath
 
 
 def create_button_extension_from_list(
@@ -259,15 +263,49 @@ def create_button_extension_from_list(
     Returns:
         Path to yaml file created
     """
-    extension_dict = {"extensionName": extension_name, "buttons": buttons}
+    # URL & pagename validation
+    invalid_urls = []
+    invalid_pages = []
+    for button_dict in buttons:
+        if button_dict["buttonType"] == "postButton":
+            url = button_dict["postUrl"]
+        else:
+            url = button_dict["redirectUrl"]
+
+        if not url.startswith(("http://", "https://")):
+            invalid_urls.append(url)
+
+        invalid_pages += [
+            p for p in button_dict["pageNames"] if not _check_valid_page_name(pagename=p)
+        ]
+
+    if len(invalid_urls) > 0 and len(invalid_pages) > 0:
+        value_error_message = f"Invalid url and pagenames. \
+            url(s) {invalid_urls} must begin with http:// or https:// \
+            invalid page name(s): {invalid_pages}"
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
+    elif len(invalid_urls) > 0 and len(invalid_pages) == 0:
+        value_error_message = f"Invalid url(s) {invalid_urls}. Must begin with http:// or https://"
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
+    elif len(invalid_urls) == 0 and len(invalid_pages) > 0:
+        value_error_message = (
+            f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
+        )
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
 
     file = f"{extension_name}.yaml"
     filepath = os.path.join(output_dir, file)
 
-    output_dict = {"extensionName": extension_name, "buttons": extension_dict}
+    output_dict = {"extensionName": extension_name, "buttons": buttons}
 
+    LOGGER.info(f"Saving {file} to {output_dir}")
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(output_dict, yaml_file, sort_keys=False)
+
+    return filepath
 
 
 def register_buttons(
@@ -278,7 +316,7 @@ def register_buttons(
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
 ):
-    """Registers a list of buttons in a Tamr instance.
+    """Registers a list of buttons in a Tamr instance. Requires Tamr restart to display buttons in UI.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
     If an impersonation_username is provided, the command is run as the provided user.
@@ -321,7 +359,7 @@ def register_button(
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
 ):
-    """Registers a button in a Tamr instance.
+    """Registers a button in a Tamr instance. Requires Tamr restart to display button in UI.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
     If an impersonation_username is provided, the command is run as the provided user.
