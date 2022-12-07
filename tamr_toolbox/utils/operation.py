@@ -187,3 +187,17 @@ def monitor(
         else:
             return operation
     raise TimeoutError(f"Waiting for operation took longer than {timeout_seconds} seconds.")
+
+
+def safe_estimate_counts(project) -> Operation:
+    """
+    Run the estimate counts job of project that works if it is the first
+    Args:
+        project: A Tamr project object
+    Returns:
+        An operation object for the estimate pairs job
+    """
+    project = project.as_mastering()
+    response = project.client.post(f"{project.api_path}/estimatedPairCounts:refresh")
+
+    return Operation.from_response(project.client, response).wait()
