@@ -17,7 +17,7 @@ jobs:
       release_branch: release-${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout develop branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: "develop"
       - name: Update version file
@@ -31,7 +31,7 @@ jobs:
         id: get_version_short
 
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.7
       - name: Install requirements
