@@ -48,7 +48,7 @@ jobs:
           last_tag=$(git describe --tags $all_tags)
           prev_release_branch=$(git branch -a --contains tags/$last_tag)
           base_commit=$(git merge-base $prev_release_branch remotes/origin/develop)
-          echo ::set-output name=commits::$(git log $base_commit..HEAD --format="   - %s;" --reverse)
+          echo "commits=$(git log $base_commit..HEAD --format="   - %s;" --reverse)" >> $GITHUB_OUTPUT
 
       - name: Construct release body
         id: body
