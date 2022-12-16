@@ -92,3 +92,36 @@ jobs:
           python -m pip install .
       - name: Import tamr_toolbox
         run: python -c 'import tamr_toolbox'
+  Enforce-Test-Coverage:
+    runs-on: ubuntu-latest
+    env:
+      COVERAGE_SINGLE: 60
+      COVERAGE_TOTAL: 80
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: invoke test
+      - name: pytester-cov
+        id: pytester-cov
+        uses: programmingwithalex/pytester-cov@main
+        with:
+          pytest-root-dir: '.'
+          cov-omit-list: ''
+          cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
+          cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
+      - name: Coverage single fail - exit
+          if: ${{ steps.pytester-cov.outputs.cov-threshold-single-fail == 'true' }}
+          run: |
+            echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-single-fail }}"
+            exit 1
+      - name: Coverage total fail - exit
+          if: ${{ steps.pytester-cov.outputs.cov-threshold-total-fail == 'true' }}
+          run: |
+            echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
+            exit 1
