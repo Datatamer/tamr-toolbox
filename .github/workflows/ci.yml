@@ -105,8 +105,6 @@ jobs:
           python-version: 3.7
       - name: Install requirements
         run: python install.py
-      - name: Run tests
-        run: invoke test
       - name: pytester-cov
         id: pytester-cov
         uses: programmingwithalex/pytester-cov@main
