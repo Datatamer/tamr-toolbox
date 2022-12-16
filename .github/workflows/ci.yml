@@ -117,9 +117,11 @@ jobs:
         if: ${{ steps.pytester-cov.outputs.cov-threshold-single-fail == 'true' }}
         run: |
           echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-single-fail }}"
+          echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
           exit 1
       - name: Coverage total fail - exit
         if: ${{ steps.pytester-cov.outputs.cov-threshold-total-fail == 'true' }}
         run: |
           echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
+          echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
           exit 1
