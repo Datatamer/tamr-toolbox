@@ -59,7 +59,9 @@ def _get_upstream_projects(project: Project, *, all_projects: List[Project]) -> 
     return [x for x in all_projects if x.name in upstream_project_names]
 
 
-def _build_edges(project: Project, client: Client, *, edges: set = None, all_projects: List[Project]) -> Set[Tuple[str, str]]:
+def _build_edges(
+    project: Project, client: Client, *, edges: set = None, all_projects: List[Project]
+) -> Set[Tuple[str, str]]:
     """
     builds a set of tuples of all edges of format (source, target)
     Args:
@@ -89,7 +91,9 @@ def _build_edges(project: Project, client: Client, *, edges: set = None, all_pro
             continue
         else:
             # and then go to it and get it's upstream datasets
-            further_upstream_edges = _build_edges(upstream_project, client, edges=set(edges), all_projects=all_projects)
+            further_upstream_edges = _build_edges(
+                upstream_project, client, edges=set(edges), all_projects=all_projects
+            )
             # print(f"adding further upstream edges {further_upstream_edges}")
             edges = edges.union(further_upstream_edges)
 
@@ -127,7 +131,9 @@ def from_project_list(projects: List[Project], client: Client) -> Graph:
     all_projects = [x for x in client.projects.stream()]
     # for each dataset get the edges and take union
     for project in projects:
-        graph_edges = set(graph_edges.union(_build_edges(project, client, all_projects=all_projects)))
+        graph_edges = set(
+            graph_edges.union(_build_edges(project, client, all_projects=all_projects))
+        )
 
     graph = nx.DiGraph()
     graph.add_edges_from(graph_edges)
