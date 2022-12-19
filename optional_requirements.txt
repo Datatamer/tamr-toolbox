@@ -1,4 +1,4 @@
-pandas>=1.0.0
+pandas>=1.1.5
 aiohttp==3.7.4.post0
 slackclient==2.7.2
 responses==0.10.14
