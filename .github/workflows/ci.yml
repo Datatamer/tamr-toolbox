@@ -95,7 +95,7 @@ jobs:
   Enforce-Test-Coverage:
     runs-on: ubuntu-latest
     env:
-      COVERAGE_SINGLE: 60
+      COVERAGE_SINGLE: 0
       COVERAGE_TOTAL: 80
     steps:
       - uses: actions/checkout@v2
@@ -110,7 +110,7 @@ jobs:
         uses: programmingwithalex/pytester-cov@main
         with:
           pytest-root-dir: '.'
-          cov-omit-list: ''
+          cov-omit-list: 'examples/*, doc_src/*'
           cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
           cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
       - name: Coverage single fail - exit
