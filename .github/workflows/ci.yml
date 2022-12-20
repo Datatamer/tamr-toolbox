@@ -110,7 +110,7 @@ jobs:
         uses: programmingwithalex/pytester-cov@main
         with:
           pytest-root-dir: '.'
-          cov-omit-list: 'examples/*, doc_src/*'
+          cov-omit-list: 'examples/*, doc_src/*, tests/*'
           cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
           cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
       - name: Coverage single fail - exit
