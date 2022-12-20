@@ -25,7 +25,8 @@ def test_get_upstream_projects():
     tamr = utils.client.create(**CONFIG["toolbox_test_instance"])
     test_project_name = "chained_minimal_mastering"
     test_project = tamr.projects.by_name(test_project_name)
-    upstream_projects = Graph._get_upstream_projects(test_project)
+    all_projects = [x for x in tamr.projects.stream()]
+    upstream_projects = Graph._get_upstream_projects(test_project, all_projects=all_projects)
     assert {x.name for x in upstream_projects} == {
         "chained_minimal_schema_mapping",
         "minimal_categorization",
@@ -37,7 +38,8 @@ def test_get_edges():
     tamr = utils.client.create(**CONFIG["toolbox_test_instance"])
     test_project_name = "chained_minimal_mastering"
     test_project = tamr.projects.by_name(test_project_name)
-    edges = Graph._build_edges(test_project, tamr)
+    all_projects = [x for x in tamr.projects.stream()]
+    edges = Graph._build_edges(test_project, tamr, all_projects=all_projects)
     expected_edges = {
         ("chained_minimal_schema_mapping", "chained_minimal_mastering"),
         ("minimal_categorization", "chained_minimal_mastering"),
