@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COVERAGE_SINGLE: 0
-      COVERAGE_TOTAL: 80
+      COVERAGE_TOTAL: 27
     steps:
       - uses: actions/checkout@v2
       - name: Install Python
@@ -122,6 +122,6 @@ jobs:
       - name: Coverage total fail - exit
         if: ${{ steps.pytester-cov.outputs.cov-threshold-total-fail == 'true' }}
         run: |
-          echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
+          echo "cov total fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
           echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
           exit 1
