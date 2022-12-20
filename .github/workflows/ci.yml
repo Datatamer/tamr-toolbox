@@ -17,9 +17,9 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: 3.7
     - name: Install requirements
@@ -34,9 +34,9 @@ jobs:
         python_version: [3.7, 3.8, 3.9]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install requirements
@@ -48,11 +48,11 @@ jobs:
   Test-Minimum-Versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
-          python-version: 3.8
+          python-version: 3.7
       - name: Set requirements to minimum
         run: sed -i 's/>=/==/g' requirements.txt
       - name: Set optional_requirements to minimum
@@ -69,9 +69,9 @@ jobs:
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install requirements
@@ -81,9 +81,9 @@ jobs:
   Test-Core-Dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.7
       - name: Install requirements

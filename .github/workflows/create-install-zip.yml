@@ -21,7 +21,7 @@ jobs:
 
       # Checkout the target branch
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.branch_name }}
 
@@ -44,9 +44,9 @@ jobs:
         run: pip install --upgrade wheel==0.34.2
       - name: Export Python Verion
         id: get_python
-        run: echo ::set-output name=version::$(python3 -V | sed 's/ //g')
+        run: echo "version=$(python3 -V | sed 's/ //g')" >> $GITHUB_OUTPUT
       - name: Export File Name
-        run: echo ::set-output name=file_name::$(echo 'tamr_toolbox_${{ github.event.inputs.branch_name }}_${{ github.event.inputs.os }}_${{ steps.get_python.outputs.version }}' |  sed 's/://')
+        run: echo "file_name=$(echo 'tamr_toolbox_${{ github.event.inputs.branch_name }}_${{ github.event.inputs.os }}_${{ steps.get_python.outputs.version }}' |  sed 's/://')" >> $GITHUB_OUTPUT
         id: get_name
 
       - name: Create wheel dir - minimal
