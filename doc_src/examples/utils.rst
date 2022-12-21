@@ -92,8 +92,12 @@ How to get a list of datasets and projects downstream from a specified dataset
 
 
 Custom UI Buttons
-------------------------------------------
-How to create custom UI button yaml files.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------------------
+How to create and register custom UI button yaml files.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**IMPORTANT:** Custom buttons are only available in v2022.008 and later.
+
 .. literalinclude:: ../../examples/scripts/utils/custom_button/create_custom_buttons.py
   :language: python
+  

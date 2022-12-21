@@ -1,13 +1,20 @@
-"Helper functions related to creating & managing custom UI buttons as yaml files"
+"""
+Helper functions related to creating & managing custom UI buttons as yaml files.
 
+Important: Custom buttons are only available to versions 2022.008.0 and later
+"""
 import logging
-from typing import List, Optional
+from typing import List, Optional, Union
 import yaml
 import os
 
+from tamr_unify_client import Client
 from tamr_toolbox.sysadmin.instance import _run_command
+from tamr_toolbox.utils.version import is_version_condition_met, current
 
 LOGGER = logging.getLogger(__name__)
+
+TAMR_RELEASE_VERSION = "2022.008.0"
 
 
 def _check_valid_page_name(*, pagename: str):
@@ -54,6 +61,34 @@ def _check_valid_page_name(*, pagename: str):
         return True
 
 
+def _check_valid_abs_path(dir: str):
+    """
+    Function to check provided path is absolute path
+    and is not $TAMR_HOME/tamr/auxiliary-sevrices/conf
+    
+    Args:
+        dir: directory provided
+    
+    Returns: 
+    
+    Raises:
+        ValueError: If path is not absolute or equal to 
+                    $TAMR_HOME/tamr/auxiliary-sevrices/conf
+    """
+    # Check absolute
+    if not os.path.isabs(dir):
+        value_error_message = f"Output directory must be absolute path."
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
+    
+    bad_paths = ('tamr/auxiliary-sevrices/conf', 'tamr/auxiliary-sevrices/conf/')
+
+    if dir.endswith(bad_paths):
+        value_error_message = f"Output directory must not be $TAMR_HOME/tamr/auxiliary-sevrices/conf."
+        LOGGER.error(value_error_message)
+        raise ValueError(value_error_message)
+
+
 def create_redirect_button(
     *,
     extension_name: str,
@@ -66,7 +101,8 @@ def create_redirect_button(
     button_name: str,
 ) -> str:
     """Create yaml file with all required attributes for
-    a 'REDIRECT' UI button
+    a 'REDIRECT' UI button.
+    Button features are only available to versions 2022.008.0 and later.
 
     Args:
         extension_name: Name of button extension
@@ -76,12 +112,14 @@ def create_redirect_button(
         page_names: The pages of the UI on which to display the button.
         redirect_url: The URL that the browser should load
         open_in_new_tab: If true, the specified URL opens in a new browser tab.
-        output_dir: Directory to save yaml file
+        output_dir: Directory to save yaml file (absolute path)
         button_name: Name of yaml file
 
     Returns:
         Path to yaml file created
     """
+    # Path validation
+    _check_valid_abs_path(output_dir)
 
     # Minor url validation
     if not redirect_url.startswith(("http://", "https://")):
@@ -134,8 +172,10 @@ def create_post_button(
     output_dir: str,
     button_name: str,
 ) -> str:
-    """Create yaml file with all required attributes for
-    a 'POST' UI button
+    """
+    Create yaml file with all required attributes for
+    a 'POST' UI button.
+    Button features are only available to versions 2022.008.0 and later.
 
     Args:
         extension_name: Name of button extension
@@ -148,12 +188,15 @@ def create_post_button(
         success_message: The message that displays to the user when the POST call succeeds.
         fail_message: The message that displays to the user when the POST call fails.
         display_response: Whether the contents of the API response body should display to the user.
-        output_dir: Directory to save yaml file
+        output_dir: Directory to save yaml file (absolute path)
         button_name: Name of yaml file
 
     Returns:
         Path to yaml file created
     """
+    # Path validation
+    _check_valid_abs_path(output_dir)
+
     # Minor url validation
     if not post_url.startswith(("http://", "https://")):
         value_error_message = f"Invalid url. Must begin with http:// or https://"
@@ -195,16 +238,21 @@ def create_post_button(
 
 
 def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str) -> str:
-    """Given a list of button yaml files, save it as a grouped extension yaml file
+    """
+    Given a list of button yaml files, save it as a grouped extension yaml file.
+    Button features are only available to versions 2022.008.0 and later.
 
     Args:
         extension_name: Name of button extension to save
         buttons: List of button yaml files (absolute paths)
-        output_dir: directory in which to save yaml extension file
+        output_dir: directory in which to save yaml extension file (absolute path)
 
     Returns:
         Path to yaml file created
     """
+    # Path validation
+    _check_valid_abs_path(output_dir)
+
     # Create dicts from the yaml files
     dict_list = []
     for file in buttons:
@@ -228,11 +276,13 @@ def create_button_extension(*, extension_name: str, buttons: List[str], output_d
 def create_button_extension_from_list(
     *, extension_name: str, output_dir: str, buttons: List[dict]
 ) -> str:
-    """Given a list of button dictionaries, save it as a grouped extension yaml file
+    """
+    Given a list of button dictionaries, save it as a grouped extension yaml file
+    Button features are only available to versions 2022.008.0 and later.
 
     Args:
         extension_name: Name of button extension to save
-        output_dir: directory in which to save yaml extension file
+        output_dir: directory in which to save yaml extension file (absolute path)
         buttons: List of button dictionaries. Either redirect or post.
         Format examples:
         ---
@@ -263,6 +313,9 @@ def create_button_extension_from_list(
     Returns:
         Path to yaml file created
     """
+    # Path Validation
+    _check_valid_abs_path(output_dir)
+
     # URL & pagename validation
     invalid_urls = []
     invalid_pages = []
@@ -310,21 +363,28 @@ def create_button_extension_from_list(
 
 def register_buttons(
     *,
-    buttons: List[str],
+    tamr_client: Client,
+    buttons: Union[str, List[str]],
     tamr_install_dir: str,
     remote_client: Optional["paramiko.SSHClient"] = None,
     impersonation_username: Optional[str] = None,
     impersonation_password: Optional[str] = None,
 ):
-    """Registers a list of buttons in a Tamr instance. Requires Tamr restart to display buttons in UI.
+    """
+    Registers a list of button(s) in a Tamr instance. Requires Tamr restart to display buttons in UI.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
     If an impersonation_username is provided, the command is run as the provided user.
     If an impersonation_password is provided, password authentication is used for impersonation,
     otherwise sudo is used.
+    Button features are only available to versions 2022.008.0 and later.
+
+    Version:
+        Requires Tamr 2022.008.0 or later
 
     Args:
-        buttons: A list of yaml files (absolute paths) with button configs
+        tamr_client: Tamr Client object
+        buttons: An individual string or a list of yaml files (absolute paths) with button configs
         tamr_install_dir: Full path to directory where Tamr is installed
         remote_client: An ssh client providing a remote connection
         impersonation_username: A bash user to run the command as,
@@ -333,6 +393,22 @@ def register_buttons(
 
     Returns:
     """
+    # Tamr version check
+    minimum_tamr_version = TAMR_RELEASE_VERSION
+    tamr_version = current(tamr_client)
+    check_version = is_version_condition_met(
+        tamr_version=tamr_version, min_version=minimum_tamr_version, raise_error=True
+    )
+
+    if isinstance(buttons, str):
+        buttons = [buttons]
+
+    # Clean up path
+    _check_valid_abs_path(tamr_install_dir)
+    
+    if tamr_install_dir.endswith('/'):
+        tamr_install_dir = tamr_install_dir[:-1]
+
     LOGGER.info(f"Registering the following buttons in Tamr: {buttons}")
 
     for button in buttons:
@@ -351,64 +427,34 @@ def register_buttons(
         )
 
 
-def register_button(
-    *,
-    button: str,
-    tamr_install_dir: str,
-    remote_client: Optional["paramiko.SSHClient"] = None,
-    impersonation_username: Optional[str] = None,
-    impersonation_password: Optional[str] = None,
-):
-    """Registers a button in a Tamr instance. Requires Tamr restart to display button in UI.
-
-    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
-    If an impersonation_username is provided, the command is run as the provided user.
-    If an impersonation_password is provided, password authentication is used for impersonation,
-    otherwise sudo is used.
-
-    Args:
-        button: Path to a yaml file with button configs
-        tamr_install_dir: Full path to directory where Tamr is installed
-        remote_client: An ssh client providing a remote connection
-        impersonation_username: A bash user to run the command as,
-            this should be the tamr install user
-        impersonation_password: The password for the impersonation_username
-
-    Returns:
-    """
-    buttons = [button]
-
-    register_buttons(
-        buttons=buttons,
-        tamr_install_dir=tamr_install_dir,
-        remote_client=remote_client,
-        impersonation_username=impersonation_username,
-        impersonation_password=impersonation_password,
-    )
-
-
-def delete_buttons(*, button_files: List[str], tamr_install_dir: str):
+def delete_buttons(*, button_files: Union[str, List[str]], tamr_install_dir: str):
     """Given a list of button yaml files, delete them thus removing the button from UI.
 
        NB: Registered buttons are located in $TAMR_HOME/tamr/auxiliary-sevrices/conf
            Requires restart of Tamr to register deletion.
+           Button features are only available to versions 2022.008.0 and later.
 
     Args:
-        button_files: List of button yaml files (absolute paths)
-        tamr_install_dir: Full path to directory where Tamr is installed
+        button_files: Individual string or list of button yaml files (absolute paths)
+        tamr_install_dir: Full path to directory where Tamr is installed (absolute path)
     Returns:
     """
+    if isinstance(button_files, str):
+        button_files = [button_files]
+
     # Check all files exist
     missing_files = [f for f in button_files if not os.path.exists(f)]
     if len(missing_files) > 0:
-        error_message = f"File(s) {missing_files} not found"
-        LOGGER.error(error_message)
-        raise FileNotFoundError(error_message)
+        warning_message = f"File(s) {missing_files} not found"
+        LOGGER.warning(warning_message)
+
+    # Work with present files only
+    present_files = [x for x in button_files if x not in set(missing_files)]
 
     button_dir = os.path.join(tamr_install_dir, "tamr/auxiliary-services/conf")
 
-    # Check button files provided reside in correct folder.
-    path_list = button_files + [button_dir]
+    # Check present button files provided reside in correct folder.
+    path_list = present_files + [button_dir]
 
     if os.path.commonpath(path_list) != button_dir:
         value_error_message = f"All button files provided must belong to {button_dir} \
@@ -417,6 +463,6 @@ def delete_buttons(*, button_files: List[str], tamr_install_dir: str):
         raise ValueError(value_error_message)
 
     LOGGER.info(f"Removing yaml files from {button_dir}")
-    for file in button_files:
-        LOGGER.debug(f"Deleting {file}")
+    for file in present_files:
         os.remove(file)
+        LOGGER.info(f"Deleted {file}")
