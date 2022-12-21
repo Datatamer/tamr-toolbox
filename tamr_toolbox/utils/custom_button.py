@@ -159,6 +159,8 @@ def create_redirect_button(
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(button_dict, yaml_file, sort_keys=False)
 
+    return filepath
+
 
 def create_post_button(
     *,
@@ -237,6 +239,8 @@ def create_post_button(
     LOGGER.info(f"Saving {file} to {output_dir}")
     with open(f"{filepath}", "w") as yaml_file:
         yaml.dump(button_dict, yaml_file, sort_keys=False)
+
+    return filepath
 
 
 def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str) -> str:
@@ -373,7 +377,8 @@ def register_buttons(
     impersonation_password: Optional[str] = None,
 ):
     """
-    Registers a list of button(s) in a Tamr instance. Requires Tamr restart to display buttons in UI.
+    Registers a list of button(s) in a Tamr instance.
+    Requires Tamr restart to display buttons in UI.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
     If an impersonation_username is provided, the command is run as the provided user.

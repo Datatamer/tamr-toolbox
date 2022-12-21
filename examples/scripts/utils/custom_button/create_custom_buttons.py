@@ -36,7 +36,7 @@ def main(output_dir):
         button_name="redirect_button_2",
     )
 
-    # Example POST button 
+    # Example POST button
     button_3 = tbox.utils.custom_button.create_post_button(
         extension_name="extension_3",
         button_id="post_button_1",
