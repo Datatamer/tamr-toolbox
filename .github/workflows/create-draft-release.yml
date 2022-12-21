@@ -26,13 +26,6 @@ jobs:
       - name: Install toolbox requirements
         run: python install.py
 
-      - name: Run tests
-        run: invoke test
-      - name: Run lint check
-        run: invoke lint
-      - name: Run format check
-        run: invoke format
-
       - name: Build docs
         run: invoke docs
 
@@ -48,7 +41,7 @@ jobs:
           last_tag=$(git describe --tags $all_tags)
           prev_release_branch=$(git branch -a --contains tags/$last_tag)
           base_commit=$(git merge-base $prev_release_branch remotes/origin/develop)
-          echo "commits=$(git log $base_commit..HEAD --format="   - %s;" --reverse)" >> $GITHUB_OUTPUT
+          echo "commits="""$(git log $base_commit..HEAD --format="   - %s;" --reverse)"""" >> $GITHUB_OUTPUT
 
       - name: Construct release body
         id: body
