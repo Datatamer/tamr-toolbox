@@ -12,6 +12,7 @@ def main(output_dir):
 
     LOGGER.info("Creating button yaml files...")
 
+    # Button link to Google browser
     button_1 = tbox.utils.custom_button.create_redirect_button(
         extension_name="extension_1",
         button_id="redirect_button_1",
@@ -23,17 +24,19 @@ def main(output_dir):
         button_name="redirect_button_1",
     )
 
+    # Button link to existing mastering dashboard
     button_2 = tbox.utils.custom_button.create_redirect_button(
         extension_name="extension_2",
         button_id="redirect_button_2",
-        button_text="Yahoo",
-        page_names=["Schema Mapping:Dashboard", "Mastering:Dashboard"],
-        redirect_url="https://www.yahoo.com",
+        button_text="Mastering Dashboard",
+        page_names=["Mastering:Dashboard"],
+        redirect_url="https://example-customer.tamrfield.com/dashboard/",
         open_in_new_tab=True,
         output_dir=output_dir,
         button_name="redirect_button_2",
     )
 
+    # Example POST button 
     button_3 = tbox.utils.custom_button.create_post_button(
         extension_name="extension_3",
         button_id="post_button_1",
@@ -50,7 +53,7 @@ def main(output_dir):
 
     # Register a button individually
     LOGGER.info(f"Registering individual button")
-    tbox.utils.custom_button.register_button(button=button_1, tamr_install_dir="/home/ubuntu")
+    tbox.utils.custom_button.register_buttons(buttons=button_1, tamr_install_dir="/home/ubuntu")
 
     # Group multiple buttons into a new extension yaml file & register it
     button_list = [button_2, button_3]
@@ -60,7 +63,7 @@ def main(output_dir):
         extension_name="extension_1", buttons=button_list, output_dir=output_dir
     )
 
-    tbox.utils.custom_button.register_button(button=extension_1, tamr_install_dir="/home/ubuntu")
+    tbox.utils.custom_button.register_buttons(buttons=extension_1, tamr_install_dir="/home/ubuntu")
 
 
 if __name__ == "__main__":

@@ -65,14 +65,14 @@ def _check_valid_abs_path(dir: str):
     """
     Function to check provided path is absolute path
     and is not $TAMR_HOME/tamr/auxiliary-sevrices/conf
-    
+
     Args:
         dir: directory provided
-    
-    Returns: 
-    
+
+    Returns:
+
     Raises:
-        ValueError: If path is not absolute or equal to 
+        ValueError: If path is not absolute or equal to
                     $TAMR_HOME/tamr/auxiliary-sevrices/conf
     """
     # Check absolute
@@ -80,11 +80,13 @@ def _check_valid_abs_path(dir: str):
         value_error_message = f"Output directory must be absolute path."
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
-    
-    bad_paths = ('tamr/auxiliary-sevrices/conf', 'tamr/auxiliary-sevrices/conf/')
+
+    bad_paths = ("tamr/auxiliary-sevrices/conf", "tamr/auxiliary-sevrices/conf/")
 
     if dir.endswith(bad_paths):
-        value_error_message = f"Output directory must not be $TAMR_HOME/tamr/auxiliary-sevrices/conf."
+        value_error_message = (
+            f"Output directory must not be $TAMR_HOME/tamr/auxiliary-sevrices/conf."
+        )
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
 
@@ -396,7 +398,8 @@ def register_buttons(
     # Tamr version check
     minimum_tamr_version = TAMR_RELEASE_VERSION
     tamr_version = current(tamr_client)
-    check_version = is_version_condition_met(
+
+    is_version_condition_met(
         tamr_version=tamr_version, min_version=minimum_tamr_version, raise_error=True
     )
 
@@ -405,8 +408,8 @@ def register_buttons(
 
     # Clean up path
     _check_valid_abs_path(tamr_install_dir)
-    
-    if tamr_install_dir.endswith('/'):
+
+    if tamr_install_dir.endswith("/"):
         tamr_install_dir = tamr_install_dir[:-1]
 
     LOGGER.info(f"Registering the following buttons in Tamr: {buttons}")
