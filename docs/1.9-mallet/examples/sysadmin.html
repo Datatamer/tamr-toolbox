@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>SysAdmin &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/examples/sysadmin.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utilities" href="utils.html" />
+    <link rel="prev" title="Projects" href="project.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sysadmin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-and-stopping-tamr">Starting and Stopping Tamr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-tamr">Configuring Tamr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connecting-to-tamr-via-okta-asa">Connecting to Tamr via Okta ASA</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
+        
+      <li>SysAdmin</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/examples/sysadmin.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sysadmin">
+<h1>SysAdmin<a class="headerlink" href="#sysadmin" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="starting-and-stopping-tamr">
+<h2>Starting and Stopping Tamr<a class="headerlink" href="#starting-and-stopping-tamr" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Starting and stopping Tamr&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="c1"># Activate logging</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">enable_toolbox_logging</span><span class="p">()</span>
+
+<span class="c1"># Create a paramiko client for remotely connecting to a Tamr instance</span>
+<span class="n">remote_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">remote_client</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">remote_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;10.9.999.999&quot;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span> <span class="n">key_filename</span><span class="o">=</span><span class="s2">&quot;/full/path/to/my-key.pem&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Restart a remote instance, using sudo for impersonation, with verbose logging</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">restart_tamr</span><span class="p">(</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Stop a local instance as the current user</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">stop_tamr</span><span class="p">(</span><span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home/&quot;</span><span class="p">)</span>
+
+<span class="c1"># Start a local instance as another user using password authentication</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">start_tamr</span><span class="p">(</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home/&quot;</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_BASH_PASSWORD&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuring-tamr">
+<h2>Configuring Tamr<a class="headerlink" href="#configuring-tamr" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Getting and setting configuration for Tamr&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Activate logging</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">enable_toolbox_logging</span><span class="p">()</span>
+
+<span class="c1"># Create a paramiko client for remotely connecting to a Tamr instance</span>
+<span class="n">remote_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">remote_client</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">remote_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;10.9.999.999&quot;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span> <span class="n">key_filename</span><span class="o">=</span><span class="s2">&quot;/full/path/to/my-key.pem&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Get all user defined configs from a local instance as the current user</span>
+<span class="n">user_defined_configs</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">get_configs</span><span class="p">(</span>
+    <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use defined config: </span><span class="si">{</span><span class="n">user_defined_configs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Example print output</span>
+<span class="sd">&quot;&quot;&quot;Use defined config: {&#39;TAMR_JOB_SPARK_EXECUTOR_CORES&#39;: 3,</span>
+<span class="sd">&#39;TAMR_LICENSE_KEY&#39;: &#39;d8mO2yX...prnfp2FL4=&#39;}&quot;&quot;&quot;</span>
+
+<span class="c1"># Get a single config from a remote instance, using password authentication</span>
+<span class="n">tamr_log_dir</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;TAMR_LOG_DIR&quot;</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_BASH_PASSWORD&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tamr logging directory: </span><span class="si">{</span><span class="n">tamr_log_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Example print output</span>
+<span class="sd">&quot;&quot;&quot;Tamr logging directory: /data/tamr-home/tamr/logs&quot;&quot;&quot;</span>
+
+<span class="c1"># Get multiple config from a remote instance, using sudo for impersonation</span>
+<span class="n">es_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">get_configs</span><span class="p">(</span>
+    <span class="n">config_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ES_HEAP_SIZE&quot;</span><span class="p">,</span> <span class="s2">&quot;ES_NUM_SHARDS&quot;</span><span class="p">],</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ElasticSearch Config: </span><span class="si">{</span><span class="n">es_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Example print output</span>
+<span class="sd">&quot;&quot;&quot;ElasticSearch Config: {&#39;ES_HEAP_SIZE&#39;: &#39;11G&#39;, &#39;ES_NUM_SHARDS&#39;: 8}&quot;&quot;&quot;</span>
+
+<span class="c1"># Get config based on a regular expression from a local instance, using sudo for impersonation</span>
+<span class="n">spark_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">get_configs</span><span class="p">(</span>
+    <span class="n">config_search_regex</span><span class="o">=</span><span class="s2">&quot;spark.*(mem|core|instances)&quot;</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spark config: </span><span class="si">{</span><span class="n">spark_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Example print output</span>
+<span class="sd">&quot;&quot;&quot;Spark config: {&#39;TAMR_JOB_SPARK_DRIVER_MEM&#39;: &#39;3G&#39;, &#39;TAMR_JOB_SPARK_EXECUTOR_CORES&#39;: 3,</span>
+<span class="sd">&#39;TAMR_JOB_SPARK_EXECUTOR_INSTANCES&#39;: 1, &#39;TAMR_JOB_SPARK_EXECUTOR_MEM&#39;: &#39;26G&#39;, &#39;</span>
+<span class="sd">TAMR_SPARK_CORES&#39;: 6, &#39;TAMR_SPARK_MEMORY&#39;: &#39;33G&#39;}&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Set multiple config values on a remote instance, using sudo for impersonation</span>
+<span class="n">changed_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">set_configs</span><span class="p">(</span>
+    <span class="n">configs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;TAMR_SPARK_MEMORY&quot;</span><span class="p">:</span> <span class="s2">&quot;50G&quot;</span><span class="p">,</span> <span class="s2">&quot;ES_HEAP_SIZE&quot;</span><span class="p">:</span> <span class="s2">&quot;5G&quot;</span><span class="p">},</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Note that the changed config returned includes indirect config changes caused by</span>
+<span class="c1"># config formula calculations</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Changed config: </span><span class="si">{</span><span class="n">changed_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Example print output</span>
+<span class="sd">&quot;&quot;&quot;Changed config: {&#39;ES_HEAP_SIZE&#39;: &#39;5G&#39;, &#39;TAMR_JOB_SPARK_EXECUTOR_INSTANCES&#39;: 5,</span>
+<span class="sd">&#39;TAMR_JOB_SPARK_EXECUTOR_MEM&#39;: &#39;8G&#39;, &#39;TAMR_SPARK_MEMORY&#39;: &#39;50G&#39;}&quot;&quot;&quot;</span>
+
+<span class="c1"># After setting new configs, Tamr needs to be restarted for the new configs to take effect</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">restart_tamr</span><span class="p">(</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/data/tamr-home&quot;</span><span class="p">,</span> <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span> <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;tamr&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connecting-to-tamr-via-okta-asa">
+<h2>Connecting to Tamr via Okta ASA<a class="headerlink" href="#connecting-to-tamr-via-okta-asa" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Connect to a remote Tamr when SSH is proxied via OKTA Advanced Server Access&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># Set your connection parameters</span>
+<span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;10.99.9.999&quot;</span>
+<span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;my.username&quot;</span>
+
+<span class="c1"># Login to Okta ASA.</span>
+<span class="c1"># If there is no current session a browser window will open to complete authentication</span>
+<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;sft&quot;</span><span class="p">,</span> <span class="s2">&quot;login&quot;</span><span class="p">])</span>
+
+<span class="c1"># Get ssh proxy information from ssh config file and use it to create a connection client</span>
+<span class="n">ssh_config</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHConfig</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.ssh/config&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">ssh_config_file</span><span class="p">:</span>
+    <span class="n">ssh_config</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">ssh_config_file</span><span class="p">)</span>
+<span class="n">host_ssh_config</span> <span class="o">=</span> <span class="n">ssh_config</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">hostname</span><span class="p">)</span>
+<span class="n">remote_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">remote_client</span><span class="o">.</span><span class="n">load_host_keys</span><span class="p">(</span><span class="n">host_ssh_config</span><span class="p">[</span><span class="s2">&quot;userknownhostsfile&quot;</span><span class="p">])</span>
+<span class="n">remote_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">host_ssh_config</span><span class="p">[</span><span class="s2">&quot;hostname&quot;</span><span class="p">],</span>
+    <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">sock</span><span class="o">=</span><span class="n">paramiko</span><span class="o">.</span><span class="n">ProxyCommand</span><span class="p">(</span><span class="n">host_ssh_config</span><span class="p">[</span><span class="s2">&quot;proxycommand&quot;</span><span class="p">]),</span>
+<span class="p">)</span>
+
+<span class="c1"># Use the created client with Tamr-Toolbox functions</span>
+<span class="n">user_defined_configs</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">sysadmin</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">get_configs</span><span class="p">(</span>
+    <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="o">=</span><span class="s2">&quot;/home/ubuntu&quot;</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="o">=</span><span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">user_defined_configs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="project.html" class="btn btn-neutral float-left" title="Projects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

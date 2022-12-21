@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -189,25 +189,28 @@
 <p>Tasks related to running jobs for groups of Tamr projects</p>
 <dl class="py function">
 <dt id="tamr_toolbox.workflow.jobs.run">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_estimate_pair_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_estimate_pair_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_profile_unified_datasets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run multiple projects in order</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>project_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>]) – A list of Tamr projects</p></li>
-<li><p><strong>run_apply_feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether train should be called on the pair matching model
+<li><p><strong>project_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>]) – A list of Tamr projects</p></li>
+<li><p><strong>run_apply_feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether train should be called on the pair matching model
 or categorization model (based on project type)</p></li>
-<li><p><strong>run_estimate_pair_counts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether an estimate pairs job should be run</p></li>
+<li><p><strong>run_estimate_pair_counts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether an estimate pairs job should be run</p></li>
+<li><p><strong>run_profile_unified_datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether unified datasets should be re-profiled</p></li>
+<li><p><strong>sleep_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of seconds to sleep between job submissions.
+Useful in some pipeline situations</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The operations that were run</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.10)"><strong>NotImplementedError</strong></a> – Raised if run() is called on an unsupported project type</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – Raised if run() is called on an unsupported project type</p>
 </dd>
 </dl>
 </dd></dl>
@@ -221,7 +224,24 @@ or categorization model (based on project type)</p></li>
 <dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the tamr project for which associated upstream projects are retrieved</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.workflow.jobs.get_project_output_datasets">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></code><code class="sig-name descname"><span class="pre">get_project_output_datasets</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#get_project_output_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.get_project_output_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves datasets produced by a given Tamr project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the Tamr project for which associated output datasets are retrieved</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The list of Tamr datasets output from the project</p>
 </dd>
 </dl>
 </dd></dl>

@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -209,7 +209,7 @@ and the generated graph from them.</p>
 <dd><p>Directly build a graph from a list of edges - tuples of format (source, target) dependencies</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>edges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>]) – List of edges in tuple format</p>
+<dd class="field-odd"><p><strong>edges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>]) – List of edges in tuple format</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a></p>
@@ -224,7 +224,7 @@ and the generated graph from them.</p>
 <dt id="tamr_toolbox.workflow.concurrent.Graph.from_project_list">
 <code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.concurrent.Graph.</span></code><code class="sig-name descname"><span class="pre">from_project_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/concurrent/Graph.html#from_project_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.concurrent.Graph.from_project_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a graph from a list of datasets
-:type projects: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>]
+:type projects: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>]
 :param projects: list of Tamr dataset objects
 :type client: <code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>
 :param client: tamr client</p>
@@ -247,7 +247,7 @@ and the generated graph from them.</p>
 <dd class="field-odd"><p><strong>graph</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>) – Graph for which to find source nodes</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of node names</p>
@@ -296,11 +296,11 @@ e.g. {1: [‘SM_project_1’, ‘Classification_project_1’], 2: [‘Mastering_
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>graph</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>) – the graph to use</p></li>
-<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the node to check</p></li>
+<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the node to check</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A list of downstream node names</p>
@@ -316,11 +316,11 @@ e.g. {1: [‘SM_project_1’, ‘Classification_project_1’], 2: [‘Mastering_
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>graph</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>) – the graph to use</p></li>
-<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the node to check</p></li>
+<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the node to check</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A set of nodes that are successors to the current node</p>
@@ -336,11 +336,11 @@ e.g. {1: [‘SM_project_1’, ‘Classification_project_1’], 2: [‘Mastering_
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>graph</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>) – the graph to use</p></li>
-<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the node to check</p></li>
+<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the node to check</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A set of nodes that are predecessors to the current node</p>
@@ -356,7 +356,7 @@ e.g. {1: [‘SM_project_1’, ‘Classification_project_1’], 2: [‘Mastering_
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>graph</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>) – the graph to start with</p></li>
-<li><p><strong>edges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>]) – the edges to add</p></li>
+<li><p><strong>edges</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>]) – the edges to add</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -394,7 +394,7 @@ the plan can be executed and its status.</p>
 <li><p><strong>graph</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Graph.Graph" title="tamr_toolbox.workflow.concurrent.Graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>) – the dataset dependency graph to use to create the planner</p></li>
 <li><p><strong>tamr_client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – the tamr client object associated with the instance for which
 to create the plan</p></li>
-<li><p><strong>starting_tier</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the tier at which to start executing the plan, every job at lower
+<li><p><strong>starting_tier</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the tier at which to start executing the plan, every job at lower
 tiers is skipped and marked as skippable</p></li>
 <li><p><strong>train</strong> – global config for whether or not to ‘apply feedback’/train the model in
 the workflows</p></li>
@@ -435,7 +435,7 @@ the workflows</p></li>
 :param planner: the planner to convert</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>representation of a planner in json format</p>
@@ -452,9 +452,9 @@ the workflows</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>planner</strong> (<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.Planner.Planner" title="tamr_toolbox.workflow.concurrent.Planner.Planner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Planner</span></code></a>) – The planner object whose plan will be executed</p></li>
 <li><p><strong>tamr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – the tamr client to use</p></li>
-<li><p><strong>concurrency_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the number of concurrent jobs to run at once</p></li>
-<li><p><strong>save_state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether or not to save the plan state to json after each update</p></li>
-<li><p><strong>polling_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the amount of time in seconds to wait between polling</p></li>
+<li><p><strong>concurrency_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the number of concurrent jobs to run at once</p></li>
+<li><p><strong>save_state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether or not to save the plan state to json after each update</p></li>
+<li><p><strong>polling_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the amount of time in seconds to wait between polling</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -520,13 +520,13 @@ the workflows</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.PlanNode.PlanNode" title="tamr_toolbox.workflow.concurrent.PlanNode.PlanNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanNode</span></code></a>]) – list of nodes to monitor</p></li>
-<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – number of hours to poll before timing out for change in job status</p></li>
-<li><p><strong>polling_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the amount of time in seconds to wait between polling</p></li>
+<li><p><strong>nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.PlanNode.PlanNode" title="tamr_toolbox.workflow.concurrent.PlanNode.PlanNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanNode</span></code></a>]) – list of nodes to monitor</p></li>
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – number of hours to poll before timing out for change in job status</p></li>
+<li><p><strong>polling_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – the amount of time in seconds to wait between polling</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.PlanNode.PlanNode" title="tamr_toolbox.workflow.concurrent.PlanNode.PlanNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanNode</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#tamr_toolbox.workflow.concurrent.PlanNode.PlanNode" title="tamr_toolbox.workflow.concurrent.PlanNode.PlanNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlanNode</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the same list of planNodes with updated statuses</p>

@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Categorization &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/modules/project/categorization.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Golden Records" href="golden_records.html" />
+    <link rel="prev" title="Project" href="../project.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../project.html">Project</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Categorization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.project.categorization.jobs">Jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.project.categorization.metrics">Metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.project.categorization.taxonomy">Taxonomy Management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transformations">Transformations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="golden_records.html">Golden Records</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mastering.html">Mastering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema_mapping.html">Schema Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="movement.html">Project Movement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflow.html">Workflow</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../modules.html">Modules</a> &raquo;</li>
+        
+          <li><a href="../project.html">Project</a> &raquo;</li>
+        
+      <li>Categorization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/project/categorization.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="categorization">
+<h1>Categorization<a class="headerlink" href="#categorization" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-tamr_toolbox.project.categorization.jobs">
+<span id="jobs"></span><h2>Jobs<a class="headerlink" href="#module-tamr_toolbox.project.categorization.jobs" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to running jobs for Tamr Categorization projects</p>
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.jobs.run">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/categorization.html#tamr_unify_client.categorization.project.CategorizationProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code></a>) – The target categorization project</p></li>
+<li><p><strong>run_apply_feedback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether train should be called on the categorization model</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.jobs.update_unified_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">update_unified_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#update_unified_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.update_unified_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the unified dataset for a categorization project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/categorization.html#tamr_unify_client.categorization.project.CategorizationProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code></a>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.jobs.apply_feedback">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">apply_feedback</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#apply_feedback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.apply_feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the model only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/categorization.html#tamr_unify_client.categorization.project.CategorizationProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code></a>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">apply_feedback_and_update_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#apply_feedback_and_update_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.apply_feedback_and_update_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains the model and updates the categorization predictions of a categorization project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/categorization.html#tamr_unify_client.categorization.project.CategorizationProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code></a>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.jobs.update_results_only">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.jobs.</span></code><code class="sig-name descname"><span class="pre">update_results_only</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/jobs.html#update_results_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.jobs.update_results_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the categorization predictions based on the existing model of a
+categorization project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/categorization.html#tamr_unify_client.categorization.project.CategorizationProject" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategorizationProject</span></code></a>) – Target categorization project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tamr_toolbox.project.categorization.metrics">
+<span id="metrics"></span><h2>Metrics<a class="headerlink" href="#module-tamr_toolbox.project.categorization.metrics" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to metrics for Tamr Categorization projects</p>
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.metrics.get_tier_confidence">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.metrics.</span></code><code class="sig-name descname"><span class="pre">get_tier_confidence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_dataset_refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/metrics.html#get_tier_confidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.metrics.get_tier_confidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts tier-specific average confidence from a Tamr internal dataset
+<cite>&lt;unified dataset name&gt;_classifications_average_confidences</cite> in a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Tamr project object</p></li>
+<li><p><strong>tier</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – integer specifying the tier to extract the average confidence;
+default value will return the average confidence at all leaf categories</p></li>
+<li><p><strong>allow_dataset_refresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – if True, allows running a job to refresh dataset to make it
+streamable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dictionary - keys are category paths, joined by ‘|’ if multi-level taxonomy and values are
+average confidence of the corresponding keys</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>dataset</cite> is not streamable and <cite>allow_dataset_refresh</cite> is False;</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – if tier is not of type int;
+    or if the project type is not classification</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if tier is less than -1 or equal to 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tamr_toolbox.project.categorization.taxonomy">
+<span id="taxonomy-management"></span><h2>Taxonomy Management<a class="headerlink" href="#module-tamr_toolbox.project.categorization.taxonomy" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to editing the taxonomy for a tamr categorization project</p>
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.taxonomy.delete_node">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.taxonomy.</span></code><code class="sig-name descname"><span class="pre">delete_node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_delete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/taxonomy.html#delete_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.taxonomy.delete_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a node from a taxonomy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client connected to target instance</p></li>
+<li><p><strong>project_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – ID of the categorization project</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – Full path of the node to be deleted</p></li>
+<li><p><strong>force_delete</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Optional flag. Default is false. If true, deletes even if there are still</p></li>
+<li><p><strong>assigned to that category. If false</strong> (<em>records</em>) – </p></li>
+<li><p><strong>operation fails with an error.</strong> (<em>the</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.taxonomy.rename_node">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.taxonomy.</span></code><code class="sig-name descname"><span class="pre">rename_node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/taxonomy.html#rename_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.taxonomy.rename_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renames an existing node in the taxonomy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client connected to target instance</p></li>
+<li><p><strong>project_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – ID of the categorization project</p></li>
+<li><p><strong>new_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – New name to assign to the leaf node</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – Full path of the existing leaf node to rename</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.taxonomy.create_node">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.taxonomy.</span></code><code class="sig-name descname"><span class="pre">create_node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/taxonomy.html#create_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.taxonomy.create_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a category with the specified path in the project taxonomy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client connected to target instance</p></li>
+<li><p><strong>project_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – ID of the categorization project</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – Full path of the new category to be added</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.taxonomy.get_taxonomy_as_dataframe">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.taxonomy.</span></code><code class="sig-name descname"><span class="pre">get_taxonomy_as_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/taxonomy.html#get_taxonomy_as_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.taxonomy.get_taxonomy_as_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the taxonomy for a project given the project ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client connected to target instance</p></li>
+<li><p><strong>project_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – ID of the categorization project</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Current taxonomy categories as a dataframe</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if project is not a categorization project or if the taxonomy does not exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.taxonomy.move_node">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.taxonomy.</span></code><code class="sig-name descname"><span class="pre">move_node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_node_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_node_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move_verifications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/categorization/taxonomy.html#move_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.categorization.taxonomy.move_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to move a node in a taxonomy to a new path. By default, the function will also move
+any verified categorizations under the old node to the new paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – Tamr client connected to the target instance.</p></li>
+<li><p><strong>project_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Project ID of categorization project.</p></li>
+<li><p><strong>old_node_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – List of the full path for the node to be moved.</p></li>
+<li><p><strong>new_node_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – List of the full path for where the node is to be moved to.</p></li>
+<li><p><strong>move_verifications</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Optional boolean argument to move verifications to the new path.</p></li>
+<li><p><strong>to false may result in loss of work.</strong> (<em>Setting</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+</div>
+<div class="section" id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.schema.map_attribute">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.schema.</span></code><code class="sig-name descname"><span class="pre">map_attribute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.schema.map_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps source_attribute in source_dataset to unified_attribute in unified_dataset.
+If the mapping already exists it will log
+a warning and return the existing AttributeMapping from the project’s collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Source attribute name to map</p></li>
+<li><p><strong>source_dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Source dataset containing the source attribute</p></li>
+<li><p><strong>unified_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Unified attribute to which to map the source attribute</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – The project in which to perform the mapping</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.attribute_mapping.resource.AttributeMapping" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The created AttributeMapping</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if input variables <cite>source_attribute_name</cite> or <cite>source_dataset_name</cite> or
+    <cite>unified_attribute_name</cite> are set to empty strings;
+    or if the dataset <cite>source_dataset_name</cite> is not found on Tamr;
+    or if <cite>source_attribute_name</cite> is missing from the attributes of <cite>source_attribute_name</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.schema.unmap_attribute">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.schema.</span></code><code class="sig-name descname"><span class="pre">unmap_attribute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.schema.unmap_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unmaps a source attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the source attribute to unmap</p></li>
+<li><p><strong>source_dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the source dataset containing that source attribute</p></li>
+<li><p><strong>unified_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the unified attribute from which to unmap</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project in which to unmap the attribute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.schema.bootstrap_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.schema.</span></code><code class="sig-name descname"><span class="pre">bootstrap_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_add_dataset_to_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.schema.bootstrap_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bootstraps a dataset (i.e. maps all source columns to themselves)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – the source dataset (a Dataset object not a string)</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project to do the mapping ing</p></li>
+<li><p><strong>force_add_dataset_to_project</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean whether to add the dataset to the project
+if it is not already a part of it</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.attribute_mapping.resource.AttributeMapping" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the AttributeMappings generated</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>source_dataset</cite> is not part of the given <cite>project</cite>, set
+    ‘force_add_dataset_to_project’ flag to True to automatically add it</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.schema.unmap_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.schema.</span></code><code class="sig-name descname"><span class="pre">unmap_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_dataset_from_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.schema.unmap_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wholly unmaps a dataset and optionally removes it from a project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – the source dataset (Dataset object not a string) to unmap</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project in which to unmap the dataset</p></li>
+<li><p><strong>remove_dataset_from_project</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean to also remove the dataset from the project</p></li>
+<li><p><strong>skip_if_missing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean to skip if dataset is not in project. If set to false and
+dataset is not in project will raise a RuntimeError</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>source_dataset</cite> is not in <cite>project</cite> and <cite>skip_if_missing</cite> not set to True</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="transformations">
+<h2>Transformations<a class="headerlink" href="#transformations" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="tamr_toolbox.project.categorization.transformations.InputTransformation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.transformations.</span></code><code class="sig-name descname"><span class="pre">InputTransformation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">transformation</span></em>, <em class="sig-param"><span class="pre">datasets=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.transformations.InputTransformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A transformation scoped to input datasets</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The text of a transformations script</p></li>
+<li><p><strong>datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]) – The list of input datasets that the script should be applied to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.project.categorization.transformations.TransformationGroup">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.transformations.</span></code><code class="sig-name descname"><span class="pre">TransformationGroup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input_scope=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">unified_scope=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.transformations.TransformationGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group of input transformations and unified transformations</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_scope</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">InputTransformation</span></code>]) – A list of transformation to apply to input datasets</p></li>
+<li><p><strong>unified_scope</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – A list of transformation scripts to apply to the unified dataset</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.transformations.get_all">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.transformations.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the transformations of a Project</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project containing transformations</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformationGroup</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>All input transformations and unified transformations of a project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.transformations.set_all">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.transformations.set_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the transformations of a Project</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project to place transformations within</p></li>
+<li><p><strong>tx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TransformationGroup</span></code>) – Transformations to put into project</p></li>
+<li><p><strong>allow_overwrite</strong> – Whether existing transformations can be overwritten</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.28.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>allow_overwrite</cite> is set to False but transformations already exists
+    in <cite>project</cite></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if provided <cite>tx</cite> are invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.transformations.get_all_unified">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all_unified</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.transformations.get_all_unified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the unified transformations of a Project</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project containing transformations</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>All unified transformations of a project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.categorization.transformations.set_all_unified">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.categorization.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all_unified</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.categorization.transformations.set_all_unified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the unified transformations of a Project.
+Any input transformations will not be altered</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project to place transformations within</p></li>
+<li><p><strong>tx</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Unified transformations to put into project</p></li>
+<li><p><strong>allow_overwrite</strong> – Whether existing unified transformations can be overwritten</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.28.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>allow_overwrite</cite> is set to False but transformations already exists
+    in <cite>project</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="golden_records.html" class="btn btn-neutral float-right" title="Golden Records" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../project.html" class="btn btn-neutral float-left" title="Project" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

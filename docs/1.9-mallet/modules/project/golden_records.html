@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Golden Records &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/modules/project/golden_records.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Mastering" href="mastering.html" />
+    <link rel="prev" title="Categorization" href="categorization.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../project.html">Project</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="categorization.html">Categorization</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Golden Records</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.project.golden_records.jobs">Jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mastering.html">Mastering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="schema_mapping.html">Schema Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="movement.html">Project Movement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflow.html">Workflow</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../modules.html">Modules</a> &raquo;</li>
+        
+          <li><a href="../project.html">Project</a> &raquo;</li>
+        
+      <li>Golden Records</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/project/golden_records.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="golden-records">
+<h1>Golden Records<a class="headerlink" href="#golden-records" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-tamr_toolbox.project.golden_records.jobs">
+<span id="jobs"></span><h2>Jobs<a class="headerlink" href="#module-tamr_toolbox.project.golden_records.jobs" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to running jobs for Tamr Golden Records projects</p>
+<dl class="py function">
+<dt id="tamr_toolbox.project.golden_records.jobs.run">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.golden_records.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/golden_records/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.golden_records.jobs.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target golden records project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.golden_records.jobs.update_profiling_info">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.golden_records.jobs.</span></code><code class="sig-name descname"><span class="pre">update_profiling_info</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/golden_records/jobs.html#update_profiling_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.golden_records.jobs.update_profiling_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updating all profiling information for golden records project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target golden records project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.golden_records.jobs.update_golden_records">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.golden_records.jobs.</span></code><code class="sig-name descname"><span class="pre">update_golden_records</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/golden_records/jobs.html#update_golden_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.golden_records.jobs.update_golden_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the draft golden records of a project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target golden records project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.golden_records.jobs.publish_golden_records">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.golden_records.jobs.</span></code><code class="sig-name descname"><span class="pre">publish_golden_records</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/golden_records/jobs.html#publish_golden_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.golden_records.jobs.publish_golden_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish the  golden records of a project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target golden records project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.golden_records.jobs.update_and_publish">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.golden_records.jobs.</span></code><code class="sig-name descname"><span class="pre">update_and_publish</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/golden_records/jobs.html#update_and_publish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.golden_records.jobs.update_and_publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the draft golden records and publish the golden records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target golden records project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mastering.html" class="btn btn-neutral float-right" title="Mastering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="categorization.html" class="btn btn-neutral float-left" title="Categorization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

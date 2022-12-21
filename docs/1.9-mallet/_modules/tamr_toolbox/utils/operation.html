@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.utils.operation &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/utils/operation.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.utils.operation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.utils.operation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to Tamr operations (or jobs)&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span><span class="p">,</span> <span class="n">time</span> <span class="k">as</span> <span class="n">now</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.operation_state</span> <span class="kn">import</span> <span class="n">OperationState</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="enforce_success"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.enforce_success">[docs]</a><span class="k">def</span> <span class="nf">enforce_success</span><span class="p">(</span><span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Raises an error if an operation fails</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operation: A Tamr operation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">operation</span><span class="o">.</span><span class="n">succeeded</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Operation </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2"> failed. Description: </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_resource_id"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.from_resource_id">[docs]</a><span class="k">def</span> <span class="nf">from_resource_id</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create an operation from a job id</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr: A Tamr client</span>
+<span class="sd">        job_id: A job ID</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Tamr operation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Tamr sometimes returns a job id of -1 if everthing is up-to-date so the requested task</span>
+    <span class="c1"># would result in no change -- make a dummy operation in this case</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">tamr</span><span class="p">,</span> <span class="n">_dummy_no_op_response</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_resource_id</span><span class="p">(</span><span class="n">tamr</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_dummy_no_op_response</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;job ID -1&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a dict to represent &#39;no-operation operation&#39;, in cases where all results that would be</span>
+<span class="sd">    produced by an operation are already up-to-date so there&#39;s nothing to do.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        code: response code include in description, Default &#39;job ID -1&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict from which dummy operation object can be constructed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_never</span> <span class="o">=</span> <span class="s2">&quot;0000-00-00T00:00:00.000Z&quot;</span>
+    <span class="n">_description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Tamr returned </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2"> for this operation, indicating that all</span>
+<span class="s2">        results that would be produced by the operation are already up-to-date.&quot;&quot;&quot;</span>
+    <span class="n">dummy_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;NOOP&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">_description</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">,</span> <span class="s2">&quot;startTime&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;endTime&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;created&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;lastModified&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">_never</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;-1&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;relativeId&quot;</span><span class="p">:</span> <span class="s2">&quot;operations/-1&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dummy_dict</span>
+
+
+<div class="viewcode-block" id="get_latest"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_latest">[docs]</a><span class="k">def</span> <span class="nf">get_latest</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get the latest operation</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr: A Tamr client</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The latest job</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">get_all</span><span class="p">(</span><span class="n">tamr</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">op</span></div>
+
+
+<div class="viewcode-block" id="get_details"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_details">[docs]</a><span class="k">def</span> <span class="nf">get_details</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return a text describing the information of a job</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operation: A Tamr operation</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A text describing the information of a job</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Host: </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Job: </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Description: </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> Status: </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2"> &quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_all"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_all">[docs]</a><span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of all jobs or operations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr: A Tamr client</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of Operation objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;/api/versioned/v1/operations&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">},</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">ops</span> <span class="o">=</span> <span class="p">[</span><span class="n">Operation</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">tamr</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">ops</span></div>
+
+
+<div class="viewcode-block" id="get_active"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.get_active">[docs]</a><span class="k">def</span> <span class="nf">get_active</span><span class="p">(</span><span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of pending and running jobs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr: A Tamr client</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of Operations objects</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ops</span> <span class="o">=</span> <span class="n">get_all</span><span class="p">(</span><span class="n">tamr</span><span class="p">)</span>
+    <span class="n">active_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">OperationState</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">OperationState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">]</span>
+    <span class="n">active_ops</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span> <span class="k">if</span> <span class="n">OperationState</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">state</span><span class="p">)</span> <span class="ow">in</span> <span class="n">active_states</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">active_ops</span></div>
+
+
+<div class="viewcode-block" id="wait"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.wait">[docs]</a><span class="k">def</span> <span class="nf">wait</span><span class="p">(</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Continuously polls for this operation&#39;s server-side state.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operation: Operation to be polled.</span>
+<span class="sd">        poll_interval_seconds: Time interval (in seconds) between subsequent polls.</span>
+<span class="sd">        timeout_seconds: Time (in seconds) to wait for operation to resolve.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TimeoutError: If operation takes longer than `timeout_seconds` to resolve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">started</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">timeout_seconds</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">started</span> <span class="o">&lt;</span> <span class="n">timeout_seconds</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">operation</span><span class="o">.</span><span class="n">status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operation</span>
+        <span class="k">elif</span> <span class="n">operation</span><span class="o">.</span><span class="n">status</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="n">OperationState</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">OperationState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">]:</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval_seconds</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">operation</span><span class="o">.</span><span class="n">status</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">OperationState</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">,</span>
+            <span class="n">OperationState</span><span class="o">.</span><span class="n">SUCCEEDED</span><span class="p">,</span>
+            <span class="n">OperationState</span><span class="o">.</span><span class="n">FAILED</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">return</span> <span class="n">operation</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+    <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation took longer than </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="monitor"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.monitor">[docs]</a><span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">timeout_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Continuously polls for this operation&#39;s server-side state and returns operation</span>
+<span class="sd">    when there is a state change</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        operation: Operation to be monitored.</span>
+<span class="sd">        poll_interval_seconds: Time interval (in seconds) between subsequent polls.</span>
+<span class="sd">        timeout_seconds: Time (in seconds) to wait for operation to resolve.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TimeoutError: If operation takes longer than `timeout_seconds` to resolve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">OperationState</span><span class="p">[</span><span class="n">operation</span><span class="o">.</span><span class="n">state</span><span class="p">]</span>
+    <span class="n">started</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">timeout_seconds</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">started</span> <span class="o">&lt;</span> <span class="n">timeout_seconds</span><span class="p">:</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+        <span class="n">new_status</span> <span class="o">=</span> <span class="n">OperationState</span><span class="p">[</span><span class="n">operation</span><span class="o">.</span><span class="n">state</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">operation</span><span class="o">.</span><span class="n">status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operation</span>
+        <span class="k">elif</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">status</span><span class="p">:</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval_seconds</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">operation</span>
+    <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation took longer than </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="safe_estimate_counts"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.safe_estimate_counts">[docs]</a><span class="k">def</span> <span class="nf">safe_estimate_counts</span><span class="p">(</span><span class="n">project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the estimate counts job of project that works if it is the first</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project: A Tamr project object</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        An operation object for the estimate pairs job</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">as_mastering</span><span class="p">()</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">api_path</span><span class="si">}</span><span class="s2">/estimatedPairCounts:refresh&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -9,6 +9,10 @@ Metrics
 ------------------------
 .. automodule:: tamr_toolbox.project.categorization.metrics
 
+Taxonomy Management
+------------------------
+.. automodule:: tamr_toolbox.project.categorization.taxonomy
+
 Schema
 ------------------------
 .. autofunction:: tamr_toolbox.project.categorization.schema.map_attribute

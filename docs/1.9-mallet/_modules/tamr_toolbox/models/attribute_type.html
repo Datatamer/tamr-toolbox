@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.models.attribute_type &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/models/attribute_type.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.models.attribute_type</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.models.attribute_type</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Enum and dataclasses representing attribute types in Tamr&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="n">PrimitiveType</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s2">&quot;PrimitiveType&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;BOOLEAN&quot;</span><span class="p">,</span> <span class="s2">&quot;DOUBLE&quot;</span><span class="p">,</span> <span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="s2">&quot;LONG&quot;</span><span class="p">,</span> <span class="s2">&quot;STRING&quot;</span><span class="p">])</span>
+
+<span class="c1"># primitive type aliases</span>
+<span class="n">DOUBLE</span> <span class="o">=</span> <span class="n">PrimitiveType</span><span class="o">.</span><span class="n">DOUBLE</span>
+<span class="n">BOOLEAN</span> <span class="o">=</span> <span class="n">PrimitiveType</span><span class="o">.</span><span class="n">BOOLEAN</span>
+<span class="n">INT</span> <span class="o">=</span> <span class="n">PrimitiveType</span><span class="o">.</span><span class="n">INT</span>
+<span class="n">LONG</span> <span class="o">=</span> <span class="n">PrimitiveType</span><span class="o">.</span><span class="n">LONG</span>
+<span class="n">STRING</span> <span class="o">=</span> <span class="n">PrimitiveType</span><span class="o">.</span><span class="n">STRING</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;See https://docs.tamr.com/reference#attribute-types</span>
+<span class="sd">    NOTE:</span>
+<span class="sd">        `sphinx_autodoc_typehints` cannot handle forward reference to `AttributeType`,</span>
+<span class="sd">        so reference docs are written manually for this type</span>
+<span class="sd">    Args:</span>
+<span class="sd">        inner_type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_tag</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ARRAY&quot;</span>
+    <span class="n">inner_type</span><span class="p">:</span> <span class="s2">&quot;AttributeType&quot;</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Map</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;See https://docs.tamr.com/reference#attribute-types</span>
+<span class="sd">    NOTE:</span>
+<span class="sd">        `sphinx_autodoc_typehints` cannot handle forward reference to `AttributeType`,</span>
+<span class="sd">        so reference docs are written manually for this type</span>
+<span class="sd">    Args:</span>
+<span class="sd">        inner_type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_tag</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;MAP&quot;</span>
+    <span class="n">inner_type</span><span class="p">:</span> <span class="s2">&quot;AttributeType&quot;</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">SubAttribute</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An attribute which is itself a property of another attribute.</span>
+<span class="sd">    See https://docs.tamr.com/reference#attribute-types</span>
+<span class="sd">    NOTE:</span>
+<span class="sd">        `sphinx_autodoc_typehints` cannot handle forward reference to `AttributeType`,</span>
+<span class="sd">        so reference docs are written manually for this type</span>
+<span class="sd">    Args:</span>
+<span class="sd">        name: Name of sub-attribute</span>
+<span class="sd">        type: See https://docs.tamr.com/reference#attribute-types</span>
+<span class="sd">        is_nullable: If this sub-attribute can be null</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;AttributeType&quot;</span>
+    <span class="n">is_nullable</span><span class="p">:</span> <span class="nb">bool</span>
+
+
+<div class="viewcode-block" id="Record"><a class="viewcode-back" href="../../../modules/models.html#tamr_toolbox.models.attribute_type.Record">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Record</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;See https://docs.tamr.com/reference#attribute-types</span>
+<span class="sd">    Args:</span>
+<span class="sd">        attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_tag</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RECORD&quot;</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">SubAttribute</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span></div>
+
+
+<span class="n">ComplexType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Map</span><span class="p">,</span> <span class="n">Record</span><span class="p">]</span>
+
+<span class="n">AttributeType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PrimitiveType</span><span class="p">,</span> <span class="n">ComplexType</span><span class="p">]</span>
+
+<span class="c1"># complex type aliases</span>
+<span class="n">DEFAULT</span><span class="p">:</span> <span class="n">AttributeType</span> <span class="o">=</span> <span class="n">Array</span><span class="p">(</span><span class="n">STRING</span><span class="p">)</span>
+<span class="n">GEOSPATIAL</span><span class="p">:</span> <span class="n">AttributeType</span> <span class="o">=</span> <span class="n">Record</span><span class="p">(</span>
+    <span class="n">attributes</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;point&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">)),</span>
+        <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiPoint&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">))),</span>
+        <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;lineString&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">))),</span>
+        <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiLineString&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">)))),</span>
+        <span class="n">SubAttribute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">)))),</span>
+        <span class="n">SubAttribute</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiPolygon&quot;</span><span class="p">,</span> <span class="n">is_nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">DOUBLE</span><span class="p">))))</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="from_json"><a class="viewcode-back" href="../../../modules/models.html#tamr_toolbox.models.attribute_type.from_json">[docs]</a><span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttributeType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make an attribute type from JSON data (deserialize)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data: JSON data from Tamr server</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baseType&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">base_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing required field &#39;baseType&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">primitive</span> <span class="ow">in</span> <span class="n">PrimitiveType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">base_type</span> <span class="o">==</span> <span class="n">primitive</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">primitive</span>
+
+    <span class="k">if</span> <span class="n">base_type</span> <span class="o">==</span> <span class="n">Array</span><span class="o">.</span><span class="n">_tag</span><span class="p">:</span>
+        <span class="n">inner_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;innerType&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inner_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing required field &#39;innerType&#39; for Array type.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Array</span><span class="p">(</span><span class="n">inner_type</span><span class="o">=</span><span class="n">from_json</span><span class="p">(</span><span class="n">inner_type</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">base_type</span> <span class="o">==</span> <span class="n">Map</span><span class="o">.</span><span class="n">_tag</span><span class="p">:</span>
+        <span class="n">inner_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;innerType&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inner_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing required field &#39;innerType&#39; for Map type.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Map</span><span class="p">(</span><span class="n">inner_type</span><span class="o">=</span><span class="n">from_json</span><span class="p">(</span><span class="n">inner_type</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">base_type</span> <span class="o">==</span> <span class="n">Record</span><span class="o">.</span><span class="n">_tag</span><span class="p">:</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attributes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing required field &#39;attributes&#39; for Record type.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Record</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">([</span><span class="n">_subattribute_from_json</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized &#39;baseType&#39;: </span><span class="si">{</span><span class="n">base_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_subattribute_from_json</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SubAttribute</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make a SubAttribute from JSON data (deserialize)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data: JSON data received from Tamr server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cp</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cp</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;is_nullable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cp</span><span class="p">[</span><span class="s2">&quot;isNullable&quot;</span><span class="p">]</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">from_json</span><span class="p">(</span><span class="n">cp</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">SubAttribute</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="to_json"><a class="viewcode-back" href="../../../modules/models.html#tamr_toolbox.models.attribute_type.to_json">[docs]</a><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">attr_type</span><span class="p">:</span> <span class="n">AttributeType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Serialize attribute type to JSON</span>
+<span class="sd">    Args:</span>
+<span class="sd">        attr_type: Attribute type to serialize</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="n">PrimitiveType</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="n">attr_type</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="p">(</span><span class="n">Array</span><span class="p">,</span> <span class="n">Map</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_type</span><span class="p">)</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span> <span class="s2">&quot;innerType&quot;</span><span class="p">:</span> <span class="n">to_json</span><span class="p">(</span><span class="n">attr_type</span><span class="o">.</span><span class="n">inner_type</span><span class="p">)}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="n">Record</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_type</span><span class="p">)</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span>
+            <span class="s2">&quot;attributes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">subattr</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">to_json</span><span class="p">(</span><span class="n">subattr</span><span class="o">.</span><span class="n">type</span><span class="p">),</span>
+                    <span class="s2">&quot;isNullable&quot;</span><span class="p">:</span> <span class="n">subattr</span><span class="o">.</span><span class="n">is_nullable</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">subattr</span> <span class="ow">in</span> <span class="n">attr_type</span><span class="o">.</span><span class="n">attributes</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">attr_type</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

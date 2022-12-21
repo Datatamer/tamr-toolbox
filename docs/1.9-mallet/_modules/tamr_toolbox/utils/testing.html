@@ -1,0 +1,553 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.utils.testing &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/utils/testing.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.utils.testing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.utils.testing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to testing code&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getfile</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">Response</span><span class="p">,</span> <span class="ne">ConnectionError</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox</span> <span class="kn">import</span> <span class="n">utils</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">WINDOWS_RESERVED_CHARACTER_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span> <span class="s2">&quot;lt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span> <span class="s2">&quot;gt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;:&quot;</span><span class="p">:</span> <span class="s2">&quot;colon&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;&quot;&#39;</span><span class="p">:</span> <span class="s2">&quot;dquote&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;/&quot;</span><span class="p">:</span> <span class="s2">&quot;fslash&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;bslash&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;|&quot;</span><span class="p">:</span> <span class="s2">&quot;pipe&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;?&quot;</span><span class="p">:</span> <span class="s2">&quot;qmark&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;*&quot;</span><span class="p">:</span> <span class="s2">&quot;asterisk&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_response_to_json</span><span class="p">(</span><span class="n">resp</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converts a Response object into json string readable by the responses mocking library</span>
+<span class="sd">    Args:</span>
+<span class="sd">        resp: Response from a Tamr API call</span>
+<span class="sd">        ip_dict: Mapping of previously encountered IP addresses to their anonymization number</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The response represented as a json string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">encoding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
+    <span class="n">resp_log</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">_anonymize_url</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">),</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+        <span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">resp_log</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_anonymize_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a anonymized url. Updates the dictionary inplace if a new ip is encountered</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: A URL</span>
+<span class="sd">        ip_dict: Previously encountered IP addresses and an assigned numeric value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        URL with the IP address anonymized</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regex_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?i)(^https?://)(.*?)([/:].*$)&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+    <span class="n">ip</span> <span class="o">=</span> <span class="n">regex_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">ip_dict</span><span class="p">[</span><span class="n">ip</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">ip_dict</span><span class="p">[</span><span class="n">ip</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ip_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">ip_dict</span><span class="p">[</span><span class="n">ip</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">regex_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">ip-</span><span class="si">{</span><span class="n">num</span><span class="si">:</span><span class="s2">05d</span><span class="si">}{</span><span class="n">regex_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_collect_operation_calls</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Response</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;If the provided response is an Operation, wait for the operation to complete and</span>
+<span class="sd">    return responses related to that operation for cases where we are running synchronously.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        response: A previous Response generated from the same Tamr client</span>
+<span class="sd">        poll_interval_seconds: Time interval (in seconds) between subsequent polls</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Responses related to polling the operation</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">_from_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation to complete: </span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">request_while_pending</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/operations/</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;PENDING&quot;</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval_seconds</span><span class="p">)</span>
+    <span class="n">request_while_running</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/operations/</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">op</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">request_when_complete</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/operations/</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">request_while_pending</span><span class="p">,</span> <span class="n">request_while_running</span><span class="p">,</span> <span class="n">request_when_complete</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_log_response</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Appends a response to a file. If the response returned is</span>
+<span class="sd">     a Tamr Operation, poll the operation until complete and log those responses as well</span>
+<span class="sd">     unless asynchronous is set to True.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_path: File to write the response to</span>
+<span class="sd">        ip_dict: Mapping of previously encountered IP addresses to their anonymization number</span>
+<span class="sd">        response: The response to log</span>
+<span class="sd">        asynchoronous: Whether or not to `wait` for Operations called during the running of tests</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;logged request: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">log_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">all_responses</span> <span class="o">=</span> <span class="p">[</span><span class="n">response</span><span class="p">]</span>
+
+        <span class="c1"># Poll and wait for operations, if applicable</span>
+        <span class="n">is_operation_request</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;.*/api/versioned/v1/operations/.*&quot;</span><span class="p">),</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">is_get_request</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span>
+        <span class="n">is_not_error</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span>
+
+        <span class="k">if</span> <span class="n">is_get_request</span> <span class="ow">and</span> <span class="n">is_operation_request</span> <span class="ow">and</span> <span class="n">is_not_error</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">asynchronous</span><span class="p">:</span>
+            <span class="n">wait_resp</span> <span class="o">=</span> <span class="n">_collect_operation_calls</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+            <span class="n">all_responses</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">wait_resp</span><span class="p">)</span>
+
+        <span class="n">all_json</span> <span class="o">=</span> <span class="p">[</span><span class="n">_response_to_json</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ip_dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_responses</span><span class="p">]</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">all_json</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">_build_response_log_path</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">test_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">response_logs_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a file path for API response logs for a given test and test parameters</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        test_func: The test function</span>
+<span class="sd">        **kwargs: Arguments to the test function</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        File path for the API response logs</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert test arguments and their values to a string, skipping ignored arguments</span>
+    <span class="n">test_params</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+    <span class="c1"># Remove reserved characters from ndjson name</span>
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">WINDOWS_RESERVED_CHARACTER_MAP</span><span class="p">:</span>
+        <span class="n">test_params</span> <span class="o">=</span> <span class="n">test_params</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">char</span><span class="p">,</span> <span class="n">WINDOWS_RESERVED_CHARACTER_MAP</span><span class="p">[</span><span class="n">char</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">test_params</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="n">test_params</span>
+
+    <span class="k">if</span> <span class="n">response_logs_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If no directory is provided, create a directory with the name of the test file</span>
+        <span class="c1"># in a directory called &quot;response_logs&quot; located in the same directory as the test file</span>
+        <span class="n">dir_matcher</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(.*)(?:</span><span class="se">\\</span><span class="s2">|/)(.*).py&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">test_func</span><span class="p">))))</span>
+
+        <span class="n">response_logs_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dir_matcher</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">/response_logs/</span><span class="si">{</span><span class="n">dir_matcher</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response_logs_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">test_func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">test_params</span><span class="si">}</span><span class="s2">.ndjson&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="mock_api"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.testing.mock_api">[docs]</a><span class="k">def</span> <span class="nf">mock_api</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">response_logs_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">enforce_online_test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Decorator for `pytest` tests that mocks API requests by reading a file of</span>
+<span class="sd">    pre-generated responses. Will generate responses file based on a real connection</span>
+<span class="sd">    if pre-generated responses are not found.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        response_logs_dir: Directory to read/write response logs</span>
+<span class="sd">        enforce_online_test: Whether an online test should be run, even if a response log</span>
+<span class="sd">            already exists</span>
+<span class="sd">        asynchronous: Whether or not to `wait` for Operations called during the running of tests</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decorated function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">test_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">test_function</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+            <span class="n">response_log_path</span> <span class="o">=</span> <span class="n">_build_response_log_path</span><span class="p">(</span>
+                <span class="n">test_func</span><span class="o">=</span><span class="n">test_function</span><span class="p">,</span> <span class="n">response_logs_dir</span><span class="o">=</span><span class="n">response_logs_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">response_log_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">enforce_online_test</span><span class="p">:</span>
+                <span class="c1"># Delete the file to enforce an online test</span>
+                <span class="n">response_log_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">response_log_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running offline test based on file at </span><span class="si">{</span><span class="n">response_log_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">_run_offline_test</span><span class="p">(</span>
+                        <span class="n">response_log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span> <span class="n">test_function</span><span class="o">=</span><span class="n">test_function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;A required API call was missing from response logs file for this &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;offline test (</span><span class="si">{</span><span class="n">response_log_path</span><span class="si">}</span><span class="s2">). The response log file must be &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;regenerated. Delete the existing file to automatically regenerate a &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;new one. Caused by: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_run_online_test</span><span class="p">(</span>
+                    <span class="n">response_log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span>
+                    <span class="n">test_function</span><span class="o">=</span><span class="n">test_function</span><span class="p">,</span>
+                    <span class="n">asynchronous</span><span class="o">=</span><span class="n">asynchronous</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">wrapped</span>
+
+    <span class="k">return</span> <span class="n">wrap</span></div>
+
+
+<span class="c1"># Handle ModuleNotFoundError to allow tamr_toolbox to be used when the optional dependency</span>
+<span class="c1"># `responses` is not installed</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">responses</span>
+
+    <span class="c1"># Stores the original _real_send function of requests</span>
+    <span class="n">_BASE_FIND_MATCH</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">RequestsMock</span><span class="o">.</span><span class="n">_find_match</span>
+    <span class="c1"># Stores the original _real_send function of responses</span>
+    <span class="n">_BASE_SEND_REAL</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">_real_send</span>
+
+    <span class="nd">@responses</span><span class="o">.</span><span class="n">activate</span>
+    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">Operation</span><span class="o">.</span><span class="n">wait</span><span class="p">,</span> <span class="s2">&quot;__defaults__&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>  <span class="c1"># sets operation wait time to 0</span>
+    <span class="k">def</span> <span class="nf">_run_offline_test</span><span class="p">(</span><span class="n">response_log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">test_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Runs a test function against saved API responses located in a file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response_log_path: Location of saved API responses</span>
+<span class="sd">            test_function: The function to test</span>
+<span class="sd">            **kwargs: Keyword arguments for the test function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">response_log_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">responses</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="n">ip_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">def</span> <span class="nf">_find_anonymized_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Allows responses library to match requests for an ip address to match to an</span>
+<span class="sd">            anonymized ip address</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">_anonymize_url</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">ip_lookup</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_BASE_FIND_MATCH</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;responses.RequestsMock._find_match&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">_find_anonymized_match</span><span class="p">):</span>
+            <span class="n">test_function</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@responses</span><span class="o">.</span><span class="n">activate</span>
+    <span class="k">def</span> <span class="nf">_run_online_test</span><span class="p">(</span>
+        <span class="n">response_log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">test_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Runs a test function against a Tamr instance and saves the API responses to a file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response_log_path: Location to save API responses</span>
+<span class="sd">            test_function: The function to test</span>
+<span class="sd">            asynchoronous: Whether or not to run asynchronously</span>
+<span class="sd">                (i.e. don&#39;t `wait` for operations to finish)</span>
+<span class="sd">            **kwargs: Keyword arguments for the test function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Online test running against Tamr instance. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Creating new file at </span><span class="si">{</span><span class="n">response_log_path</span><span class="si">}</span><span class="s2">. This may take a while ...&quot;</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">response_log_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">response_log_path</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+
+        <span class="c1"># Each time an API call is made, allow it to pass through responses and make a real call</span>
+        <span class="c1"># Each time a real call is made, log the response in the response file</span>
+        <span class="n">responses</span><span class="o">.</span><span class="n">add_passthru</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;.*&quot;</span><span class="p">))</span>
+
+        <span class="n">ip_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">def</span> <span class="nf">_send_real_with_log</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Logs the response from BASE_SEND_REAL</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                *args: The positional arguments for BASE_SEND_REAL</span>
+<span class="sd">                **kwargs: The keyword arguments for BASE_SEND_REAL</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                The response from the call</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">_BASE_SEND_REAL</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Prevent recursion</span>
+            <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;responses._real_send&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">_BASE_SEND_REAL</span><span class="p">):</span>
+                <span class="n">_log_response</span><span class="p">(</span>
+                    <span class="n">log_path</span><span class="o">=</span><span class="n">response_log_path</span><span class="p">,</span>
+                    <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                    <span class="n">ip_dict</span><span class="o">=</span><span class="n">ip_lookup</span><span class="p">,</span>
+                    <span class="n">asynchronous</span><span class="o">=</span><span class="n">asynchronous</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span>
+
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;responses._real_send&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">_send_real_with_log</span><span class="p">):</span>
+            <span class="n">test_function</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Setting the passthru above permanently changes state for online testing</span>
+        <span class="c1"># Reset passthru to default</span>
+        <span class="n">responses</span><span class="o">.</span><span class="n">mock</span><span class="o">.</span><span class="n">passthru_prefixes</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="n">responses</span><span class="o">.</span><span class="n">_default_mock</span><span class="o">.</span><span class="n">passthru_prefixes</span> <span class="o">=</span> <span class="p">()</span>
+
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="c1"># Ensure exception is due to responses package being missing</span>
+    <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">msg</span> <span class="o">!=</span> <span class="s2">&quot;No module named &#39;responses&#39;&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">err</span>
+
+    <span class="k">def</span> <span class="nf">_run_offline_test</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dummy function to raise the appropriate exception if the function is called without the</span>
+<span class="sd">        necessary package installed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">responses</span>  <span class="c1"># noqa: F401</span>
+
+    <span class="k">def</span> <span class="nf">_run_online_test</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dummy function to raise the appropriate exception if the function is called without the</span>
+<span class="sd">        necessary package installed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">responses</span>  <span class="c1"># noqa: F401</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

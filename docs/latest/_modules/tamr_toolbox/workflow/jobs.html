@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -161,14 +161,16 @@
             
   <h1>Source code for tamr_toolbox.workflow.jobs</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Tasks related to running jobs for groups of Tamr projects&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
-<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Dataset</span>
 <span class="kn">from</span> <span class="nn">tamr_toolbox.models.project_type</span> <span class="kn">import</span> <span class="n">ProjectType</span>
 
 <span class="kn">from</span> <span class="nn">tamr_toolbox.project</span> <span class="kn">import</span> <span class="n">mastering</span><span class="p">,</span> <span class="n">categorization</span><span class="p">,</span> <span class="n">golden_records</span><span class="p">,</span> <span class="n">schema_mapping</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -178,6 +180,8 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">run_apply_feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">run_estimate_pair_counts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">run_profile_unified_datasets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">sleep_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Run multiple projects in order</span>
 
@@ -186,6 +190,9 @@
 <span class="sd">        run_apply_feedback: Whether train should be called on the pair matching model</span>
 <span class="sd">            or categorization model (based on project type)</span>
 <span class="sd">        run_estimate_pair_counts: Whether an estimate pairs job should be run</span>
+<span class="sd">        run_profile_unified_datasets: Whether unified datasets should be re-profiled</span>
+<span class="sd">        sleep_interval: Number of seconds to sleep between job submissions.</span>
+<span class="sd">            Useful in some pipeline situations</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The operations that were run</span>
@@ -221,6 +228,31 @@
             <span class="p">)</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Excluding GOLDEN_RECORDS as profile information is refreshed as part of job:</span>
+        <span class="c1"># breakpoint()</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">)</span>
+            <span class="o">|</span> <span class="p">(</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">CATEGORIZATION</span><span class="p">)</span>
+            <span class="o">|</span> <span class="p">(</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">DEDUP</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">run_profile_unified_datasets</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking for profile for </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">profile</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">profile</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">HTTPError</span><span class="p">:</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Profile not found for </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Creating&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; a profile.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">create_profile</span><span class="p">()</span>
+                    <span class="n">profile</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">profile</span><span class="p">()</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Refreshing profile for </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">refresh</span><span class="p">())</span>
+
+        <span class="c1"># if we need to sleep before the next iteration then do so</span>
+        <span class="c1"># default is zero so don&#39;t need an if statement</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_interval</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">operations</span></div>
 
@@ -326,6 +358,29 @@
     <span class="n">upstream_projects</span> <span class="o">=</span> <span class="n">_find_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">upstream_projects</span></div>
+
+
+<div class="viewcode-block" id="get_project_output_datasets"><a class="viewcode-back" href="../../../modules/workflow/jobs.html#tamr_toolbox.workflow.jobs.get_project_output_datasets">[docs]</a><span class="k">def</span> <span class="nf">get_project_output_datasets</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieves datasets produced by a given Tamr project</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the Tamr project for which associated output datasets are retrieved</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The list of Tamr datasets output from the project&quot;&quot;&quot;</span>
+    <span class="n">input_datasets_dependencies</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dep</span>
+        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="p">{</span><span class="n">input_ds</span> <span class="k">for</span> <span class="n">input_ds</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">input_datasets</span><span class="p">()}</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">dependencies</span>
+    <span class="p">]</span>
+    <span class="n">output_dataset_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">dep</span><span class="o">.</span><span class="n">dataset_name</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">input_datasets_dependencies</span>
+        <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">output_from_project_steps</span>
+        <span class="ow">and</span> <span class="n">project</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">dep</span><span class="o">.</span><span class="n">output_from_project_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">project_name</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">ds</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">datasets</span> <span class="k">if</span> <span class="n">ds</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">output_dataset_names</span><span class="p">]</span></div>
 </pre></div>
 
            </div>

@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>DF-Connect &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/modules/data_io/df_connect.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Dataset" href="../dataset.html" />
+    <link rel="prev" title="Dataframe" href="dataframe.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../data_io.html">Data Input/Output</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="csv.html">CSV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dataframe.html">Dataframe</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">DF-Connect</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.data_io.df_connect.client">Client</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.data_io.df_connect.jdbc_info">JdbcInfo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflow.html">Workflow</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../modules.html">Modules</a> &raquo;</li>
+        
+          <li><a href="../data_io.html">Data Input/Output</a> &raquo;</li>
+        
+      <li>DF-Connect</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/data_io/df_connect.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="df-connect">
+<h1>DF-Connect<a class="headerlink" href="#df-connect" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-tamr_toolbox.data_io.df_connect.client">
+<span id="client"></span><h2>Client<a class="headerlink" href="#module-tamr_toolbox.data_io.df_connect.client" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to interacting with the Tamr auxiliary service DF-connect</p>
+<dl class="py class">
+<dt id="tamr_toolbox.data_io.df_connect.client.Client">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">Client</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#Client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>A data class for interacting with df_connect via jdbc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the host where df_connect is running</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the port on which df_connect is listening</p></li>
+<li><p><strong>protocol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – http or https</p></li>
+<li><p><strong>base_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – if using nginx-like proxy this is the redirect path</p></li>
+<li><p><strong>tamr_username</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the tamr account to use</p></li>
+<li><p><strong>tamr_password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the password for the tamr account to use</p></li>
+<li><p><strong>jbdc_info</strong> – configuration information for the jdbc connection</p></li>
+<li><p><strong>cert</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – optional path to a certfile for authentication</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.from_config">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">from_config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'df_connect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ingest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a Client object from a json dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – A json dictionary of configuration values</p></li>
+<li><p><strong>config_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – block of the config to parse for values. Defaults to ‘df_connect’</p></li>
+<li><p><strong>jdbc_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the key used to specify which block of df_connect–&gt;jdbc in configuration to be
+used for picking up database connection information. Defaults to ‘ingest’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A Client object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.create">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple wrapper for creating an instance of <cite>Client</cite> dataclass object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the host where df_connect is running</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the port on which df_connect is listening</p></li>
+<li><p><strong>protocol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – http or https</p></li>
+<li><p><strong>base_path</strong> – if using nginx-like proxy this is the redirect path</p></li>
+<li><p><strong>tamr_username</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the tamr account to use</p></li>
+<li><p><strong>tamr_password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the password for the tamr account to use</p></li>
+<li><p><strong>jdbc_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – configuration information for the jdbc connection</p></li>
+<li><p><strong>cert</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – optional path to a certfile for authentication</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An instance of <cite>tamr_toolbox.data_io.df_connect.Client</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.get_connect_session">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">get_connect_session</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#get_connect_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.get_connect_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an authenticated session using Tamr credentials from configuration.
+Raises an exception if df_connect is not installed or running correctly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – An instance of a Client object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.28.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An authenticated session</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if the a connection to df_connect cannot be established</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.ingest_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">ingest_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#ingest_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.ingest_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ingest a dataset into Tamr via df-df_connect given dataset name, query string, and optional
+list of columns for primary key</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of dataset</p></li>
+<li><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – jdbc query to execute in the database and results of which will be loaded into Tamr</p></li>
+<li><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – A Client object for establishing session and loading jdbc parameters</p></li>
+<li><p><strong>primary_key</strong> – list of columns to use as primary key. If None then df_connect will generate
+its own primary key</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JSON response from API call</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HTTPError</strong> – if the call to ingest the dataset was unsuccessful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.export_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">export_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_before_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export a dataset via jdbc to a target database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the dataset to export</p></li>
+<li><p><strong>target_table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the table in the database to update</p></li>
+<li><p><strong>truncate_before_load</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether or not to truncate the database table before load</p></li>
+<li><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – A Client object for establishing session and loading jdbc parameters</p></li>
+<li><p><strong>jdbc_key</strong> – the key for picking up relevant block for export from config file.
+See examples directory for usage</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JSON response from API call</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HTTPError</strong> – if the call to export the dataset was unsuccessful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.execute_statement">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">execute_statement</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#execute_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.execute_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the execute statement endpoint of df-df_connect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statement</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the SQL statement to be executed</p></li>
+<li><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – A Client object for establishing session and loading jdbc parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JSON response from API call</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HTTPError</strong> – if the call to df_connect was unsuccessful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.profile_query_results">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">profile_query_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#profile_query_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.profile_query_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Profile the contents of JDBC queries via df_connect and write results to a Tamr dataset.
+For example the query “select * from table A” means that all rows from table A will be
+profiled, while “select * from table A where name==”my_name”” will only profile rows meeting
+the name==”my_name” condition.
+The same Tamr dataset can be used for profile results from multiple queries</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of Tamr dataset for the profiling results</p></li>
+<li><p><strong>queries</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – list of JDBC queries to execute in the database, the results of which will be
+profiled</p></li>
+<li><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – A Client object for establishing session and loading jdbc parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JSON response from API call</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HTTPError</strong> – if the call to profile the dataset was unsuccessful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">export_dataset_avro_schema</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset_avro_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a connect info object and writes the avro schema to specified url for specified
+dataset. By default assumes HDFS but if local_fs is set to true writes to server file system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – The connect client to use</p></li>
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the location in the relevant file system to which to write the avro schema</p></li>
+<li><p><strong>dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the dataset</p></li>
+<li><p><strong>fs_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a>) – the remote filesystem type. Currently supports ‘HDFS’ and ‘LOCAL’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>json returned by df-connects /urlExport/&lt;hdfs/serverfs&gt;/avroSchema endpoint</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>HTTPError</strong> – if the call to export the schema was unsuccessful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">export_dataset_as_avro</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset_as_avro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a connect info object and writes the corresponding avro file to specified url for
+specified dataset. By default assumes HDFS but if local_fs is set to true writes to server
+file system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – The connect client to use</p></li>
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the location in the relevant file system to which to write the avro schema</p></li>
+<li><p><strong>dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the dataset</p></li>
+<li><p><strong>fs_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a>) – the remote filesystem type. Currently supports ‘HDFS’ and ‘LOCAL’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>json returned by df-connects /urlExport/&lt;hdfs/serverfs&gt;/avroSchema endpoint</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if using an unsupported type of file system</p></li>
+<li><p><strong>HTTPError</strong> – if the call to export the dataset was unsuccessful</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tamr_toolbox.data_io.df_connect.jdbc_info">
+<span id="jdbcinfo"></span><h2>JdbcInfo<a class="headerlink" href="#module-tamr_toolbox.data_io.df_connect.jdbc_info" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to handling jdbc information for the Tamr auxiliary service DF-connect</p>
+<dl class="py class">
+<dt id="tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></code><code class="sig-name descname"><span class="pre">JdbcInfo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jdbc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#JdbcInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dataclass to tie together relevant data to ingest data into df_connect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jdbc_url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The jdbc url for the database to which to connect</p></li>
+<li><p><strong>db_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The database user as whom to authenticate</p></li>
+<li><p><strong>db_password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The password for the database user</p></li>
+<li><p><strong>fetch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The number of records by which to chunk the jdbc ResultSet</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.jdbc_info.from_config">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></code><code class="sig-name descname"><span class="pre">from_config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'df_connect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ingest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of JdbcInfo from a json object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – A json dictionary containing configuration values</p></li>
+<li><p><strong>config_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the top-level key of the config to use.</p></li>
+<li><p><strong>jdbc_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the key to use for the jdbc block. Needs to be within <cite>config_key</cite> block.
+Defaults to ‘ingest’, but can be used to specify any sub-block of a config
+object or yaml file. See example configs and exports for more context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo" title="tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">JdbcInfo</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.data_io.df_connect.jdbc_info.create">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple wrapper to create an object of type <cite>JdbcInfo</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jdbc_url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The jdbc url for the database to which to connect</p></li>
+<li><p><strong>db_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The database user as whom to authenticate</p></li>
+<li><p><strong>db_password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The password for the database user</p></li>
+<li><p><strong>fetch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The number of records by which to chunk the jdbc ResultSet</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo" title="tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">JdbcInfo</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An instance of a JdbcInfo object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../dataset.html" class="btn btn-neutral float-right" title="Dataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="dataframe.html" class="btn btn-neutral float-left" title="Dataframe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

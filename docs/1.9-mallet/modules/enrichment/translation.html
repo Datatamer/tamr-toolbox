@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Translation &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/modules/enrichment/translation.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Filesystem" href="../filesystem.html" />
+    <link rel="prev" title="API Client" href="api_client.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../enrichment.html">Enrichment</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="api_client.html">API clients</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Translation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.enrichment.translate">Translate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dictionary">Dictionary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflow.html">Workflow</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../modules.html">Modules</a> &raquo;</li>
+        
+          <li><a href="../enrichment.html">Enrichment</a> &raquo;</li>
+        
+      <li>Translation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/enrichment/translation.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="translation">
+<h1>Translation<a class="headerlink" href="#translation" title="Permalink to this headline">¶</a></h1>
+<p>This module requires an optional dependency. See <a class="reference internal" href="../../installation.html"><span class="doc">Installation</span></a> for details.</p>
+<div class="section" id="module-tamr_toolbox.enrichment.translate">
+<span id="translate"></span><h2>Translate<a class="headerlink" href="#module-tamr_toolbox.enrichment.translate" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to efficiently translating data not present in existing translation
+dictionaries</p>
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.translate.standardize_phrases">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></code><code class="sig-name descname"><span class="pre">standardize_phrases</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_phrases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#standardize_phrases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.standardize_phrases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standardize phrases to translate to avoid re-translating previously translated phrases but
+with different formating</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>original_phrases</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – List of phrases to standardize</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of standardized text</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.translate.get_phrases_to_translate">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></code><code class="sig-name descname"><span class="pre">get_phrases_to_translate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_phrases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#get_phrases_to_translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.get_phrases_to_translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find phrases not previously translated and initiate dictionary entry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_phrases</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – list of phrases to translate</p></li>
+<li><p><strong>translation_dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – a translation dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of standardized phrases not present as keys of the translation dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.translate.from_list">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></code><code class="sig-name descname"><span class="pre">from_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_phrases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nmt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_save_every_n_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_save_to_disk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/tmp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.from_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate a list of phrases from source language to target language.
+The translation is saved in a dictionary on your local file system before updating the
+main dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>all_phrases</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – List of standardized phrases to translate.</p></li>
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – a google translate api client</p></li>
+<li><p><strong>dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – a toolbox translation dictionary</p></li>
+<li><p><strong>source_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language the text to translate is in, “auto” means the api_client
+google_api api_client will try to detect the source language automatically</p></li>
+<li><p><strong>target_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language to translate into</p></li>
+<li><p><strong>chunk_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – number of phrases to translate per api_client calls, set too high and you
+will hit API user rate limit errors</p></li>
+<li><p><strong>translation_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – google_api api_client api_client model to use, “nmt” or “pbmt”.
+Choose “pbmt” if an “nmt” model doesn’t exists for your source to target language pair</p></li>
+<li><p><strong>intermediate_save_every_n_chunks</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – save periodically api_client dictionary to disk every n
+chunk of phrases translated</p></li>
+<li><p><strong>intermediate_save_to_disk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – decide whether to save periodically the dictionary to disk to
+avoid loss of translation data if code breaks</p></li>
+<li><p><strong>intermediate_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – path to folder where dictionary will be save periodically to avoid
+loss of translation data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The updated translation dictionary</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if the argument chunk_size is set to 0</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="dictionary">
+<h2>Dictionary<a class="headerlink" href="#dictionary" title="Permalink to this headline">¶</a></h2>
+<p>Toolbox translation dictionaries have the following general format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TranslationDictionary</span><span class="p">(</span>
+    <span class="n">standardized_phrase</span><span class="o">=</span><span class="s2">&quot;cheddar cheese&quot;</span><span class="p">,</span>
+    <span class="n">translated_phrase</span><span class="o">=</span><span class="s2">&quot;fromage cheddar&quot;</span><span class="p">,</span>
+    <span class="n">detected_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">original_phrases</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cheddar cheese&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<br /><p>Toolbox translation dictionaries have the following format when loaded in memory to be able to
+access each dictionary by their standardized phrase:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;cheddar cheese&quot;</span><span class="p">:</span> <span class="n">TranslationDictionary</span><span class="p">(</span>
+        <span class="n">standardized_phrase</span><span class="o">=</span><span class="s2">&quot;cheddar cheese&quot;</span><span class="p">,</span>
+        <span class="n">translated_phrase</span><span class="o">=</span><span class="s2">&quot;fromage cheddar&quot;</span><span class="p">,</span>
+        <span class="n">detected_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="n">original_phrases</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cheddar cheese&quot;</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;ground beef&quot;</span><span class="p">:</span> <span class="n">TranslationDictionary</span><span class="p">(</span>
+        <span class="n">standardized_phrase</span><span class="o">=</span><span class="s2">&quot;ground beef&quot;</span><span class="p">,</span>
+        <span class="n">translated_phrase</span><span class="o">=</span><span class="s2">&quot;boeuf haché&quot;</span><span class="p">,</span>
+        <span class="n">detected_language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+        <span class="n">original_phrases</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ground beef&quot;</span><span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<br /><p>When loaded on Tamr, translation dictionaries are source dataset with “standardized_phrase” as
+the primary key and the following attributes:</p>
+<ul class="simple">
+<li><p>“translated_phrase”</p></li>
+<li><p>“detected_language”</p></li>
+<li><p>“original_phrases”</p></li>
+</ul>
+<br /><span class="target" id="module-tamr_toolbox.enrichment.dictionary"></span><p>Tasks related to creating, updating, saving and moving translation dictionaries
+in and out of Tamr</p>
+<dl class="py class">
+<dt id="tamr_toolbox.enrichment.dictionary.TranslationDictionary">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">TranslationDictionary</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">standardized_phrase=None</span></em>, <em class="sig-param"><span class="pre">translated_phrase=None</span></em>, <em class="sig-param"><span class="pre">detected_language=None</span></em>, <em class="sig-param"><span class="pre">original_phrases=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#TranslationDictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>A DataClass for translation dictionaries</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>standardized_phrase</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The unique common standardized version of all original_phrases</p></li>
+<li><p><strong>translated_phrase</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The translated standardized phrase to the target language of the
+dictionary</p></li>
+<li><p><strong>detected_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The language detected of the standardized phrase if source language is
+set to auto</p></li>
+<li><p><strong>original_phrases</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – A set of original phrases which all convert to the standardized phrases
+when applying standardization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">SetEncoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#SetEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Class to transform type ‘set’ to type ‘list’ when saving objects to JSON format</p>
+<dl class="py method">
+<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder.default">
+<code class="sig-name descname"><span class="pre">default</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">python_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#SetEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a set into a list if input is a set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>python_object</strong> – the python object to be saved to a json format</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Default json encoder format of input object or List if input is a Set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder.encode">
+<code class="sig-name descname"><span class="pre">encode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a JSON string representation of a Python data structure.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">json.encoder</span> <span class="kn">import</span> <span class="n">JSONEncoder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">JSONEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">({</span><span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]})</span>
+<span class="go">&#39;{&quot;foo&quot;: [&quot;bar&quot;, &quot;baz&quot;]}&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder.iterencode">
+<code class="sig-name descname"><span class="pre">iterencode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_one_shot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder.iterencode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode the given object and yield each string
+representation as available.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">JSONEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">iterencode</span><span class="p">(</span><span class="n">bigobject</span><span class="p">):</span>
+    <span class="n">mysocket</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.filename">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">filename</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a toolbox translation dictionary file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>]) – base directory where dictionaries are saved</p></li>
+<li><p><strong>target_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language to translate into, for a list of allowed inputs:
+<a class="reference external" href="https://cloud.google.com/translate/docs/basic/discovering-supported-languages">https://cloud.google.com/translate/docs/basic/discovering-supported-languages</a></p></li>
+<li><p><strong>source_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language the text to translate is in, if None, assumes it is “auto”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A toolbox translation dictionary file path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.create">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an empty dictionary on disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – base directory where dictionary is saved</p></li>
+<li><p><strong>target_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language to translate into, for a list of allowed inputs:
+<a class="reference external" href="https://cloud.google.com/translate/docs/basic/discovering-supported-languages">https://cloud.google.com/translate/docs/basic/discovering-supported-languages</a></p></li>
+<li><p><strong>source_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language the text to translate is in, if None, assumes it is “auto”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A path to a dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.to_json">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">to_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a toolbox translation dictionary entries to a json format where set object are
+converted to list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – a toolbox translation dictionary</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of toolbox translation dictionary entries in json format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.to_dict">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">to_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a toolbox translation dictionary entries to a dictionary format where set object are
+converted to list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – a toolbox translation dictionary</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>]]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of toolbox translation dictionary entries in dictionary format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.save">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a toolbox translation dictionary to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>translation_dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – dictionary object to be saved to disk</p></li>
+<li><p><strong>dictionary_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – base directory where dictionary is saved</p></li>
+<li><p><strong>target_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language to translate into, for a list of allowed inputs:
+<a class="reference external" href="https://cloud.google.com/translate/docs/basic/discovering-supported-languages">https://cloud.google.com/translate/docs/basic/discovering-supported-languages</a></p></li>
+<li><p><strong>source_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language the text to translate is in, if None, assumes it is “auto”</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.load">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a toolbox translation dictionary from disk to memory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – base directory where dictionary is saved</p></li>
+<li><p><strong>target_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language to translate into, for a list of allowed inputs:
+<a class="reference external" href="https://cloud.google.com/translate/docs/basic/discovering-supported-languages">https://cloud.google.com/translate/docs/basic/discovering-supported-languages</a></p></li>
+<li><p><strong>source_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the language the text to translate is in, if None, assumes it is “auto”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A toolbox translation dictionary</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if the dictionary was found on disk but is not of a valid
+    toolbox translation dictionary type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.update">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a toolbox translation dictionary with another temporary translation dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>main_dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – the main toolbox translation dictionary containing past
+translation results</p></li>
+<li><p><strong>tmp_dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – a temporary toolbox translation dictionary containing new translation</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.convert_to_mappings">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">convert_to_mappings</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#convert_to_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.convert_to_mappings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a translation dictionary into a mapping of original phrases to translated phrases
+:type dictionary: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]
+:param dictionary: a toolbox translation dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dictionary with original phrase as key and translate phrase as value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.from_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">from_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#from_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.from_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stream a dictionary from Tamr</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – Tamr Dataset object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A toolbox translation dictionary</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if the provided <cite>dataset</cite> is not a toolbox translation dictionary dataset</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NameError" title="(in Python v3.11)"><strong>NameError</strong></a> – if the provided <cite>dataset</cite> does not contain all the attributes of a
+    toolbox translation dictionary</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if there is any other problem while reading the <cite>dataset</cite> as a
+    toolbox translation dictionary</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.dictionary.to_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">to_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ingest a toolbox dictionary in Tamr, creates the source dataset if it doesn’t exists</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]) – a toolbox translation dictionary</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]) – a Tamr client dataset</p></li>
+<li><p><strong>datasets_collection</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.collection.DatasetCollection" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetCollection</span></code></a>]) – a Tamr client datasets collection</p></li>
+<li><p><strong>target_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the target language of the given dictionary</p></li>
+<li><p><strong>source_language</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the source language of the given dictionary</p></li>
+<li><p><strong>create_dataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – flag to create or upsert to an existing translation dictionary
+source dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The name of the created or updated Tamr Dataset</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if <cite>create_dataset</cite> is False and <cite>dataset</cite> is not provided or is not a
+    toolbox translation dictionary dataset.
+    If <cite>create_dataset</cite> is True but <cite>datasets_collection</cite> or <cite>target_language</cite> or
+    <cite>source_language</cite> is missing or the Tamr dataset already exists</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if there is an error during the creation of the Tamr dataset attributes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../filesystem.html" class="btn btn-neutral float-right" title="Filesystem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api_client.html" class="btn btn-neutral float-left" title="API Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.utils.config &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/utils/config.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.utils.config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.utils.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to loading and using configuration files&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># Define pattern to be used for parsing environment variables in config files</span>
+<span class="c1"># This pattern searches for the &#39;$&#39; character at the start of variable name and then retrieves</span>
+<span class="c1"># all other text in the variable name. For example: &#39;$MY_VAR&#39; matches and returns &#39;MY_VAR&#39;</span>
+<span class="n">ENV_VAR_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\$(.*)$&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_yaml_env_variable_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Replaces values that match the ENV_VAR_PATTERN with</span>
+<span class="sd">    the value of the corresponding environment variable&quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="n">env_match</span> <span class="o">=</span> <span class="n">ENV_VAR_PATTERN</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">env_match</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">env_match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">env_var</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">env_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No environment variable for </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> found, using None.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">env_var</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">_yaml_env_loader</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reads a yaml file and creates a dictionary, retrieving environment variables as needed</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_to_file: Path to config yaml file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        All configuration variables in a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">yaml_loader</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span>
+    <span class="n">yaml_loader</span><span class="o">.</span><span class="n">add_implicit_resolver</span><span class="p">(</span><span class="s2">&quot;!env_var&quot;</span><span class="p">,</span> <span class="n">ENV_VAR_PATTERN</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">yaml_loader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s2">&quot;!env_var&quot;</span><span class="p">,</span> <span class="n">_yaml_env_variable_constructor</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">config_file</span><span class="p">:</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config_file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml_loader</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configurations have been loaded from </span><span class="si">{</span><span class="n">path_to_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">configs</span>
+
+
+<div class="viewcode-block" id="from_yaml"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.config.from_yaml">[docs]</a><span class="k">def</span> <span class="nf">from_yaml</span><span class="p">(</span>
+    <span class="n">path_to_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">default_path_to_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reads a yaml file and creates a dictionary. Input values can be retrieved from environment</span>
+<span class="sd">    variables</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_to_file: Path to config yaml file</span>
+<span class="sd">        default_path_to_file: Path to use if path_to_file is null or empty</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        All configuration variables in a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If path_to_file is not populated, use default_path_to_file instead</span>
+    <span class="k">if</span> <span class="n">path_to_file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">default_path_to_file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_path_to_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">default_path_to_file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="n">not_populated_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No target path or default path has been specified. At least one must have a &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;value not: &#39;path_to_file&#39;=&#39;</span><span class="si">{</span><span class="n">path_to_file</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;default_path_to_file&#39;=&#39;</span><span class="si">{</span><span class="n">default_path_to_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">not_populated_error</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">not_populated_error</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading configuration file from default: </span><span class="si">{</span><span class="n">default_path_to_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">path_to_file</span> <span class="o">=</span> <span class="n">default_path_to_file</span>
+
+    <span class="k">return</span> <span class="n">_yaml_env_loader</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

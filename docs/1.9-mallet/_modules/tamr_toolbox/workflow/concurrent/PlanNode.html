@@ -1,0 +1,490 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.workflow.concurrent.PlanNode &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/workflow/concurrent/PlanNode.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.workflow.concurrent.PlanNode</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.workflow.concurrent.PlanNode</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">dataclasses_json</span> <span class="kn">import</span> <span class="n">dataclass_json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.workflow.concurrent.PlanNodeStatus</span> <span class="kn">import</span> <span class="n">PlanNodeStatus</span><span class="p">,</span> <span class="n">from_plan_node</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.project_type</span> <span class="kn">import</span> <span class="n">ProjectType</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.project_steps</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SchemaMappingSteps</span><span class="p">,</span>
+    <span class="n">CategorizationSteps</span><span class="p">,</span>
+    <span class="n">MasteringSteps</span><span class="p">,</span>
+    <span class="n">GoldenRecordsSteps</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.project</span> <span class="kn">import</span> <span class="n">schema_mapping</span><span class="p">,</span> <span class="n">categorization</span><span class="p">,</span> <span class="n">mastering</span><span class="p">,</span> <span class="n">golden_records</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">WORKFLOW_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">SchemaMappingSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">:</span> <span class="n">schema_mapping</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_unified_dataset</span>
+    <span class="p">},</span>
+    <span class="n">ProjectType</span><span class="o">.</span><span class="n">DEDUP</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">:</span> <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_unified_dataset</span><span class="p">,</span>
+        <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">GENERATE_PAIRS</span><span class="p">:</span> <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">generate_pairs</span><span class="p">,</span>
+        <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">APPLY_FEEDBACK</span><span class="p">:</span> <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">apply_feedback</span><span class="p">,</span>
+        <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_HIGH_IMPACT_PAIRS</span><span class="p">:</span> <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_pair_predictions</span><span class="p">,</span>
+        <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_CLUSTERS</span><span class="p">:</span> <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_clusters</span><span class="p">,</span>
+        <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">PUBLISH_CLUSTERS</span><span class="p">:</span> <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">publish_clusters</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">ProjectType</span><span class="o">.</span><span class="n">CATEGORIZATION</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">:</span> <span class="n">categorization</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_unified_dataset</span><span class="p">,</span>
+        <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">APPLY_FEEDBACK</span><span class="p">:</span> <span class="n">categorization</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">apply_feedback</span><span class="p">,</span>
+        <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">UPDATE_RESULTS_ONLY</span><span class="p">:</span> <span class="n">categorization</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_results_only</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">ProjectType</span><span class="o">.</span><span class="n">GOLDEN_RECORDS</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">GoldenRecordsSteps</span><span class="o">.</span><span class="n">PROFILE_GOLDEN_RECORDS</span><span class="p">:</span> <span class="n">golden_records</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_profiling_info</span><span class="p">,</span>
+        <span class="n">GoldenRecordsSteps</span><span class="o">.</span><span class="n">UPDATE_GOLDEN_RECORDS</span><span class="p">:</span> <span class="n">golden_records</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">update_golden_records</span><span class="p">,</span>
+        <span class="n">GoldenRecordsSteps</span><span class="o">.</span><span class="n">PUBLISH_GOLDEN_RECORDS</span><span class="p">:</span> <span class="n">golden_records</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">publish_golden_records</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="PlanNode"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNode.PlanNode">[docs]</a><span class="nd">@dataclass_json</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PlanNode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataclass for the node of a Planner object</span>
+<span class="sd">    - contains method for setting list of operations based on project type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span>
+    <span class="n">priority</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">current_op</span><span class="p">:</span> <span class="n">Operation</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">PlanNodeStatus</span> <span class="o">=</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PLANNED</span>
+    <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">project_type</span><span class="p">:</span> <span class="n">ProjectType</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">project_steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">SchemaMappingSteps</span><span class="p">],</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">MasteringSteps</span><span class="p">],</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">GoldenRecordsSteps</span><span class="p">],</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">CategorizationSteps</span><span class="p">],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">current_step</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">SchemaMappingSteps</span><span class="p">,</span> <span class="n">MasteringSteps</span><span class="p">,</span> <span class="n">CategorizationSteps</span><span class="p">,</span> <span class="n">GoldenRecordsSteps</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">steps_to_run</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">SchemaMappingSteps</span><span class="p">],</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">MasteringSteps</span><span class="p">],</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">GoldenRecordsSteps</span><span class="p">],</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">CategorizationSteps</span><span class="p">],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># set the project type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_type</span> <span class="o">=</span> <span class="n">ProjectType</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+
+        <span class="c1"># then set project steps based on project type</span>
+        <span class="c1"># first for schema mapping projects</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">SchemaMappingSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">]</span>
+        <span class="c1"># now for mastering projects</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">DEDUP</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project_steps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">GENERATE_PAIRS</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">APPLY_FEEDBACK</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_HIGH_IMPACT_PAIRS</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_CLUSTERS</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">PUBLISH_CLUSTERS</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project_steps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">GENERATE_PAIRS</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_HIGH_IMPACT_PAIRS</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">UPDATE_CLUSTERS</span><span class="p">,</span>
+                    <span class="n">MasteringSteps</span><span class="o">.</span><span class="n">PUBLISH_CLUSTERS</span><span class="p">,</span>
+                <span class="p">]</span>
+        <span class="c1"># now for categorization projects</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">CATEGORIZATION</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project_steps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">,</span>
+                    <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">APPLY_FEEDBACK</span><span class="p">,</span>
+                    <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">UPDATE_RESULTS_ONLY</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">project_steps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">UPDATE_UNIFIED_DATASET</span><span class="p">,</span>
+                    <span class="n">CategorizationSteps</span><span class="o">.</span><span class="n">UPDATE_RESULTS_ONLY</span><span class="p">,</span>
+                <span class="p">]</span>
+        <span class="c1"># finally for golden record projects</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">GOLDEN_RECORDS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">project_steps</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">GoldenRecordsSteps</span><span class="o">.</span><span class="n">PROFILE_GOLDEN_RECORDS</span><span class="p">,</span>
+                <span class="n">GoldenRecordsSteps</span><span class="o">.</span><span class="n">UPDATE_GOLDEN_RECORDS</span><span class="p">,</span>
+                <span class="n">GoldenRecordsSteps</span><span class="o">.</span><span class="n">PUBLISH_GOLDEN_RECORDS</span><span class="p">,</span>
+            <span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Don&#39;t know how to create a PlanNode object for project type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">project_type</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="poll"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNode.poll">[docs]</a><span class="k">def</span> <span class="nf">poll</span><span class="p">(</span><span class="n">plan_node</span><span class="p">:</span> <span class="n">PlanNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlanNode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Polls the status of the current_op object and returns a new PlanNode with updated status</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        plan_node: the PlanNode object to poll</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Copy of the original plan node with status updated based on the status of the current_op</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get current op and see if it is None (i.e. if plannode hasn&#39;t been triggered)</span>
+    <span class="n">current_op</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">current_op</span>
+
+    <span class="k">if</span> <span class="n">current_op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># if this node hasn&#39;t been triggered just return the current status in case</span>
+        <span class="c1"># it has been updated by upstream actions</span>
+        <span class="n">updated_plan_node_status</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">status</span>
+        <span class="n">updated_current_op</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">updated_operations</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># current op exists so update it</span>
+        <span class="n">updated_current_op</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">current_op</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+        <span class="c1"># also update the list of all ops - rigamarole is to avoid updating current op twice</span>
+        <span class="c1"># since it already exists in plan_node.operations list</span>
+        <span class="n">updated_operations</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">current_op</span><span class="p">]</span>
+        <span class="n">updated_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">updated_current_op</span><span class="p">)</span>
+
+        <span class="c1"># if the op status changed set the plan node&#39;s current op to the updated one</span>
+        <span class="c1"># and use from_plan_node to capture logic around in progress</span>
+        <span class="k">if</span> <span class="n">updated_current_op</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">current_op</span><span class="o">.</span><span class="n">state</span><span class="p">:</span>
+            <span class="c1"># update the current op</span>
+            <span class="n">plan_node</span><span class="o">.</span><span class="n">current_op</span> <span class="o">=</span> <span class="n">updated_current_op</span>
+            <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span> <span class="o">=</span> <span class="n">updated_operations</span>
+            <span class="n">updated_plan_node_status</span> <span class="o">=</span> <span class="n">from_plan_node</span><span class="p">(</span><span class="n">plan_node</span><span class="p">)</span>
+        <span class="c1"># if the op didn&#39;t change status neither will the node so just pass through</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">updated_plan_node_status</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">status</span>
+
+    <span class="k">return</span> <span class="n">PlanNode</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">operations</span><span class="o">=</span><span class="n">updated_operations</span><span class="p">,</span>
+        <span class="n">project</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+        <span class="n">priority</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span>
+        <span class="n">current_op</span><span class="o">=</span><span class="n">updated_current_op</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">updated_plan_node_status</span><span class="p">,</span>
+        <span class="n">current_step</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">current_step</span><span class="p">,</span>
+        <span class="n">steps_to_run</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">steps_to_run</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_next_step"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNode.run_next_step">[docs]</a><span class="k">def</span> <span class="nf">run_next_step</span><span class="p">(</span><span class="n">plan_node</span><span class="p">:</span> <span class="n">PlanNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlanNode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a plan node and runs the project</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        plan_node: the node to run</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        updated plan node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if current_step is None this node has never been run,</span>
+    <span class="c1"># so set it and the steps_to_run from project_steps</span>
+    <span class="n">current_step</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">current_step</span>
+    <span class="k">if</span> <span class="n">current_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">steps_to_run</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">project_steps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">next_step</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">project_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># else we are on step 2+ so user and trim list of steps_to_run</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plan node in trigger next step: </span><span class="si">{</span><span class="n">plan_node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">next_step</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">steps_to_run</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">steps_to_run</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">steps_to_run</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;running step </span><span class="si">{</span><span class="n">next_step</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">plan_node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># We only call methods that return a list with one and only one operation</span>
+    <span class="n">current_op</span> <span class="o">=</span> <span class="n">WORKFLOW_MAP</span><span class="p">[</span><span class="n">plan_node</span><span class="o">.</span><span class="n">project_type</span><span class="p">][</span><span class="n">next_step</span><span class="p">](</span>
+        <span class="n">plan_node</span><span class="o">.</span><span class="n">project</span><span class="p">,</span> <span class="n">process_asynchronously</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># handle case where operations is empty list (nothing has been run)</span>
+    <span class="k">if</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">operations_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_op</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">operations_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">current_op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">operations_list</span><span class="p">:</span>
+            <span class="n">operations_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_op</span><span class="p">)</span>
+    <span class="c1"># don&#39;t forget to update the status - and first update the current op and operations list</span>
+    <span class="n">plan_node</span><span class="o">.</span><span class="n">current_op</span> <span class="o">=</span> <span class="n">current_op</span>
+    <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span> <span class="o">=</span> <span class="n">operations_list</span>
+    <span class="n">plan_node</span><span class="o">.</span><span class="n">current_step</span> <span class="o">=</span> <span class="n">next_step</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">from_plan_node</span><span class="p">(</span><span class="n">plan_node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PlanNode</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">operations</span><span class="o">=</span><span class="n">operations_list</span><span class="p">,</span>
+        <span class="n">current_op</span><span class="o">=</span><span class="n">current_op</span><span class="p">,</span>
+        <span class="n">priority</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span>
+        <span class="n">project</span><span class="o">=</span><span class="n">plan_node</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+        <span class="n">steps_to_run</span><span class="o">=</span><span class="n">steps_to_run</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+        <span class="n">current_step</span><span class="o">=</span><span class="n">next_step</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="monitor"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNode.monitor">[docs]</a><span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span>
+    <span class="n">nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PlanNode</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="n">polling_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PlanNode</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Monitors the status of a list of PlanNodes, when one on that list changes to</span>
+<span class="sd">        either failed/succeeded/cancelled it returns the list</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nodes: list of nodes to monitor</span>
+<span class="sd">        timeout: number of hours to poll before timing out for change in job status</span>
+<span class="sd">        polling_interval: the amount of time in seconds to wait between polling</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the same list of planNodes with updated statuses</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if empty then return immediate and log a warning</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Jobs list is empty! Something is probably wrong.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">timeout_in_seconds</span> <span class="o">=</span> <span class="mi">3600</span> <span class="o">*</span> <span class="n">timeout</span>
+
+    <span class="c1"># get initial statuses</span>
+    <span class="n">initial_statuses</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">status</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">}</span>
+
+    <span class="c1"># get project names for logging</span>
+    <span class="n">running_projects</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">])</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;starting to monitor projects:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">running_projects</span><span class="si">}</span><span class="se">\n</span><span class="s2"> with timeout of </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> hours&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># poll only as long as we haven&#39;t gotten past timeout</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">timeout_in_seconds</span><span class="p">:</span>
+
+        <span class="c1"># sleep at beginning of loop for polling interval</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">polling_interval</span><span class="p">)</span>
+
+        <span class="c1"># poll the jobs and get updated nodes</span>
+        <span class="n">updated_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">poll</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">]</span>
+        <span class="c1"># generate updated statuses</span>
+        <span class="n">updated_statuses</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">status</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">updated_nodes</span><span class="p">}</span>
+
+        <span class="c1"># if status has changed return list</span>
+        <span class="k">if</span> <span class="n">initial_statuses</span> <span class="o">!=</span> <span class="n">updated_statuses</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">updated_nodes</span>
+
+    <span class="c1"># if we got here it timed out and raise runtime error</span>
+    <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Monitoring jobs:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">running_projects</span><span class="si">}</span><span class="se">\n</span><span class="s2"> timed out after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> hours!&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

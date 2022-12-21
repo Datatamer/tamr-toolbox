@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Data Input/Output &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/examples/data_io.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dataset" href="dataset.html" />
+    <link rel="prev" title="Examples" href="../examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Data Input/Output</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#df-connect">DF-Connect</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#connecting-to-tamr-s-auxiliary-service-df-connect">Connecting to Tamr’s Auxiliary Service Df-Connect</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ingesting-a-table-as-a-tamr-dataset">Ingesting a table as a Tamr dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ingesting-multiple-tables-from-multiple-sources">Ingesting multiple tables from multiple sources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-tables-and-writing-results-to-a-tamr-dataset">Profiling tables and writing results to a Tamr dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exporting-a-tamr-dataset-to-a-single-target">Exporting a Tamr dataset to a single target</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exporting-a-tamr-dataset-to-multiple-targets">Exporting a Tamr dataset to multiple targets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exporting-a-tamr-dataset-to-hive">Exporting a Tamr dataset to Hive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-if-tamr-dataset-is-streamable">Check if Tamr dataset is streamable</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dataframe">Dataframe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-dataframe-from-tamr-dataset">Create Dataframe from Tamr Dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validate-a-dataframe-before-upserting-records-to-a-tamr-dataset">Validate a Dataframe before upserting records to a Tamr Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#csv">CSV</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#export-csv-from-tamr-dataset-to-a-designated-filepath">Export CSV from Tamr Dataset to a designated filepath</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-csv-from-taxonomy-to-a-designated-filepath">Export CSV from taxonomy to a designated filepath</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
+        
+      <li>Data Input/Output</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/examples/data_io.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="data-input-output">
+<h1>Data Input/Output<a class="headerlink" href="#data-input-output" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="df-connect">
+<h2>DF-Connect<a class="headerlink" href="#df-connect" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="connecting-to-tamr-s-auxiliary-service-df-connect">
+<h3>Connecting to Tamr’s Auxiliary Service Df-Connect<a class="headerlink" href="#connecting-to-tamr-s-auxiliary-service-df-connect" title="Permalink to this headline">¶</a></h3>
+<p>Connecting to Tamr’s df-connect auxiliary service is straightforward using the tamr-toolbox.
+The module that does this is <cite>tamr_toolbox/data_io/df_connect</cite> and the main object is an instance of type <cite>ConnectInfo</cite>.
+The easiest way to generate such an object is via reading in a configuration file like so:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">df_connect</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_HOST</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9030&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tamr_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_USERNAME</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tamr_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jdbc</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">ingest</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">jdbc_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_INGEST_DB_URL</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_INGEST_DB_USERNAME</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_INGEST_DB_PASSWORD</span><span class="w"></span>
+<span class="w">            </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ingesting-a-table-as-a-tamr-dataset">
+<h3>Ingesting a table as a Tamr dataset<a class="headerlink" href="#ingesting-a-table-as-a-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The below code is an example that reads a config file, shows how to use it to create a</span>
+<span class="sd"> `Client` object, and then streams an example table into Tamr. Relies on default values and</span>
+<span class="sd"> everything being specified by config file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/connect.config.yaml&quot;</span><span class="p">)</span>
+<span class="n">my_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">)</span>
+
+<span class="c1"># ingest table A to dataset A</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ingest_dataset</span><span class="p">(</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;dataset_A&quot;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT * FROM TABLE_A&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ingesting-multiple-tables-from-multiple-sources">
+<h3>Ingesting multiple tables from multiple sources<a class="headerlink" href="#ingesting-multiple-tables-from-multiple-sources" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">df_connect</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_HOST</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9030&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tamr_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_USERNAME</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tamr_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jdbc</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">oracle</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">jdbc_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_ORACLE_DB_URL</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_ORACLE_DB_USERNAME</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_ORACLE_DB_PASSWORD</span><span class="w"></span>
+<span class="w">            </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"></span>
+<span class="w">        </span><span class="nt">postgres</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">jdbc_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_POSTGRES_DB_URL</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_POSTGRES_DB_USERNAME</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_POSTGRES_DB_PASSWORD</span><span class="w"></span>
+<span class="w">            </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Each instance of `Client` is configured to connect to one jdbc source via the `jdbc_key`</span>
+<span class="sd">parameter. The default value of *ingest* is what is used in the simple example.</span>
+<span class="sd">However, the code below shows how to connect to multiple source databases using a more</span>
+<span class="sd">complicated config file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># load example config file for multiple databases</span>
+<span class="n">my_connect_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+    <span class="s2">&quot;examples/resources/conf/connect_multi_ingest.config.yaml&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># stream table A into Tamr using &#39;oracle&#39; db source</span>
+<span class="n">my_oracle_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+    <span class="n">my_connect_config</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="s2">&quot;oracle&quot;</span>
+<span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ingest_dataset</span><span class="p">(</span>
+    <span class="n">my_oracle_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;source_A&quot;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT * FROM schemaA.tableA&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># stream table B into Tamr using postgres db source</span>
+<span class="n">my_postgres_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+    <span class="n">my_connect_config</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="s2">&quot;postgres&quot;</span>
+<span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ingest_dataset</span><span class="p">(</span>
+    <span class="n">my_postgres_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;source_B&quot;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT * FROM schemaB.tableB&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="profiling-tables-and-writing-results-to-a-tamr-dataset">
+<h3>Profiling tables and writing results to a Tamr dataset<a class="headerlink" href="#profiling-tables-and-writing-results-to-a-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The below code is an example that reads in the above config file, shows how to use it to create a</span>
+<span class="sd"> `Client` object, and then profiles example tables, writing the results into Tamr.</span>
+<span class="sd"> Relies on default values and everything being specified by config file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/connect.config.yaml&quot;</span><span class="p">)</span>
+<span class="n">my_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">)</span>
+
+<span class="c1"># profile tables A and B, and write results to Tamr dataset dfconnect_profiling</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">profile_query_results</span><span class="p">(</span>
+    <span class="n">my_connect</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;dfconnect_profiling&quot;</span><span class="p">,</span>
+    <span class="n">queries</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SELECT * FROM TABLE_A&quot;</span><span class="p">,</span> <span class="s2">&quot;SELECT * FROM TABLE_B&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exporting-a-tamr-dataset-to-a-single-target">
+<h3>Exporting a Tamr dataset to a single target<a class="headerlink" href="#exporting-a-tamr-dataset-to-a-single-target" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Export data from Tamr using df-connect. An example where everything is default in config file,</span>
+<span class="sd">which implies exported data is written back to same database as ingested from.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/connect.config.yaml&quot;</span><span class="p">)</span>
+<span class="n">my_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">)</span>
+
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;example_dataset&quot;</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;example_target_table&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exporting-a-tamr-dataset-to-multiple-targets">
+<h3>Exporting a Tamr dataset to multiple targets<a class="headerlink" href="#exporting-a-tamr-dataset-to-multiple-targets" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">df_connect</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_HOST</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">base_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;df_connect&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tamr_username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_USERNAME</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tamr_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jdbc</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">ingest</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">jdbc_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_INGEST_DB_URL</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_INGEST_DB_USERNAME</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_INGEST_DB_PASSWORD</span><span class="w"></span>
+<span class="w">            </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"></span>
+<span class="w">        </span><span class="nt">oracle</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">jdbc_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_EXPORT_ORACLE_DB_URL</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_EXPORT_ORACLE_DB_USERNAME</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_EXPORT_ORACLE_DB_PASSWORD</span><span class="w"></span>
+<span class="w">            </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
+<span class="w">        </span><span class="nt">postgres</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">jdbc_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_EXPORT_POSTGRES_DB_URL</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_EXPORT_POSTGRES_DB_USERNAME</span><span class="w"></span>
+<span class="w">            </span><span class="nt">db_password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_EXPORT_POSTGRES_DB_PASSWORD</span><span class="w"></span>
+<span class="w">            </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to demonstrate how to export datasets from Tamr using df_connect</span>
+<span class="sd">sending multiple datasets to multiple different databases with multiple different</span>
+<span class="sd">parameters/behaviors</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># load example multi config</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/connect_multi_export.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># stream dataset A to Oracle with default export values from config file</span>
+<span class="n">my_connect_oracle</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="s2">&quot;oracle&quot;</span><span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect_oracle</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;dataset_A&quot;</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_A&quot;</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="s2">&quot;oracle&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># stream dataset A to Oracle target table B, while truncating before loading and only 1k records</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect_oracle</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;dataset_A&quot;</span><span class="p">,</span>
+    <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_B&quot;</span><span class="p">,</span>
+    <span class="n">truncate_before_load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">limit_records</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># stream dataset A to Postgres, keeping all Tamr-generated columns</span>
+<span class="n">my_connect_postgres</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="s2">&quot;postgres&quot;</span><span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect_postgres</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;dataset_A&quot;</span><span class="p">,</span>
+    <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_postgres_A&quot;</span><span class="p">,</span>
+    <span class="n">columns_exclude_regex</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># stream dataset A to Postgres, flattening arrays into single string with comma separation</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect_postgres</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;dataset_A&quot;</span><span class="p">,</span>
+    <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_postgres_B&quot;</span><span class="p">,</span>
+    <span class="n">multi_value_delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exporting-a-tamr-dataset-to-hive">
+<h3>Exporting a Tamr dataset to Hive<a class="headerlink" href="#exporting-a-tamr-dataset-to-hive" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Export data from Tamr to Hive using df-connect. Df-connect supports making *external* tables in</span>
+<span class="sd">Hive see https://cwiki.apache.org/confluence/display/Hive/Managed+vs.+External+Tables</span>
+<span class="sd">for some discussion on the difference between managed and external tables. The biggest reason to</span>
+<span class="sd">take this route is performance. It is infeasible to generate a managed table and insert millions</span>
+<span class="sd">of rows into Hive. Streaming the data to hdfs and then creating an external table that points at</span>
+<span class="sd">that table is orders of magnitude faster.</span>
+
+<span class="sd">Creating an external table consists of three steps</span>
+
+<span class="sd">1) stream the data to HDFS as an avro file (note: this assumes that df-connect itself has been</span>
+<span class="sd">setup to talk the HDFS) into its own directory</span>
+
+<span class="sd">2) stream the avro schema file to HDFS in some other directory than the data file</span>
+<span class="sd">    (steps 1 and 2 are re-orderable)</span>
+
+<span class="sd">3) Create a table in Hive telling Hive about the location of the data and the schema file</span>
+<span class="sd">(Hive needs both where the data is and what the schema is in order to create a table,</span>
+<span class="sd">this is messy with avro unless you use an avro schema file, see</span>
+<span class="sd">https://community.cloudera.com/t5/Support-Questions/Is-there-a-way-to-create-Hive-table-based-on-Avro-data/td-p/119473</span>
+<span class="sd">for some discussion</span>
+
+
+<span class="sd">WARNING: The jdbc execute endpoint is purposefully designed for flexibility of the engineer to</span>
+<span class="sd">accomplish data pipeline tasks. As such it allows arbitrary SQL to be run. You should take care to</span>
+<span class="sd">ensure that you neither run any SQL deleterious to the database. Related,</span>
+<span class="sd">DO NOT RUN ARBITRARY SQL PASSED FROM UNKNOWN SOURCES.</span>
+<span class="sd">Doing so opens you up to SQL-injection vulnerabilities. https://xkcd.com/327/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.data_io.file_system_type</span> <span class="kn">import</span> <span class="n">FileSystemType</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--config_file_path&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;examples/resources/conf/connect.config.yaml&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the path to a config file containing df-connect connection information.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--dataset_name&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;my_dataset&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the name of the dataset to stream from Tamr.&quot;</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--table_name&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;my_hive_db.my_hive_table&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the name of the table to create in Hive for this dataset&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--hdfs_base_path&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the location in hdfs to use to stream the data/schema&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">config_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hdfs_base_path</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Takes a config file (to setup df connect client), locations for both where to put the avro</span>
+<span class="sd">     file and where to put the avro schema file, along with the hive statement to execute</span>
+<span class="sd">     for creating a table.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_file_path: the path to your config file</span>
+<span class="sd">        dataset_name: the name of the dataset to stream from Tamr to create the table</span>
+<span class="sd">        table_name: the name of the target table in Hive to create</span>
+<span class="sd">        hdfs_base_path: the location in hdfs where to put this data. Note that the avro file will</span>
+<span class="sd">         be in &lt;hdfs_base_path&gt;/data/my_dataset.avro while the schema will be in</span>
+<span class="sd">         &lt;hdfs_base_path&gt;/schema/my_dataset.avsc</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of json objects returned by each request that is made</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># setup df_connect client</span>
+    <span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">)</span>
+    <span class="n">my_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">)</span>
+
+    <span class="c1"># create needed variables</span>
+    <span class="n">hdfs_data_path</span> <span class="o">=</span> <span class="n">hdfs_base_path</span> <span class="o">+</span> <span class="s2">&quot;/data/&quot;</span>
+    <span class="n">hdfs_file_url</span> <span class="o">=</span> <span class="n">hdfs_data_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">.avro&quot;</span>
+    <span class="n">hdfs_schema_url</span> <span class="o">=</span> <span class="n">hdfs_base_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/schema/</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">.avsc&quot;</span>
+
+    <span class="c1"># now generate the create table statement - pay attention to the LOCATION keyword and</span>
+    <span class="c1"># notice it is the directory of the avro file, not the file itself</span>
+
+    <span class="c1"># **** SEE WARNING IN TOP LEVEL COMMENTS ****</span>
+    <span class="n">hive_create_table_statement</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;CREATE EXTERNAL TABLE IF NOT EXISTS </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> ROW FORMAT SERDE &quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&#39;org.apache.hadoop.hive.serde2.avro.AvroSerDe&#39; STORED AS INPUTFORMAT &quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&#39;org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat&#39; OUTPUTFORMAT &quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;&#39;org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat&#39; LOCATION &quot;</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">hdfs_data_path</span><span class="si">}</span><span class="s2">&#39; TBLPROPERTIES &quot;</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(&#39;avro.schema.url&#39;=&#39;</span><span class="si">{</span><span class="n">hdfs_schema_url</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">response_jsons</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># export the schema first</span>
+    <span class="n">schema_response</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset_avro_schema</span><span class="p">(</span>
+        <span class="n">my_connect</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">hdfs_schema_url</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">fs_type</span><span class="o">=</span><span class="n">FileSystemType</span><span class="o">.</span><span class="n">HDFS</span>
+    <span class="p">)</span>
+    <span class="n">response_jsons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">schema_response</span><span class="p">)</span>
+
+    <span class="c1"># export the data next</span>
+    <span class="n">data_response</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset_as_avro</span><span class="p">(</span>
+        <span class="n">my_connect</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">hdfs_file_url</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">fs_type</span><span class="o">=</span><span class="n">FileSystemType</span><span class="o">.</span><span class="n">HDFS</span>
+    <span class="p">)</span>
+    <span class="n">response_jsons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_response</span><span class="p">)</span>
+
+    <span class="c1"># now create the table via execute endpoint</span>
+    <span class="n">execute_response</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">execute_statement</span><span class="p">(</span>
+        <span class="n">my_connect</span><span class="p">,</span> <span class="n">statement</span><span class="o">=</span><span class="n">hive_create_table_statement</span>
+    <span class="p">)</span>
+    <span class="n">response_jsons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">execute_response</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">response_jsons</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-if-tamr-dataset-is-streamable">
+<h3>Check if Tamr dataset is streamable<a class="headerlink" href="#check-if-tamr-dataset-is-streamable" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet explicitly check that a dataset is streamable when exporting with df_connect&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># read config and connect Tamr client</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/connect_data_export.config.yaml&quot;</span><span class="p">)</span>
+<span class="n">my_connect</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">my_config</span><span class="p">)</span>
+<span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get the Dataset of interest</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="s2">&quot;my_tamr_dataset_id&quot;</span><span class="p">)</span>
+
+<span class="c1"># default tries to export dataset without explicit streamable check</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_table&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># if dataset is not streamable, this will raise an error</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span><span class="o">.</span><span class="n">status</span><span class="p">()</span><span class="o">.</span><span class="n">is_streamable</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not streamable.&quot;</span><span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_table&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># if dataset is not streamable, this will allow it to be refreshed</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span><span class="o">.</span><span class="n">status</span><span class="p">()</span><span class="o">.</span><span class="n">is_streamable</span><span class="p">:</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">df_connect</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">export_dataset</span><span class="p">(</span>
+    <span class="n">my_connect</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">target_table_name</span><span class="o">=</span><span class="s2">&quot;target_table&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dataframe">
+<h2>Dataframe<a class="headerlink" href="#dataframe" title="Permalink to this headline">¶</a></h2>
+<p>tamr-toolbox provides functions to create a pandas Dataframe from a Tamr dataset and optionally flatten it.
+It can also perform basic profiling and validation of pandas Dataframes,
+intended to be used for data quality checks before upserting records into Tamr.</p>
+<div class="section" id="create-dataframe-from-tamr-dataset">
+<h3>Create Dataframe from Tamr Dataset<a class="headerlink" href="#create-dataframe-from-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for exporting a dataset from Tamr as a pandas.Dataframe&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># Read config, make Tamr Client</span>
+<span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+
+<span class="c1"># get dataframe from Tamr Dataset</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="s2">&quot;my_tamr_dataset_id&quot;</span><span class="p">)</span>
+<span class="c1"># default will stream all rows and not apply any flattening</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="c1"># get with lists flattened to strings and a subset of columns and rows</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span> <span class="n">flatten_delimiter</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tamr_id&quot;</span><span class="p">,</span> <span class="s2">&quot;last_name&quot;</span><span class="p">,</span> <span class="s2">&quot;first_name&quot;</span><span class="p">],</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+<span class="c1"># if the Tamr dataset is not streamable, pass this option to allow refreshing it</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">allow_dataset_refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># a dataframe can also be flattened after creation</span>
+<span class="c1"># default will attempt to flatten all columns</span>
+<span class="n">df3</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="c1"># flatten only a subset of columns, and force non-string inner array types to strings</span>
+<span class="n">df4</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;last_name&quot;</span><span class="p">],</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validate-a-dataframe-before-upserting-records-to-a-tamr-dataset">
+<h3>Validate a Dataframe before upserting records to a Tamr Dataset<a class="headerlink" href="#validate-a-dataframe-before-upserting-records-to-a-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for validating the contents of a pandas.Dataframe followed by ingestion into a</span>
+<span class="sd">Tamr dataset&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">my_custom_function</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">my_other_custom_function</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># Read config, make Tamr Client</span>
+<span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+
+<span class="c1"># create DataFrame.  typically this would be from a CSV file</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;my_file.csv&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;str&quot;</span><span class="p">)</span>
+
+<span class="c1"># perform validation</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">require_present_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;column_1&quot;</span><span class="p">,</span> <span class="s2">&quot;column_2&quot;</span><span class="p">],</span>
+    <span class="n">require_unique_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">],</span>
+    <span class="n">require_nonnull_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;column_1&quot;</span><span class="p">],</span>
+    <span class="n">custom_checks</span><span class="o">=</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">my_custom_function</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;column_1&quot;</span><span class="p">,</span> <span class="s2">&quot;column_2&quot;</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">my_other_custom_function</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;column_1&quot;</span><span class="p">,</span> <span class="s2">&quot;column_2&quot;</span><span class="p">]),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># can also have validation return a boolean and a dict of failed columns</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span>
+    <span class="n">raise_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">require_present_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;column_1&quot;</span><span class="p">,</span> <span class="s2">&quot;column_2&quot;</span><span class="p">],</span>
+    <span class="n">require_unique_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">],</span>
+    <span class="n">require_nonnull_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="s2">&quot;column_1&quot;</span><span class="p">],</span>
+    <span class="n">custom_checks</span><span class="o">=</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">my_custom_function</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;column_1&quot;</span><span class="p">,</span> <span class="s2">&quot;column_2&quot;</span><span class="p">]),</span>
+        <span class="p">(</span><span class="n">my_other_custom_function</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;column_1&quot;</span><span class="p">,</span> <span class="s2">&quot;column_2&quot;</span><span class="p">]),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># result bool will be True if all tests succeed, then proceed to upsert the records from the</span>
+<span class="c1"># CSV dataset to Tamr</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+    <span class="n">tamr_dataset</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="s2">&quot;my_tamr_dataset_id&quot;</span><span class="p">)</span>
+    <span class="n">tamr_dataset</span><span class="o">.</span><span class="n">upsert_from_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">primary_key_name</span><span class="o">=</span><span class="s2">&quot;primary_key&quot;</span><span class="p">)</span>
+
+<span class="c1"># if any checks have failed, get the details</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation failed, failing checks: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">details</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="csv">
+<h2>CSV<a class="headerlink" href="#csv" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="export-csv-from-tamr-dataset-to-a-designated-filepath">
+<h3>Export CSV from Tamr Dataset to a designated filepath<a class="headerlink" href="#export-csv-from-tamr-dataset-to-a-designated-filepath" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset.config.yaml</span><span class="w"></span>
+
+<span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">datasets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project_dataset</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_mastering_project_unified_dataset_published_clusters_with_data&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">export_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/path/to/data/output/my_mastering_project_unified_dataset_published_clusters_with_data.csv&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project_dataset</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_categorization_project_unified_dataset_classifications_with_data&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">export_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/path/to/data/output/my_categorization_project_unified_dataset_classifications_with_data.csv&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for exporting a dataset from Tamr as a CSV&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">export_file_path</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Exports a csv from a dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        dataset_id: The id of the dataset to export</span>
+<span class="sd">        export_file_path: Path to write the csv file to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+
+    <span class="c1"># Export the default using default settings</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">csv</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">export_file_path</span><span class="o">=</span><span class="n">export_file_path</span><span class="p">)</span>
+
+    <span class="c1"># Export after adjusting some of the default parameters including csv delimiter,</span>
+    <span class="c1"># flattening delimiter for recording multi-values, limiting and ordering the columns, limiting</span>
+    <span class="c1"># the number of rows, adjusting the buffer size that determines at what interval records are</span>
+    <span class="c1"># written to disk, and renaming the &quot;last_name&quot; column to &quot;family_name&quot;</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">csv</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="p">,</span>
+        <span class="n">export_file_path</span><span class="p">,</span>
+        <span class="n">csv_delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span>
+        <span class="n">flatten_delimiter</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tamr_id&quot;</span><span class="p">,</span> <span class="s2">&quot;last_name&quot;</span><span class="p">,</span> <span class="s2">&quot;first_name&quot;</span><span class="p">],</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">buffer_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">column_name_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;family_name&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing CSV is complete&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/dataset.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">dataset_id</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_mastering_project_dataset&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="n">export_file_path</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_mastering_project_dataset&quot;</span><span class="p">][</span><span class="s2">&quot;export_file_path&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="export-csv-from-taxonomy-to-a-designated-filepath">
+<h3>Export CSV from taxonomy to a designated filepath<a class="headerlink" href="#export-csv-from-taxonomy-to-a-designated-filepath" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for exporting taxonomy of a Tamr Categorization project to a csv file&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># Create the Tamr client</span>
+<span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get a Tamr categorization project by ID</span>
+<span class="n">my_project</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+
+<span class="c1"># Export the taxonomy to a csv file</span>
+<span class="n">export_file_path</span> <span class="o">=</span> <span class="s2">&quot;path_to_the_csv_file/file_name.csv&quot;</span>
+<span class="n">records_written</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">csv</span><span class="o">.</span><span class="n">from_taxonomy</span><span class="p">(</span>
+    <span class="n">my_project</span><span class="p">,</span>
+    <span class="n">export_file_path</span><span class="p">,</span>
+    <span class="n">csv_delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+    <span class="n">flatten_delimiter</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
+    <span class="n">quote_character</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+    <span class="n">quoting</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote </span><span class="si">{</span><span class="n">records_written</span><span class="si">}</span><span class="s2"> categories to </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="dataset.html" class="btn btn-neutral float-right" title="Dataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

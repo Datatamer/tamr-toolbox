@@ -1,0 +1,603 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.workflow.backup &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/workflow/backup.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.workflow.backup</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.workflow.backup</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to backup and restore of Tamr instances&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.filesystem</span> <span class="kn">import</span> <span class="n">bash</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="list_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.list_backups">[docs]</a><span class="k">def</span> <span class="nf">list_backups</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Lists all backups available to Tamr client. Will list both succeeded and failed backups.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: A client object</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A generator of json dict objects for the backups available to client.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;backups&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">backup</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">backup</span></div>
+
+
+<div class="viewcode-block" id="get_backup_by_id"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.get_backup_by_id">[docs]</a><span class="k">def</span> <span class="nf">get_backup_by_id</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">backup_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Fetches the json object for a given backup ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: A Tamr client object.</span>
+<span class="sd">        backup_id: The relativeID corresponding to the desired backup.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Json dict corresponding to the desired backup.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Raised if GET request to Tamr fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">api_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;backups/</span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_string</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Received non-200 response code &#39;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;with message &#39;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="initiate_backup"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.initiate_backup">[docs]</a><span class="k">def</span> <span class="nf">initiate_backup</span><span class="p">(</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="n">polling_timeout_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">connection_retry_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Runs a backup of Tamr client and waits until it is finished.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: A Tamr client object</span>
+<span class="sd">        poll_interval_seconds: Amount of time in between polls of job state.</span>
+<span class="sd">        polling_timeout_seconds: Amount of time before a timeout error is thrown.</span>
+<span class="sd">        connection_retry_timeout_seconds: Amount of time before timeout error is thrown during</span>
+<span class="sd">            connection retry</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Json dict of response from API request.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;backups&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Received non-200 response code &#39;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">backup_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;relativeId&quot;</span><span class="p">]</span>
+
+    <span class="n">op</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">poll_endpoint</span><span class="p">(</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
+        <span class="n">api_endpoint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;backups/</span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">poll_interval_seconds</span><span class="o">=</span><span class="n">poll_interval_seconds</span><span class="p">,</span>
+        <span class="n">polling_timeout_seconds</span><span class="o">=</span><span class="n">polling_timeout_seconds</span><span class="p">,</span>
+        <span class="n">connection_retry_timeout_seconds</span><span class="o">=</span><span class="n">connection_retry_timeout_seconds</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">op</span></div>
+
+
+<div class="viewcode-block" id="initiate_restore"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.initiate_restore">[docs]</a><span class="k">def</span> <span class="nf">initiate_restore</span><span class="p">(</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">backup_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">polling_timeout_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="n">connection_retry_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Restores the Tamr client to the state of the supplied backup.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: A Tamr client object</span>
+<span class="sd">        backup_id: BackupId of the desired backup.</span>
+<span class="sd">        polling_timeout_seconds: Amount of time before a timeout error is thrown.</span>
+<span class="sd">        poll_interval_seconds: Amount of time in between polls of job state.</span>
+<span class="sd">        connection_retry_timeout_seconds: Amount of time before timeout error is thrown during</span>
+<span class="sd">            connection retry</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Json dict of response from API request.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Raised if the target backup contains errors</span>
+<span class="sd">        RuntimeError: Raised if the restore fails to start</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">backup</span> <span class="o">=</span> <span class="n">get_backup_by_id</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">backup_id</span><span class="o">=</span><span class="n">backup_id</span><span class="p">)</span>
+    <span class="n">backup_state</span> <span class="o">=</span> <span class="n">backup</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">backup_state</span> <span class="o">==</span> <span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">:</span>
+        <span class="n">value_error_message1</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Backup file with ID </span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2"> did not succeed and has status </span><span class="si">{</span><span class="n">backup_state</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message1</span><span class="p">)</span>
+
+    <span class="n">error_message</span> <span class="o">=</span> <span class="n">backup</span><span class="p">[</span><span class="s2">&quot;errorMessage&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">error_message</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">value_error_message2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Backup file with ID </span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2"> contains non-null error message </span><span class="si">{</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message2</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message2</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;instance/restore&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">backup_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+        <span class="n">runtime_error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Received non-200 response code &#39;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&#39; : </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">runtime_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">runtime_error_message</span><span class="p">)</span>
+
+    <span class="n">op</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">poll_endpoint</span><span class="p">(</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
+        <span class="n">api_endpoint</span><span class="o">=</span><span class="s2">&quot;instance/restore&quot;</span><span class="p">,</span>
+        <span class="n">poll_interval_seconds</span><span class="o">=</span><span class="n">poll_interval_seconds</span><span class="p">,</span>
+        <span class="n">polling_timeout_seconds</span><span class="o">=</span><span class="n">polling_timeout_seconds</span><span class="p">,</span>
+        <span class="n">connection_retry_timeout_seconds</span><span class="o">=</span><span class="n">connection_retry_timeout_seconds</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">op</span></div>
+
+
+<div class="viewcode-block" id="validate_backup"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.validate_backup">[docs]</a><span class="k">def</span> <span class="nf">validate_backup</span><span class="p">(</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Validates that a directory is a valid backup. A valid backup has a</span>
+<span class="sd">    manifest file, a completion file (_SUCCEEDED, _FAILED, or _CANCELED),</span>
+<span class="sd">    the folder has a valid date format, and the date is prior to the current time</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory: path to backup directory</span>
+<span class="sd">        backup_datetime_format: String datetime format in backup folder name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if directory is a valid backup, otherwise False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    <span class="n">backup_name</span> <span class="o">=</span> <span class="n">directory</span><span class="o">.</span><span class="n">stem</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;manifest.json&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+        <span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;manifest.yaml&quot;</span>
+    <span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The following directory &#39;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&#39; is not a valid Tamr Backup. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Neither manifest.json nor manifest.yaml exist.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="nb">any</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">,</span> <span class="s2">&quot;CANCELED&quot;</span><span class="p">,</span> <span class="s2">&quot;FAILED&quot;</span><span class="p">]])</span>
+    <span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The following directory &#39;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&#39; is not a valid Tamr Backup &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;A SUCCEEDED, CANCELED, or FAILED completion file does not exist.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">backup_name</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The following directory &#39;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&#39; is not a valid Tamr Backup &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;The directory name </span><span class="si">{</span><span class="n">backup_name</span><span class="si">}</span><span class="s2"> is not a valid datetime&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">time</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The following directory &#39;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&#39; is not a valid &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Tamr Backup the datetime represents an invalid time </span><span class="si">{</span><span class="n">time</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="delete_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_backups">[docs]</a><span class="k">def</span> <span class="nf">delete_backups</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">backups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Deletes backup folders recursively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        backups: list of backups to delete</span>
+<span class="sd">        backup_directory: Path to backup directory</span>
+<span class="sd">        backup_datetime_format: String datetime format in backup folder name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of deleted backup names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">backup_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
+    <span class="n">backups_to_delete</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">backups</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deleting </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">backups_to_delete</span><span class="p">)</span><span class="si">}</span><span class="s2"> backup(s): &#39;</span><span class="si">{</span><span class="n">backups_to_delete</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">deleted_backups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">backup</span> <span class="ow">in</span> <span class="n">backups</span><span class="p">:</span>
+        <span class="n">backup_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">backup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validate_backup</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">backup_path</span><span class="p">),</span> <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span><span class="p">):</span>
+            <span class="n">bash</span><span class="o">.</span><span class="n">remove_directories</span><span class="p">([</span><span class="n">backup_path</span><span class="p">],</span> <span class="n">allow_recursive_deletes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">deleted_backups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">backup</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backup</span><span class="si">}</span><span class="s2"> is not a valid backup to delete.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">deleted_backups</span></div>
+
+
+<div class="viewcode-block" id="classify_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.classify_backups">[docs]</a><span class="k">def</span> <span class="nf">classify_backups</span><span class="p">(</span>
+    <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Takes stock of successful and failed valid backups in the backup directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        backup_directory: Path to backup directory</span>
+<span class="sd">        backup_datetime_format: String datetime format in backup folder name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON dict with the keys &quot;successful&quot; (List of successful backups) and</span>
+<span class="sd">        &quot;not_successful&quot; (List of failed or cancelled backups)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if target backup file contains an error message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">backup_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
+    <span class="n">backups</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found &#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">backups</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; entries in the directory </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">not_succeeded</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">succeeded</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">backup</span> <span class="ow">in</span> <span class="n">backups</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">validate_backup</span><span class="p">(</span>
+            <span class="n">backup_directory</span> <span class="o">/</span> <span class="n">backup</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span>
+        <span class="p">):</span>
+            <span class="n">backup_path</span> <span class="o">=</span> <span class="n">backup_directory</span> <span class="o">/</span> <span class="n">backup</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">backup_path</span> <span class="o">/</span> <span class="s2">&quot;_SUCCEEDED&quot;</span><span class="p">):</span>
+                <span class="n">succeeded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">backup</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">backup_path</span> <span class="o">/</span> <span class="s2">&quot;_SUCCEEDED&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">succeeded_file</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">succeeded_file</span><span class="p">[</span><span class="s2">&quot;errorMessage&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Successful backup file </span><span class="si">{</span><span class="n">backup_path</span><span class="si">}</span><span class="s2">/_SUCCEEDED contains non-null &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;error message &#39;</span><span class="si">{</span><span class="n">succeeded_file</span><span class="p">[</span><span class="s1">&#39;errorMessage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">not_succeeded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">backup</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;succeeded&quot;</span><span class="p">:</span> <span class="n">succeeded</span><span class="p">,</span> <span class="s2">&quot;not_succeeded&quot;</span><span class="p">:</span> <span class="n">not_succeeded</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="delete_old_backups"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_old_backups">[docs]</a><span class="k">def</span> <span class="nf">delete_old_backups</span><span class="p">(</span>
+    <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">num_successful_backups_to_keep</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_failed_backups_to_keep</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Deletes old backups. Keeps the most recent num_successful_backups_to_keep successful backups</span>
+<span class="sd">        and the most recent num_failed_backups_to_keep failed backups</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        backup_directory: Path to backup directory</span>
+<span class="sd">        num_successful_backups_to_keep: Number of successful backups to keep</span>
+<span class="sd">        num_failed_backups_to_keep: Number of failed or canceled backups to keep</span>
+<span class="sd">        backup_datetime_format: String datetime format in backup folder name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of deleted backups. Returns None if no backups are deleted.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the number of backups to keep is less than 0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">backup_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_successful_backups_to_keep</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">value_error_message_1</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Argument for num_successful_backups_to_keep must be greater than 0. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">num_successful_backups_to_keep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message_1</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message_1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">num_failed_backups_to_keep</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">value_error_message_2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Argument for num_failed_backups_to_keep must be greater than 0. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Found &#39;</span><span class="si">{</span><span class="n">num_failed_backups_to_keep</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message_2</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message_2</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching all backups from directory &#39;</span><span class="si">{</span><span class="n">backup_directory</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">classify_backups</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span><span class="p">)</span>
+    <span class="n">succeeded</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;succeeded&quot;</span><span class="p">]</span>
+    <span class="n">not_succeeded</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;not_succeeded&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">succeeded</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">not_succeeded</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found zero backups in directory &#39;</span><span class="si">{</span><span class="n">backup_directory</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">deleted_failed_backups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">deleted_successful_backups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">succeeded</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">num_successful_backups_to_keep</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">succeeded</span><span class="p">)</span><span class="si">}</span><span class="s2"> successful backup. Keeping all successful backups&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Removing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">succeeded</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_successful_backups_to_keep</span><span class="si">}</span><span class="s2"> successful backups&quot;</span>
+            <span class="p">)</span>
+            <span class="n">succeeded</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">succeeded</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;backups </span><span class="si">{</span><span class="n">succeeded</span><span class="si">}</span><span class="s2"> from directory </span><span class="si">{</span><span class="n">backup_directory</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;which is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">deleted_successful_backups</span> <span class="o">=</span> <span class="n">delete_backups</span><span class="p">(</span>
+                <span class="n">backups</span><span class="o">=</span><span class="n">succeeded</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">succeeded</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_successful_backups_to_keep</span><span class="p">],</span>
+                <span class="n">backup_directory</span><span class="o">=</span><span class="n">backup_directory</span><span class="p">,</span>
+                <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_succeeded</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">num_failed_backups_to_keep</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">not_succeeded</span><span class="p">)</span><span class="si">}</span><span class="s2"> failed backups. Keeping all failed backups&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Removing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">not_succeeded</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_failed_backups_to_keep</span><span class="si">}</span><span class="s2"> unsuccessful backups&quot;</span>
+            <span class="p">)</span>
+            <span class="n">not_succeeded</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">not_succeeded</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">deleted_failed_backups</span> <span class="o">=</span> <span class="n">delete_backups</span><span class="p">(</span>
+                <span class="n">backups</span><span class="o">=</span><span class="n">not_succeeded</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_succeeded</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_failed_backups_to_keep</span><span class="p">],</span>
+                <span class="n">backup_directory</span><span class="o">=</span><span class="n">backup_directory</span><span class="p">,</span>
+                <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">deleted_failed_backups</span> <span class="o">+</span> <span class="n">deleted_successful_backups</span></div>
+
+
+<div class="viewcode-block" id="delete_old_spark_event_logs"><a class="viewcode-back" href="../../../modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_old_spark_event_logs">[docs]</a><span class="k">def</span> <span class="nf">delete_old_spark_event_logs</span><span class="p">(</span>
+    <span class="n">tamr_home_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">num_days_to_keep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">14</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deletes sparkEventLogs older than the specified number of days.</span>
+<span class="sd">    This assumes that Spark is running locally on the same VM as Tamr</span>
+<span class="sd">    and that the logs are on the local filesystem.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_home_directory: Path to the Tamr home directory</span>
+<span class="sd">        num_days_to_keep: Number of days for which to keep logs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of deleted sparkEventLogs files</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if num_days_to_keep is less than 0</span>
+<span class="sd">        FileNotFoundError: if sparkEventLogs directory doesn&#39;t exist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spark_event_log_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">tamr_home_directory</span><span class="p">,</span> <span class="s2">&quot;tamr/unify-data/job/sparkEventLogs&quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">spark_event_log_directory</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;directory does not exist: </span><span class="si">{</span><span class="n">spark_event_log_directory</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">bash</span><span class="o">.</span><span class="n">delete_old_files</span><span class="p">(</span><span class="n">spark_event_log_directory</span><span class="p">,</span> <span class="n">num_days_to_keep</span><span class="o">=</span><span class="n">num_days_to_keep</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

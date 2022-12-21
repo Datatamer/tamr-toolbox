@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Schema Mapping &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/modules/project/schema_mapping.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Project Movement" href="movement.html" />
+    <link rel="prev" title="Mastering" href="mastering.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notifications.html">Notifications</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../project.html">Project</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="categorization.html">Categorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="golden_records.html">Golden Records</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mastering.html">Mastering</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Schema Mapping</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.project.schema_mapping.jobs">Jobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transformations">Transformations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="movement.html">Project Movement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflow.html">Workflow</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../modules.html">Modules</a> &raquo;</li>
+        
+          <li><a href="../project.html">Project</a> &raquo;</li>
+        
+      <li>Schema Mapping</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/modules/project/schema_mapping.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="schema-mapping">
+<h1>Schema Mapping<a class="headerlink" href="#schema-mapping" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-tamr_toolbox.project.schema_mapping.jobs">
+<span id="jobs"></span><h2>Jobs<a class="headerlink" href="#module-tamr_toolbox.project.schema_mapping.jobs" title="Permalink to this headline">¶</a></h2>
+<p>Tasks related to running jobs for Tamr Schema Mapping projects</p>
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.jobs.run">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/schema_mapping/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.jobs.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target schema mapping project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.jobs.update_unified_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.jobs.</span></code><code class="sig-name descname"><span class="pre">update_unified_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_asynchronously</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/schema_mapping/jobs.html#update_unified_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.jobs.update_unified_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the unified dataset for a schema mapping project</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Target schema mapping project</p></li>
+<li><p><strong>process_asynchronously</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether or not to wait for the job to finish before returning
+- must be set to True for concurrent workflow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/operation.html#tamr_unify_client.operation.Operation" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The operations that were run</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.schema.map_attribute">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.schema.</span></code><code class="sig-name descname"><span class="pre">map_attribute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.schema.map_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps source_attribute in source_dataset to unified_attribute in unified_dataset.
+If the mapping already exists it will log
+a warning and return the existing AttributeMapping from the project’s collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Source attribute name to map</p></li>
+<li><p><strong>source_dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Source dataset containing the source attribute</p></li>
+<li><p><strong>unified_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Unified attribute to which to map the source attribute</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – The project in which to perform the mapping</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.attribute_mapping.resource.AttributeMapping" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The created AttributeMapping</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if input variables <cite>source_attribute_name</cite> or <cite>source_dataset_name</cite> or
+    <cite>unified_attribute_name</cite> are set to empty strings;
+    or if the dataset <cite>source_dataset_name</cite> is not found on Tamr;
+    or if <cite>source_attribute_name</cite> is missing from the attributes of <cite>source_attribute_name</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.schema.unmap_attribute">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.schema.</span></code><code class="sig-name descname"><span class="pre">unmap_attribute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.schema.unmap_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unmaps a source attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the source attribute to unmap</p></li>
+<li><p><strong>source_dataset_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the source dataset containing that source attribute</p></li>
+<li><p><strong>unified_attribute_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the unified attribute from which to unmap</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project in which to unmap the attribute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.schema.bootstrap_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.schema.</span></code><code class="sig-name descname"><span class="pre">bootstrap_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_add_dataset_to_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.schema.bootstrap_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bootstraps a dataset (i.e. maps all source columns to themselves)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – the source dataset (a Dataset object not a string)</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project to do the mapping ing</p></li>
+<li><p><strong>force_add_dataset_to_project</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean whether to add the dataset to the project
+if it is not already a part of it</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.attribute_mapping.resource.AttributeMapping" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeMapping</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the AttributeMappings generated</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>source_dataset</cite> is not part of the given <cite>project</cite>, set
+    ‘force_add_dataset_to_project’ flag to True to automatically add it</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.schema.unmap_dataset">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.schema.</span></code><code class="sig-name descname"><span class="pre">unmap_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_dataset_from_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.schema.unmap_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wholly unmaps a dataset and optionally removes it from a project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_dataset</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – the source dataset (Dataset object not a string) to unmap</p></li>
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – the project in which to unmap the dataset</p></li>
+<li><p><strong>remove_dataset_from_project</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean to also remove the dataset from the project</p></li>
+<li><p><strong>skip_if_missing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – boolean to skip if dataset is not in project. If set to false and
+dataset is not in project will raise a RuntimeError</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>source_dataset</cite> is not in <cite>project</cite> and <cite>skip_if_missing</cite> not set to True</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="transformations">
+<h2>Transformations<a class="headerlink" href="#transformations" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="tamr_toolbox.project.schema_mapping.transformations.InputTransformation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.transformations.</span></code><code class="sig-name descname"><span class="pre">InputTransformation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">transformation</span></em>, <em class="sig-param"><span class="pre">datasets=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.transformations.InputTransformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A transformation scoped to input datasets</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The text of a transformations script</p></li>
+<li><p><strong>datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>]) – The list of input datasets that the script should be applied to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tamr_toolbox.project.schema_mapping.transformations.TransformationGroup">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.transformations.</span></code><code class="sig-name descname"><span class="pre">TransformationGroup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input_scope=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">unified_scope=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.transformations.TransformationGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group of input transformations and unified transformations</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_scope</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">InputTransformation</span></code>]) – A list of transformation to apply to input datasets</p></li>
+<li><p><strong>unified_scope</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – A list of transformation scripts to apply to the unified dataset</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.transformations.get_all">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.transformations.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the transformations of a Project</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project containing transformations</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformationGroup</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>All input transformations and unified transformations of a project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.transformations.set_all">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.transformations.set_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the transformations of a Project</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project to place transformations within</p></li>
+<li><p><strong>tx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TransformationGroup</span></code>) – Transformations to put into project</p></li>
+<li><p><strong>allow_overwrite</strong> – Whether existing transformations can be overwritten</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.28.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>allow_overwrite</cite> is set to False but transformations already exists
+    in <cite>project</cite></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if provided <cite>tx</cite> are invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.transformations.get_all_unified">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all_unified</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.transformations.get_all_unified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the unified transformations of a Project</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project containing transformations</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>All unified transformations of a project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.project.schema_mapping.transformations.set_all_unified">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project.schema_mapping.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all_unified</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.project.schema_mapping.transformations.set_all_unified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the unified transformations of a Project.
+Any input transformations will not be altered</p>
+<dl class="simple">
+<dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/project.html#tamr_unify_client.project.resource.Project" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>) – Project to place transformations within</p></li>
+<li><p><strong>tx</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Unified transformations to put into project</p></li>
+<li><p><strong>allow_overwrite</strong> – Whether existing unified transformations can be overwritten</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.28.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <cite>allow_overwrite</cite> is set to False but transformations already exists
+    in <cite>project</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="movement.html" class="btn btn-neutral float-right" title="Project Movement" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mastering.html" class="btn btn-neutral float-left" title="Mastering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

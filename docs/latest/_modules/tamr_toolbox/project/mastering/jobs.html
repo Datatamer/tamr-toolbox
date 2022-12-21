@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -300,7 +300,7 @@
     <span class="n">completed_operations</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">run_estimate_pair_counts</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estimate pair counts for project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">estimate_pairs</span><span class="p">()</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">asynchronous</span><span class="o">=</span><span class="n">process_asynchronously</span><span class="p">)</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">safe_estimate_counts</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">process_asynchronously</span><span class="p">:</span>
             <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">completed_operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>

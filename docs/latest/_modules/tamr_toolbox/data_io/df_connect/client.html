@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -170,7 +170,7 @@
 <span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
 <span class="kn">from</span> <span class="nn">tamr_toolbox.data_io.file_system_type</span> <span class="kn">import</span> <span class="n">FileSystemType</span>
 <span class="kn">from</span> <span class="nn">tamr_unify_client.auth</span> <span class="kn">import</span> <span class="n">UsernamePasswordAuth</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -187,6 +187,7 @@
 <span class="sd">        tamr_username: the tamr account to use</span>
 <span class="sd">        tamr_password: the password for the tamr account to use</span>
 <span class="sd">        jbdc_info: configuration information for the jdbc connection</span>
+<span class="sd">        cert: optional path to a certfile for authentication</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span>
@@ -195,7 +196,8 @@
     <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">tamr_username</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">tamr_password</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">jdbc_info</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">JdbcInfo</span></div>
+    <span class="n">jdbc_info</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">JdbcInfo</span>
+    <span class="n">cert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="from_config"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.from_config">[docs]</a><span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
@@ -217,6 +219,12 @@
     <span class="n">base_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">port</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
+    <span class="c1"># Optional cert may or may not be present in config file (back-compat from TBOX-295)</span>
+    <span class="k">if</span> <span class="s2">&quot;cert&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">cert</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;cert&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cert</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">return</span> <span class="n">Client</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
         <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
@@ -225,6 +233,7 @@
         <span class="n">tamr_username</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;tamr_username&quot;</span><span class="p">],</span>
         <span class="n">tamr_password</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;tamr_password&quot;</span><span class="p">],</span>
         <span class="n">jdbc_info</span><span class="o">=</span><span class="n">jdbc_info</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">config_key</span><span class="o">=</span><span class="n">config_key</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="n">jdbc_key</span><span class="p">),</span>
+        <span class="n">cert</span><span class="o">=</span><span class="n">cert</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -237,6 +246,7 @@
     <span class="n">tamr_username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">tamr_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">jdbc_dict</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span>
+    <span class="n">cert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Simple wrapper for creating an instance of `Client` dataclass object.</span>
@@ -249,6 +259,7 @@
 <span class="sd">        tamr_username: the tamr account to use</span>
 <span class="sd">        tamr_password: the password for the tamr account to use</span>
 <span class="sd">        jdbc_dict: configuration information for the jdbc connection</span>
+<span class="sd">        cert: optional path to a certfile for authentication</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An instance of `tamr_toolbox.data_io.df_connect.Client`</span>
@@ -262,6 +273,7 @@
         <span class="n">tamr_username</span><span class="o">=</span><span class="n">tamr_username</span><span class="p">,</span>
         <span class="n">tamr_password</span><span class="o">=</span><span class="n">tamr_password</span><span class="p">,</span>
         <span class="n">jdbc_info</span><span class="o">=</span><span class="n">jdbc_information</span><span class="p">,</span>
+        <span class="n">cert</span><span class="o">=</span><span class="n">cert</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -364,6 +376,7 @@
     <span class="n">s</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
     <span class="n">s</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Content-type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">})</span>
     <span class="n">s</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">})</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">cert</span> <span class="o">=</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">cert</span>
 
     <span class="c1"># test that df_connect is running properly</span>
     <span class="n">url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="s2">&quot;/api/service/health&quot;</span><span class="p">)</span>
