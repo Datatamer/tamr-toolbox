@@ -58,7 +58,8 @@ jobs:
         run: git checkout -b 'release-${{ steps.get_version.outputs.version }}'
 
       - name: Commit changes
-        run: git add . && git commit -m 'build\: add docs for release ${{ steps.get_version.outputs.version }}'
+        run: >
+            git add . && git commit -m 'build: add docs for release ${{ steps.get_version.outputs.version }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create branch
