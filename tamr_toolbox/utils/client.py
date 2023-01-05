@@ -11,8 +11,13 @@ from time import sleep, time as now
 from requests import Response
 from tamr_unify_client import Client
 from tamr_unify_client.auth import UsernamePasswordAuth
+from tamr_unify_client.auth import JwtTokenAuth
+
+from tamr_toolbox.utils.version import current, is_version_condition_met
 
 LOGGER = logging.getLogger(__name__)
+
+TAMR_JWT_RELEASE_VERSION = "2022.010.0"
 
 
 def health_check(client: Client) -> bool:
@@ -78,6 +83,61 @@ def create(
         session=session,
         store_auth_cookie=store_auth_cookie,
     )
+    if enforce_healthy:
+        if not health_check(client):
+            LOGGER.error(f"Tamr is not healthy. Check logs and Tamr.")
+            raise SystemError("Tamr is not healthy. Check logs and Tamr.")
+    return client
+
+
+def create_with_jwt(
+    *,
+    jwt_token: str,
+    host: str,
+    port: Optional[Union[str, int]] = 9100,
+    protocol: str = "http",
+    base_path: str = "/api/versioned/v1/",
+    session: Optional[requests.Session] = None,
+    store_auth_cookie: bool = False,
+    enforce_healthy: bool = False,
+) -> Client:
+    """Creates a Tamr client from the provided configuration values using a JWT token instead
+    of a username and password. Note that this feature is only available on v2022.010.0 or later.
+
+    Args:
+        jwt_token: A JWT token to authenticate the client
+        host: The ip address of Tamr
+        port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port
+        protocol: https or http
+        base_path: Optional argument to specify a different base path
+        session: Optional argument to pass an existing requests Session
+        store_auth_cookie: If true will allow Tamr authentication cookie to be stored and reused
+        enforce_healthy: If true will enforce a healthy state upon creation
+
+    Returns:
+        Tamr client
+    """
+    full_address = f"{protocol}://{host}:{port}" if port is not None else f"{protocol}://{host}"
+    LOGGER.info(f"Creating client using JWT token at {full_address}.")
+    client = Client(
+        auth=JwtTokenAuth(token=jwt_token),
+        host=host,
+        port=int(port) if port is not None else None,
+        protocol=protocol,
+        base_path=base_path,
+        session=session,
+        store_auth_cookie=store_auth_cookie,
+    )
+
+    # Check if the version of Tamr is compatible with JWT Auth:
+    LOGGER.info("Checking if JWT Auth is compatible with current Tamr version")
+    minimum_tamr_version = TAMR_JWT_RELEASE_VERSION
+    tamr_version = current(client)
+
+    is_version_condition_met(
+        tamr_version=tamr_version, min_version=minimum_tamr_version, raise_error=True
+    )
+
     if enforce_healthy:
         if not health_check(client):
             LOGGER.error(f"Tamr is not healthy. Check logs and Tamr.")
