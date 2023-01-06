@@ -92,7 +92,7 @@ def create(
 
 def create_with_jwt(
     *,
-    jwt_token: str,
+    token: str,
     host: str,
     port: Optional[Union[str, int]] = 9100,
     protocol: str = "http",
@@ -105,7 +105,7 @@ def create_with_jwt(
     of a username and password. Note that this feature is only available on v2022.010.0 or later.
 
     Args:
-        jwt_token: A JWT token to authenticate the client
+        token: A JWT token to authenticate the client
         host: The ip address of Tamr
         port: The port of the Tamr UI. Pass a value of `None` to specify an address with no port
         protocol: https or http
@@ -120,7 +120,7 @@ def create_with_jwt(
     full_address = f"{protocol}://{host}:{port}" if port is not None else f"{protocol}://{host}"
     LOGGER.info(f"Creating client using JWT token at {full_address}.")
     client = Client(
-        auth=JwtTokenAuth(token=jwt_token),
+        auth=JwtTokenAuth(token=token),
         host=host,
         port=int(port) if port is not None else None,
         protocol=protocol,
