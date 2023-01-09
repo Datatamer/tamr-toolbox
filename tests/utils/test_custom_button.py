@@ -49,5 +49,5 @@ def test_create_post_button_with_invalid_pagenames():
 def test_delete_button_incorrect_path():
 
     incorrect_button_files = ["/path/to/random_button.yaml"]
-    with pytest.raises(ValueError):
+    with pytest.raises(FileNotFoundError):
         delete_buttons(button_files=incorrect_button_files, tamr_install_dir="/home/ubuntu")

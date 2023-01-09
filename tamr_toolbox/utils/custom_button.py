@@ -458,6 +458,9 @@ def delete_buttons(*, button_files: Union[str, List[str]], tamr_install_dir: str
 
     # Work with present files only
     present_files = [x for x in button_files if x not in set(missing_files)]
+    if len(present_files) == 0:
+        error_message = "None of provided files found."
+        raise FileNotFoundError(error_message)
 
     button_dir = os.path.join(tamr_install_dir, "tamr/auxiliary-services/conf")
 
