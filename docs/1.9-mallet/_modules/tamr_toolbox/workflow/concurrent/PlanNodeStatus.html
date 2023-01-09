@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.workflow.concurrent.PlanNodeStatus &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/workflow/concurrent/PlanNodeStatus.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.workflow.concurrent.PlanNodeStatus</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.workflow.concurrent.PlanNodeStatus</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Enum representing job status&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PlanNodeStatus"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNodeStatus.PlanNodeStatus">[docs]</a><span class="k">class</span> <span class="nc">PlanNodeStatus</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing job status for executing a concurrent pipeline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>  <span class="c1"># one or more of the jobs for the project failed</span>
+    <span class="n">CANCELED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># one or more of the jobs for the project was cancelled</span>
+    <span class="n">BLOCKED</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># running this project is blocked by upstream dependencies failing</span>
+    <span class="n">PLANNED</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># default state - planned but not yet runnable due to upstream dependencies</span>
+    <span class="n">SKIPPABLE</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># used when, for example, starting later in the plan</span>
+    <span class="n">RUNNABLE</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># all dependencies met (e.g. starting tier project) - the project can be run</span>
+    <span class="n">PENDING_NEXT_STEP</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># project has run some steps successfully and has more steps remaining</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># a job for the project is currently running</span>
+    <span class="n">SUCCEEDED</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># all project steps completed successfully</span></div>
+
+
+<span class="k">def</span> <span class="nf">from_tamr_op</span><span class="p">(</span><span class="n">op</span><span class="p">:</span> <span class="n">Operation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlanNodeStatus</span><span class="p">:</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;checking state of operation </span><span class="si">{</span><span class="n">op</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># check each operation</span>
+    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;PENDING&quot;</span> <span class="ow">or</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;RUNNING&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">RUNNING</span>
+    <span class="k">elif</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SUCCEEDED</span>
+    <span class="k">elif</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;FAILED&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">FAILED</span>
+    <span class="k">elif</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;CANCELED&quot;</span> <span class="ow">or</span> <span class="n">op</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;CANCELING&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">CANCELED</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2"> can&#39;t be translated to a PlanNodeStatus object&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="from_plan_node"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNodeStatus.from_plan_node">[docs]</a><span class="k">def</span> <span class="nf">from_plan_node</span><span class="p">(</span>
+    <span class="n">plan_node</span><span class="p">:</span> <span class="s2">&quot;tamr_toolbox.workflow.concurrent.PlanNode.PlanNode&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlanNodeStatus</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a PlanNode Status from a PlanNode object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        plan_node: the plan node object to get the status of</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Latest view of the status of the PlanNode passed in</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the status of all operations for this node and convert to status</span>
+    <span class="c1"># if there are none then and there is nothing to check - just return the status</span>
+    <span class="k">if</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">status</span>
+
+    <span class="c1"># if there are operations check the operations poll them and see the latest state</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;getting plan node status at plan node at step </span><span class="si">{</span><span class="n">plan_node</span><span class="o">.</span><span class="n">current_step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">operations_to_poll</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">operations</span><span class="p">]</span>
+    <span class="n">all_statuses</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_tamr_op</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">operations_to_poll</span><span class="p">]</span>
+
+    <span class="c1"># since the enum is ordered just send the minimum status of all operations back</span>
+    <span class="c1"># this means any failures/cancellations result in failure/cancelled</span>
+    <span class="c1"># and then any operations that are less than succeeded represent the overall</span>
+    <span class="c1"># status of this node, which is correct (remember that each node is a project with</span>
+    <span class="c1"># multiple operations associated with updating it)</span>
+
+    <span class="c1"># if the plan node has next steps and its min is succeeded then mark as pending</span>
+    <span class="n">min_status</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">all_statuses</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">steps_to_run</span> <span class="ow">and</span> <span class="n">min_status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SUCCEEDED</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PENDING_NEXT_STEP</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">min_status</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

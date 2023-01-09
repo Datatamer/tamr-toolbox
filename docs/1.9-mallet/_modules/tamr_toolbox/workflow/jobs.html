@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.workflow.jobs &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/workflow/jobs.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.workflow.jobs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.workflow.jobs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to running jobs for groups of Tamr projects&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.project_type</span> <span class="kn">import</span> <span class="n">ProjectType</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.project</span> <span class="kn">import</span> <span class="n">mastering</span><span class="p">,</span> <span class="n">categorization</span><span class="p">,</span> <span class="n">golden_records</span><span class="p">,</span> <span class="n">schema_mapping</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../modules/workflow/jobs.html#tamr_toolbox.workflow.jobs.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="n">project_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">run_apply_feedback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">run_estimate_pair_counts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">run_profile_unified_datasets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">sleep_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Run multiple projects in order</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_list: A list of Tamr projects</span>
+<span class="sd">        run_apply_feedback: Whether train should be called on the pair matching model</span>
+<span class="sd">            or categorization model (based on project type)</span>
+<span class="sd">        run_estimate_pair_counts: Whether an estimate pairs job should be run</span>
+<span class="sd">        run_profile_unified_datasets: Whether unified datasets should be re-profiled</span>
+<span class="sd">        sleep_interval: Number of seconds to sleep between job submissions.</span>
+<span class="sd">            Useful in some pipeline situations</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The operations that were run</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: Raised if run() is called on an unsupported project type</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">operations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">project_list</span><span class="p">:</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">ProjectType</span><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">:</span>
+            <span class="n">operations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">schema_mapping</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">project</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">CATEGORIZATION</span><span class="p">:</span>
+            <span class="n">operations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">categorization</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="n">project</span><span class="o">.</span><span class="n">as_categorization</span><span class="p">(),</span> <span class="n">run_apply_feedback</span><span class="o">=</span><span class="n">run_apply_feedback</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">DEDUP</span><span class="p">:</span>
+            <span class="n">operations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">mastering</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="n">project</span><span class="o">.</span><span class="n">as_mastering</span><span class="p">(),</span>
+                    <span class="n">run_apply_feedback</span><span class="o">=</span><span class="n">run_apply_feedback</span><span class="p">,</span>
+                    <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="n">run_estimate_pair_counts</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">GOLDEN_RECORDS</span><span class="p">:</span>
+            <span class="n">operations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">golden_records</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">project</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Function run.continuous_operations not defined for project type </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Excluding GOLDEN_RECORDS as profile information is refreshed as part of job:</span>
+        <span class="c1"># breakpoint()</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">)</span>
+            <span class="o">|</span> <span class="p">(</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">CATEGORIZATION</span><span class="p">)</span>
+            <span class="o">|</span> <span class="p">(</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">DEDUP</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">run_profile_unified_datasets</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking for profile for </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">profile</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">profile</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">HTTPError</span><span class="p">:</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Profile not found for </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. Creating&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; a profile.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">create_profile</span><span class="p">()</span>
+                    <span class="n">profile</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">profile</span><span class="p">()</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Refreshing profile for </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">refresh</span><span class="p">())</span>
+
+        <span class="c1"># if we need to sleep before the next iteration then do so</span>
+        <span class="c1"># default is zero so don&#39;t need an if statement</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep_interval</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">operations</span></div>
+
+
+<span class="k">def</span> <span class="nf">_find_upstream_projects</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span>
+    <span class="n">all_projects</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">project_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">upstream_projects</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Check for upstream projects that have source datasets that require</span>
+<span class="sd">    updating</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project: a tamr project</span>
+<span class="sd">        track of projects that need to be checked for upstream dependencies</span>
+<span class="sd">        all_projects: list of all projects that exist within Tamr</span>
+<span class="sd">        project_list: keeps track of projects that have yet to be checked</span>
+<span class="sd">        for upstream dependencies.</span>
+<span class="sd">        upstream_projects: list to keep track of projects within a chain of projects</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        upstream_projects: final list of tamr projects in a chained</span>
+<span class="sd">        workflow</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Obtain the name of project to be updated and initiate the list of</span>
+    <span class="c1"># projects (project_list) that are maintained within the check_for_upstream_project</span>
+    <span class="c1"># function to check for upstream dependencies</span>
+
+    <span class="c1"># Get project_id from project</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">resource_id</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">upstream_projects</span><span class="p">:</span>
+        <span class="n">upstream_projects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">project_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">project_id</span><span class="p">]</span>
+
+        <span class="n">all_projects</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="p">:</span>
+            <span class="n">all_projects</span><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">resource_id</span>
+
+    <span class="k">for</span> <span class="n">project_id</span> <span class="ow">in</span> <span class="n">project_list</span><span class="p">:</span>
+        <span class="c1"># Obtain resource id of project to be updated from the dictionary of</span>
+        <span class="c1"># project details</span>
+        <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">project</span><span class="o">.</span><span class="n">resource_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">upstream_projects</span><span class="p">:</span>
+            <span class="n">upstream_projects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="p">)</span>
+
+        <span class="c1"># Remove the current project from the list tracking projects that</span>
+        <span class="c1"># need to be reviewed for upstream projects/dependencies</span>
+        <span class="n">project_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
+
+        <span class="n">project_source_datasets</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/projects/</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">/inputDatasets&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">relative_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;relativeId&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">project_source_datasets</span><span class="p">]</span>
+
+        <span class="c1"># Check which upstream projects the upstream datasets derive from</span>
+        <span class="k">for</span> <span class="n">relative_id</span> <span class="ow">in</span> <span class="n">relative_ids</span><span class="p">:</span>
+            <span class="n">dataset_details</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_relative_id</span><span class="p">(</span><span class="n">relative_id</span><span class="p">)</span>
+
+            <span class="c1"># If these projects are linked to further datasets upstream,</span>
+            <span class="c1"># keep track of these upstream projects in project_list</span>
+            <span class="n">upstream_datasets</span> <span class="o">=</span> <span class="n">dataset_details</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">output_from_project_steps</span>
+            <span class="k">if</span> <span class="n">upstream_datasets</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">upstream_dataset</span> <span class="ow">in</span> <span class="n">upstream_datasets</span><span class="p">:</span>
+                    <span class="n">upstream_project</span> <span class="o">=</span> <span class="n">upstream_dataset</span><span class="o">.</span><span class="n">project_name</span>
+                    <span class="n">project_id</span> <span class="o">=</span> <span class="n">all_projects</span><span class="p">[</span><span class="n">upstream_project</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">project_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">project_list</span><span class="p">:</span>
+                        <span class="n">project_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
+
+    <span class="c1"># If there are projects added to the project list, check whether these</span>
+    <span class="c1"># projects have dependencies upstream by rerunning the</span>
+    <span class="c1"># check_for_upstream_datasets recursively</span>
+    <span class="k">if</span> <span class="n">project_list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_find_upstream_projects</span><span class="p">(</span>
+            <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
+            <span class="n">project_list</span><span class="o">=</span><span class="n">project_list</span><span class="p">,</span>
+            <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span><span class="p">,</span>
+            <span class="n">upstream_projects</span><span class="o">=</span><span class="n">upstream_projects</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># If the first project in the chain is reached, return the list of</span>
+        <span class="c1"># projects that need to be updated</span>
+
+        <span class="c1"># Reverse list of projects so that the first project in the chain is</span>
+        <span class="c1"># returned first</span>
+        <span class="n">upstream_projects</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+        <span class="n">upstream_projects</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">project_id</span> <span class="ow">in</span> <span class="n">upstream_projects</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">upstream_projects</span>
+
+
+<div class="viewcode-block" id="get_upstream_projects"><a class="viewcode-back" href="../../../modules/workflow/jobs.html#tamr_toolbox.workflow.jobs.get_upstream_projects">[docs]</a><span class="k">def</span> <span class="nf">get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Check for upstream projects associated with a specified project</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the tamr project for which associated upstream projects are retrieved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Retrieve upstream projects (if any) from a specified Project</span>
+    <span class="n">upstream_projects</span> <span class="o">=</span> <span class="n">_find_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">upstream_projects</span></div>
+
+
+<div class="viewcode-block" id="get_project_output_datasets"><a class="viewcode-back" href="../../../modules/workflow/jobs.html#tamr_toolbox.workflow.jobs.get_project_output_datasets">[docs]</a><span class="k">def</span> <span class="nf">get_project_output_datasets</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieves datasets produced by a given Tamr project</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the Tamr project for which associated output datasets are retrieved</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The list of Tamr datasets output from the project&quot;&quot;&quot;</span>
+    <span class="n">input_datasets_dependencies</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dep</span>
+        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="p">{</span><span class="n">input_ds</span> <span class="k">for</span> <span class="n">input_ds</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">input_datasets</span><span class="p">()}</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">dependencies</span>
+    <span class="p">]</span>
+    <span class="n">output_dataset_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">dep</span><span class="o">.</span><span class="n">dataset_name</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">input_datasets_dependencies</span>
+        <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">output_from_project_steps</span>
+        <span class="ow">and</span> <span class="n">project</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">dep</span><span class="o">.</span><span class="n">output_from_project_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">project_name</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">ds</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">datasets</span> <span class="k">if</span> <span class="n">ds</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">output_dataset_names</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

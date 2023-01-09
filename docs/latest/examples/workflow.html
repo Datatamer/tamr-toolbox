@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -278,8 +278,9 @@
     <span class="n">my_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_id</span> <span class="ow">in</span> <span class="n">project_ids</span><span class="p">]</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;About to run projects: </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="c1"># runs the projects specifying to wait 30 seconds between jobs</span>
     <span class="n">operations</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">my_projects</span><span class="p">,</span> <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">my_projects</span><span class="p">,</span> <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sleep_interval</span><span class="o">=</span><span class="mi">30</span>
     <span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks for </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2"> complete&quot;</span><span class="p">)</span>
@@ -356,7 +357,7 @@
     <span class="c1"># Retrieve the projects</span>
     <span class="n">my_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_id</span> <span class="ow">in</span> <span class="n">project_ids</span><span class="p">]</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;About to run build graph for projects: </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">my_graph</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">from_project_list</span><span class="p">(</span><span class="n">my_projects</span><span class="p">)</span>
+    <span class="n">my_graph</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">from_project_list</span><span class="p">(</span><span class="n">my_projects</span><span class="p">,</span> <span class="n">tamr_client</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Building planner object&quot;</span><span class="p">)</span>
     <span class="n">my_planner</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Planner</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">my_graph</span><span class="p">,</span> <span class="n">tamr_client</span><span class="o">=</span><span class="n">tamr_client</span><span class="p">)</span>

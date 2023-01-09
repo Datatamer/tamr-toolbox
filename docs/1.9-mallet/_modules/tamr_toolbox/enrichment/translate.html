@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.enrichment.translate &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/enrichment/translate.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.enrichment.translate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.enrichment.translate</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to efficiently translating data not present in existing translation</span>
+<span class="sd">dictionaries&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.dictionary</span> <span class="kn">import</span> <span class="n">TranslationDictionary</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.dictionary</span> <span class="kn">import</span> <span class="n">update</span><span class="p">,</span> <span class="n">save</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.api_client</span> <span class="kn">import</span> <span class="n">google</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
+<span class="c1"># This environments variable is set automatically when `invoke docs` is used</span>
+<span class="n">BUILDING_DOCS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_TOOLBOX_DOCS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+<span class="k">if</span> <span class="n">BUILDING_DOCS</span><span class="p">:</span>
+    <span class="c1"># Import relevant optional dependencies</span>
+    <span class="kn">from</span> <span class="nn">google.cloud.translate_v2</span> <span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">GoogleTranslateClient</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_yield_chunk</span><span class="p">(</span><span class="n">list_to_split</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split a list into a List of List with constant length</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        list_to_split: List to split into chunks</span>
+<span class="sd">        chunk_size: number of items to have in each list after splitting</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A List of List</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># For item i in a range that is a length of l,</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_to_split</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">):</span>
+        <span class="c1"># Create an index range for l of n items:</span>
+        <span class="k">yield</span> <span class="n">list_to_split</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_filter_numeric_and_null_phrases</span><span class="p">(</span><span class="n">phrase</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform None and numbers saved as text as empty strings</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        phrase: data to filter</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An empty string</span>
+<span class="sd">        Raises an error if the input is neither None nor a string</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: is the provided phrase is not of type string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">phrase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phrase</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phrase</span><span class="si">}</span><span class="s2"> is not in text format. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Only text can be translated, check data type.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">phrase</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">phrase</span>
+
+
+<div class="viewcode-block" id="standardize_phrases"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.standardize_phrases">[docs]</a><span class="k">def</span> <span class="nf">standardize_phrases</span><span class="p">(</span><span class="n">original_phrases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Standardize phrases to translate to avoid re-translating previously translated phrases but</span>
+<span class="sd">    with different formating</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        original_phrases: List of phrases to standardize</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of standardized text</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">standardized_phrases</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_filter_numeric_and_null_phrases</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">phrase</span> <span class="ow">in</span> <span class="n">original_phrases</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">standardized_phrases</span></div>
+
+
+<div class="viewcode-block" id="get_phrases_to_translate"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.get_phrases_to_translate">[docs]</a><span class="k">def</span> <span class="nf">get_phrases_to_translate</span><span class="p">(</span>
+    <span class="n">original_phrases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">translation_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find phrases not previously translated and initiate dictionary entry</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        original_phrases: list of phrases to translate</span>
+<span class="sd">        translation_dictionary: a translation dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of standardized phrases not present as keys of the translation dictionary</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">count_already_translated</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count_needing_translation</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">original</span><span class="p">,</span> <span class="n">standard</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">original_phrases</span><span class="p">,</span> <span class="n">standardize_phrases</span><span class="p">(</span><span class="n">original_phrases</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">standard</span> <span class="ow">in</span> <span class="n">translation_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">translation_dictionary</span><span class="p">[</span><span class="n">standard</span><span class="p">]</span><span class="o">.</span><span class="n">original_phrases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">original</span><span class="p">)</span>
+            <span class="n">count_already_translated</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">translation_dictionary</span><span class="p">[</span><span class="n">standard</span><span class="p">]</span> <span class="o">=</span> <span class="n">TranslationDictionary</span><span class="p">(</span>
+                <span class="n">original_phrases</span><span class="o">=</span><span class="p">{</span><span class="n">original</span><span class="p">},</span> <span class="n">standardized_phrase</span><span class="o">=</span><span class="n">standard</span>
+            <span class="p">)</span>
+            <span class="n">count_needing_translation</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;From the </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">original_phrases</span><span class="p">)</span><span class="si">}</span><span class="s2"> sent for translation, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">count_already_translated</span><span class="si">}</span><span class="s2"> can be translated with the dictionary and &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">count_needing_translation</span><span class="si">}</span><span class="s2"> need to be translated&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">to_translate</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">standardized_phrase</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">translation_dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">translated_phrase</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">to_translate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">to_translate</span></div>
+
+
+<div class="viewcode-block" id="from_list"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.from_list">[docs]</a><span class="k">def</span> <span class="nf">from_list</span><span class="p">(</span>
+    <span class="n">all_phrases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;GoogleTranslateClient&quot;</span><span class="p">,</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">translation_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nmt&quot;</span><span class="p">,</span>
+    <span class="n">intermediate_save_every_n_chunks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">intermediate_save_to_disk</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">intermediate_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/tmp&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate a list of phrases from source language to target language.</span>
+<span class="sd">    The translation is saved in a dictionary on your local file system before updating the</span>
+<span class="sd">    main dictionary</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        all_phrases: List of standardized phrases to translate.</span>
+<span class="sd">        client: a google translate api client</span>
+<span class="sd">        dictionary: a toolbox translation dictionary</span>
+<span class="sd">        source_language: the language the text to translate is in, &quot;auto&quot; means the api_client</span>
+<span class="sd">            google_api api_client will try to detect the source language automatically</span>
+<span class="sd">        target_language: the language to translate into</span>
+<span class="sd">        chunk_size: number of phrases to translate per api_client calls, set too high and you</span>
+<span class="sd">            will hit API user rate limit errors</span>
+<span class="sd">        translation_model: google_api api_client api_client model to use, &quot;nmt&quot; or &quot;pbmt&quot;.</span>
+<span class="sd">            Choose &quot;pbmt&quot; if an &quot;nmt&quot; model doesn&#39;t exists for your source to target language pair</span>
+<span class="sd">        intermediate_save_every_n_chunks: save periodically api_client dictionary to disk every n</span>
+<span class="sd">            chunk of phrases translated</span>
+<span class="sd">        intermediate_save_to_disk: decide whether to save periodically the dictionary to disk to</span>
+<span class="sd">            avoid loss of translation data if code breaks</span>
+<span class="sd">        intermediate_folder: path to folder where dictionary will be save periodically to avoid</span>
+<span class="sd">            loss of translation data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated translation dictionary</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the argument chunk_size is set to 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chunk_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Translation chunk size cannot be of size 0&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">intermediate_save_every_n_chunks</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">intermediate_save_every_n_chunks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">intermediate_save_every_n_chunks</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="n">unique_all_phrases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_phrases</span><span class="p">))</span>
+    <span class="n">nbr_of_unique_phrases</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_all_phrases</span><span class="p">)</span>
+
+    <span class="n">phrases_to_translate</span> <span class="o">=</span> <span class="n">get_phrases_to_translate</span><span class="p">(</span><span class="n">unique_all_phrases</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">)</span>
+    <span class="n">number_phrases_to_translate</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phrases_to_translate</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">number_phrases_to_translate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All phrases to translate are found in the local dictionary.&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Of the </span><span class="si">{</span><span class="n">nbr_of_unique_phrases</span><span class="si">}</span><span class="s2"> unique phrases to translate, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">number_phrases_to_translate</span><span class="si">}</span><span class="s2"> were not found in the dictionary.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Google has a translation rate limits</span>
+        <span class="c1"># to avoid hitting those the phrases are sent for translation in chunks</span>
+        <span class="n">number_of_chunks</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">number_phrases_to_translate</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">)</span>
+
+        <span class="n">tmp_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">chunk_of_phrases</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_yield_chunk</span><span class="p">(</span><span class="n">phrases_to_translate</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Translating chunk </span><span class="si">{</span><span class="n">ix</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="n">number_of_chunks</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">translated_phrases</span> <span class="o">=</span> <span class="n">google</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span>
+                <span class="n">phrases_to_translate</span><span class="o">=</span><span class="n">chunk_of_phrases</span><span class="p">,</span>
+                <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
+                <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span><span class="p">,</span>
+                <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span>
+                <span class="n">translation_model</span><span class="o">=</span><span class="n">translation_model</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">translated_phrases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">tmp_dictionary</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">translated_phrases</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">ix</span> <span class="o">%</span> <span class="n">intermediate_save_every_n_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving intermediate outputs&quot;</span><span class="p">)</span>
+                <span class="n">update</span><span class="p">(</span><span class="n">main_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">tmp_dictionary</span><span class="o">=</span><span class="n">tmp_dictionary</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">intermediate_save_to_disk</span><span class="p">:</span>
+                    <span class="n">save</span><span class="p">(</span>
+                        <span class="n">translation_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span>
+                        <span class="n">dictionary_folder</span><span class="o">=</span><span class="n">intermediate_folder</span><span class="p">,</span>
+                        <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span>
+                        <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="c1"># resetting temporary results after saving it</span>
+                <span class="n">tmp_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># update dictionary</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">main_dictionary</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">tmp_dictionary</span><span class="o">=</span><span class="n">tmp_dictionary</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

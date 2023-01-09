@@ -111,3 +111,21 @@ def test_run_with_wrong_project_type(project_id: str):
 
     with pytest.raises(TypeError):
         mastering.jobs.run(project)
+
+
+@mock_api()
+def test_safe_generate_pairs():
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    estimate_project_id = CONFIG["projects"]["first_pairs_estimate"]
+    project = client.projects.by_resource_id(estimate_project_id)
+    project = project.as_mastering()
+
+    op = utils.operation.safe_estimate_counts(project)
+    assert op.succeeded()
+
+    count = project.client.get(
+        f"/api/versioned/v1/projects/{estimate_project_id}/estimatedPairCounts"
+    ).json()
+    assert int(count["totalEstimate"]["candidatePairCount"]) >= int(
+        count["totalEstimate"]["generatedPairCount"]
+    )

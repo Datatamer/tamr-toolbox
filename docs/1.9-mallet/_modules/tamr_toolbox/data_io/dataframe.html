@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.data_io.dataframe &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/data_io/dataframe.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.data_io.dataframe</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.data_io.dataframe</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to moving data in or out of Tamr using pandas.DataFrames&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.data_io</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.validation_check</span> <span class="kn">import</span> <span class="n">ValidationCheck</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils</span> <span class="kn">import</span> <span class="n">operation</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
+<span class="c1"># This environments variable is set automatically when `invoke docs` is used</span>
+<span class="n">BUILDING_DOCS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_TOOLBOX_DOCS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+<span class="k">if</span> <span class="n">BUILDING_DOCS</span><span class="p">:</span>
+    <span class="c1"># Import relevant optional dependencies</span>
+    <span class="kn">import</span> <span class="nn">pandas</span>
+
+
+<span class="k">def</span> <span class="nf">_flatten_list_series</span><span class="p">(</span>
+    <span class="n">series</span><span class="p">:</span> <span class="s2">&quot;pandas.Series&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+    <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pandas.Series&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flattens list types to strings.  See ``_flatten_list`` for details.</span>
+<span class="sd">    Operates on a pandas Series, and is intended to be applied using `apply` to a pandas DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        series: pandas Series of values to flatten</span>
+<span class="sd">        delimiter: string to use as delimiter for concatenating lists</span>
+<span class="sd">        force: if True, will force non-string inner types to string</span>
+<span class="sd">        columns: optional, list of columns to flatten</span>
+
+<span class="sd">    Returns: Series of flattened values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">_flatten_list</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+    <span class="c1"># if we haven&#39;t specified which columns, or this column is in the list, apply the function</span>
+    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">series</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="c1"># otherwise do nothing</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">series</span>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../../modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts DataFrame columns with list type to strings</span>
+<span class="sd">    and returns a copy of the DataFrame with this change.</span>
+<span class="sd">    Tamr often produces datasets with columns of list type,</span>
+<span class="sd">    which often are more easily consumed as single-valued columns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame from Tamr dataset</span>
+<span class="sd">        delimiter: string to use as delimiter for concatenating lists</span>
+<span class="sd">        columns: optional, list of columns to flatten</span>
+<span class="sd">        force: if True, will force non-string inner types to string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        flattened DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># apply a series-wise function that can operate on specific columns of the dataframe</span>
+    <span class="n">series_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_flatten_list_series</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">series_func</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_dataset"><a class="viewcode-back" href="../../../modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.from_dataset">[docs]</a><span class="k">def</span> <span class="nf">from_dataset</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flatten_delimiter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flatten_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">force_flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">nrows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">allow_dataset_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a DataFrame from a Tamr Dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: Tamr Dataset object</span>
+<span class="sd">        columns: optional, ordered list of columns to keep</span>
+<span class="sd">        flatten_delimiter: if set, flatten list types to strings by concatenating with this</span>
+<span class="sd">            delimiter</span>
+<span class="sd">        flatten_columns: optional, list of columns to flatten</span>
+<span class="sd">        force_flatten:  if False, arrays with inner types other than string will not be flattened.</span>
+<span class="sd">            if True, will force all inner types to strings when flattening values.</span>
+<span class="sd">            if True, `flatten_delimiter` must be specified.</span>
+<span class="sd">        nrows: number of rows to read. default None will read all rows</span>
+<span class="sd">        allow_dataset_refresh: if True, allows running a job to refresh dataset to make streamable</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if `columns` or `flatten_columns` contain columns that are not present in</span>
+<span class="sd">            `dataset`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Validate arguments</span>
+    <span class="k">if</span> <span class="n">force_flatten</span> <span class="ow">and</span> <span class="n">flatten_delimiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`force_flatten` is True but no `flatten_delimiter` is specified.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># This function requires pandas, an optional dependency</span>
+    <span class="kn">import</span> <span class="nn">pandas</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Streaming records to DataFrame for dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">dataset_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+    <span class="n">attr_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset_attrs</span><span class="p">]</span>
+    <span class="c1"># check that specified columns exist</span>
+    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">_check_columns_subset</span><span class="p">(</span>
+            <span class="n">input_list</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">reference_list</span><span class="o">=</span><span class="n">attr_names</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="c1"># checks on columns to flatten</span>
+    <span class="k">if</span> <span class="n">flatten_delimiter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">flatten_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">flatten_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">attr_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check that specified columns exist</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">_check_columns_subset</span><span class="p">(</span>
+                <span class="n">input_list</span><span class="o">=</span><span class="n">flatten_columns</span><span class="p">,</span> <span class="n">reference_list</span><span class="o">=</span><span class="n">attr_names</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="c1"># check types of flatten_columns</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset_attrs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flatten_columns</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">attr_type</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">attr_type</span><span class="p">[</span><span class="s2">&quot;baseType&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ARRAY&quot;</span> <span class="ow">and</span> <span class="n">attr_type</span><span class="p">[</span><span class="s2">&quot;innerType&quot;</span><span class="p">][</span><span class="s2">&quot;baseType&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;STRING&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">force_flatten</span><span class="p">:</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Will force attribute to string: </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, with type: </span><span class="si">{</span><span class="n">attr_type</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Will not flatten attribute: </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, with type: </span><span class="si">{</span><span class="n">attr_type</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">flatten_columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span><span class="o">.</span><span class="n">status</span><span class="p">()</span><span class="o">.</span><span class="n">is_streamable</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">allow_dataset_refresh</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Refreshing dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> to make streamable.&quot;</span><span class="p">)</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not streamable. Refresh it first, or run&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; with allow_dataset_refresh=True&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="c1"># if flattening, set the function to apply to records as _flatten_list</span>
+    <span class="c1"># otherwise set as _identity</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">flatten_delimiter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">_flatten_list</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">flatten_delimiter</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force_flatten</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">_yield_records</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">flatten_columns</span><span class="o">=</span><span class="n">flatten_columns</span>
+        <span class="p">),</span>
+        <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="k">def</span> <span class="nf">_count_null</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="s2">&quot;pandas.Series&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the number of null values in a pandas Series</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s: pandas Series</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="profile"><a class="viewcode-back" href="../../../modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.profile">[docs]</a><span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes profile statistics from an input DataFrame,</span>
+<span class="sd">    and returns statistics in another DataFrame.</span>
+<span class="sd">    Intended to be used for validation checks on a DataFrame before</span>
+<span class="sd">    upserting records to a Tamr Dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with profile statistics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># compute per-attribute metrics</span>
+    <span class="c1"># attr_metrics: aggregations that return a Series indexed by the attribute names</span>
+    <span class="c1"># attr_metric_names: aggregations that return a Series indexed by the attribute names</span>
+    <span class="n">attr_agg_functions</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="c1"># number of unique values</span>
+    <span class="n">attr_agg_functions</span><span class="p">[</span><span class="s2">&quot;DistinctValueCount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;nunique&quot;</span>
+
+    <span class="c1"># number of null values</span>
+    <span class="n">attr_agg_functions</span><span class="p">[</span><span class="s2">&quot;EmptyValueCount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_count_null</span>
+
+    <span class="c1"># aggregate to compute per-attribute metrics</span>
+    <span class="n">df_profile</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">attr_agg_functions</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># rename columns</span>
+    <span class="n">df_profile</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">attr_agg_functions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="c1"># add summary level metrics</span>
+    <span class="n">df_profile</span><span class="p">[</span><span class="s2">&quot;RecordCount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df_profile</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_present_columns</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">require_present_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that a specified list of columns in a DataFrame are all present</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">        require_present_columns: list of columns that are checked to be present</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ValidationCheck object, with bool for whether check passed and dict of failing columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">require_present_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_present_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># check if columns are present</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">require_present_columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> is not present&quot;</span><span class="p">)</span>
+            <span class="n">failed_checks_dict</span><span class="p">[</span><span class="s2">&quot;failed_present_columns&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_unique_columns</span><span class="p">(</span>
+    <span class="n">df_profile</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">require_unique_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that a specified list of columns in a DataFrame have all unique values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_profile: DataFrame containing profile information</span>
+<span class="sd">        require_unique_columns: list of columns that are checked to have all unique values,</span>
+<span class="sd">            e.g. a primary key column</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ValidationCheck object, with bool for whether check passed and dict of failing columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">require_unique_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_unique_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># check for unique columns</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">require_unique_columns</span><span class="p">:</span>
+        <span class="n">num_unique</span> <span class="o">=</span> <span class="n">df_profile</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col</span><span class="p">,</span> <span class="s2">&quot;DistinctValueCount&quot;</span><span class="p">]</span>
+        <span class="n">num_records</span> <span class="o">=</span> <span class="n">df_profile</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col</span><span class="p">,</span> <span class="s2">&quot;RecordCount&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">num_unique</span> <span class="o">==</span> <span class="n">num_records</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> has only </span><span class="si">{</span><span class="n">num_unique</span><span class="si">}</span><span class="s2"> unique values out of </span><span class="si">{</span><span class="n">num_records</span><span class="si">}</span><span class="s2"> records&quot;</span>
+            <span class="p">)</span>
+            <span class="n">failed_checks_dict</span><span class="p">[</span><span class="s2">&quot;failed_unique_columns&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_nonnull_columns</span><span class="p">(</span>
+    <span class="n">df_profile</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">require_nonnull_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that a specified list of columns in a DataFrame have all non-null values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_profile: DataFrame containing profile information</span>
+<span class="sd">        require_nonnull_columns: list of columns that are checked to have all non-null values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ValidationCheck object, with bool for whether check passed and dict of failing columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">require_nonnull_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_nonnull_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># check for nonnull columns</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">require_nonnull_columns</span><span class="p">:</span>
+        <span class="n">num_null</span> <span class="o">=</span> <span class="n">df_profile</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col</span><span class="p">,</span> <span class="s2">&quot;EmptyValueCount&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">num_null</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="n">num_null</span><span class="si">}</span><span class="s2"> null values&quot;</span><span class="p">)</span>
+            <span class="n">failed_checks_dict</span><span class="p">[</span><span class="s2">&quot;failed_nonnull_columns&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_custom</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span>
+    <span class="n">columns_to_check</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">check_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Dataframe</span>
+<span class="sd">        columns_to_check: columns on which check_function will be applied</span>
+<span class="sd">        check_function: function applied on columns_to_check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ValidationCheck object, with bool for whether all checks passed and dict of failing columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns_to_check</span><span class="p">]</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">check_function</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns_to_check</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">df1</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> failed custom check </span><span class="si">{</span><span class="n">check_function</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">failed_checks_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;failed custom check </span><span class="si">{</span><span class="n">check_function</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../../modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="s2">&quot;pandas.DataFrame&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">raise_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">require_present_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">require_unique_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">require_nonnull_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">custom_checks</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs validation checks on a DataFrame.</span>
+<span class="sd">    Returns a dict of columns that fail each check, and optionally returns an error.</span>
+<span class="sd">    Intended to be used on a DataFrame prior to upserting records into a Tamr dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">        raise_error: if True, will raise a ValueError on failing checks.  if False,</span>
+<span class="sd">            will print Warning and return a dict</span>
+<span class="sd">        require_present_columns: list of columns that are checked to be present</span>
+<span class="sd">        require_unique_columns: list of columns that are checked to have all unique values,</span>
+<span class="sd">            e.g. a primary key column</span>
+<span class="sd">        require_nonnull_columns: list of columns that are checked to have all non-null values</span>
+<span class="sd">        custom_checks: collection of tuples each containing a custom function and list of columns,</span>
+<span class="sd">            on which to apply it</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ValidationCheck object, with bool for whether all checks passed and dict of failing columns</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if `raise_error` is set True, and any checks fail</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">require_present_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_present_columns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">require_unique_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_unique_columns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">require_nonnull_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">require_nonnull_columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># compute profile stats</span>
+    <span class="n">df_profile</span> <span class="o">=</span> <span class="n">profile</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="c1"># check for present columns</span>
+    <span class="n">failed_checks_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">_check_present_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">require_present_columns</span><span class="o">=</span><span class="n">require_present_columns</span><span class="p">)</span><span class="o">.</span><span class="n">details</span>
+    <span class="p">)</span>
+
+    <span class="c1"># check for unique columns</span>
+    <span class="n">failed_checks_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">_check_unique_columns</span><span class="p">(</span><span class="n">df_profile</span><span class="p">,</span> <span class="n">require_unique_columns</span><span class="o">=</span><span class="n">require_unique_columns</span><span class="p">)</span><span class="o">.</span><span class="n">details</span>
+    <span class="p">)</span>
+
+    <span class="c1"># check for nonnull columns</span>
+    <span class="n">failed_checks_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">_check_nonnull_columns</span><span class="p">(</span><span class="n">df_profile</span><span class="p">,</span> <span class="n">require_nonnull_columns</span><span class="o">=</span><span class="n">require_nonnull_columns</span><span class="p">)</span><span class="o">.</span><span class="n">details</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">custom_check</span> <span class="ow">in</span> <span class="n">custom_checks</span><span class="p">:</span>
+        <span class="n">failed_checks_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">_check_custom</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="n">check_function</span><span class="o">=</span><span class="n">custom_check</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">columns_to_check</span><span class="o">=</span><span class="n">custom_check</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">details</span>
+        <span class="p">)</span>
+
+    <span class="n">failed_checks_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span>
+    <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed_checks_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">passed</span> <span class="ow">and</span> <span class="n">raise_error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="p">(</span>
+            <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DataFrame validation failed.  failed columns for each check: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">failed_checks_dict</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ValidationCheck</span><span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed_checks_dict</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

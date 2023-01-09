@@ -1,0 +1,726 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.dataset.manage &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/dataset/manage.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.dataset.manage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.dataset.manage</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models</span> <span class="kn">import</span> <span class="n">attribute_type</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="exists"><a class="viewcode-back" href="../../../modules/dataset.html#tamr_toolbox.dataset.manage.exists">[docs]</a><span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a dataset exists in a Tamr instance</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: Tamr python client object for the target instance</span>
+<span class="sd">        dataset_name: The dataset name</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        True or False for if the dataset exists in target instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="create"><a class="viewcode-back" href="../../../modules/dataset.html#tamr_toolbox.dataset.manage.create">[docs]</a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">primary_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">AttributeType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_descriptions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Flexibly create a source dataset in Tamr</span>
+
+<span class="sd">    A template dataset object can be passed in to create a duplicate dataset with a new name. If</span>
+<span class="sd">    the template dataset is not provided, the primary_keys must be defined for the dataset to be</span>
+<span class="sd">    created. Additional attributes can be added in the attributes argument. The default attribute</span>
+<span class="sd">    type will be ARRAY STRING. Non-default attribute types can be specified in the attribute_types</span>
+<span class="sd">    dictionary. Any attribute descriptions can be specified in the attribute_descriptions</span>
+<span class="sd">    dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: TUC client object</span>
+<span class="sd">        dataset_name: name for the new dataset being created</span>
+<span class="sd">        dataset: optional dataset TUC object to use as a template for the new dataset</span>
+<span class="sd">        primary_keys: one or more attributes for primary key(s) of the new dataset</span>
+<span class="sd">        attributes: a list of attribute names to create in the new dataset</span>
+<span class="sd">        attribute_types: dictionary for non-default types, attribute name is the key and</span>
+<span class="sd">            AttributeType is the value</span>
+<span class="sd">        attribute_descriptions: dictionary for attribute descriptions, attribute name is the key</span>
+<span class="sd">            and the attribute description is the value</span>
+<span class="sd">        description: description of the new dataset</span>
+<span class="sd">        external_id: external_id for dataset, if None Tamr will create one for you</span>
+<span class="sd">        tags: the list of tags for the new dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dataset created in Tamr</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        requests.HTTPError: If any HTTP error is encountered</span>
+<span class="sd">        ValueError: If both dataset and primary_keys are not defined</span>
+<span class="sd">        ValueError: If the dataset already exists</span>
+<span class="sd">        TypeError: If the attributes argument is not an Iterable</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import tamr_toolbox as tbox</span>
+<span class="sd">        &gt;&gt;&gt; tamr_client = tbox.utils.client.create(**instance_connection_info)</span>
+<span class="sd">        &gt;&gt;&gt; tbox.dataset.manage.create(</span>
+<span class="sd">        &gt;&gt;&gt;     client=tamr_client,</span>
+<span class="sd">        &gt;&gt;&gt;     dataset_name=&quot;my_new_dataset&quot;,</span>
+<span class="sd">        &gt;&gt;&gt;     primary_keys=[&quot;unique_id&quot;],</span>
+<span class="sd">        &gt;&gt;&gt;     attributes=[&quot;name&quot;,&quot;address&quot;],</span>
+<span class="sd">        &gt;&gt;&gt;     description=&quot;My new dataset&quot;,</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">primary_keys</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dataset or primary_keys must be defined&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get dataset information</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="c1"># Get attributes from dataset object</span>
+        <span class="n">attribute_types</span><span class="p">,</span> <span class="n">attribute_descriptions</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">stream</span><span class="p">():</span>
+            <span class="n">attribute_types</span><span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+            <span class="n">attribute_descriptions</span><span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">attribute_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="c1"># Get dataset spec information</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">tags</span>
+        <span class="n">primary_keys</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">key_attribute_names</span>
+
+    <span class="c1"># Check input type is correct</span>
+    <span class="k">if</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;attributes arg must be an Iterable&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">):</span>
+        <span class="n">creation_spec</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+            <span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">:</span> <span class="n">primary_keys</span><span class="p">,</span>
+            <span class="s2">&quot;externalId&quot;</span><span class="p">:</span> <span class="n">external_id</span><span class="p">,</span>
+            <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="n">tags</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">creation_spec</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A dataset with name </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> has been created&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A dataset with name &#39;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&#39; already exists&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get new dataset</span>
+    <span class="n">target_dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+
+    <span class="c1"># Update attributes in dataset</span>
+    <span class="k">if</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="n">filtered_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span> <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">primary_keys</span><span class="p">]</span>
+        <span class="n">create_attributes</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">target_dataset</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="n">filtered_attributes</span><span class="p">,</span>
+            <span class="n">attribute_types</span><span class="o">=</span><span class="n">attribute_types</span><span class="p">,</span>
+            <span class="n">attribute_descriptions</span><span class="o">=</span><span class="n">attribute_descriptions</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">target_dataset</span></div>
+
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../modules/dataset.html#tamr_toolbox.dataset.manage.update">[docs]</a><span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">AttributeType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_descriptions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">override_existing_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Flexibly update a source dataset in Tamr</span>
+
+<span class="sd">    All the attributes that should exist in the dataset must be defined in the attributes argument.</span>
+<span class="sd">    This function will add/remove attributes in the dataset until the dataset attributes matches</span>
+<span class="sd">    the set of attributes passed in as an argument. The default attribute type will be ARRAY</span>
+<span class="sd">    STRING . To set non-default attribute types, they must be defined in the attribute_types</span>
+<span class="sd">    dictionary. Any attribute descriptions can be specified in the attribute_descriptions</span>
+<span class="sd">    dictionary. By default, the existing attribute types will not change unless</span>
+<span class="sd">    override_existing_types is set to True. When False, the attribute type updates will only be</span>
+<span class="sd">    logged.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: An existing TUC dataset</span>
+<span class="sd">        attributes: Complete list of attribute names that should exist in the updated dataset</span>
+<span class="sd">        attribute_types: dictionary for non-default types, attribute name is the key and</span>
+<span class="sd">            AttributeType is the value</span>
+<span class="sd">        attribute_descriptions: dictionary for attribute descriptions, attribute name is the</span>
+<span class="sd">            key and the attribute description is the value</span>
+<span class="sd">        description: updated description of dataset, if None will not update the description</span>
+<span class="sd">        tags: updated tags for the dataset, if None will not update tags</span>
+<span class="sd">        override_existing_types: boolean flag, when true will alter existing attribute&#39;s types</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Updated Dataset</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        requests.HTTPError: If any HTTP error is encountered</span>
+<span class="sd">        ValueError: If the dataset is not a source dataset</span>
+<span class="sd">        TypeError: If the attributes argument is not an Iterable</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import tamr_toolbox as tbox</span>
+<span class="sd">        &gt;&gt;&gt; from tbox.models import attribute_type</span>
+<span class="sd">        &gt;&gt;&gt; tamr_client = tbox.utils.client.create(**instance_connection_info)</span>
+<span class="sd">        &gt;&gt;&gt; dataset = = tamr_client.datasets.by_name(&quot;my_dataset_name&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; tbox.dataset.manage.update(</span>
+<span class="sd">        &gt;&gt;&gt;     client=tamr_client,</span>
+<span class="sd">        &gt;&gt;&gt;     dataset=dataset,</span>
+<span class="sd">        &gt;&gt;&gt;     attributes=[&quot;unique_id&quot;,&quot;name&quot;,&quot;address&quot;,&quot;total_sales&quot;],</span>
+<span class="sd">        &gt;&gt;&gt;     attribute_types={&quot;total_sales&quot;:attribute_type.ARRAY(attribute_type.DOUBLE)},</span>
+<span class="sd">        &gt;&gt;&gt;     override_existing_types = True,</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">upstream_datasets</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> is not a source dataset&quot;</span><span class="p">)</span>
+    <span class="n">primary_keys</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Check input type is correct</span>
+    <span class="k">if</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;attributes arg must be an Iterable&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Update description and tags</span>
+    <span class="n">dataset_spec</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">description</span><span class="p">:</span>
+        <span class="n">dataset_spec</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating description for </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="n">dataset_spec</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">with_tags</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating tags for </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">dataset_spec</span><span class="o">.</span><span class="n">put</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="c1"># Get current dataset attributes</span>
+        <span class="n">existing_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+
+        <span class="c1"># Update attributes in dataset</span>
+        <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">primary_keys</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">existing_attributes</span><span class="p">:</span>
+                <span class="c1"># This attribute already exists, update to new type</span>
+                <span class="n">type_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">attribute_name</span><span class="p">:</span> <span class="p">(</span><span class="n">attribute_types</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">attribute_name</span><span class="p">,</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">DEFAULT</span>
+                    <span class="p">)</span>
+                <span class="p">}</span>
+                <span class="n">desc_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">attribute_name</span><span class="p">:</span> <span class="p">(</span><span class="n">attribute_descriptions</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attribute_name</span><span class="p">)</span>
+                <span class="p">}</span>
+
+                <span class="n">edit_attributes</span><span class="p">(</span>
+                    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                    <span class="n">attribute_types</span><span class="o">=</span><span class="n">type_dict</span><span class="p">,</span>
+                    <span class="n">attribute_descriptions</span><span class="o">=</span><span class="n">desc_dict</span><span class="p">,</span>
+                    <span class="n">override_existing_types</span><span class="o">=</span><span class="n">override_existing_types</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># This attribute does not already exist, create</span>
+                <span class="n">create_attributes</span><span class="p">(</span>
+                    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                    <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">],</span>
+                    <span class="n">attribute_types</span><span class="o">=</span><span class="n">attribute_types</span><span class="p">,</span>
+                    <span class="n">attribute_descriptions</span><span class="o">=</span><span class="n">attribute_descriptions</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Remove any attributes from dataset that aren&#39;t in the new list of attributes</span>
+        <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">existing_attributes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="n">attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">primary_keys</span><span class="p">:</span>
+                <span class="n">delete_attributes</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="create_attributes"><a class="viewcode-back" href="../../../modules/dataset.html#tamr_toolbox.dataset.manage.create_attributes">[docs]</a><span class="k">def</span> <span class="nf">create_attributes</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">AttributeType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_descriptions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create new attributes in a dataset</span>
+
+<span class="sd">    The default attribute type will be ARRAY STRING. To set non-default attribute types, they must</span>
+<span class="sd">    be defined in the attribute_types dictionary. Any attribute descriptions can be specified in</span>
+<span class="sd">    the attribute_descriptions dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: An existing TUC dataset</span>
+<span class="sd">        attributes: list of attribute names to be added to dataset</span>
+<span class="sd">        attribute_types: dictionary for non-default types, attribute name is the key and</span>
+<span class="sd">            AttributeType is the value</span>
+<span class="sd">        attribute_descriptions: dictionary for attribute descriptions, attribute name is the</span>
+<span class="sd">            key and the attribute description is the value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Updated Dataset</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        requests.HTTPError: If any HTTP error is encountered</span>
+<span class="sd">        TypeError: If the attributes argument is not an Iterable</span>
+<span class="sd">        ValueError: If the dataset is a unified dataset</span>
+<span class="sd">        ValueError: If an attribute passed in already exists in the dataset</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">upstream_datasets</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> is not a source dataset&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check input type is correct</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;attributes arg must be an Iterable&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get current dataset attributes</span>
+    <span class="n">existing_attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+
+    <span class="c1"># Check that none of the new attribute names already exist</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">existing_attributes</span><span class="p">:</span>
+            <span class="c1"># This attribute already exists</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;An attribute with name &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; already exists in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Add attributes to dataset</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="n">attr_spec_dict</span> <span class="o">=</span> <span class="n">_make_spec_dict</span><span class="p">(</span>
+            <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+            <span class="n">attribute_types</span><span class="o">=</span><span class="n">attribute_types</span><span class="p">,</span>
+            <span class="n">attribute_descriptions</span><span class="o">=</span><span class="n">attribute_descriptions</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">attr_spec_dict</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="edit_attributes"><a class="viewcode-back" href="../../../modules/dataset.html#tamr_toolbox.dataset.manage.edit_attributes">[docs]</a><span class="k">def</span> <span class="nf">edit_attributes</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">attribute_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">AttributeType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_descriptions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">override_existing_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Edit existing attributes in a dataset</span>
+
+<span class="sd">    The attribute type and/or descriptions can be updated to new values. Attributes that will be</span>
+<span class="sd">    updated must be in either the attribute_types or attribute_descriptions dictionaries or</span>
+<span class="sd">    both. The default attribute type will be ARRAY STRING. To set non-default attribute types, they</span>
+<span class="sd">    must be defined in the attribute_types dictionary. Any attribute descriptions can be specified</span>
+<span class="sd">    in the attribute_descriptions dictionary. If only the attribute_descriptions dictionary is</span>
+<span class="sd">    defined, the attribute type will not be updated.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: An existing TUC dataset</span>
+<span class="sd">        attribute_types: dictionary for non-default types, attribute name is the key and</span>
+<span class="sd">            AttributeType is the value</span>
+<span class="sd">        attribute_descriptions: dictionary for attribute descriptions, attribute name is the</span>
+<span class="sd">            key and the attribute description is the value</span>
+<span class="sd">        override_existing_types: bool flag, when true will alter existing attributes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Updated Dataset</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        requests.HTTPError: If any HTTP error is encountered</span>
+<span class="sd">        ValueError: If the dataset is not a source dataset</span>
+<span class="sd">        ValueError: If a passed attribute does not exist in the dataset</span>
+<span class="sd">        ValueError: If a passed attribute is a primary key and can&#39;t be removed</span>
+<span class="sd">        ValueError: If there are no updates to attributes in attribute_types or</span>
+<span class="sd">            attribute_descriptions arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">upstream_datasets</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> is not a source dataset&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check description or type changes are passed in</span>
+    <span class="k">if</span> <span class="n">attribute_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">attribute_descriptions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sd">&quot;&quot;&quot;Updates to attributes must be passed in via attribute_types</span>
+<span class="sd">            or attribute_descriptions arguments&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Get list of attributes that need updating from attribute_types and</span>
+    <span class="c1"># attribute_descriptions dictionaries</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attribute_types</span> <span class="ow">or</span> <span class="nb">list</span><span class="p">()}</span> <span class="o">|</span> <span class="p">{</span>
+        <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attribute_descriptions</span> <span class="ow">or</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Get current dataset attributes</span>
+    <span class="n">target_attribute_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">}</span>
+    <span class="n">existing_attributes</span> <span class="o">=</span> <span class="n">target_attribute_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">primary_keys</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Check that all of the attribute names already exist in dataset</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_attributes</span><span class="p">:</span>
+            <span class="c1"># This attribute does not exist</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;An attribute with name &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; does not exist in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">primary_keys</span><span class="p">:</span>
+            <span class="c1"># Can not edit a primary key</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; is a primary key and can&#39;t be updated&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Update attributes in dataset</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="n">attr_spec_dict</span> <span class="o">=</span> <span class="n">_make_spec_dict</span><span class="p">(</span>
+            <span class="n">attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+            <span class="n">attribute_types</span><span class="o">=</span><span class="n">attribute_types</span><span class="p">,</span>
+            <span class="n">attribute_descriptions</span><span class="o">=</span><span class="n">attribute_descriptions</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">existing_attribute_spec</span> <span class="o">=</span> <span class="n">target_attribute_dict</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">attribute_types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attribute_types</span><span class="p">:</span>
+            <span class="n">new_type_class</span> <span class="o">=</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">existing_attribute_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_type_class</span> <span class="o">=</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">attr_spec_dict</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="n">old_type_class</span> <span class="o">=</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">existing_attribute_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">new_type_class</span> <span class="o">==</span> <span class="n">old_type_class</span><span class="p">:</span>
+            <span class="c1"># Update description</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">attribute_descriptions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attribute_descriptions</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="n">existing_attribute_spec</span> <span class="o">=</span> <span class="n">existing_attribute_spec</span><span class="o">.</span><span class="n">with_description</span><span class="p">(</span>
+                    <span class="n">attribute_descriptions</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">existing_attribute_spec</span><span class="o">.</span><span class="n">put</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;There are no updates to the attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">override_existing_types</span><span class="p">:</span>
+            <span class="c1"># Update type</span>
+            <span class="n">new_attr_spec</span> <span class="o">=</span> <span class="n">existing_attribute_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="n">new_attr_spec</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_spec_dict</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Update description</span>
+            <span class="k">if</span> <span class="s2">&quot;description&quot;</span> <span class="ow">in</span> <span class="n">attr_spec_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_attr_spec</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_spec_dict</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Remove and add attribute with new spec</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">delete_by_resource_id</span><span class="p">(</span>
+                <span class="n">target_attribute_dict</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span><span class="o">.</span><span class="n">resource_id</span>
+            <span class="p">)</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">new_attr_spec</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updated attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;The attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> curently has</span>
+<span class="s2">                 the type &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">old_type_class</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;. Set &#39;override_existing_types&#39; to</span>
+<span class="s2">                 True to update the type to &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">new_type_class</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="delete_attributes"><a class="viewcode-back" href="../../../modules/dataset.html#tamr_toolbox.dataset.manage.delete_attributes">[docs]</a><span class="k">def</span> <span class="nf">delete_attributes</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">attributes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Remove attributes from dataset by attribute name</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: An existing TUC dataset</span>
+<span class="sd">        attributes: list of attribute names to delete from dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Updated Dataset</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the dataset is not a source dataset</span>
+<span class="sd">        ValueError: If a passed attribute does not exist in the dataset</span>
+<span class="sd">        ValueError: If a passed attribute is a primary key and can&#39;t be removed</span>
+<span class="sd">        TypeError: If the attributes argument is not an Iterable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">upstream_datasets</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> is not a source dataset&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check input type is correct</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;attributes arg must be an Iterable&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get current dataset attributes</span>
+    <span class="n">target_attribute_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">}</span>
+    <span class="n">existing_attributes</span> <span class="o">=</span> <span class="n">target_attribute_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">primary_keys</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Check all attributes exist before starting to remove any</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_attributes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; does not exist in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">primary_keys</span><span class="p">:</span>
+            <span class="c1"># Can not edit a primary key</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; is a primary key and can&#39;t be removed&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Remove attributes from dataset</span>
+    <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">delete_by_resource_id</span><span class="p">(</span><span class="n">target_attribute_dict</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span><span class="o">.</span><span class="n">resource_id</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deleted attribute &#39;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">&#39; in </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<span class="k">def</span> <span class="nf">_make_spec_dict</span><span class="p">(</span>
+    <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">attribute_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">AttributeType</span><span class="p">],</span>
+    <span class="n">attribute_descriptions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create attribute spec dictionary</span>
+
+<span class="sd">    The default attribute type will be ARRAY STRING. Non-default attribute types can be specified</span>
+<span class="sd">    in the attribute_types dictionary. Any attribute descriptions can be specified in the</span>
+<span class="sd">    attribute_descriptions dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        attribute_name: name of the attribute</span>
+<span class="sd">        attribute_types: dictionary for non-default types, attribute name is the key and</span>
+<span class="sd">            AttributeType is the value</span>
+<span class="sd">        attribute_descriptions: dictionary for attribute descriptions, attribute name is the</span>
+<span class="sd">            key and the attribute description is the value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Json Dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">attribute_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attribute_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">attr_type</span> <span class="o">=</span> <span class="n">attribute_types</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attr_type</span> <span class="o">=</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">DEFAULT</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">attr_type</span><span class="o">=</span><span class="n">attr_type</span><span class="p">)}</span>
+
+    <span class="k">if</span> <span class="n">attribute_descriptions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">attribute_descriptions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attribute_descriptions</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

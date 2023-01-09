@@ -1,0 +1,546 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Workflow &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/examples/workflow.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modules" href="../modules.html" />
+    <link rel="prev" title="Utilities" href="utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#run-backup-restore">Run Backup Restore</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-multiple-projects-sequentially">Run Multiple Projects Sequentially</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-multiple-projects-concurrently">Run Multiple Projects Concurrently</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interactive-backup-cleanup">Interactive Backup Cleanup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
+        
+      <li>Workflow</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/examples/workflow.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="workflow">
+<h1>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="run-backup-restore">
+<h2>Run Backup Restore<a class="headerlink" href="#run-backup-restore" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for managing backup and restore operations for a Tamr instance&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># Read config, make Tamr Client, make logger</span>
+<span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pw&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;my-script&quot;</span><span class="p">)</span>
+
+<span class="c1"># List backups and create new backup</span>
+<span class="n">backups</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">list_backups</span><span class="p">(</span><span class="n">tamr</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">tamr_backup</span> <span class="ow">in</span> <span class="n">backups</span><span class="p">:</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">tamr_backup</span><span class="p">)</span>
+
+<span class="c1"># optional: delete old sparkEventLogs before backup to reduce backup size</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting old sparkEventLogs&quot;</span><span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">delete_old_spark_event_logs</span><span class="p">(</span><span class="s2">&quot;/home/ubuntu&quot;</span><span class="p">,</span> <span class="n">num_days_to_keep</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;About to run backup&quot;</span><span class="p">)</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">initiate_backup</span><span class="p">(</span><span class="n">tamr</span><span class="p">)</span>
+<span class="n">backup_id</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;relativeId&quot;</span><span class="p">]</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed backup with state </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2"> and relative ID </span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Restore to previous backup file</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;About to run restore to backup file&quot;</span><span class="p">)</span>
+<span class="n">backup_id</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>  <span class="c1"># update with the relativeID of your desired backup file</span>
+<span class="n">op</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">initiate_restore</span><span class="p">(</span><span class="n">tamr</span><span class="p">,</span> <span class="n">backup_id</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed restore to backup file with ID </span><span class="si">{</span><span class="n">backup_id</span><span class="si">}</span><span class="s2"> with state </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Delete backups</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">classify_backups</span><span class="p">(</span><span class="s2">&quot;/path/to/my/backups/&quot;</span><span class="p">)</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Backup directory /home/ubuntu/tamr/backups contains </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;succeeded&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> successful backups&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;not_succeeded&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> unsuccessful backups.&quot;</span>
+<span class="p">)</span>
+<span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">delete_old_backups</span><span class="p">(</span>
+    <span class="s2">&quot;/path/to/my/backups/&quot;</span><span class="p">,</span> <span class="n">num_successful_backups_to_keep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_failed_backups_to_keep</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Deleted </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;succeeded&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2"> old successful backups and&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;not_succeeded&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2"> unsuccessful backups.&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-multiple-projects-sequentially">
+<span id="workflow-run-projects"></span><h2>Run Multiple Projects Sequentially<a class="headerlink" href="#run-multiple-projects-sequentially" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a pipeline consisting of multiple Tamr projects&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">project_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Operation</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Runs the continuous steps of a multiple projects of any type</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        project_ids: The ids of the target projects to run in order</span>
+
+<span class="sd">    Returns: List of jobs run</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># Retrieve the projects</span>
+    <span class="n">my_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_id</span> <span class="ow">in</span> <span class="n">project_ids</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;About to run projects: </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># runs the projects specifying to wait 30 seconds between jobs</span>
+    <span class="n">operations</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">my_projects</span><span class="p">,</span> <span class="n">run_apply_feedback</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">run_estimate_pair_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sleep_interval</span><span class="o">=</span><span class="mi">30</span>
+    <span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks for </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2"> complete&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">operations</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/project.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">project_ids</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_schema_mapping_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_categorization_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_mastering_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_golden_records_project&quot;</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-multiple-projects-concurrently">
+<h2>Run Multiple Projects Concurrently<a class="headerlink" href="#run-multiple-projects-concurrently" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for running a pipeline consisting of multiple Tamr projects concurrently&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">project_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Runs the continuous steps of a multiple projects of any type</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        project_ids: The ids of the target projects to run in order</span>
+
+<span class="sd">    Returns: List of jobs run</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># Retrieve the projects</span>
+    <span class="n">my_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_id</span> <span class="ow">in</span> <span class="n">project_ids</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;About to run build graph for projects: </span><span class="si">{</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">my_projects</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">my_graph</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">from_project_list</span><span class="p">(</span><span class="n">my_projects</span><span class="p">,</span> <span class="n">tamr_client</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Building planner object&quot;</span><span class="p">)</span>
+    <span class="n">my_planner</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Planner</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">my_graph</span><span class="p">,</span> <span class="n">tamr_client</span><span class="o">=</span><span class="n">tamr_client</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing concurrent workflow with 3 concurrent jobs&quot;</span><span class="p">)</span>
+    <span class="n">my_planner</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">Planner</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">my_planner</span><span class="p">,</span> <span class="n">tamr_client</span><span class="p">,</span> <span class="n">concurrency_level</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span>
+
+    <span class="n">plan_status</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">PlanStatus</span><span class="o">.</span><span class="n">from_planner</span><span class="p">(</span><span class="n">my_planner</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status after running plan </span><span class="si">{</span><span class="n">plan_status</span><span class="si">}</span><span class="s2"> complete&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/project.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">project_ids</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_schema_mapping_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_categorization_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_mastering_project&quot;</span><span class="p">],</span>
+            <span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_golden_records_project&quot;</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="interactive-backup-cleanup">
+<h2>Interactive Backup Cleanup<a class="headerlink" href="#interactive-backup-cleanup" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for an interactive command prompt for Tamr backup management&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">backup_directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">backup_datetime_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S-</span><span class="si">%f</span><span class="s2">&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Provides prompts to delete or keep files/directories in backup_directory</span>
+<span class="sd">    Args:</span>
+<span class="sd">        backup_directory: Path to backup directory</span>
+<span class="sd">        backup_datetime_format: String datetime format in backup folder name</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">backup_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
+    <span class="n">backups</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">backup_directory</span><span class="p">)</span>
+
+    <span class="n">backups</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">backups</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">backups_to_delete</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">backup_name</span> <span class="ow">in</span> <span class="n">backups</span><span class="p">:</span>
+        <span class="n">backup_path</span> <span class="o">=</span> <span class="n">backup_directory</span> <span class="o">/</span> <span class="n">backup_name</span>
+        <span class="k">if</span> <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">validate_backup</span><span class="p">(</span>
+            <span class="n">backup_path</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span>
+        <span class="p">):</span>
+            <span class="n">backup_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">backup_name</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">backup_path</span> <span class="o">/</span> <span class="s2">&quot;_SUCCEEDED&quot;</span><span class="p">):</span>
+                <span class="n">succeeded_file</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span>
+                    <span class="n">backup_path</span> <span class="o">/</span> <span class="s2">&quot;_SUCCEEDED&quot;</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s2">&quot;series&quot;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">succeeded_file</span><span class="p">[</span><span class="s2">&quot;errorMessage&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Backup </span><span class="si">{</span><span class="n">backup_name</span><span class="si">}</span><span class="s2"> completed successfully at </span><span class="si">{</span><span class="n">backup_time</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;with no error message. Would you like to delete (Y/N)?&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Backup </span><span class="si">{</span><span class="n">backup_name</span><span class="si">}</span><span class="s2"> completed successfully at </span><span class="si">{</span><span class="n">backup_time</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;with error message </span><span class="si">{</span><span class="n">succeeded_file</span><span class="p">[</span><span class="s1">&#39;errorMessage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Would you like to delete (Y/N)?&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Backup </span><span class="si">{</span><span class="n">backup_name</span><span class="si">}</span><span class="s2"> failed at </span><span class="si">{</span><span class="n">backup_time</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Would you like to delete (Y/N)?&quot;</span>
+                <span class="p">)</span>
+            <span class="k">while</span> <span class="n">response</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">]:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Invalid response please enter &#39;Y&#39; or &#39;N&#39;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">]:</span>
+                <span class="n">backups_to_delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">backup_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backup_name</span><span class="si">}</span><span class="s2"> is an invalid backup. Would you like to delete (Y/N)?&quot;</span>
+            <span class="p">)</span>
+            <span class="k">while</span> <span class="n">response</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">]:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Invalid response please enter &#39;Y&#39; or &#39;N&#39;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">]:</span>
+                <span class="n">tbox</span><span class="o">.</span><span class="n">filesystem</span><span class="o">.</span><span class="n">bash</span><span class="o">.</span><span class="n">remove_directories</span><span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">backup_path</span><span class="p">),</span> <span class="n">allow_recursive_deletes</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">backup</span><span class="o">.</span><span class="n">delete_backups</span><span class="p">(</span>
+        <span class="n">backups</span><span class="o">=</span><span class="n">backups_to_delete</span><span class="p">,</span>
+        <span class="n">backup_directory</span><span class="o">=</span><span class="n">backup_directory</span><span class="p">,</span>
+        <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">backup_datetime_format</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--backup_directory&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a directory to cleanup&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--backup_datetime_format&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;String datetime format in backup folder name&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">backup_directory</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">backup_directory</span><span class="p">,</span> <span class="n">backup_datetime_format</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">backup_datetime_format</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../modules.html" class="btn btn-neutral float-right" title="Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="utils.html" class="btn btn-neutral float-left" title="Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

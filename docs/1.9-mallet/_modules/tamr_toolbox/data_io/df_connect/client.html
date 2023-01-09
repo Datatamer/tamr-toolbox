@@ -1,0 +1,706 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.data_io.df_connect.client &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/data_io/df_connect/client.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.data_io.df_connect.client</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.data_io.df_connect.client</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to interacting with the Tamr auxiliary service DF-connect&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.data_io.df_connect</span> <span class="kn">import</span> <span class="n">jdbc_info</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.data_io.file_system_type</span> <span class="kn">import</span> <span class="n">FileSystemType</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.auth</span> <span class="kn">import</span> <span class="n">UsernamePasswordAuth</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Client"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.Client">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Client</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A data class for interacting with df_connect via jdbc.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        host: the host where df_connect is running</span>
+<span class="sd">        port: the port on which df_connect is listening</span>
+<span class="sd">        protocol: http or https</span>
+<span class="sd">        base_path: if using nginx-like proxy this is the redirect path</span>
+<span class="sd">        tamr_username: the tamr account to use</span>
+<span class="sd">        tamr_password: the password for the tamr account to use</span>
+<span class="sd">        jbdc_info: configuration information for the jdbc connection</span>
+<span class="sd">        cert: optional path to a certfile for authentication</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tamr_username</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tamr_password</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">jdbc_info</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">JdbcInfo</span>
+    <span class="n">cert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="from_config"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.from_config">[docs]</a><span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span> <span class="n">config_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;df_connect&quot;</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ingest&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Constructs a Client object from a json dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config: A json dictionary of configuration values</span>
+<span class="sd">        config_key: block of the config to parse for values. Defaults to &#39;df_connect&#39;</span>
+<span class="sd">        jdbc_key: the key used to specify which block of df_connect--&gt;jdbc in configuration to be</span>
+<span class="sd">            used for picking up database connection information. Defaults to &#39;ingest&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Client object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># proxy and port redirect are optional</span>
+    <span class="n">base_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_path&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Optional cert may or may not be present in config file (back-compat from TBOX-295)</span>
+    <span class="k">if</span> <span class="s2">&quot;cert&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">cert</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;cert&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cert</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">Client</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">protocol</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;protocol&quot;</span><span class="p">],</span>
+        <span class="n">base_path</span><span class="o">=</span><span class="n">base_path</span><span class="p">,</span>
+        <span class="n">tamr_username</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;tamr_username&quot;</span><span class="p">],</span>
+        <span class="n">tamr_password</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="n">config_key</span><span class="p">][</span><span class="s2">&quot;tamr_password&quot;</span><span class="p">],</span>
+        <span class="n">jdbc_info</span><span class="o">=</span><span class="n">jdbc_info</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">config_key</span><span class="o">=</span><span class="n">config_key</span><span class="p">,</span> <span class="n">jdbc_key</span><span class="o">=</span><span class="n">jdbc_key</span><span class="p">),</span>
+        <span class="n">cert</span><span class="o">=</span><span class="n">cert</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.create">[docs]</a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">base_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">tamr_username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">tamr_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">jdbc_dict</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">,</span>
+    <span class="n">cert</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple wrapper for creating an instance of `Client` dataclass object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        host: the host where df_connect is running</span>
+<span class="sd">        port: the port on which df_connect is listening</span>
+<span class="sd">        protocol: http or https</span>
+<span class="sd">        base_path: if using nginx-like proxy this is the redirect path</span>
+<span class="sd">        tamr_username: the tamr account to use</span>
+<span class="sd">        tamr_password: the password for the tamr account to use</span>
+<span class="sd">        jdbc_dict: configuration information for the jdbc connection</span>
+<span class="sd">        cert: optional path to a certfile for authentication</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An instance of `tamr_toolbox.data_io.df_connect.Client`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jdbc_information</span> <span class="o">=</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">jdbc_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Client</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">protocol</span><span class="o">=</span><span class="n">protocol</span><span class="p">,</span>
+        <span class="n">base_path</span><span class="o">=</span><span class="n">base_path</span><span class="p">,</span>
+        <span class="n">tamr_username</span><span class="o">=</span><span class="n">tamr_username</span><span class="p">,</span>
+        <span class="n">tamr_password</span><span class="o">=</span><span class="n">tamr_password</span><span class="p">,</span>
+        <span class="n">jdbc_info</span><span class="o">=</span><span class="n">jdbc_information</span><span class="p">,</span>
+        <span class="n">cert</span><span class="o">=</span><span class="n">cert</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">api_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Constructs and returns url for request to df_connect. Valid for both http and https.</span>
+
+<span class="sd">     Args:</span>
+<span class="sd">         connect_info: An object of type JdbcInfo from which to pull host/port</span>
+<span class="sd">         api_path: The api endpoint to be called</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        url: A string of the request url formatted correctly for that instance of df_connect.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># handle port:</span>
+    <span class="k">if</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">port</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">port</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">port</span>
+    <span class="c1"># handle ssl_redirect</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">connect_info</span><span class="o">.</span><span class="n">base_path</span><span class="p">,</span> <span class="n">api_path</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)])</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="n">api_path</span> <span class="k">if</span> <span class="n">api_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">protocol</span> <span class="o">==</span> <span class="s2">&quot;https&quot;</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="n">port</span> <span class="o">+</span> <span class="n">api_path</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://&quot;</span> <span class="o">+</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="n">port</span> <span class="o">+</span> <span class="n">api_path</span>
+    <span class="k">return</span> <span class="n">url</span>
+
+
+<span class="k">def</span> <span class="nf">_get_query_config</span><span class="p">(</span><span class="n">jdbc_info</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">JdbcInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Packages configuration info into relevant query configuration json (dict) which is used</span>
+<span class="sd">    for multiple df_connect API calls.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        jdbc_info: JdbcInfo object from which to construct the query configuration.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        query_config: A dictionary suitable for usage in all df_connect API calls needing a</span>
+<span class="sd">            queryConfig parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">query_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;jdbcUrl&quot;</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">jdbc_url</span><span class="p">,</span>
+        <span class="s2">&quot;dbUsername&quot;</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span>
+        <span class="s2">&quot;dbPassword&quot;</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span>
+        <span class="s2">&quot;fetchSize&quot;</span><span class="p">:</span> <span class="n">jdbc_info</span><span class="o">.</span><span class="n">fetch_size</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">query_config</span>
+
+
+<span class="k">def</span> <span class="nf">_get_export_config</span><span class="p">(</span>
+    <span class="n">multi_value_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">limit_records</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">columns_exclude_regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export</span>
+<span class="sd">     in form of json dictionary</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        multi_value_delimiter: value with which to delimit multivalues. default is |</span>
+<span class="sd">        limit_records: number of records to stream. default is 0 (export all records)</span>
+<span class="sd">        columns_exclude_regex: override config file for columnsExcludeRegex, default is empty</span>
+<span class="sd">            string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary suitable for usage in all df_connect API calls around jdbc export</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># build json object</span>
+    <span class="n">export_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;mergedArrayValuesDelimiter&quot;</span><span class="p">:</span> <span class="n">multi_value_delimiter</span><span class="p">,</span>
+        <span class="s2">&quot;limitRecords&quot;</span><span class="p">:</span> <span class="n">limit_records</span><span class="p">,</span>
+        <span class="s2">&quot;columnsExcludeRegex&quot;</span><span class="p">:</span> <span class="n">columns_exclude_regex</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">export_config</span>
+
+
+<span class="k">def</span> <span class="nf">_get_avro_url_export_config</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generates json needed for using avro(schema) export endpoints.</span>
+<span class="sd">    Primary key is always set to [] since needing it is an artifact of the df-connect endpoint</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url: the url to which the avro(schema) will be written</span>
+<span class="sd">        dataset_name: the dataset for which the avro(schema) will be written</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s2">&quot;datasetName&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="s2">&quot;primaryKey&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+
+<div class="viewcode-block" id="get_connect_session"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.get_connect_session">[docs]</a><span class="k">def</span> <span class="nf">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns an authenticated session using Tamr credentials from configuration.</span>
+<span class="sd">    Raises an exception if df_connect is not installed or running correctly.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        connect_info: An instance of a Client object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An authenticated session</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if the a connection to df_connect cannot be established</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">auth</span> <span class="o">=</span> <span class="n">UsernamePasswordAuth</span><span class="p">(</span><span class="n">connect_info</span><span class="o">.</span><span class="n">tamr_username</span><span class="p">,</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">tamr_password</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Content-type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">})</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">})</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">cert</span> <span class="o">=</span> <span class="n">connect_info</span><span class="o">.</span><span class="n">cert</span>
+
+    <span class="c1"># test that df_connect is running properly</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="s2">&quot;/api/service/health&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Tamr auxiliary service df-df_connect is either not running or not healthy at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; Did you install it? Df-connect does not come with default Tamr installation.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; Check its status and your configuration.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="ingest_dataset"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.ingest_dataset">[docs]</a><span class="k">def</span> <span class="nf">ingest_dataset</span><span class="p">(</span>
+    <span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ingest a dataset into Tamr via df-df_connect given dataset name, query string, and optional</span>
+<span class="sd">    list of columns for primary key</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name: Name of dataset</span>
+<span class="sd">        query: jdbc query to execute in the database and results of which will be loaded into Tamr</span>
+<span class="sd">        connect_info: A Client object for establishing session and loading jdbc parameters</span>
+<span class="sd">        primary_key: list of columns to use as primary key. If None then df_connect will generate</span>
+<span class="sd">            its own primary key</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON response from API call</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPError: if the call to ingest the dataset was unsuccessful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># handle primary key</span>
+    <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+    <span class="c1"># establish a df_connect session</span>
+    <span class="n">connect_session</span> <span class="o">=</span> <span class="n">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">)</span>
+
+    <span class="c1"># ingest data</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="s2">&quot;/api/jdbcIngest/ingest&quot;</span>
+    <span class="n">query_config</span> <span class="o">=</span> <span class="n">_get_query_config</span><span class="p">(</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="p">)</span>
+    <span class="n">ingest_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+        <span class="s2">&quot;datasetName&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span>
+        <span class="s2">&quot;primaryKey&quot;</span><span class="p">:</span> <span class="n">primary_key</span><span class="p">,</span>
+        <span class="s2">&quot;queryConfig&quot;</span><span class="p">:</span> <span class="n">query_config</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">ingest_url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Streaming data from </span><span class="si">{</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="o">.</span><span class="n">jdbc_url</span><span class="si">}</span><span class="s2"> to &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Tamr with the following query: </span><span class="se">\n\t</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">ingest_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ingest_data</span><span class="p">))</span>
+
+    <span class="c1"># check if successful and if so return True</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="export_dataset"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.export_dataset">[docs]</a><span class="k">def</span> <span class="nf">export_dataset</span><span class="p">(</span>
+    <span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">target_table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">truncate_before_load</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Export a dataset via jdbc to a target database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name: the name of the dataset to export</span>
+<span class="sd">        target_table_name: the table in the database to update</span>
+<span class="sd">        truncate_before_load: whether or not to truncate the database table before load</span>
+<span class="sd">        connect_info: A Client object for establishing session and loading jdbc parameters</span>
+<span class="sd">        jdbc_key: the key for picking up relevant block for export from config file.</span>
+<span class="sd">            See examples directory for usage</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON response from API call</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPError: if the call to export the dataset was unsuccessful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># establish a df_connect session</span>
+    <span class="n">connect_session</span> <span class="o">=</span> <span class="n">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">)</span>
+
+    <span class="c1"># export data</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="s2">&quot;/api/urlExport/jdbc&quot;</span>
+    <span class="n">query_config</span> <span class="o">=</span> <span class="n">_get_query_config</span><span class="p">(</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="p">)</span>
+    <span class="n">export_data_config</span> <span class="o">=</span> <span class="n">_get_export_config</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">export_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;unifyDatasetName&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span>
+        <span class="s2">&quot;queryConfig&quot;</span><span class="p">:</span> <span class="n">query_config</span><span class="p">,</span>
+        <span class="s2">&quot;exportDataConfig&quot;</span><span class="p">:</span> <span class="n">export_data_config</span><span class="p">,</span>
+        <span class="s2">&quot;truncateBeforeLoad&quot;</span><span class="p">:</span> <span class="n">truncate_before_load</span><span class="p">,</span>
+        <span class="s2">&quot;targetTableName&quot;</span><span class="p">:</span> <span class="n">target_table_name</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">export_url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Streaming data to </span><span class="si">{</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="o">.</span><span class="n">jdbc_url</span><span class="si">}</span><span class="s2"> from this &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Tamr dataset: </span><span class="se">\n\t</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">export_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">export_data</span><span class="p">))</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="execute_statement"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.execute_statement">[docs]</a><span class="k">def</span> <span class="nf">execute_statement</span><span class="p">(</span><span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calls the execute statement endpoint of df-df_connect.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        statement: the SQL statement to be executed</span>
+<span class="sd">        connect_info: A Client object for establishing session and loading jdbc parameters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON response from API call</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPError: if the call to df_connect was unsuccessful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># establish a df_connect session</span>
+    <span class="n">connect_session</span> <span class="o">=</span> <span class="n">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">)</span>
+
+    <span class="c1"># parse query config from main configuration</span>
+    <span class="n">query_config</span> <span class="o">=</span> <span class="n">_get_query_config</span><span class="p">(</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="p">)</span>
+
+    <span class="c1"># export data</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="s2">&quot;/api/jdbcIngest/execute&quot;</span>
+    <span class="n">execute_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;queryConfig&quot;</span><span class="p">:</span> <span class="n">query_config</span><span class="p">,</span> <span class="s2">&quot;statement&quot;</span><span class="p">:</span> <span class="n">statement</span><span class="p">}</span>
+    <span class="n">execute_url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Execute statement </span><span class="si">{</span><span class="n">statement</span><span class="si">}</span><span class="s2"> using the following jdbc url </span><span class="si">{</span><span class="n">query_config</span><span class="p">[</span><span class="s1">&#39;jdbcUrl&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">execute_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">execute_data</span><span class="p">))</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="profile_query_results"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.profile_query_results">[docs]</a><span class="k">def</span> <span class="nf">profile_query_results</span><span class="p">(</span>
+    <span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">queries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profile the contents of JDBC queries via df_connect and write results to a Tamr dataset.</span>
+<span class="sd">    For example the query &quot;select * from table A&quot; means that all rows from table A will be</span>
+<span class="sd">    profiled, while &quot;select * from table A where name==&quot;my_name&quot;&quot; will only profile rows meeting</span>
+<span class="sd">    the name==&quot;my_name&quot; condition.</span>
+<span class="sd">    The same Tamr dataset can be used for profile results from multiple queries</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name: Name of Tamr dataset for the profiling results</span>
+<span class="sd">        queries: list of JDBC queries to execute in the database, the results of which will be</span>
+<span class="sd">            profiled</span>
+<span class="sd">        connect_info: A Client object for establishing session and loading jdbc parameters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON response from API call</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPError: if the call to profile the dataset was unsuccessful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># primary key must be passed but isn&#39;t used</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># establish a df_connect session</span>
+    <span class="n">connect_session</span> <span class="o">=</span> <span class="n">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">)</span>
+
+    <span class="c1"># run profiling</span>
+    <span class="n">api_path</span> <span class="o">=</span> <span class="s2">&quot;/api/jdbcIngest/profile&quot;</span>
+    <span class="n">query_config</span> <span class="o">=</span> <span class="n">_get_query_config</span><span class="p">(</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="p">)</span>
+    <span class="n">profile_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;queryTargetList&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span> <span class="s2">&quot;datasetName&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="s2">&quot;primaryKey&quot;</span><span class="p">:</span> <span class="n">primary_key</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;queryConfig&quot;</span><span class="p">:</span> <span class="n">query_config</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">profile_url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Profiling data from </span><span class="si">{</span><span class="n">connect_info</span><span class="o">.</span><span class="n">jdbc_info</span><span class="o">.</span><span class="n">jdbc_url</span><span class="si">}</span><span class="s2"> to Tamr with the &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;following queries: </span><span class="se">\n\t</span><span class="si">{</span><span class="n">queries</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">profile_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">profile_data</span><span class="p">))</span>
+
+    <span class="c1"># check if successful, and if so, return request JSON</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="export_dataset_avro_schema"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema">[docs]</a><span class="k">def</span> <span class="nf">export_dataset_avro_schema</span><span class="p">(</span>
+    <span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fs_type</span><span class="p">:</span> <span class="n">Enum</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a connect info object and writes the avro schema to specified url for specified</span>
+<span class="sd">    dataset. By default assumes HDFS but if local_fs is set to true writes to server file system.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        connect_info: The connect client to use</span>
+<span class="sd">        url: the location in the relevant file system to which to write the avro schema</span>
+<span class="sd">        dataset_name: the name of the dataset</span>
+<span class="sd">        fs_type: the remote filesystem type. Currently supports &#39;HDFS&#39; and &#39;LOCAL&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        json returned by df-connects /urlExport/&lt;hdfs/serverfs&gt;/avroSchema endpoint</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        HTTPError: if the call to export the schema was unsuccessful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">fs_type</span> <span class="o">==</span> <span class="n">FileSystemType</span><span class="o">.</span><span class="n">LOCAL</span><span class="p">:</span>
+        <span class="n">api_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/urlExport/</span><span class="si">{</span><span class="n">fs_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">/avroSchema&quot;</span>
+    <span class="k">elif</span> <span class="n">fs_type</span> <span class="o">==</span> <span class="n">FileSystemType</span><span class="o">.</span><span class="n">HDFS</span><span class="p">:</span>
+        <span class="n">api_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/urlExport/</span><span class="si">{</span><span class="n">fs_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">/avroSchema&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;trying to use unsupported type </span><span class="si">{</span><span class="n">fs_type</span><span class="si">}</span><span class="s2">, supported are &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">FileSystemType</span><span class="o">.</span><span class="n">LOCAL</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="n">FileSystemType</span><span class="o">.</span><span class="n">HDFS</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+    <span class="n">url_export_config</span> <span class="o">=</span> <span class="n">_get_avro_url_export_config</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+
+    <span class="c1"># establish a df_connect session and make API call</span>
+    <span class="n">connect_session</span> <span class="o">=</span> <span class="n">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">url_export_config</span><span class="p">))</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="export_dataset_as_avro"><a class="viewcode-back" href="../../../../modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro">[docs]</a><span class="k">def</span> <span class="nf">export_dataset_as_avro</span><span class="p">(</span>
+    <span class="n">connect_info</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fs_type</span><span class="p">:</span> <span class="n">Enum</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a connect info object and writes the corresponding avro file to specified url for</span>
+<span class="sd">    specified dataset. By default assumes HDFS but if local_fs is set to true writes to server</span>
+<span class="sd">    file system.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        connect_info: The connect client to use</span>
+<span class="sd">        url: the location in the relevant file system to which to write the avro schema</span>
+<span class="sd">        dataset_name: the name of the dataset</span>
+<span class="sd">        fs_type: the remote filesystem type. Currently supports &#39;HDFS&#39; and &#39;LOCAL&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        json returned by df-connects /urlExport/&lt;hdfs/serverfs&gt;/avroSchema endpoint</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if using an unsupported type of file system</span>
+<span class="sd">        HTTPError: if the call to export the dataset was unsuccessful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">fs_type</span> <span class="o">==</span> <span class="n">FileSystemType</span><span class="o">.</span><span class="n">LOCAL</span><span class="p">:</span>
+        <span class="n">api_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/urlExport/</span><span class="si">{</span><span class="n">fs_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">/avro&quot;</span>
+    <span class="k">elif</span> <span class="n">fs_type</span> <span class="o">==</span> <span class="n">FileSystemType</span><span class="o">.</span><span class="n">HDFS</span><span class="p">:</span>
+        <span class="n">api_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/urlExport/</span><span class="si">{</span><span class="n">fs_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">/avro&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;trying to use unsupported type </span><span class="si">{</span><span class="n">fs_type</span><span class="si">}</span><span class="s2">, supported are &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">FileSystemType</span><span class="o">.</span><span class="n">LOCAL</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="n">FileSystemType</span><span class="o">.</span><span class="n">HDFS</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+    <span class="n">url_export_config</span> <span class="o">=</span> <span class="n">_get_avro_url_export_config</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+
+    <span class="c1"># establish a df_connect session and make API call</span>
+    <span class="n">connect_session</span> <span class="o">=</span> <span class="n">get_connect_session</span><span class="p">(</span><span class="n">connect_info</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">_get_url</span><span class="p">(</span><span class="n">connect_info</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">url_export_config</span><span class="p">))</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

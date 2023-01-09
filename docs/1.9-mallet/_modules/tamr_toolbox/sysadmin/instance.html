@@ -1,0 +1,807 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.sysadmin.instance &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/sysadmin/instance.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.sysadmin.instance</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.sysadmin.instance</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to a Tamr instance&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
+<span class="c1"># This environments variable is set automatically when `invoke docs` is used</span>
+<span class="n">BUILDING_DOCS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_TOOLBOX_DOCS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+<span class="k">if</span> <span class="n">BUILDING_DOCS</span><span class="p">:</span>
+    <span class="c1"># Import relevant optional dependencies</span>
+    <span class="kn">import</span> <span class="nn">paramiko</span>
+
+
+<span class="k">def</span> <span class="nf">_run_remote_command</span><span class="p">(</span>
+    <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">,</span>
+    <span class="n">command_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the provided command in a remote environment using the provided ssh client</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        command: The command to run</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        command_input: Content to send to stdin after command is started</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (exit code of command, stdout of command, stderr of command)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">command_details_message</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Running command [</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">] on &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;remote machine (</span><span class="si">{</span><span class="n">remote_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span><span class="o">.</span><span class="n">getpeername</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;as user &#39;</span><span class="si">{</span><span class="n">remote_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span><span class="o">.</span><span class="n">get_username</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">command_details_message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">command_details_message</span><span class="p">)</span>
+
+    <span class="c1"># Initiate command</span>
+    <span class="n">stdin_file</span><span class="p">,</span> <span class="n">stdout_file</span><span class="p">,</span> <span class="n">stderr_file</span> <span class="o">=</span> <span class="n">remote_client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+    <span class="n">command_channel</span> <span class="o">=</span> <span class="n">stdout_file</span><span class="o">.</span><span class="n">channel</span>
+
+    <span class="c1"># Provide input to command (such as a password) if given</span>
+    <span class="k">if</span> <span class="n">command_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stdin_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command_input</span><span class="p">)</span>
+    <span class="n">stdin_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># While waiting for command to complete,</span>
+    <span class="c1"># Collect command output</span>
+    <span class="c1"># Some bash scripts do not close their stderr and stdout even after the exit status is ready</span>
+    <span class="c1"># This leads to calls like stdout_file.readlines() to hang indefinitely</span>
+    <span class="c1"># We empty the buffer instead to avoid this issue</span>
+    <span class="n">full_stdout</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">full_stderr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="n">command_channel</span><span class="o">.</span><span class="n">in_stderr_buffer</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">command_channel</span><span class="o">.</span><span class="n">in_buffer</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_stdout</span> <span class="o">+=</span> <span class="n">stdout</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDOUT: </span><span class="si">{</span><span class="n">stdout</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDOUT: </span><span class="si">{</span><span class="n">stdout</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_stderr</span> <span class="o">+=</span> <span class="n">stderr</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDERR: </span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDERR: </span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">command_channel</span><span class="o">.</span><span class="n">exit_status_ready</span><span class="p">():</span>
+            <span class="n">stdout_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">stderr_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">break</span>
+
+    <span class="n">command_output_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Command ended with exit code </span><span class="si">{</span><span class="n">command_channel</span><span class="o">.</span><span class="n">exit_status</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">command_output_message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">command_output_message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">command_channel</span><span class="o">.</span><span class="n">exit_status</span><span class="p">,</span> <span class="n">full_stdout</span><span class="p">,</span> <span class="n">full_stderr</span>
+
+
+<span class="k">def</span> <span class="nf">_run_local_command</span><span class="p">(</span>
+    <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">command_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the provided command in the local shell</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        command: The command to run</span>
+<span class="sd">        command_input: Content to send to stdin after command is started</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (exit code of command, stdout of command, stderr of command)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">command_details_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Running command [</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">] on local machine.&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">command_details_message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">command_details_message</span><span class="p">)</span>
+
+    <span class="c1"># Initiate command</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Provide input to command (such as a password) if given</span>
+    <span class="k">if</span> <span class="n">command_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command_input</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># Wait for command to complete</span>
+    <span class="c1"># Collect command output</span>
+    <span class="c1"># Some bash scripts do not close their stderr and stdout even after the exit status is ready</span>
+    <span class="c1"># This leads to calls like stdout.readlines() to hang indefinitely</span>
+    <span class="c1"># We use peek instead to avoid this issue</span>
+    <span class="n">full_stdout</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">full_stderr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">peek</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">peek</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_stdout</span> <span class="o">+=</span> <span class="n">stdout</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDOUT: </span><span class="si">{</span><span class="n">stdout</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDOUT: </span><span class="si">{</span><span class="n">stdout</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full_stderr</span> <span class="o">+=</span> <span class="n">stderr</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDERR: </span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDERR: </span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="n">command_output_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Command ended with exit code </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">command_output_message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">command_output_message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">full_stdout</span><span class="p">,</span> <span class="n">full_stderr</span>
+
+
+<span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span>
+    <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">enforce_success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the provided command in a remote environment if an ssh client is specified otherwise</span>
+<span class="sd">    run the provided command in the local shell</span>
+
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        command: The command to run</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+<span class="sd">        enforce_success: Whether to throw an error if the command fails</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (exit code of command, stdout of command, stderr of command)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: Raised when enforce_success is True and the command exists with an non-0 code</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If a username is specified, switch users for running the command</span>
+    <span class="k">if</span> <span class="n">impersonation_username</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">impersonation_password</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># If no password is provided use sudo</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sudo su - </span><span class="si">{</span><span class="n">impersonation_username</span><span class="si">}</span><span class="s2"> -c &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="n">password_input</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If a password is required pass it into the running process</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;su - </span><span class="si">{</span><span class="n">impersonation_username</span><span class="si">}</span><span class="s2"> -c &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="n">password_input</span> <span class="o">=</span> <span class="n">impersonation_password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># If no username is specified, no password is needed</span>
+        <span class="n">password_input</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Run the command on the local or remote system</span>
+    <span class="k">if</span> <span class="n">remote_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exit_code</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">_run_local_command</span><span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span> <span class="n">command_input</span><span class="o">=</span><span class="n">password_input</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">exit_code</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">_run_remote_command</span><span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span> <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span> <span class="n">command_input</span><span class="o">=</span><span class="n">password_input</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+        <span class="p">)</span>
+
+    <span class="c1"># When enforce_success is True, raise an error for non-zero exit codes</span>
+    <span class="k">if</span> <span class="n">enforce_success</span> <span class="ow">and</span> <span class="n">exit_code</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">remote_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">task_description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;local command.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">remote_ip</span> <span class="o">=</span> <span class="n">remote_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span><span class="o">.</span><span class="n">getpeername</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">remote_username</span> <span class="o">=</span> <span class="n">remote_client</span><span class="o">.</span><span class="n">get_transport</span><span class="p">()</span><span class="o">.</span><span class="n">get_username</span><span class="p">()</span>
+            <span class="n">task_description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to run remote command on </span><span class="si">{</span><span class="n">remote_ip</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">remote_username</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task_description</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Command: [</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">] exited with code </span><span class="si">{</span><span class="n">exit_code</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;STDOUT: [</span><span class="si">{</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;STDERR: [</span><span class="si">{</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">exit_code</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
+
+
+<div class="viewcode-block" id="start_tamr"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.start_tamr">[docs]</a><span class="k">def</span> <span class="nf">start_tamr</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">include_dependencies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Starts the Tamr software and the Tamr dependencies if include_dependencies is true.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        include_dependencies: Whether Tamr dependencies should be started</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: Raised if Tamr start script(s) fail</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">include_dependencies</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting Tamr dependencies.&quot;</span><span class="p">)</span>
+        <span class="n">_run_command</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/start-dependencies.sh&quot;</span><span class="p">,</span>
+            <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+            <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+            <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+            <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting Tamr software.&quot;</span><span class="p">)</span>
+    <span class="n">_run_command</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/start-unify.sh&quot;</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+        <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="stop_tamr"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.stop_tamr">[docs]</a><span class="k">def</span> <span class="nf">stop_tamr</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">include_dependencies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Stops the Tamr software and the Tamr dependencies if include_dependencies is true.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        include_dependencies: Whether Tamr dependencies should be stopped</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: Raised if Tamr stop script(s) fail</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stopping Tamr software.&quot;</span><span class="p">)</span>
+    <span class="n">_run_command</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/stop-unify.sh&quot;</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+        <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_dependencies</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stopping Tamr dependencies.&quot;</span><span class="p">)</span>
+        <span class="n">_run_command</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/stop-dependencies.sh&quot;</span><span class="p">,</span>
+            <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+            <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+            <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+            <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="restart_tamr"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.restart_tamr">[docs]</a><span class="k">def</span> <span class="nf">restart_tamr</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">include_dependencies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Restarts the Tamr software and the Tamr dependencies if include_dependencies is true.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        include_dependencies: Whether Tamr dependencies should be restarted</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+<span class="sd">        verbose: Whether the full command, stdout, and stderr should be logged at INFO level</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: Raised if Tamr start or stop script(s) fail</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stop_tamr</span><span class="p">(</span>
+        <span class="n">tamr_install_dir</span><span class="o">=</span><span class="n">tamr_install_dir</span><span class="p">,</span>
+        <span class="n">include_dependencies</span><span class="o">=</span><span class="n">include_dependencies</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_tamr</span><span class="p">(</span>
+        <span class="n">tamr_install_dir</span><span class="o">=</span><span class="n">tamr_install_dir</span><span class="p">,</span>
+        <span class="n">include_dependencies</span><span class="o">=</span><span class="n">include_dependencies</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_configs"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.get_configs">[docs]</a><span class="k">def</span> <span class="nf">get_configs</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">config_search_regex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">user_defined_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieves configuration values from a Tamr instance.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_names: A list of configuration names to fetch the value for,</span>
+<span class="sd">            when None all configurations will be fetched</span>
+<span class="sd">        config_search_regex: A regular expression used to filter the names of the</span>
+<span class="sd">            configurations to return</span>
+<span class="sd">        user_defined_only: Whether to filter to only user defined config</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary of Tamr configuration variables and their values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieving </span><span class="si">{</span><span class="s1">&#39;user defined &#39;</span> <span class="k">if</span> <span class="n">user_defined_only</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">config from Tamr.&quot;</span><span class="p">)</span>
+
+    <span class="n">user_defined_flag</span> <span class="o">=</span> <span class="s2">&quot; --userDefined&quot;</span> <span class="k">if</span> <span class="n">user_defined_only</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/utils/unify-admin.sh config:get</span><span class="si">{</span><span class="n">user_defined_flag</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">config_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">exit_code</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">_run_command</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+        <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Tamr returns configs in yaml form, here we convert to a dictionary representation</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config_search_regex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtering to config names containing the regex &#39;</span><span class="si">{</span><span class="n">config_search_regex</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="n">compiled_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">config_search_regex</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">compiled_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">key</span><span class="p">)}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">configs</span></div>
+
+
+<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieves a configuration value from a Tamr instance.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_name: The configuration names to fetch the value for</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary of Tamr configuration variables and their values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_configs</span><span class="p">(</span>
+        <span class="n">config_names</span><span class="o">=</span><span class="p">[</span><span class="n">config_name</span><span class="p">],</span>
+        <span class="n">config_search_regex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">tamr_install_dir</span><span class="o">=</span><span class="n">tamr_install_dir</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+    <span class="p">)[</span><span class="n">config_name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="set_configs"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.set_configs">[docs]</a><span class="k">def</span> <span class="nf">set_configs</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">configs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Sets configuration values in a Tamr instance.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        configs: A dictionary of configuration variables and their desired values</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary of Tamr configuration variables and their values for any configuration</span>
+<span class="sd">        values that were  changed by running this command</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2"> configs in Tamr.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># When setting values, Tamr warns about invalid config names but does not error</span>
+    <span class="c1"># So we get all config to validate config names before sending the config:set command</span>
+    <span class="n">starting_config</span> <span class="o">=</span> <span class="n">get_configs</span><span class="p">(</span>
+        <span class="n">tamr_install_dir</span><span class="o">=</span><span class="n">tamr_install_dir</span><span class="p">,</span>
+        <span class="n">config_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_search_regex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">invalid_config_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">starting_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_config_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot set provided Tamr configs. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid config names found: </span><span class="si">{</span><span class="n">invalid_config_names</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Run the set command</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/utils/unify-admin.sh config:set &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">_run_command</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+        <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Retrieve all config again, to allow us to provide all config modified by the change</span>
+    <span class="c1"># A set action can impact other config values due to formula calculations</span>
+    <span class="n">ending_config</span> <span class="o">=</span> <span class="n">get_configs</span><span class="p">(</span>
+        <span class="n">tamr_install_dir</span><span class="o">=</span><span class="n">tamr_install_dir</span><span class="p">,</span>
+        <span class="n">config_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_search_regex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">user_defined_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ending_config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">starting_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">value</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="set_config"><a class="viewcode-back" href="../../../modules/sysadmin.html#tamr_toolbox.sysadmin.instance.set_config">[docs]</a><span class="k">def</span> <span class="nf">set_config</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">config_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Sets configuration values in a Tamr instance.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config_name: The name of the configuration variable to update</span>
+<span class="sd">        config_value: The desired value for the configuration variable</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary of Tamr configuration variables and their values for any configuration</span>
+<span class="sd">        values that were  changed by running this command</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">set_configs</span><span class="p">(</span>
+        <span class="n">tamr_install_dir</span><span class="o">=</span><span class="n">tamr_install_dir</span><span class="p">,</span>
+        <span class="n">configs</span><span class="o">=</span><span class="p">{</span><span class="n">config_name</span><span class="p">:</span> <span class="n">config_value</span><span class="p">},</span>
+        <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+        <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+        <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

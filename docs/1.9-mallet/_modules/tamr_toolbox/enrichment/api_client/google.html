@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.enrichment.api_client.google &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/enrichment/api_client/google.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.enrichment.api_client.google</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.enrichment.api_client.google</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to translating data with the google translation API&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.dictionary</span> <span class="kn">import</span> <span class="n">TranslationDictionary</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">html</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
+<span class="c1"># This environments variable is set automatically when `invoke doc_src` is used</span>
+<span class="n">BUILDING_DOCS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_TOOLBOX_DOCS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+<span class="k">if</span> <span class="n">BUILDING_DOCS</span><span class="p">:</span>
+    <span class="c1"># Import relevant optional dependencies</span>
+    <span class="kn">from</span> <span class="nn">google.cloud.translate_v2</span> <span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">GoogleTranslateClient</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_valid_translation_language</span><span class="p">(</span>
+    <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;GoogleTranslateClient&quot;</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that the provided language is an accepted google translation api language with an</span>
+<span class="sd">    option to specify the target language to check the source to target language combination</span>
+<span class="sd">    is supported</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: a google translate api client</span>
+<span class="sd">        language: the language to check</span>
+<span class="sd">        target_language: the target language to translate to</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">languages</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_languages</span><span class="p">(</span><span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">)</span>
+    <span class="n">valid_source_languages</span> <span class="o">=</span> <span class="p">[</span><span class="n">language</span><span class="p">[</span><span class="s2">&quot;language&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">language</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_source_languages</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">language</span> <span class="o">!=</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">target_language</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Specified language </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> is not supported by the Google Translation API&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Valid languages are: </span><span class="si">{</span><span class="n">valid_source_languages</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Translation from </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">target_language</span><span class="si">}</span><span class="s2"> is supported by the &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Google Translation API. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Valid source languages for </span><span class="si">{</span><span class="n">target_language</span><span class="si">}</span><span class="s2"> are: </span><span class="si">{</span><span class="n">valid_source_languages</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_valid_translation_languages</span><span class="p">(</span>
+    <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;GoogleTranslateClient&quot;</span><span class="p">,</span> <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that the provided target and source language combination is an accepted translation</span>
+<span class="sd">    with the google translation api</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: a google translate api client</span>
+<span class="sd">        source_language: the target language to translate from</span>
+<span class="sd">        target_language: the target language to translate to</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">target_language</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;&#39;auto&#39; is not a valid target language for translation&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_check_valid_translation_language</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">target_language</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">source_language</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Source language is set to &#39;auto&#39;, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;the Google Translation API will automatically detect the source language&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_check_valid_translation_language</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">source_language</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="translation_client_from_json"><a class="viewcode-back" href="../../../../modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google.translation_client_from_json">[docs]</a><span class="k">def</span> <span class="nf">translation_client_from_json</span><span class="p">(</span><span class="n">json_credential_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GoogleTranslateClient&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a Google translation client based on credentials stored in a Google credential</span>
+<span class="sd">    json file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        json_credential_path: path to the google credential json file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Google Translate Client</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">google.cloud.translate_v2</span> <span class="kn">import</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">GoogleTranslateClient</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connecting to Google Translation Client&quot;</span><span class="p">)</span>
+    <span class="n">google_client</span> <span class="o">=</span> <span class="n">GoogleTranslateClient</span><span class="o">.</span><span class="n">from_service_account_json</span><span class="p">(</span><span class="n">json_credential_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">google_client</span></div>
+
+
+<div class="viewcode-block" id="translate"><a class="viewcode-back" href="../../../../modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google.translate">[docs]</a><span class="k">def</span> <span class="nf">translate</span><span class="p">(</span>
+    <span class="n">phrases_to_translate</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;GoogleTranslateClient&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">translation_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nmt&quot;</span><span class="p">,</span>
+    <span class="n">num_of_tries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Translate a list of text to a target language using google&#39;s translation api</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        phrases_to_translate: list of phrases to translate from the source language to the</span>
+<span class="sd">            target language</span>
+<span class="sd">        client: location of the credentials JSON read by the google_api client</span>
+<span class="sd">        source_language: the language the text to translate is in, &quot;auto&quot; means the api_client</span>
+<span class="sd">            google_api api_client will try to detect the source language automatically</span>
+<span class="sd">        target_language: the language to translate into</span>
+<span class="sd">        translation_model: google_api api_client api_client model to use, &quot;nmt&quot; or &quot;pbmt&quot;.</span>
+<span class="sd">            Choose &quot;pbmt&quot; if an &quot;nmt&quot; model doesn&#39;t exists for your source to target language pair</span>
+<span class="sd">        num_of_tries: number of times to try to translate if the translation call fails</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A toolbox translation dictionary.</span>
+<span class="sd">        None if the translation failed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_valid_translation_languages</span><span class="p">(</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">source_language</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">source_language</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">num_attempts</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">last_attempt</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">while</span> <span class="n">num_attempts</span> <span class="o">&lt;=</span> <span class="n">num_of_tries</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num_attempts</span> <span class="o">==</span> <span class="n">num_of_tries</span> <span class="ow">and</span> <span class="n">num_of_tries</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;WARNING: Tried and failed to translate current &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;chunk of phrases </span><span class="si">{</span><span class="n">num_of_tries</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> times. Final try.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">last_attempt</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span>
+                <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span>
+                <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">translation_model</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="n">phrases_to_translate</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">source_language</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">returned_translation</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">translation</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]:</span> <span class="n">TranslationDictionary</span><span class="p">(</span>
+                        <span class="n">standardized_phrase</span><span class="o">=</span><span class="n">translation</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span>
+                        <span class="n">translated_phrase</span><span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">translation</span><span class="p">[</span><span class="s2">&quot;translatedText&quot;</span><span class="p">]),</span>
+                        <span class="n">detected_language</span><span class="o">=</span><span class="n">translation</span><span class="p">[</span><span class="s2">&quot;detectedSourceLanguage&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">translation</span> <span class="ow">in</span> <span class="n">response</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">returned_translation</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">translation</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]:</span> <span class="n">TranslationDictionary</span><span class="p">(</span>
+                        <span class="n">standardized_phrase</span><span class="o">=</span><span class="n">translation</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span>
+                        <span class="n">translated_phrase</span><span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">translation</span><span class="p">[</span><span class="s2">&quot;translatedText&quot;</span><span class="p">]),</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">translation</span> <span class="ow">in</span> <span class="n">response</span>
+                <span class="p">}</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">returned_translation</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">returned_translation</span>
+
+        <span class="c1"># TODO: check which exception returns the User Rate Limit error</span>
+        <span class="c1">#  to better handle the exceptions</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;User Rate Limit Exceeded&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">last_attempt</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Google api_client API user rate limit exceeded, &quot;</span>
+                    <span class="s2">&quot;waiting 10 seconds and retrying.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+                <span class="n">num_attempts</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not translate current chunk of phrases. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="n">num_attempts</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Ran out of number of tries. Skipping.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

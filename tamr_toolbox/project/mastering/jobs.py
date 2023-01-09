@@ -138,7 +138,7 @@ def _run_custom_pair_operations(
     completed_operations = []
     if run_estimate_pair_counts:
         LOGGER.info(f"Estimate pair counts for project {project.name} (id={project.resource_id}).")
-        op = project.estimate_pairs().refresh(asynchronous=process_asynchronously)
+        op = operation.safe_estimate_counts(project)
         if not process_asynchronously:
             operation.enforce_success(op)
         completed_operations.append(op)

@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.enrichment.dictionary &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/enrichment/dictionary.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.enrichment.dictionary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.enrichment.dictionary</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to creating, updating, saving and moving translation dictionaries</span>
+<span class="sd">in and out of Tamr&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.collection</span> <span class="kn">import</span> <span class="n">DatasetCollection</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TranslationDictionary"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.TranslationDictionary">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TranslationDictionary</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A DataClass for translation dictionaries</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        standardized_phrase: The unique common standardized version of all original_phrases</span>
+<span class="sd">        translated_phrase: The translated standardized phrase to the target language of the</span>
+<span class="sd">            dictionary</span>
+<span class="sd">        detected_language: The language detected of the standardized phrase if source language is</span>
+<span class="sd">            set to auto</span>
+<span class="sd">        original_phrases: A set of original phrases which all convert to the standardized phrases</span>
+<span class="sd">            when applying standardization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">standardized_phrase</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">translated_phrase</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">detected_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">original_phrases</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">set</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="SetEncoder"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder">[docs]</a><span class="k">class</span> <span class="nc">SetEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Class to transform type &#39;set&#39; to type &#39;list&#39; when saving objects to JSON format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SetEncoder.default"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform a set into a list if input is a set</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            python_object: the python object to be saved to a json format</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Default json encoder format of input object or List if input is a Set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">python_object</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">python_object</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_object</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="filename"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.filename">[docs]</a><span class="k">def</span> <span class="nf">filename</span><span class="p">(</span>
+    <span class="n">dictionary_folder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a toolbox translation dictionary file path</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary_folder: base directory where dictionaries are saved</span>
+<span class="sd">        target_language: the language to translate into, for a list of allowed inputs:</span>
+<span class="sd">            https://cloud.google.com/translate/docs/basic/discovering-supported-languages</span>
+<span class="sd">        source_language: the language the text to translate is in, if None, assumes it is &quot;auto&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A toolbox translation dictionary file path</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_language</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">source_language</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+    <span class="n">dictionary_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dictionary_</span><span class="si">{</span><span class="n">source_language</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_to_</span><span class="si">{</span><span class="n">target_language</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictionary_folder</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">dictionary_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dictionary_folder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">dictionary_folder</span> <span class="o">/</span> <span class="n">dictionary_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.create">[docs]</a><span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
+    <span class="n">dictionary_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty dictionary on disk</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary_folder: base directory where dictionary is saved</span>
+<span class="sd">        target_language: the language to translate into, for a list of allowed inputs:</span>
+<span class="sd">            https://cloud.google.com/translate/docs/basic/discovering-supported-languages</span>
+<span class="sd">        source_language: the language the text to translate is in, if None, assumes it is &quot;auto&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A path to a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dictionary_filepath</span> <span class="o">=</span> <span class="n">filename</span><span class="p">(</span>
+        <span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dictionary_filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({}))</span>
+    <span class="k">return</span> <span class="n">dictionary_filepath</span></div>
+
+
+<div class="viewcode-block" id="to_json"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_json">[docs]</a><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a toolbox translation dictionary entries to a json format where set object are</span>
+<span class="sd">    converted to list</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a toolbox translation dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of toolbox translation dictionary entries in json format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="bp">cls</span><span class="o">=</span><span class="n">SetEncoder</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="to_dict"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_dict">[docs]</a><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">]]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a toolbox translation dictionary entries to a dictionary format where set object are</span>
+<span class="sd">    converted to list</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a toolbox translation dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of toolbox translation dictionary entries in dictionary format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="bp">cls</span><span class="o">=</span><span class="n">SetEncoder</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="save"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.save">[docs]</a><span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+    <span class="n">translation_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">],</span>
+    <span class="n">dictionary_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a toolbox translation dictionary to disk</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        translation_dictionary: dictionary object to be saved to disk</span>
+<span class="sd">        dictionary_folder: base directory where dictionary is saved</span>
+<span class="sd">        target_language: the language to translate into, for a list of allowed inputs:</span>
+<span class="sd">            https://cloud.google.com/translate/docs/basic/discovering-supported-languages</span>
+<span class="sd">        source_language: the language the text to translate is in, if None, assumes it is &quot;auto&quot;</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dictionary_filepath</span> <span class="o">=</span> <span class="n">filename</span><span class="p">(</span>
+        <span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">translation_dictionary</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing Dictionary to file&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dictionary_filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_json</span><span class="p">(</span><span class="n">translation_dictionary</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+    <span class="n">dictionary_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">source_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a toolbox translation dictionary from disk to memory</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary_folder: base directory where dictionary is saved</span>
+<span class="sd">        target_language: the language to translate into, for a list of allowed inputs:</span>
+<span class="sd">            https://cloud.google.com/translate/docs/basic/discovering-supported-languages</span>
+<span class="sd">        source_language: the language the text to translate is in, if None, assumes it is &quot;auto&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A toolbox translation dictionary</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if the dictionary was found on disk but is not of a valid</span>
+<span class="sd">            toolbox translation dictionary type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dictionary_filepath</span> <span class="o">=</span> <span class="n">filename</span><span class="p">(</span>
+        <span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dictionary_filepath</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dictionary </span><span class="si">{</span><span class="n">dictionary_filepath</span><span class="si">}</span><span class="s2"> does not exists, creating an empty one.&quot;</span><span class="p">)</span>
+        <span class="n">dictionary_filepath</span> <span class="o">=</span> <span class="n">create</span><span class="p">(</span>
+            <span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dictionary_filepath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">translation_dictionary</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Tranform the loaded dictionaries into a TranslationDictionary</span>
+            <span class="n">translation_dictionary</span> <span class="o">=</span> <span class="p">[</span><span class="n">TranslationDictionary</span><span class="p">(</span><span class="o">**</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">translation_dictionary</span><span class="p">]</span>
+            <span class="c1"># Change original phrases from List to Set</span>
+            <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="n">translation_dictionary</span><span class="p">:</span>
+                <span class="n">dictionary</span><span class="o">.</span><span class="n">original_phrases</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">original_phrases</span><span class="p">)</span>
+            <span class="c1"># Make the standardized phrase the main key of the translation dictionary to be able</span>
+            <span class="c1"># to access each translation easily</span>
+            <span class="n">translation_dictionary</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">standardized_phrase</span><span class="p">:</span> <span class="n">t</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">translation_dictionary</span>
+                <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">standardized_phrase</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not read translation dictionary at </span><span class="si">{</span><span class="n">dictionary_filepath</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Check that the dictionary is of the correct type. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">translation_dictionary</span></div>
+
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.update">[docs]</a><span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+    <span class="n">main_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">],</span>
+    <span class="n">tmp_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update a toolbox translation dictionary with another temporary translation dictionary</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        main_dictionary: the main toolbox translation dictionary containing past</span>
+<span class="sd">            translation results</span>
+<span class="sd">        tmp_dictionary: a temporary toolbox translation dictionary containing new translation</span>
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">standardized_phrase</span><span class="p">,</span> <span class="n">translation</span> <span class="ow">in</span> <span class="n">tmp_dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">main_dictionary_entry</span> <span class="o">=</span> <span class="n">main_dictionary</span><span class="p">[</span><span class="n">standardized_phrase</span><span class="p">]</span>
+            <span class="n">main_dictionary_entry</span><span class="o">.</span><span class="n">translated_phrase</span> <span class="o">=</span> <span class="n">translation</span><span class="o">.</span><span class="n">translated_phrase</span>
+            <span class="n">main_dictionary_entry</span><span class="o">.</span><span class="n">detected_language</span> <span class="o">=</span> <span class="n">translation</span><span class="o">.</span><span class="n">detected_language</span>
+
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">main_dictionary</span><span class="p">[</span><span class="n">standardized_phrase</span><span class="p">]</span> <span class="o">=</span> <span class="n">TranslationDictionary</span><span class="p">(</span>
+                <span class="n">standardized_phrase</span><span class="o">=</span><span class="n">standardized_phrase</span><span class="p">,</span>
+                <span class="n">translated_phrase</span><span class="o">=</span><span class="n">translation</span><span class="o">.</span><span class="n">translated_phrase</span><span class="p">,</span>
+                <span class="n">detected_language</span><span class="o">=</span><span class="n">translation</span><span class="o">.</span><span class="n">detected_language</span><span class="p">,</span>
+                <span class="n">original_phrases</span><span class="o">=</span><span class="n">translation</span><span class="o">.</span><span class="n">original_phrases</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_to_mappings"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.convert_to_mappings">[docs]</a><span class="k">def</span> <span class="nf">convert_to_mappings</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform a translation dictionary into a mapping of original phrases to translated phrases</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a toolbox translation dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a dictionary with original phrase as key and translate phrase as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mapping_from_dictionary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">original_phrase</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">translated_phrase</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">original_phrase</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">original_phrases</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">mapping_from_dictionary</span></div>
+
+
+<div class="viewcode-block" id="from_dataset"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.from_dataset">[docs]</a><span class="k">def</span> <span class="nf">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stream a dictionary from Tamr</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: Tamr Dataset object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A toolbox translation dictionary</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the provided `dataset` is not a toolbox translation dictionary dataset</span>
+<span class="sd">        NameError: if the provided `dataset` does not contain all the attributes of a</span>
+<span class="sd">            toolbox translation dictionary</span>
+<span class="sd">        RuntimeError: if there is any other problem while reading the `dataset` as a</span>
+<span class="sd">            toolbox translation dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">key_attribute_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;standardized_phrase&quot;</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided Tamr Dataset is not a toolbox translation dictionary&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">records</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="n">TranslationDictionary</span><span class="p">(</span><span class="o">**</span><span class="n">record</span><span class="p">)</span>
+            <span class="c1"># values are returned as a list of a single string, we change this to string</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">translated_phrase</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">translated_phrase</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">detected_language</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">detected_language</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># original phrases are stored on Tamr as lists, we save it as a set</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">original_phrases</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">original_phrases</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">NameError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Supplied Tamr dataset is not in a toolbox translation dictionary format: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error while reading the Tamr dataset translation dictionary: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="n">formatted_dictionary</span> <span class="o">=</span> <span class="p">{</span><span class="n">entry</span><span class="o">.</span><span class="n">standardized_phrase</span><span class="p">:</span> <span class="n">entry</span><span class="p">}</span>
+        <span class="n">dictionary</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">formatted_dictionary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+
+
+<div class="viewcode-block" id="to_dataset"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_dataset">[docs]</a><span class="k">def</span> <span class="nf">to_dataset</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranslationDictionary</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">datasets_collection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetCollection</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">source_language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">create_dataset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ingest a toolbox dictionary in Tamr, creates the source dataset if it doesn&#39;t exists</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a toolbox translation dictionary</span>
+<span class="sd">        dataset: a Tamr client dataset</span>
+<span class="sd">        datasets_collection: a Tamr client datasets collection</span>
+<span class="sd">        target_language: the target language of the given dictionary</span>
+<span class="sd">        source_language: the source language of the given dictionary</span>
+<span class="sd">        create_dataset: flag to create or upsert to an existing translation dictionary</span>
+<span class="sd">            source dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The name of the created or updated Tamr Dataset</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if `create_dataset` is False and `dataset` is not provided or is not a</span>
+<span class="sd">            toolbox translation dictionary dataset.</span>
+<span class="sd">            If `create_dataset` is True but `datasets_collection` or `target_language` or</span>
+<span class="sd">            `source_language` is missing or the Tamr dataset already exists</span>
+<span class="sd">        RuntimeError: if there is an error during the creation of the Tamr dataset attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">create_dataset</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Tamr Client Dataset missing from inputs, please provide a Tamr &quot;</span>
+                <span class="s2">&quot;Client Dataset if updating an existing translation dictionary dataset&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">key_attribute_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;standardized_phrase&quot;</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided Tamr Dataset is not a toolbox translation dictionary&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">datasets_collection</span> <span class="ow">and</span> <span class="n">target_language</span> <span class="ow">and</span> <span class="n">source_language</span><span class="p">):</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;A Tamr Datasets Collection, target_language and source_language &quot;</span>
+                <span class="s2">&quot;must all be inputs if creating the toolbox translation &quot;</span>
+                <span class="s2">&quot;dictionary dataset&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="c1"># Get dataset name using filename function</span>
+        <span class="c1"># The value of dictionary folder here is unimportant</span>
+        <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span>
+            <span class="n">filename</span><span class="p">(</span>
+                <span class="n">dictionary_folder</span><span class="o">=</span><span class="s2">&quot;not/a/real/path&quot;</span><span class="p">,</span>  <span class="c1"># will be dropped immediately</span>
+                <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span>
+                <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets_collection</span><span class="p">]:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Tamr Dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> already exists on Tamr, you cannot &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;create a dataset with the same name as another one&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating toolbox translation dictionary dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> on Tamr&quot;</span><span class="p">)</span>
+        <span class="n">creation_spec</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;standardized_phrase&quot;</span><span class="p">]}</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">datasets_collection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">creation_spec</span><span class="p">)</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span>
+        <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;translated_phrase&quot;</span><span class="p">,</span> <span class="s2">&quot;detected_language&quot;</span><span class="p">,</span> <span class="s2">&quot;original_phrases&quot;</span><span class="p">]:</span>
+            <span class="n">attr_spec</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">attribute</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="s2">&quot;ARRAY&quot;</span><span class="p">,</span> <span class="s2">&quot;innerType&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="s2">&quot;STRING&quot;</span><span class="p">}},</span>
+            <span class="p">}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">attr_spec</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error while creating attribute </span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2"> for dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ingesting toolbox translation dictionary to Tamr&quot;</span><span class="p">)</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">upsert_records</span><span class="p">(</span><span class="n">records</span><span class="o">=</span><span class="n">to_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">),</span> <span class="n">primary_key_name</span><span class="o">=</span><span class="s2">&quot;standardized_phrase&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -17,9 +17,9 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: 3.7
     - name: Install requirements
@@ -34,9 +34,9 @@ jobs:
         python_version: [3.7, 3.8, 3.9]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install requirements
@@ -48,11 +48,11 @@ jobs:
   Test-Minimum-Versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
-          python-version: 3.8
+          python-version: 3.7
       - name: Set requirements to minimum
         run: sed -i 's/>=/==/g' requirements.txt
       - name: Set optional_requirements to minimum
@@ -69,9 +69,9 @@ jobs:
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install requirements
@@ -81,9 +81,9 @@ jobs:
   Test-Core-Dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.7
       - name: Install requirements
@@ -92,3 +92,36 @@ jobs:
           python -m pip install .
       - name: Import tamr_toolbox
         run: python -c 'import tamr_toolbox'
+  Enforce-Test-Coverage:
+    runs-on: ubuntu-latest
+    env:
+      COVERAGE_SINGLE: 0
+      COVERAGE_TOTAL: 27
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install requirements
+        run: python install.py
+      - name: pytester-cov
+        id: pytester-cov
+        uses: programmingwithalex/pytester-cov@main
+        with:
+          pytest-root-dir: '.'
+          cov-omit-list: 'examples/*, doc_src/*, tests/*, install.py, setup.py, tasks.py'
+          cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
+          cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
+      - name: Coverage single fail - exit
+        if: ${{ steps.pytester-cov.outputs.cov-threshold-single-fail == 'true' }}
+        run: |
+          echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-single-fail }}"
+          echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
+          exit 1
+      - name: Coverage total fail - exit
+        if: ${{ steps.pytester-cov.outputs.cov-threshold-total-fail == 'true' }}
+        run: |
+          echo "cov total fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
+          echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
+          exit 1

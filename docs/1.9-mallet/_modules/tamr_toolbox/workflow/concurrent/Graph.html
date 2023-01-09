@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.workflow.concurrent.Graph &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/workflow/concurrent/Graph.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.workflow.concurrent.Graph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.workflow.concurrent.Graph</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.project_type</span> <span class="kn">import</span> <span class="n">ProjectType</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Graph"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.Graph">[docs]</a><span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">Graph</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dataclass for holding a set of Tamr project dependencies (edges),</span>
+<span class="sd">    and the generated graph from them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">edges</span><span class="p">:</span> <span class="nb">set</span>
+    <span class="n">directed_graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">all_projects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get projects immediately upstream of a given project</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project: the project to check</span>
+<span class="sd">        all_projects: a list of all Projects on the Tamr Core instance</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of project names upstream of the project</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span>
+    <span class="c1"># find upstream datasets - if GR project just get input datasets</span>
+    <span class="k">if</span> <span class="n">ProjectType</span><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="p">]</span> <span class="o">==</span> <span class="n">ProjectType</span><span class="o">.</span><span class="n">GOLDEN_RECORDS</span><span class="p">:</span>
+        <span class="n">upstream_datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">input_datasets</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()]</span>
+    <span class="c1"># else find the upstream datasets of the UD (not input datasets to capture datasets used in Tx)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unified_dataset_id</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">relative_id</span>
+        <span class="n">unified_dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_relative_id</span><span class="p">(</span><span class="n">unified_dataset_id</span><span class="p">)</span>
+        <span class="n">upstream_datasets</span> <span class="o">=</span> <span class="n">unified_dataset</span><span class="o">.</span><span class="n">upstream_datasets</span><span class="p">()</span>
+
+    <span class="n">upstream_project_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># walk through upstream datasets</span>
+    <span class="k">for</span> <span class="n">upstream_result</span> <span class="ow">in</span> <span class="n">upstream_datasets</span><span class="p">:</span>
+        <span class="c1"># get the upstream object as a dataset</span>
+        <span class="n">upstream_dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">upstream_result</span><span class="o">.</span><span class="n">resource_id</span><span class="p">)</span>
+        <span class="c1"># see if it is the output of a project and if so add to the list</span>
+        <span class="n">upstream_dataset_projects</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">project_name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">upstream_dataset</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">output_from_project_steps</span>
+        <span class="p">)</span>
+        <span class="n">upstream_project_names</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">upstream_dataset_projects</span><span class="p">])</span>
+
+    <span class="c1"># we have all projects in all_projects variables so only return those whose</span>
+    <span class="c1"># name is in upstream_project_names</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_projects</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">upstream_project_names</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_build_edges</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">edges</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">all_projects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    builds a set of tuples of all edges of format (source, target)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project: the project to get edges for</span>
+<span class="sd">        client: tamr client</span>
+<span class="sd">        edges: set of tuples (source, target)</span>
+<span class="sd">        all_projects: a list of all Projects on the Tamr Core instance</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">upstream_projects</span> <span class="o">=</span> <span class="n">_get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">upstream_project</span> <span class="ow">in</span> <span class="n">upstream_projects</span><span class="p">:</span>
+        <span class="c1"># add the edge for this upstream dataset</span>
+        <span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">upstream_project</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="c1"># if we&#39;ve already walked backward for this upstream dataset don&#39;t keep walking</span>
+        <span class="c1"># you know we&#39;ve walked it if it shows up as the target in an edge (hence the [1] index)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">upstream_project</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;skipping dataset </span><span class="si">{</span><span class="n">upstream_project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> since it is already&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; in edges as target: </span><span class="si">{</span><span class="p">[</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">edges</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span><span class="n">upstream_project</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># and then go to it and get it&#39;s upstream datasets</span>
+            <span class="n">further_upstream_edges</span> <span class="o">=</span> <span class="n">_build_edges</span><span class="p">(</span>
+                <span class="n">upstream_project</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">edges</span><span class="p">),</span> <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span>
+            <span class="p">)</span>
+            <span class="c1"># print(f&quot;adding further upstream edges {further_upstream_edges}&quot;)</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">further_upstream_edges</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edges</span>
+
+
+<div class="viewcode-block" id="from_edges"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.from_edges">[docs]</a><span class="k">def</span> <span class="nf">from_edges</span><span class="p">(</span><span class="n">edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Directly build a graph from a list of edges - tuples of format (source, target) dependencies</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        edges: List of edges in tuple format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Graph object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span> <span class="n">directed_graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_project_list"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.from_project_list">[docs]</a><span class="k">def</span> <span class="nf">from_project_list</span><span class="p">(</span><span class="n">projects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">],</span> <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a graph from a list of datasets</span>
+<span class="sd">    Args:</span>
+<span class="sd">        projects: list of Tamr dataset objects</span>
+<span class="sd">        client: tamr client</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Graph object built from the dependencies of the datasets passed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># start with empty set</span>
+    <span class="n">graph_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c1"># save all projects to list so we don&#39;t have to hit the API every time</span>
+    <span class="n">all_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">stream</span><span class="p">()]</span>
+    <span class="c1"># for each dataset get the edges and take union</span>
+    <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+        <span class="n">graph_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="n">graph_edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">_build_edges</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">graph_edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="o">=</span><span class="n">graph_edges</span><span class="p">,</span> <span class="n">directed_graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_source_nodes"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_source_nodes">[docs]</a><span class="k">def</span> <span class="nf">get_source_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gives all source nodes in a graph</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: Graph for which to find source nodes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of node names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span>
+    <span class="n">source_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">di_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">di_graph</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">n</span><span class="p">)]:</span>
+            <span class="n">source_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">source_nodes</span></div>
+
+
+<div class="viewcode-block" id="get_end_nodes"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_end_nodes">[docs]</a><span class="k">def</span> <span class="nf">get_end_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns all end nodes in a directed graph</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: Graph for which to find end nodes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of names of all end nodes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span>
+    <span class="n">end_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">di_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">di_graph</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">n</span><span class="p">)]:</span>
+            <span class="n">end_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">end_nodes</span></div>
+
+
+<div class="viewcode-block" id="get_projects_by_tier"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_projects_by_tier">[docs]</a><span class="k">def</span> <span class="nf">get_projects_by_tier</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the different projects at each tier</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: the Graph for which to generate the tiers</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A json dict who&#39;s structure is {&#39;tier&#39;: [paths_at_that_tier], ...}</span>
+<span class="sd">        e.g. {1: [&#39;SM_project_1&#39;, &#39;Classification_project_1&#39;], 2: [&#39;Mastering_project&#39;],</span>
+<span class="sd">        3: [&#39;Golden_records_project&#39;]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source_nodes</span> <span class="o">=</span> <span class="n">get_source_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+    <span class="n">path_tier_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+        <span class="c1"># just add source nodes to tier 0</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">source_nodes</span><span class="p">:</span>
+            <span class="n">path_tier_dict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="c1"># since all dependent projects must be run first</span>
+        <span class="c1"># the tier is the maximum length of all simple paths to this node</span>
+        <span class="c1"># so get the max length from all source nodes</span>
+        <span class="n">tier</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">source_nodes</span><span class="p">:</span>
+            <span class="n">current_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">all_simple_paths</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">)]</span>
+            <span class="c1"># skip source nodes that don&#39;t link to this project</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">current_paths</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">max_path_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">current_paths</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">max_path_length</span> <span class="o">&gt;</span> <span class="n">tier</span><span class="p">:</span>
+                <span class="n">tier</span> <span class="o">=</span> <span class="n">max_path_length</span>
+
+        <span class="c1"># decrement tier to count from 0</span>
+        <span class="n">tier</span> <span class="o">=</span> <span class="n">tier</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="c1"># check if tier exists in the dict, if so add to it, else create entry</span>
+        <span class="k">if</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">path_tier_dict</span><span class="p">:</span>
+            <span class="n">path_tier_dict</span><span class="p">[</span><span class="n">tier</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path_tier_dict</span><span class="p">[</span><span class="n">tier</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">path_tier_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="get_all_downstream_nodes"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_all_downstream_nodes">[docs]</a><span class="k">def</span> <span class="nf">get_all_downstream_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all nodes downstream of this one (i.e. they have a path from this node to them)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: the graph to use</span>
+<span class="sd">        node: the node to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of downstream node names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">downstream_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">diGraph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">diGraph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="n">all_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">all_simple_paths</span><span class="p">(</span><span class="n">diGraph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">n</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">all_paths</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span><span class="p">:</span>
+                <span class="n">downstream_paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># the above generates a list of things like</span>
+    <span class="c1"># [projectA, projectB, projectA, projectC] if projectA goes to both project_B and project_C</span>
+    <span class="c1"># so make a set, then remove the node itself</span>
+    <span class="n">downstream_nodes</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">downstream_paths</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">node</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">downstream_nodes</span></div>
+
+
+<div class="viewcode-block" id="get_successors"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_successors">[docs]</a><span class="k">def</span> <span class="nf">get_successors</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all successor nodes to the current node</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: the graph to use</span>
+<span class="sd">        node: the node to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A set of nodes that are successors to the current node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">di_graph</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">node</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_predecessors"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_predecessors">[docs]</a><span class="k">def</span> <span class="nf">get_predecessors</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all predecessor nodes to the current node</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: the graph to use</span>
+<span class="sd">        node: the node to check</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A set of nodes that are predecessors to the current node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">di_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">di_graph</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="add_edges"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.add_edges">[docs]</a><span class="k">def</span> <span class="nf">add_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes an existing graph and creates a new one with the new edge</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: the graph to start with</span>
+<span class="sd">        edges: the edges to add</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A copy of initial graph with new edge</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">old_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">directed_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+    <span class="n">new_edges</span> <span class="o">=</span> <span class="n">old_edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">from_edges</span><span class="p">(</span><span class="n">new_edges</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

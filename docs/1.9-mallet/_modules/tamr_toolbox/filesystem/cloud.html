@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.filesystem.cloud &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/filesystem/cloud.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.filesystem.cloud</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.filesystem.cloud</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
+<span class="c1"># This environments variable is set automatically when `invoke docs` is used</span>
+<span class="n">BUILDING_DOCS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_TOOLBOX_DOCS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+<span class="k">if</span> <span class="n">BUILDING_DOCS</span><span class="p">:</span>
+    <span class="c1"># Import relevant optional dependencies</span>
+    <span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
+    <span class="kn">from</span> <span class="nn">mypy_boto3_s3.client</span> <span class="kn">import</span> <span class="n">S3Client</span>
+
+
+<div class="viewcode-block" id="gcs_upload"><a class="viewcode-back" href="../../../modules/filesystem.html#tamr_toolbox.filesystem.cloud.gcs_upload">[docs]</a><span class="k">def</span> <span class="nf">gcs_upload</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="p">:</span> <span class="s2">&quot;storage.Client&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">destination_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Upload data to a Google storage bucket</span>
+<span class="sd">    Args:</span>
+<span class="sd">        source_filepath: file path of source file being uploaded</span>
+<span class="sd">        destination_filepath: path to google bucket</span>
+<span class="sd">        cloud_client: google storage client with user credentials</span>
+<span class="sd">        bucket_name: name of google bucket</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bucket</span> <span class="o">=</span> <span class="n">cloud_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">destination_filepath</span><span class="p">)</span>
+    <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_filename</span><span class="p">(</span><span class="n">source_filepath</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="gcs_download"><a class="viewcode-back" href="../../../modules/filesystem.html#tamr_toolbox.filesystem.cloud.gcs_download">[docs]</a><span class="k">def</span> <span class="nf">gcs_download</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="p">:</span> <span class="s2">&quot;storage.Client&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">destination_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download data to a Google storage bucket</span>
+<span class="sd">    Args:</span>
+<span class="sd">        source_filepath: Path to file being downloaded on Google</span>
+<span class="sd">        destination_filepath: Destination filepath for file being downloaded</span>
+<span class="sd">        cloud_client: google storage client with user credentials</span>
+<span class="sd">        bucket_name: name of google bucket being downloaded from</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bucket</span> <span class="o">=</span> <span class="n">cloud_client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
+    <span class="n">this_blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">source_filepath</span><span class="p">)</span>
+    <span class="n">this_blob</span><span class="o">.</span><span class="n">download_to_filename</span><span class="p">(</span><span class="n">destination_filepath</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="s3_upload"><a class="viewcode-back" href="../../../modules/filesystem.html#tamr_toolbox.filesystem.cloud.s3_upload">[docs]</a><span class="k">def</span> <span class="nf">s3_upload</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="p">:</span> <span class="s2">&quot;S3Client&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Upload data to Amazon AWS bucket</span>
+<span class="sd">    Args:</span>
+<span class="sd">        source_filepath: file path of source file being uploaded</span>
+<span class="sd">        destination_filepath: path to AWS bucket</span>
+<span class="sd">        cloud_client: AWS client with user credentials</span>
+<span class="sd">        bucket_name: name of AWS bucket</span>
+<span class="sd">        downloads copy of file being uploaded to filepath</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cloud_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
+        <span class="n">Filename</span><span class="o">=</span><span class="n">source_filepath</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">destination_filepath</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="s3_download"><a class="viewcode-back" href="../../../modules/filesystem.html#tamr_toolbox.filesystem.cloud.s3_download">[docs]</a><span class="k">def</span> <span class="nf">s3_download</span><span class="p">(</span>
+    <span class="n">cloud_client</span><span class="p">:</span> <span class="s2">&quot;S3Client&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download data from an Amazon AWS bucket</span>
+<span class="sd">    Args:</span>
+<span class="sd">        source_filepath: Path to file being downloaded on AWS</span>
+<span class="sd">        destination_filepath: Destination filepath for file being downloaded</span>
+<span class="sd">        cloud_client: AWS client with user credentials</span>
+<span class="sd">        bucket_name: name of AWS bucket being downloaded from</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cloud_client</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span>
+        <span class="n">Bucket</span><span class="o">=</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">source_filepath</span><span class="p">,</span> <span class="n">Filename</span><span class="o">=</span><span class="n">destination_filepath</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Dataset &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/examples/dataset.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Enrichment" href="enrichment.html" />
+    <link rel="prev" title="Data Input/Output" href="data_io.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#manage-datasets">Manage Datasets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-dataset">Create a dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#migrate-dataset-definition-changes-from-a-source-to-target-instance">Migrate dataset definition changes from a source to target instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-attributes-to-a-dataset">Add attributes to a dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-an-attribute-from-a-dataset">Remove an attribute from a dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dataset-profiles">Dataset Profiles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-and-retrieve-a-profile-for-a-dataset">Create and retrieve a profile for a dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
+        
+      <li>Dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/examples/dataset.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dataset">
+<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="manage-datasets">
+<h2>Manage Datasets<a class="headerlink" href="#manage-datasets" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-a-dataset">
+<h3>Create a dataset<a class="headerlink" href="#create-a-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># create_dataset.config.yaml</span><span class="w"></span>
+
+<span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">datasets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project_dataset</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test_create_dataset&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">attributes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;unique_id&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;address&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">        </span><span class="nt">primary_keys</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;unique_id&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Dataset</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">testing&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for creating a dataset&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">primary_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Creates a dataset in Tamr</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        dataset_name: name of dataset</span>
+<span class="sd">        attributes: list of attributes to create</span>
+<span class="sd">        primary_key: primary key for dataset</span>
+<span class="sd">        description: description of dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating dataset: </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">tamr_client</span><span class="p">,</span>
+        <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+        <span class="n">primary_keys</span><span class="o">=</span><span class="n">primary_keys</span><span class="p">,</span>
+        <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;examples/resources/conf/create_dataset.config.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">dataset_name</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_source_dataset&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+        <span class="n">attributes</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_source_dataset&quot;</span><span class="p">][</span><span class="s2">&quot;attributes&quot;</span><span class="p">],</span>
+        <span class="n">primary_keys</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_source_dataset&quot;</span><span class="p">][</span><span class="s2">&quot;primary_key&quot;</span><span class="p">],</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_source_dataset&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="migrate-dataset-definition-changes-from-a-source-to-target-instance">
+<h3>Migrate dataset definition changes from a source to target instance<a class="headerlink" href="#migrate-dataset-definition-changes-from-a-source-to-target-instance" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># migrate_dataset.config.yaml</span><span class="w"></span>
+
+<span class="nt">source_migration_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$DEV_HOST</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_USERNAME</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w"></span>
+
+<span class="nt">target_migration_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$PROD_HOST</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_USERNAME</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w"></span>
+
+<span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">datasets</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">dataset_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test_dataset&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to migrate changes to a dataset attributes from one instance of Tamr to another</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># load example multi config</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/migrate_dataset.config.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the source tamr client</span>
+<span class="n">source_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;source_migration_instance&quot;</span><span class="p">])</span>
+
+<span class="c1"># Create the target tamr client</span>
+<span class="n">target_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;target_migration_instance&quot;</span><span class="p">])</span>
+
+<span class="c1"># Update each dataset</span>
+<span class="n">datasets</span> <span class="o">=</span> <span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;dataset_name&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Get dataset from source instance</span>
+    <span class="n">source_dataset</span> <span class="o">=</span> <span class="n">source_client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+
+    <span class="c1"># Get updated dataset definition</span>
+    <span class="n">attr_type_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">attr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">tbox</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">attribute_type</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">attributes</span>
+    <span class="p">}</span>
+    <span class="n">attribute_names</span> <span class="o">=</span> <span class="n">attr_type_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">description</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">tags</span>
+
+    <span class="c1"># Migrate dataset updates from source to target instance</span>
+    <span class="k">if</span> <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">target_client</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">):</span>
+        <span class="n">target_dataset</span> <span class="o">=</span> <span class="n">target_client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+        <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">target_dataset</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="n">attribute_names</span><span class="p">,</span>
+            <span class="n">attribute_types</span><span class="o">=</span><span class="n">attr_type_dict</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+            <span class="n">override_existing_types</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">primary_keys</span> <span class="o">=</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">]</span>
+        <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">client</span><span class="o">=</span><span class="n">target_client</span><span class="p">,</span> <span class="n">primary_keys</span><span class="o">=</span><span class="n">primary_keys</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">source_dataset</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-attributes-to-a-dataset">
+<h3>Add attributes to a dataset<a class="headerlink" href="#add-attributes-to-a-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to change dataset attributes for a Tamr dataset</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models</span> <span class="kn">import</span> <span class="n">attribute_type</span>
+
+
+<span class="c1"># load example multi config</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/migrate_dataset.config.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the source tamr client</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;source_migration_instance&quot;</span><span class="p">])</span>
+
+<span class="c1"># Get dataset from Tamr instance</span>
+<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;your dataset name&gt;&quot;</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+
+<span class="c1"># Note you can optionally just past in a list of attribute names</span>
+<span class="c1"># The attribute types will default to ARRAY STRING</span>
+<span class="n">attribute_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;client_id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;sales&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">]</span>
+<span class="n">attribute_types</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">,</span>
+    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">,</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">attribute_type</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span>
+    <span class="s2">&quot;sales&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">attribute_type</span><span class="o">.</span><span class="n">GEOSPATIAL</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">updated_dataset</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">create_attributes</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attribute_names</span><span class="p">,</span> <span class="n">attribute_types</span><span class="o">=</span><span class="n">attribute_types</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-an-attribute-from-a-dataset">
+<h3>Remove an attribute from a dataset<a class="headerlink" href="#remove-an-attribute-from-a-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to delete attributes from a Tamr dataset</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># load example multi config</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/migrate_dataset.config.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the source tamr client</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;source_migration_instance&quot;</span><span class="p">])</span>
+
+<span class="c1"># Get dataset from Tamr instance</span>
+<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;your dataset name&gt;&quot;</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+
+
+<span class="n">attribute_name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">]</span>
+
+<span class="n">updated_dataset</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">manage</span><span class="o">.</span><span class="n">delete_attributes</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dataset-profiles">
+<h2>Dataset Profiles<a class="headerlink" href="#dataset-profiles" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-and-retrieve-a-profile-for-a-dataset">
+<h3>Create and retrieve a profile for a dataset<a class="headerlink" href="#create-and-retrieve-a-profile-for-a-dataset" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example script to create and/or retrieve a dataset profile</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+<span class="c1"># load example config</span>
+<span class="n">my_config</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;examples/resources/conf/migrate_dataset.config.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the source tamr client</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">my_config</span><span class="p">[</span><span class="s2">&quot;source_migration_instance&quot;</span><span class="p">])</span>
+
+<span class="c1"># Get dataset from Tamr instance</span>
+<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;&lt;your dataset name&gt;&quot;</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Setting the optional second argument to True below ensures that</span>
+<span class="sd">    - A new profile is created if it does not exist or is in an inconsistent state</span>
+<span class="sd">    - The profile is refreshed if it is out-of-date</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_profile</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">allow_create_or_refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="enrichment.html" class="btn btn-neutral float-right" title="Enrichment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="data_io.html" class="btn btn-neutral float-left" title="Data Input/Output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

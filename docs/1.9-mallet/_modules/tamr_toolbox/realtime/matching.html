@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.realtime.matching &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/realtime/matching.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.realtime.matching</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.realtime.matching</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.mastering.project</span> <span class="kn">import</span> <span class="n">MasteringProject</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.operation</span> <span class="kn">import</span> <span class="n">from_resource_id</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="update_realtime_match_data"><a class="viewcode-back" href="../../../modules/realtime.html#tamr_toolbox.realtime.matching.update_realtime_match_data">[docs]</a><span class="k">def</span> <span class="nf">update_realtime_match_data</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span>
+    <span class="n">do_update_clusters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">do_use_manual_clustering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">options</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates data for RealTime match queries if needed, based on latest published clusters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: project to be updated</span>
+<span class="sd">        do_update_clusters: whether to update clusters, default True</span>
+<span class="sd">        do_use_manual_clustering: whether to use externally managed clustering, default False</span>
+<span class="sd">        options: Options passed to underlying :class:`~tamr_unify_client.operation.Operation`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        an operation object describing the update operation</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if update API call fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make sure we have the original name of the project to use with the match endpoint</span>
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">_get_internal_project_name</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;projects/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">:updateLLM?updateClusters=</span><span class="si">{</span><span class="n">do_update_clusters</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&amp;useManualClustering=</span><span class="si">{</span><span class="n">do_use_manual_clustering</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Match data update for </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> failed at submission time: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">operation_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
+    <span class="n">operation</span> <span class="o">=</span> <span class="n">from_resource_id</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">operation</span><span class="o">.</span><span class="n">apply_options</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="poll_realtime_match_status"><a class="viewcode-back" href="../../../modules/realtime.html#tamr_toolbox.realtime.matching.poll_realtime_match_status">[docs]</a><span class="k">def</span> <span class="nf">poll_realtime_match_status</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span> <span class="n">match_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">num_tries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">wait_sec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if match service is queryable. Try up to `num_tries` times at 1 sec (or user-specified)</span>
+<span class="sd">    interval.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the mastering project whose status to check</span>
+<span class="sd">        match_client: a Tamr client set to use the port of the Match API</span>
+<span class="sd">        num_tries: max number of times to poll endpoint, default 10</span>
+<span class="sd">        wait_sec: number of seconds to wait between tries, default 1</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool indicating whether project is queryable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">_get_internal_project_name</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/v1/projects/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">:isQueryable&quot;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Poll endpoint to until project is queryable or num_tries reached</span>
+    <span class="k">while</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="n">num_tries</span><span class="p">:</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">match_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">queryable</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;true&quot;</span>
+
+        <span class="k">if</span> <span class="n">queryable</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait_sec</span><span class="p">)</span>  <span class="c1"># call api at wait_sec interval if project isn&#39;t yet queryable</span>
+
+    <span class="k">return</span> <span class="n">queryable</span></div>
+
+
+<div class="viewcode-block" id="match_query"><a class="viewcode-back" href="../../../modules/realtime.html#tamr_toolbox.realtime.matching.match_query">[docs]</a><span class="k">def</span> <span class="nf">match_query</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span>
+    <span class="n">match_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">],</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">primary_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">min_match_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_num_matches</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the best matching clusters or records for each supplied record. Returns a dictionary where</span>
+<span class="sd">    each key correpsonds to an input record and the value is a list of the RealTime match results</span>
+<span class="sd">    for that record. An empty result list indicates a null response from matching (or no responses</span>
+<span class="sd">    above the `min_match_prob`, if that parameter was supplied).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the mastering project to query for matches</span>
+<span class="sd">        match_client: a Tamr client set to use the port of the Match API</span>
+<span class="sd">        records: list of records to match</span>
+<span class="sd">        type: one of &quot;records&quot; or  &quot;clusters&quot; -- whether to pull record or cluster matches</span>
+<span class="sd">        primary_key: a primary key for the data; if supplied, this must be a field in input records</span>
+<span class="sd">        batch_size: split input into this batch size for match query calls (e.g. to prevent network</span>
+<span class="sd">            timeouts), default None sends a single query with all records</span>
+<span class="sd">        min_match_prob: if set, only matches with probability above minimum will be returned,</span>
+<span class="sd">            default None</span>
+<span class="sd">        max_num_matches: if set, at most max_num_matches will be returned for each input record in</span>
+<span class="sd">            records, default None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict keyed by integers (indices of inputs), or by `primary_key` if `primary_key` is</span>
+<span class="sd">        supplied, with value a list containing matched data</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if match `type` is not &quot;records&quot; or &quot;clusters&quot;, or if `batch_size` is invalid</span>
+<span class="sd">        RuntimeError: if query fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>  <span class="c1"># dict which defaults to empty list to hold results</span>
+
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">_get_internal_project_name</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/v1/projects/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">:match?type=</span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Set up keys to read results</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;records&quot;</span><span class="p">:</span>
+        <span class="n">record_key</span> <span class="o">=</span> <span class="s2">&quot;queryRecordId&quot;</span>
+        <span class="n">prob_key</span> <span class="o">=</span> <span class="s2">&quot;matchProbability&quot;</span>
+    <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;clusters&quot;</span><span class="p">:</span>
+        <span class="n">record_key</span> <span class="o">=</span> <span class="s2">&quot;entityId&quot;</span>
+        <span class="n">prob_key</span> <span class="o">=</span> <span class="s2">&quot;avgMatchProb&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported match type </span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check batch size and set if not supplied</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No input supplied to match_query -- returning empty result.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result_dict</span>
+    <span class="k">elif</span> <span class="n">batch_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch size must be non-negative: received </span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Split into batches and convert to match query format</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">json_recs</span> <span class="o">=</span> <span class="n">_prepare_json</span><span class="p">(</span><span class="n">records</span><span class="p">[</span><span class="n">j</span> <span class="p">:</span> <span class="n">j</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">],</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">match_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_recs</span><span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RealTime match query failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="c1"># Process responses</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">:</span>  <span class="c1"># handle null response</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># If data was found, decode, identify source record, and add match to corresponding</span>
+        <span class="c1"># list of results in the result dictionary</span>
+        <span class="k">for</span> <span class="n">resp_block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">resp_block</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp_block</span><span class="p">)</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">record_key</span><span class="p">])</span> <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result</span><span class="p">[</span><span class="n">record_key</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">max_num_matches</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">max_num_matches</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">min_match_prob</span> <span class="ow">and</span> <span class="n">result</span><span class="p">[</span><span class="n">prob_key</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_match_prob</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">result_dict</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result_dict</span></div>
+
+
+<span class="k">def</span> <span class="nf">_prepare_json</span><span class="p">(</span>
+    <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Put records into JSON format expected by RealTime match endpoint</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        records: list of records to match</span>
+<span class="sd">        primary_key: a primary key for the data; if not None, must be a field in the input records</span>
+<span class="sd">        offset: offset to apply to generated integer `recordId` -- this is necessary for batching</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of formatted records</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if primary_key is supplied but some supplied record(s) do not have the</span>
+<span class="sd">            primary_key field</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json_records</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;recordId&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">primary_key</span><span class="p">),</span> <span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">}</span> <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">records</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not all input records had a primary key field </span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># use integers as recordId</span>
+        <span class="n">json_records</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;recordId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">offset</span> <span class="o">+</span> <span class="n">k</span><span class="p">),</span> <span class="s2">&quot;record&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">}</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">rec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">json_records</span>
+
+
+<span class="k">def</span> <span class="nf">_get_internal_project_name</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get project&#39;s internal name (as opposed to the `displayName`, which can be changed by users)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the mastering project of which to retrieve the internal name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the project&#39;s internal name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get usage data for unified dataset of input project</span>
+    <span class="n">usage_resp</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span>
+    <span class="c1"># Get project internal name from first output_from_project_step of unified dataset useage</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">usage_resp</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">output_from_project_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">project_name</span>
+    <span class="k">return</span> <span class="n">name</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -25,8 +25,9 @@ def main(*, instance_connection_info: Dict[str, str], project_ids: List[str]) ->
     my_projects = [tamr_client.projects.by_resource_id(p_id) for p_id in project_ids]
     LOGGER.info(f"About to run projects: {[p.name for p in my_projects]}")
 
+    # runs the projects specifying to wait 30 seconds between jobs
     operations = tbox.workflow.jobs.run(
-        my_projects, run_apply_feedback=False, run_estimate_pair_counts=False
+        my_projects, run_apply_feedback=False, run_estimate_pair_counts=False, sleep_interval=30
     )
 
     LOGGER.info(f"Tasks for {[p.name for p in my_projects]} complete")

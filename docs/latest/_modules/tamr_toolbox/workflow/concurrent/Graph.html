@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -185,11 +185,13 @@
     <span class="n">directed_graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span></div>
 
 
-<span class="k">def</span> <span class="nf">_get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">all_projects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    get projects immediately upstream of a given project</span>
 <span class="sd">    Args:</span>
 <span class="sd">        project: the project to check</span>
+<span class="sd">        all_projects: a list of all Projects on the Tamr Core instance</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of project names upstream of the project</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -214,21 +216,26 @@
         <span class="p">)</span>
         <span class="n">upstream_project_names</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">upstream_dataset_projects</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">upstream_project_names</span><span class="p">]</span>
+    <span class="c1"># we have all projects in all_projects variables so only return those whose</span>
+    <span class="c1"># name is in upstream_project_names</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_projects</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">upstream_project_names</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_build_edges</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">edges</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span> <span class="nf">_build_edges</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">edges</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">all_projects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    builds a set of tuples of all edges of format (source, target)</span>
 <span class="sd">    Args:</span>
 <span class="sd">        project: the project to get edges for</span>
 <span class="sd">        client: tamr client</span>
 <span class="sd">        edges: set of tuples (source, target)</span>
+<span class="sd">        all_projects: a list of all Projects on the Tamr Core instance</span>
 
 <span class="sd">    Returns:</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">upstream_projects</span> <span class="o">=</span> <span class="n">_get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+    <span class="n">upstream_projects</span> <span class="o">=</span> <span class="n">_get_upstream_projects</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -246,7 +253,9 @@
             <span class="k">continue</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># and then go to it and get it&#39;s upstream datasets</span>
-            <span class="n">further_upstream_edges</span> <span class="o">=</span> <span class="n">_build_edges</span><span class="p">(</span><span class="n">upstream_project</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">edges</span><span class="p">))</span>
+            <span class="n">further_upstream_edges</span> <span class="o">=</span> <span class="n">_build_edges</span><span class="p">(</span>
+                <span class="n">upstream_project</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">edges</span><span class="p">),</span> <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span>
+            <span class="p">)</span>
             <span class="c1"># print(f&quot;adding further upstream edges {further_upstream_edges}&quot;)</span>
             <span class="n">edges</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">further_upstream_edges</span><span class="p">)</span>
 
@@ -280,9 +289,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># start with empty set</span>
     <span class="n">graph_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c1"># save all projects to list so we don&#39;t have to hit the API every time</span>
+    <span class="n">all_projects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">stream</span><span class="p">()]</span>
     <span class="c1"># for each dataset get the edges and take union</span>
     <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
-        <span class="n">graph_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph_edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">_build_edges</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">client</span><span class="p">)))</span>
+        <span class="n">graph_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="n">graph_edges</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">_build_edges</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">all_projects</span><span class="o">=</span><span class="n">all_projects</span><span class="p">))</span>
+        <span class="p">)</span>
 
     <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">graph_edges</span><span class="p">)</span>

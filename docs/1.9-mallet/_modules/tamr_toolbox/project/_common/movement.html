@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.project._common.movement &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/project/_common/movement.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.project._common.movement</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.project._common.movement</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to project movement as part of Tamr projects&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.version</span> <span class="kn">import</span> <span class="n">requires_tamr_version</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="export_artifacts"><a class="viewcode-back" href="../../../../modules/project/movement.html#tamr_toolbox.project.export_artifacts">[docs]</a><span class="nd">@requires_tamr_version</span><span class="p">(</span><span class="n">min_version</span><span class="o">=</span><span class="s2">&quot;2021.005.0&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">export_artifacts</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span>
+    <span class="n">artifact_directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">exclude_artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Export project artifacts for project movement</span>
+
+<span class="sd">    Requires Tamr 2021.005.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: a tamr project object</span>
+<span class="sd">        artifact_directory_path: export directory for project artifacts</span>
+<span class="sd">        exclude_artifacts: list of artifacts to exclude</span>
+<span class="sd">        asynchronous: flag to run function asynchronously</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        operation for project export api call</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initializing empty lists if any</span>
+    <span class="k">if</span> <span class="n">exclude_artifacts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exclude_artifacts</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># make project export api request</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;artifactDirectory&quot;</span><span class="p">:</span> <span class="n">artifact_directory_path</span><span class="p">,</span> <span class="s2">&quot;excludeArtifacts&quot;</span><span class="p">:</span> <span class="n">exclude_artifacts</span><span class="p">}</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting to export </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> of type </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/projects/</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">:export&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span>
+    <span class="p">)</span>
+    <span class="c1"># Raise error if export api call not successful</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error exporting project artifacts: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># get operation</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="n">operation</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">from_resource_id</span><span class="p">(</span><span class="n">tamr</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">asynchronous</span><span class="p">:</span>
+        <span class="c1"># periodically check export job until completion</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for export to be created.&quot;</span><span class="p">)</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Export complete: </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Export called asynchronously: </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">operation</span></div>
+
+
+<div class="viewcode-block" id="import_artifacts"><a class="viewcode-back" href="../../../../modules/project/movement.html#tamr_toolbox.project.import_artifacts">[docs]</a><span class="nd">@requires_tamr_version</span><span class="p">(</span><span class="n">min_version</span><span class="o">=</span><span class="s2">&quot;2021.005.0&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">import_artifacts</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">project_artifact_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">tamr_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">target_project</span><span class="p">:</span> <span class="n">Project</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">new_project_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">new_unified_dataset_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">exclude_artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_additive_artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_destructive_artifacts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fail_if_not_present</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">asynchronous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Import project artifacts into a tamr instance</span>
+
+<span class="sd">    Requires Tamr 2021.005.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_client: a tamr client</span>
+<span class="sd">        project_artifact_path: project artifacts zip filepath</span>
+<span class="sd">        target_project: an optional target project for migration</span>
+<span class="sd">        new_project_name: new project name</span>
+<span class="sd">        new_unified_dataset_name: new unified dataset name</span>
+<span class="sd">        exclude_artifacts: list of artifacts to exclude in import</span>
+<span class="sd">        include_additive_artifacts: list of artifacts to import only additively</span>
+<span class="sd">        include_destructive_artifacts: list of artifacts to import destructively</span>
+<span class="sd">        fail_if_not_present: flag to fail project if not already present in instance</span>
+<span class="sd">        asynchronous: flag to run function asynchronously</span>
+<span class="sd">        overwrite_existing: flag to overwrite existing project artifacts</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        operation for project import api call</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initializing empty lists if any</span>
+    <span class="k">if</span> <span class="n">exclude_artifacts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exclude_artifacts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">include_additive_artifacts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">include_additive_artifacts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">include_destructive_artifacts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">include_destructive_artifacts</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># handle spaces in project artifact path</span>
+    <span class="k">if</span> <span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">project_artifact_path</span><span class="p">:</span>
+        <span class="n">project_artifact_path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">pathname2url</span><span class="p">(</span><span class="n">project_artifact_path</span><span class="p">)</span>
+
+    <span class="c1"># make project import api request</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;projectArtifact&quot;</span><span class="p">:</span> <span class="n">project_artifact_path</span><span class="p">,</span>
+        <span class="s2">&quot;excludeArtifacts&quot;</span><span class="p">:</span> <span class="n">exclude_artifacts</span><span class="p">,</span>
+        <span class="s2">&quot;includeAdditiveArtifacts&quot;</span><span class="p">:</span> <span class="n">include_additive_artifacts</span><span class="p">,</span>
+        <span class="s2">&quot;includeDestructiveArtifacts&quot;</span><span class="p">:</span> <span class="n">include_destructive_artifacts</span><span class="p">,</span>
+        <span class="s2">&quot;failIfNotPresent&quot;</span><span class="p">:</span> <span class="n">fail_if_not_present</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">new_project_name</span> <span class="ow">or</span> <span class="n">new_unified_dataset_name</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Cannot import to existing project and simultaneously set &quot;</span>
+                <span class="s2">&quot;new_project_name or new_unified_dataset_name.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">overwrite_existing</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Starting to import artifacts from </span><span class="si">{</span><span class="n">project_artifact_path</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;into existing project </span><span class="si">{</span><span class="n">target_project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;with id </span><span class="si">{</span><span class="n">target_project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;/api/versioned/v1/projects/</span><span class="si">{</span><span class="n">target_project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">:import&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Unable to overwrite existing project; overwrite flag is off.&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">new_project_name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="p">]:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;New project name </span><span class="si">{</span><span class="n">new_project_name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_unified_dataset_name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ds</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">datasets</span><span class="p">]:</span>
+            <span class="c1"># otherwise response will be ok, but operation &#39;state&#39;=&#39;FAILED&#39;</span>
+            <span class="c1"># and artifacts will be partially migrated : creates issues on re-run.</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;New unified dataset name </span><span class="si">{</span><span class="n">new_unified_dataset_name</span><span class="si">}</span><span class="s2"> already exists.&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="n">body</span><span class="p">[</span><span class="s2">&quot;newProjectName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_project_name</span>
+        <span class="n">body</span><span class="p">[</span><span class="s2">&quot;newUnifiedDatasetName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_unified_dataset_name</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Starting to import artifacts from </span><span class="si">{</span><span class="n">project_artifact_path</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;into new project </span><span class="si">{</span><span class="n">new_project_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/versioned/v1/projects:import&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+
+    <span class="c1"># Raise exception if import was not successful</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error importing project artifacts: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># get operation</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="n">operation</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">from_resource_id</span><span class="p">(</span><span class="n">tamr</span><span class="o">=</span><span class="n">tamr_client</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">asynchronous</span><span class="p">:</span>
+        <span class="c1"># periodically check export job until completion</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for project to be imported.&quot;</span><span class="p">)</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Import complete: </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Import called asynchronously: </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">operation</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

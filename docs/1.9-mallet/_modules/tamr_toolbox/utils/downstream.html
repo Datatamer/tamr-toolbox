@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.utils.downstream &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/utils/downstream.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.utils.downstream</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.utils.downstream</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.project_type</span> <span class="kn">import</span> <span class="n">ProjectType</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.downstream.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include_dependencies_by_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a dataset&#39;s downstream datasets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: The target dataset.</span>
+<span class="sd">        include_dependencies_by_name: Whether to include datasets based on name similarity.</span>
+<span class="sd">            No dependencies will be found by name if the `dataset` is not an unified dataset</span>
+<span class="sd">            either based on backened pipeline (if project still exists) or based on</span>
+<span class="sd">            regex (dataset name has suffix &#39;unified_dataset&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of Dataset objects ordered by number of its downstream dependencies.</span>
+<span class="sd">            Note that there can be bidirectional dependency so datasets with same number of</span>
+<span class="sd">            dependencies can depend on each other.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">downstream_datasets</span> <span class="o">=</span> <span class="n">_find_downstream_datasets</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">include_dependencies_by_name</span><span class="o">=</span><span class="n">include_dependencies_by_name</span><span class="p">,</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">client</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Remove the target dataset from the list</span>
+    <span class="n">downstream_datasets</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="c1"># Extract the list of the Dataset objects</span>
+    <span class="n">downstream_datasets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">downstream_datasets</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="c1"># sort list of downstream datasets by number of dependencies</span>
+    <span class="c1"># because parent dataset always has greater number of dependencies than its child datasets</span>
+    <span class="c1"># note that there can be bidirectional dependency so datasets with same number of</span>
+    <span class="c1"># dependencies can depend on each other</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sorting the downstream datasets by number of dependencies&quot;</span><span class="p">)</span>
+    <span class="n">sorted_datasets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">downstream_datasets</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">dependencies</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sorted_datasets</span></div>
+
+
+<div class="viewcode-block" id="projects"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.downstream.projects">[docs]</a><span class="k">def</span> <span class="nf">projects</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include_dependencies_by_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Project</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Return list of downstream project_list for a dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: The target dataset.</span>
+<span class="sd">        include_dependencies_by_name: Whether to include datasets based on name similarity.</span>
+<span class="sd">            No dependencies will be found by name if the `dataset` is not an unified dataset</span>
+<span class="sd">            either based on backened pipeline (if project still exists) or based on</span>
+<span class="sd">            regex (dataset name has suffix &#39;unified_dataset&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of downstream project_list in order,</span>
+<span class="sd">            including the project the target `dataset` is part of.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">downstream_datasets</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="p">,</span> <span class="n">include_dependencies_by_name</span><span class="o">=</span><span class="n">include_dependencies_by_name</span>
+    <span class="p">)</span>
+    <span class="n">project_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># downstream dataset list is ordered by number of dependency ascending</span>
+    <span class="k">for</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="n">downstream_datasets</span><span class="p">:</span>
+        <span class="n">project_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_find_associated_projects</span><span class="p">(</span><span class="n">dependency</span><span class="p">))</span>
+    <span class="c1"># add project_list of the target dataset</span>
+    <span class="n">project_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_find_associated_projects</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+
+    <span class="c1"># use Ordered Dict to keep the order (set doesn&#39;t keep the order)</span>
+    <span class="n">project_ids</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">project_ids</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downstream project ids found: </span><span class="si">{</span><span class="n">project_ids</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Need to reverse to get the most upstream project first</span>
+    <span class="n">project_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">project_ids</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">project_list</span></div>
+
+
+<span class="k">def</span> <span class="nf">_find_downstream_datasets</span><span class="p">(</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">include_dependencies_by_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">all_tamr_datasets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">all_unified_datasets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">downstream_datasets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a dataset&#39;s downstream datasets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name: Name of the target dataset.</span>
+<span class="sd">        client: Tamr client</span>
+<span class="sd">        include_dependencies_by_name: Whether to include datasets based on name similarity.</span>
+<span class="sd">        all_tamr_datasets: A dictionary of all datasets existing in Tamr by name.</span>
+<span class="sd">        all_unified_datasets: A List of current unified datasets in Tamr.</span>
+<span class="sd">        downstream_datasets: A dictionary of downstream datasets by name.</span>
+<span class="sd">            This argument is not to be set by users, and only used internally.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of Dataset objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initialize optional variables</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_tamr_datasets</span><span class="p">:</span>
+        <span class="n">all_tamr_datasets</span> <span class="o">=</span> <span class="p">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">dataset</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="p">}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_unified_datasets</span><span class="p">:</span>
+        <span class="n">all_unified_datasets</span> <span class="o">=</span> <span class="n">_get_all_unified_datasets</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">downstream_datasets</span><span class="p">:</span>
+        <span class="n">downstream_datasets</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Initialize a set of datasets need to check further downstream</span>
+    <span class="c1"># (if include dependencies by name)</span>
+    <span class="n">datasets_check</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start checking dependencies of </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">all_tamr_datasets</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span>
+    <span class="n">dataset_dependencies</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">dependencies</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset_dependencies</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;datasets with dependency suggested by pipeline&quot;</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataset_dependencies</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">include_dependencies_by_name</span> <span class="ow">and</span> <span class="n">_is_unified_dataset</span><span class="p">(</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">all_unified_datasets</span><span class="o">=</span><span class="n">all_unified_datasets</span>
+        <span class="p">):</span>
+            <span class="c1"># if a downstream dataset is unified dataset and want to include dependencies by name,</span>
+            <span class="c1"># need to check it further downstream</span>
+            <span class="n">datasets_check</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dataset_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">d</span><span class="o">.</span><span class="n">dataset_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">downstream_datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">downstream_datasets</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">dataset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">dataset</span><span class="p">()</span>
+
+    <span class="c1"># get dependencies suggested by name matching</span>
+    <span class="c1"># if the target dataset is or used to be unified dataset</span>
+    <span class="c1"># and whose prefix is the target dataset&#39;s name if the target is unified dataset</span>
+    <span class="k">if</span> <span class="n">include_dependencies_by_name</span> <span class="ow">and</span> <span class="n">_is_unified_dataset</span><span class="p">(</span>
+        <span class="n">dataset_name</span><span class="p">,</span> <span class="n">all_unified_datasets</span><span class="o">=</span><span class="n">all_unified_datasets</span>
+    <span class="p">):</span>
+        <span class="n">dependencies_suggested_by_name</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">all_tamr_datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dependencies_suggested_by_name</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;datasets with dependency suggested by name&quot;</span>
+        <span class="p">)</span>
+        <span class="n">datasets_check</span> <span class="o">=</span> <span class="n">datasets_check</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">dependencies_suggested_by_name</span><span class="p">)</span>
+        <span class="c1"># Filter out datasets that have already been checked and the target dataset</span>
+        <span class="n">datasets_check</span> <span class="o">=</span> <span class="n">datasets_check</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">downstream_datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="c1"># add the target dataset to list of downstream datasets to avoid checking later</span>
+    <span class="n">downstream_datasets</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+
+    <span class="c1"># check further downstream for either dependencies suggested by name</span>
+    <span class="c1"># or dependencies that used to or is unified dataset</span>
+    <span class="c1"># note: dictionary `downstream_datasets` is passed by reference</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets_check</span><span class="p">:</span>
+        <span class="n">_find_downstream_datasets</span><span class="p">(</span>
+            <span class="n">d</span><span class="p">,</span>
+            <span class="n">include_dependencies_by_name</span><span class="o">=</span><span class="n">include_dependencies_by_name</span><span class="p">,</span>
+            <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
+            <span class="n">all_tamr_datasets</span><span class="o">=</span><span class="n">all_tamr_datasets</span><span class="p">,</span>
+            <span class="n">all_unified_datasets</span><span class="o">=</span><span class="n">all_unified_datasets</span><span class="p">,</span>
+            <span class="n">downstream_datasets</span><span class="o">=</span><span class="n">downstream_datasets</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">downstream_datasets</span>
+
+
+<span class="k">def</span> <span class="nf">_find_associated_projects</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Return list of project_list that the dataset is part of.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: The target dataset.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of Project IDs that the target `dataset` is part of.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">project_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">project</span><span class="p">()</span><span class="o">.</span><span class="n">resource_id</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">input_to_project_steps</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">project_list</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_unified_dataset</span><span class="p">(</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">check_regex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">regex</span><span class="o">=</span><span class="s2">&quot;.*unified_dataset$&quot;</span><span class="p">,</span>
+    <span class="n">all_unified_datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check if a dataset is or used to be unified dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_name: Name of the target dataset.</span>
+<span class="sd">        check_regex: A Boolean to determine whether to check for regex matching if a dataset is</span>
+<span class="sd">            not part of the pipeline (if its project has been deleted.) Default to True.</span>
+<span class="sd">        regex: A string of regex to check. Default to &#39;.*unified_dataset$&#39; which is Tamr&#39;s current</span>
+<span class="sd">            default unified dataset naming.</span>
+<span class="sd">        all_unified_datasets: List of unified dataset names.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Boolean, if True, the target `dataset` is or used to be unified dataset.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check project pipeline (only works if project has not been deleted)</span>
+    <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">all_unified_datasets</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="c1"># check regex</span>
+    <span class="k">if</span> <span class="n">check_regex</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_get_all_unified_datasets</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        client: Tamr client</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of unified dataset names.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use Project Spec to minimize number of API calls</span>
+    <span class="n">unified_dataset_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;unifiedDatasetName&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">projects</span>
+        <span class="c1"># GOLDEN_RECORDS project does not have unified dataset</span>
+        <span class="k">if</span> <span class="n">ProjectType</span><span class="p">[</span><span class="n">project</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+        <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">ProjectType</span><span class="o">.</span><span class="n">SCHEMA_MAPPING_RECOMMENDATIONS</span><span class="p">,</span>
+            <span class="n">ProjectType</span><span class="o">.</span><span class="n">DEDUP</span><span class="p">,</span>
+            <span class="n">ProjectType</span><span class="o">.</span><span class="n">CATEGORIZATION</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">unified_dataset_names</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

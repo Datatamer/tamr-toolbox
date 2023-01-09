@@ -1,0 +1,68 @@
+name: Create Release Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_number:
+        description: 'The number for this release in the format: 0.0.0'
+        required: true
+      version_toolname:
+        description: 'The tool name for this release such as: axe'
+        required: true
+
+jobs:
+  CreateReleasePRs:
+    runs-on: ubuntu-20.04
+    outputs:
+      release_branch: release-${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v3
+        with:
+          ref: "develop"
+      - name: Update version file
+        run: echo '${{ github.event.inputs.version_number }}-${{ github.event.inputs.version_toolname }}' > version.txt
+      - name: Export version
+        run: echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
+        id: get_version
+      - name: Export short version
+        # this sed drops the patch version from the name changing 1.2.3-axe into 1.2-axe
+        run: echo "version=$(cat version.txt | sed "s/\([0-9]\.[0-9]\).[0-9]/\1/g")" >> $GITHUB_OUTPUT
+        id: get_version_short
+
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.7
+      - name: Install requirements
+        run: python install.py
+
+      - name: Run tests
+        run: invoke test
+      - name: Run lint check
+        run: invoke lint
+      - name: Run format check
+        run: invoke format
+
+      - name: Build docs
+        run: invoke docs
+
+      - name: Remove previous latest doc
+        run: rm -r docs/latest
+      - name: Move docs to online pages location
+        run: cp -r docs/_draft_build docs/${{ steps.get_version_short.outputs.version }} && cp -r docs/_draft_build docs/latest
+
+      - name: Configure git
+        run: git config --global user.email "tamr-toolbox@tamr.com" && git config --global user.name "Tamr"
+      - name: Init release branch
+        run: git checkout -b 'release-${{ steps.get_version.outputs.version }}'
+
+      - name: Commit changes
+        run: >
+            git add . && git commit -m 'build: add docs for release ${{ steps.get_version.outputs.version }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create branch
+        run: git push --set-upstream origin release-${{ steps.get_version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

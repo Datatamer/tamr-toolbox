@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -349,6 +349,20 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">operation</span>
     <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waiting for operation took longer than </span><span class="si">{</span><span class="n">timeout_seconds</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="safe_estimate_counts"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.operation.safe_estimate_counts">[docs]</a><span class="k">def</span> <span class="nf">safe_estimate_counts</span><span class="p">(</span><span class="n">project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the estimate counts job of project that works if it is the first</span>
+<span class="sd">    Args:</span>
+<span class="sd">        project: A Tamr project object</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        An operation object for the estimate pairs job</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">as_mastering</span><span class="p">()</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">api_path</span><span class="si">}</span><span class="s2">/estimatedPairCounts:refresh&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Operation</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

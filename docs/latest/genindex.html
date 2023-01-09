@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -256,6 +256,8 @@
 </li>
       <li><a href="modules/filesystem.html#tamr_toolbox.filesystem.bash.create_directories">create_directories() (in module tamr_toolbox.filesystem.bash)</a>
 </li>
+      <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.taxonomy.create_node">create_node() (in module tamr_toolbox.project.categorization.taxonomy)</a>
+</li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.version.current">current() (in module tamr_toolbox.utils.version)</a>
 </li>
   </ul></td>
@@ -279,6 +281,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_backups">delete_backups() (in module tamr_toolbox.workflow.backup)</a>
+</li>
+      <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.taxonomy.delete_node">delete_node() (in module tamr_toolbox.project.categorization.taxonomy)</a>
 </li>
       <li><a href="modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_old_backups">delete_old_backups() (in module tamr_toolbox.workflow.backup)</a>
 </li>
@@ -412,10 +416,10 @@
 </li>
       <li><a href="modules/sysadmin.html#tamr_toolbox.sysadmin.instance.get_configs">get_configs() (in module tamr_toolbox.sysadmin.instance)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.get_connect_session">get_connect_session() (in module tamr_toolbox.data_io.df_connect.client)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/utils.html#tamr_toolbox.utils.operation.get_details">get_details() (in module tamr_toolbox.utils.operation)</a>
 </li>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_end_nodes">get_end_nodes() (in module tamr_toolbox.workflow.concurrent.Graph)</a>
@@ -428,11 +432,15 @@
 </li>
       <li><a href="modules/dataset.html#tamr_toolbox.dataset._dataset.get_profile">get_profile() (in module tamr_toolbox.dataset._dataset)</a>
 </li>
+      <li><a href="modules/workflow/jobs.html#tamr_toolbox.workflow.jobs.get_project_output_datasets">get_project_output_datasets() (in module tamr_toolbox.workflow.jobs)</a>
+</li>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_projects_by_tier">get_projects_by_tier() (in module tamr_toolbox.workflow.concurrent.Graph)</a>
 </li>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_source_nodes">get_source_nodes() (in module tamr_toolbox.workflow.concurrent.Graph)</a>
 </li>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_successors">get_successors() (in module tamr_toolbox.workflow.concurrent.Graph)</a>
+</li>
+      <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.taxonomy.get_taxonomy_as_dataframe">get_taxonomy_as_dataframe() (in module tamr_toolbox.project.categorization.taxonomy)</a>
 </li>
       <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.metrics.get_tier_confidence">get_tier_confidence() (in module tamr_toolbox.project.categorization.metrics)</a>
 </li>
@@ -572,6 +580,8 @@
 </li>
         <li><a href="modules/project/categorization.html#module-tamr_toolbox.project.categorization.metrics">tamr_toolbox.project.categorization.metrics</a>
 </li>
+        <li><a href="modules/project/categorization.html#module-tamr_toolbox.project.categorization.taxonomy">tamr_toolbox.project.categorization.taxonomy</a>
+</li>
         <li><a href="modules/project/golden_records.html#module-tamr_toolbox.project.golden_records.jobs">tamr_toolbox.project.golden_records.jobs</a>
 </li>
         <li><a href="modules/project/mastering.html#module-tamr_toolbox.project.mastering.jobs">tamr_toolbox.project.mastering.jobs</a>
@@ -627,6 +637,8 @@
         <li><a href="modules/notifications/slack.html#tamr_toolbox.notifications.slack.monitor_job">(in module tamr_toolbox.notifications.slack)</a>
 </li>
       </ul></li>
+      <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.taxonomy.move_node">move_node() (in module tamr_toolbox.project.categorization.taxonomy)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -685,10 +697,14 @@
 </li>
       <li><a href="modules/filesystem.html#tamr_toolbox.filesystem.bash.remove_directories">remove_directories() (in module tamr_toolbox.filesystem.bash)</a>
 </li>
+      <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.taxonomy.rename_node">rename_node() (in module tamr_toolbox.project.categorization.taxonomy)</a>
+</li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.version.requires_tamr_version">requires_tamr_version() (in module tamr_toolbox.utils.version)</a>
 </li>
       <li><a href="modules/sysadmin.html#tamr_toolbox.sysadmin.instance.restart_tamr">restart_tamr() (in module tamr_toolbox.sysadmin.instance)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.run">run() (in module tamr_toolbox.project.categorization.jobs)</a>
 
       <ul>
@@ -701,8 +717,6 @@
         <li><a href="modules/workflow/jobs.html#tamr_toolbox.workflow.jobs.run">(in module tamr_toolbox.workflow.jobs)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNode.run_next_step">run_next_step() (in module tamr_toolbox.workflow.concurrent.PlanNode)</a>
 </li>
   </ul></td>
@@ -714,6 +728,8 @@
       <li><a href="modules/filesystem.html#tamr_toolbox.filesystem.cloud.s3_download">s3_download() (in module tamr_toolbox.filesystem.cloud)</a>
 </li>
       <li><a href="modules/filesystem.html#tamr_toolbox.filesystem.cloud.s3_upload">s3_upload() (in module tamr_toolbox.filesystem.cloud)</a>
+</li>
+      <li><a href="modules/utils.html#tamr_toolbox.utils.operation.safe_estimate_counts">safe_estimate_counts() (in module tamr_toolbox.utils.operation)</a>
 </li>
       <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.save">save() (in module tamr_toolbox.enrichment.dictionary)</a>
 </li>
@@ -907,6 +923,13 @@
 
       <ul>
         <li><a href="modules/project/categorization.html#module-tamr_toolbox.project.categorization.metrics">module</a>
+</li>
+      </ul></li>
+      <li>
+    tamr_toolbox.project.categorization.taxonomy
+
+      <ul>
+        <li><a href="modules/project/categorization.html#module-tamr_toolbox.project.categorization.taxonomy">module</a>
 </li>
       </ul></li>
       <li>

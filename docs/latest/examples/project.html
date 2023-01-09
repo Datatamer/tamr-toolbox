@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.8.1 - Lathe
+                1.9.0 - Mallet
               </div>
             
           
@@ -112,6 +112,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#run-categorization-step-by-step">Run Categorization Step-By-Step</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#bootstrap-a-categorization-model">Bootstrap a Categorization Model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#obtain-average-confidence-for-a-specific-tier">Obtain Average Confidence for a Specific Tier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#make-changes-to-taxonomy">Make changes to taxonomy</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#mastering">Mastering</a><ul>
@@ -776,6 +777,131 @@
 
 <span class="c1"># Can also set the specific tier, which starts at 1</span>
 <span class="n">tier1_confidence_dict</span> <span class="o">=</span> <span class="n">get_tier_confidence</span><span class="p">(</span><span class="n">my_project</span><span class="p">,</span> <span class="n">tier</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="make-changes-to-taxonomy">
+<h3>Make changes to taxonomy<a class="headerlink" href="#make-changes-to-taxonomy" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span><span class="w"></span>
+
+<span class="nt">my_tamr_instance</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_HOST</span><span class="w"> </span><span class="c1"># Example: &quot;1.2.3.4&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;9100&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PASSWORD</span><span class="w">  </span><span class="c1"># Example: &quot;abc123&quot;</span><span class="w"></span>
+
+<span class="nt">projects</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_mastering_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_golden_records_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_categorization_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">my_schema_mapping_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script provides an example of how to make changes to the taxonomy of a categorization project</span>
+<span class="sd">without losing the verified categories already provided. Suppose we had the following taxonomy:</span>
+
+<span class="sd">root</span>
+<span class="sd">└── Animal &amp; Pet Supplies</span>
+<span class="sd">    ├── Cat Supplies</span>
+<span class="sd">    ├── Crocodile Supplies</span>
+<span class="sd">    └── Dog Supplies</span>
+
+<span class="sd">And we wished to edit this taxonomy to the following instead:</span>
+
+<span class="sd">root</span>
+<span class="sd">└── Supplies</span>
+<span class="sd">    ├── Animal Supplies</span>
+<span class="sd">    │   └── Crocodile Supplies</span>
+<span class="sd">    └── Pet Supplies</span>
+<span class="sd">        ├── Cat Supplies</span>
+<span class="sd">        └── Dog Supplies</span>
+
+<span class="sd">This example makes the changes by doing the following in order:</span>
+<span class="sd">1. Creating a new node &quot;Supplies&quot;.</span>
+<span class="sd">2. Moving node &quot;Animal &amp; Pet Supplies&quot; to the node &quot;Supplies -&gt; Pet Supplies&quot;</span>
+<span class="sd">3. Creating a new node &quot;Supplies -&gt; Animal Supplies&quot;</span>
+<span class="sd">3. Moving &quot;Supplies -&gt; Pet Supplies -&gt; Crocodile Supplies&quot; to &quot;Supplies -&gt; Animal Supplies -&gt;</span>
+<span class="sd">Crocodile Supplies&quot;</span>
+
+<span class="sd">For larger scale changes, the required paths can also be provided programmatically.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">categorization_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Loads the taxonomy of a categorization project and creates a node, renames it, deletes it</span>
+<span class="sd">    and moves a node to another location.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        categorization_project_id: The id of the target categorization project</span>
+
+<span class="sd">    Returns: None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the tamr client</span>
+    <span class="n">tamr_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># Create a new node &quot;Supplies&quot;:</span>
+    <span class="n">new_path</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Supplies&quot;</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating new node </span><span class="si">{</span><span class="n">new_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">categorization</span><span class="o">.</span><span class="n">taxonomy</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span>
+        <span class="n">tamr_client</span><span class="p">,</span> <span class="n">categorization_project_id</span><span class="p">,</span> <span class="n">new_path</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Move node &quot;Animal &amp; Pet Supplies&quot; to the node &quot;Supplies -&gt; Pet Supplies&quot;:</span>
+    <span class="n">old_path</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Animal &amp; Pet Supplies&quot;</span><span class="p">]</span>
+    <span class="n">new_path</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Supplies&quot;</span><span class="p">,</span> <span class="s2">&quot;Pet Supplies&quot;</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Moving node </span><span class="si">{</span><span class="n">old_path</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">categorization</span><span class="o">.</span><span class="n">taxonomy</span><span class="o">.</span><span class="n">move_node</span><span class="p">(</span>
+        <span class="n">tamr_client</span><span class="p">,</span> <span class="n">categorization_project_id</span><span class="p">,</span> <span class="n">old_path</span><span class="p">,</span> <span class="n">new_path</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create a new node &quot;Supplies -&gt; Animal Supplies&quot;</span>
+    <span class="n">new_path</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Supplies&quot;</span><span class="p">,</span> <span class="s2">&quot;Animal Supplies&quot;</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating node </span><span class="si">{</span><span class="n">new_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">categorization</span><span class="o">.</span><span class="n">taxonomy</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span>
+        <span class="n">tamr_client</span><span class="p">,</span> <span class="n">categorization_project_id</span><span class="p">,</span> <span class="n">new_path</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Move &quot;Supplies -&gt; Pet Supplies -&gt; Crocodile Supplies&quot; to &quot;Supplies -&gt; Animal Supplies -&gt;</span>
+    <span class="c1"># Crocodile Supplies&quot;:</span>
+    <span class="n">new_path</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Supplies&quot;</span><span class="p">,</span> <span class="s2">&quot;Animal Supplies&quot;</span><span class="p">,</span> <span class="s2">&quot;Crocodile Supplies&quot;</span><span class="p">]</span>
+    <span class="n">node_to_move</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Supplies&quot;</span><span class="p">,</span> <span class="s2">&quot;Pet Supplies&quot;</span><span class="p">,</span> <span class="s2">&quot;Crocodile Supplies&quot;</span><span class="p">]</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Moving node </span><span class="si">{</span><span class="n">node_to_move</span><span class="si">}</span><span class="s2"> to be under </span><span class="si">{</span><span class="n">new_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">categorization</span><span class="o">.</span><span class="n">taxonomy</span><span class="o">.</span><span class="n">move_node</span><span class="p">(</span>
+        <span class="n">tamr_client</span><span class="p">,</span> <span class="n">categorization_project_id</span><span class="p">,</span> <span class="n">node_to_move</span><span class="p">,</span> <span class="n">new_path</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/project.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">categorization_project_id</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="s2">&quot;my_categorization_project&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1644,6 +1770,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -1709,13 +1836,8 @@
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
     <span class="c1">## preparing for the import</span>
-    <span class="c1"># finding the path to export file</span>
-    <span class="n">zipfile_name</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">f</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">export_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">export_path</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">))</span>
-    <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">zipfile_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">export_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">zipfile_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># finding the path to export file from op JSON response</span>
+    <span class="n">zipfile_path</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;:\s?(.+\.zip)&quot;</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">description</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># constructing the new project name and respective unified dataset name to be imported to tamr</span>
     <span class="n">new_project_name</span> <span class="o">=</span> <span class="n">new_name</span> <span class="k">if</span> <span class="n">new_name</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_name</span><span class="si">}{</span><span class="n">postfix</span><span class="si">}</span><span class="s2">&quot;</span>

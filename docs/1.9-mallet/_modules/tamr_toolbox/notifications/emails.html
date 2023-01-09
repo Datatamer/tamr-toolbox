@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.notifications.emails &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/notifications/emails.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.notifications.emails</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.notifications.emails</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to creation of Email notifications&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.notifications.common</span> <span class="kn">import</span> <span class="n">_monitor_job</span> <span class="k">as</span> <span class="n">monitor_job_common</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.operation_state</span> <span class="kn">import</span> <span class="n">OperationState</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.operation</span> <span class="kn">import</span> <span class="n">get_details</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_build_message</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subject_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sender</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">recipients</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Builds email message in Multipurpose Internet Mail Extensions (MIME) format. MIME is an</span>
+<span class="sd">    Internet standard that extends the format of email messages</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message: Body of email message</span>
+<span class="sd">        subject_line: subject of email</span>
+<span class="sd">        sender: email address of sender</span>
+<span class="sd">        recipients: list of emails to send message to</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Email as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># build email</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject_line</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;From&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">recipients</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="send_email"><a class="viewcode-back" href="../../../modules/notifications/emails.html#tamr_toolbox.notifications.emails.send_email">[docs]</a><span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">subject_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sender_address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sender_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">recipient_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">smtp_server</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">smtp_port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">use_tls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">keyfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">certfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sends a message via email to list of recipients</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message: Body of email message</span>
+<span class="sd">        subject_line: subject of email</span>
+<span class="sd">        sender_address: email address to send message from ex: my_pipeline@gmail.com</span>
+<span class="sd">        sender_password: password to login to sender_email</span>
+<span class="sd">        recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]</span>
+<span class="sd">        smtp_server: smtp server address of sender_email ex: smtp.gmail.com</span>
+<span class="sd">        smtp_port: port to send email from, use 465 for SSL, use 587 for TLS</span>
+<span class="sd">        use_tls: A boolean value to turn on/off TLS protocol</span>
+<span class="sd">        keyfile: the private key to a TLS/SSL certificate, usually PEM format</span>
+<span class="sd">        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the message and response codes from the smtp server if there are any</span>
+<span class="sd">        errors. The dictionary will contain one entry for each recipient that was refused.</span>
+<span class="sd">        Each entry contains a tuple of the SMTP error code and the accompanying error</span>
+<span class="sd">        message sent by the server. A successful response will contain an empty dict.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        SMTPException. The base exception class used by the smtplib module</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># build email</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">_build_message</span><span class="p">(</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+        <span class="n">subject_line</span><span class="o">=</span><span class="n">subject_line</span><span class="p">,</span>
+        <span class="n">sender</span><span class="o">=</span><span class="n">sender_address</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="n">recipient_addresses</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">response</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">message</span>
+
+    <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">create_default_context</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span> <span class="n">smtp_port</span><span class="p">)</span> <span class="k">if</span> <span class="n">use_tls</span> <span class="k">else</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span>
+        <span class="n">smtp_server</span><span class="p">,</span> <span class="n">smtp_port</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="n">keyfile</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="n">certfile</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_tls</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">(</span><span class="n">keyfile</span><span class="o">=</span><span class="n">keyfile</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="n">certfile</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># login and send message</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender_address</span><span class="p">,</span> <span class="n">sender_password</span><span class="p">)</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender_address</span><span class="p">,</span> <span class="n">recipient_addresses</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">response</span><span class="p">[</span><span class="s2">&quot;errors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span>
+
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="k">def</span> <span class="nf">_send_job_status_message</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">sender_address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sender_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">recipient_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">smtp_server</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">smtp_port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span>
+    <span class="n">notify_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OperationState</span><span class="p">],</span>
+    <span class="n">use_tls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">keyfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">certfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks operation state and if in `notify_states` sends the message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sender_address: email address to send message from ex: my_pipeline@gmail.com</span>
+<span class="sd">        sender_password: password to login to sender_email</span>
+<span class="sd">        recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]</span>
+<span class="sd">        smtp_server: smtp server address of sender_email ex: smtp.gmail.com</span>
+<span class="sd">        smtp_port: port to send email from, use 465 for SSL</span>
+<span class="sd">        operation: A Tamr Operation</span>
+<span class="sd">        notify_states: States for which notifications should be sent</span>
+<span class="sd">        use_tls: A boolean value to opt to use TLS protocol</span>
+<span class="sd">        keyfile: the private key to a TLS/SSL certificate, usually PEM format</span>
+<span class="sd">        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the message and response codes from the smtp server if there are any</span>
+<span class="sd">        errors. The dictionary will contain one entry for each recipient that was refused.</span>
+<span class="sd">        Each entry contains a tuple of the SMTP error code and the accompanying error</span>
+<span class="sd">        message sent by the server. A successful response will contain an empty dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">OperationState</span><span class="p">[</span><span class="n">operation</span><span class="o">.</span><span class="n">state</span><span class="p">]</span>
+    <span class="n">message</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">notify_states</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">get_details</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">send_email</span><span class="p">(</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">subject_line</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">sender_address</span><span class="o">=</span><span class="n">sender_address</span><span class="p">,</span>
+            <span class="n">sender_password</span><span class="o">=</span><span class="n">sender_password</span><span class="p">,</span>
+            <span class="n">recipient_addresses</span><span class="o">=</span><span class="n">recipient_addresses</span><span class="p">,</span>
+            <span class="n">smtp_server</span><span class="o">=</span><span class="n">smtp_server</span><span class="p">,</span>
+            <span class="n">smtp_port</span><span class="o">=</span><span class="n">smtp_port</span><span class="p">,</span>
+            <span class="n">use_tls</span><span class="o">=</span><span class="n">use_tls</span><span class="p">,</span>
+            <span class="n">keyfile</span><span class="o">=</span><span class="n">keyfile</span><span class="p">,</span>
+            <span class="n">certfile</span><span class="o">=</span><span class="n">certfile</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span>
+
+
+<div class="viewcode-block" id="monitor_job"><a class="viewcode-back" href="../../../modules/notifications/emails.html#tamr_toolbox.notifications.emails.monitor_job">[docs]</a><span class="k">def</span> <span class="nf">monitor_job</span><span class="p">(</span>
+    <span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">sender_address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sender_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">recipient_addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">smtp_server</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">smtp_port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">],</span>
+    <span class="n">poll_interval_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">timeout_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">notify_states</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">OperationState</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">use_tls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">keyfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">certfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">JsonDict</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Monitors a Tamr Operation and sends an email when the job status is updated</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr: A Tamr client</span>
+<span class="sd">        sender_address: email address to send message from ex: my_pipeline@gmail.com</span>
+<span class="sd">        sender_password: password to login to sender_email</span>
+<span class="sd">        recipient_addresses: list of emails to send message to ex: [client_email@gmail.com]</span>
+<span class="sd">        smtp_server: smtp server address of sender_email ex: smtp.gmail.com</span>
+<span class="sd">        smtp_port: port to send email from, use 465 for SSL</span>
+<span class="sd">        operation: A job ID or a Tamr operation</span>
+<span class="sd">        poll_interval_seconds: Time interval (in seconds) between subsequent polls</span>
+<span class="sd">        timeout_seconds: Time (in seconds) to wait</span>
+<span class="sd">        notify_states : States for which notifications should be sent, use None for all states</span>
+<span class="sd">        use_tls: A boolean value to opt to use TLS protocol</span>
+<span class="sd">        keyfile: the private key to a TLS/SSL certificate, usually PEM format</span>
+<span class="sd">        certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of dicts. Each dict comtains the message and error response codes from the smtp</span>
+<span class="sd">        server. The dictionary will contain one entry for each recipient that was refused.</span>
+<span class="sd">        Each entry contains a tuple of the SMTP error code and the accompanying error</span>
+<span class="sd">        message sent by the server. A successful response will contain an empty dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_responses</span> <span class="o">=</span> <span class="n">monitor_job_common</span><span class="p">(</span>
+        <span class="n">tamr</span><span class="o">=</span><span class="n">tamr</span><span class="p">,</span>
+        <span class="n">send_message</span><span class="o">=</span><span class="n">send_email</span><span class="p">,</span>
+        <span class="n">send_status_function</span><span class="o">=</span><span class="n">_send_job_status_message</span><span class="p">,</span>
+        <span class="n">sender_address</span><span class="o">=</span><span class="n">sender_address</span><span class="p">,</span>
+        <span class="n">sender_password</span><span class="o">=</span><span class="n">sender_password</span><span class="p">,</span>
+        <span class="n">recipient_addresses</span><span class="o">=</span><span class="n">recipient_addresses</span><span class="p">,</span>
+        <span class="n">smtp_server</span><span class="o">=</span><span class="n">smtp_server</span><span class="p">,</span>
+        <span class="n">smtp_port</span><span class="o">=</span><span class="n">smtp_port</span><span class="p">,</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span>
+        <span class="n">poll_interval_seconds</span><span class="o">=</span><span class="n">poll_interval_seconds</span><span class="p">,</span>
+        <span class="n">timeout_seconds</span><span class="o">=</span><span class="n">timeout_seconds</span><span class="p">,</span>
+        <span class="n">notify_states</span><span class="o">=</span><span class="n">notify_states</span><span class="p">,</span>
+        <span class="n">use_tls</span><span class="o">=</span><span class="n">use_tls</span><span class="p">,</span>
+        <span class="n">keyfile</span><span class="o">=</span><span class="n">keyfile</span><span class="p">,</span>
+        <span class="n">certfile</span><span class="o">=</span><span class="n">certfile</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">list_responses</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

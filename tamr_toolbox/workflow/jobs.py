@@ -1,4 +1,5 @@
 """Tasks related to running jobs for groups of Tamr projects"""
+import time
 from typing import List, Optional
 import logging
 
@@ -18,6 +19,7 @@ def run(
     run_apply_feedback: bool = False,
     run_estimate_pair_counts: bool = False,
     run_profile_unified_datasets: bool = False,
+    sleep_interval: int = 0,
 ) -> List[Operation]:
     """Run multiple projects in order
 
@@ -27,6 +29,8 @@ def run(
             or categorization model (based on project type)
         run_estimate_pair_counts: Whether an estimate pairs job should be run
         run_profile_unified_datasets: Whether unified datasets should be re-profiled
+        sleep_interval: Number of seconds to sleep between job submissions.
+            Useful in some pipeline situations
 
     Returns:
         The operations that were run
@@ -83,6 +87,10 @@ def run(
                     profile = project.unified_dataset().profile()
                 LOGGER.info(f"Refreshing profile for {project.unified_dataset().name}")
                 operations.append(profile.refresh())
+
+        # if we need to sleep before the next iteration then do so
+        # default is zero so don't need an if statement
+        time.sleep(sleep_interval)
 
     return operations
 

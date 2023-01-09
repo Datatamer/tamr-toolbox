@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.data_io.csv &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/data_io/csv.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.data_io.csv</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.data_io.csv</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to moving data in or out of Tamr using delimited files&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils</span> <span class="kn">import</span> <span class="n">operation</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.data_io</span> <span class="kn">import</span> <span class="n">common</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="from_dataset"><a class="viewcode-back" href="../../../modules/data_io/csv.html#tamr_toolbox.data_io.csv.from_dataset">[docs]</a><span class="k">def</span> <span class="nf">from_dataset</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">export_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">csv_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">column_name_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flatten_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+    <span class="n">quote_character</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+    <span class="n">quoting</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">,</span>
+    <span class="n">na_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NaN&quot;</span><span class="p">,</span>
+    <span class="n">nrows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">allow_dataset_refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export a Tamr Dataset to a csv file. Records are streamed to disk and written according to a</span>
+<span class="sd">    given buffer size. As a result this is more memory efficient than first reading to a</span>
+<span class="sd">    pandas.DataFrame and writing to CSV.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: Tamr Dataset object</span>
+<span class="sd">        export_file_path: Path to the csv file where the dataset will be saved</span>
+<span class="sd">        csv_delimiter: Delimiter of the csv file</span>
+<span class="sd">        columns: Optional, Ordered list of columns to write. If None, write all columns in</span>
+<span class="sd">            arbitrary order.</span>
+<span class="sd">        column_name_dict: Optional, Dictionary in the format {&lt;Tamr dataset column name&gt; : &lt;new csv</span>
+<span class="sd">            column name&gt;}, used to rename some or all columns in the output file.</span>
+<span class="sd">        flatten_delimiter: Flatten list types to strings by concatenating with this delimiter</span>
+<span class="sd">        quote_character: Character used to escape value for csv delimiter when it appears in the</span>
+<span class="sd">            value.</span>
+<span class="sd">        quoting: The escape strategy to use according to the Python csv writer.</span>
+<span class="sd">            See https://docs.python.org/2/library/csv.html#csv.QUOTE_MINIMAL</span>
+<span class="sd">        na_value: Value to write that represents empty or missing data.</span>
+<span class="sd">            See https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html</span>
+<span class="sd">            for the na_values supported by default in pandas.read_csv</span>
+<span class="sd">        nrows: Optional, Number of rows to write. If None, then write all rows.</span>
+<span class="sd">        allow_dataset_refresh: If True, allows running a job to refresh dataset to make streamable.</span>
+<span class="sd">            Otherwise a RuntimeError will be thrown if the dataset is unstreamable.</span>
+<span class="sd">        buffer_size: Number of records to store in memory before writing to disk</span>
+<span class="sd">        overwrite: if True and export_file_name already exists, overwrite the file.</span>
+<span class="sd">            Otherwise throw an error</span>
+<span class="sd">        encoding: The encoding to use in the written file.</span>
+<span class="sd">            See https://docs.python.org/3/library/functions.html#open</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The total number of records written</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileExistsError: if the csv file to which the dataset is to be streamed exists</span>
+<span class="sd">            and `overwrite` is False</span>
+<span class="sd">        RuntimeError: if `dataset` is not streamable and `allow_dataset_refresh` is False</span>
+<span class="sd">        ValueError: if `columns` or `flatten_columns` contain columns that are not</span>
+<span class="sd">            present in `dataset`, or if column renaming would yield duplicate column names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Streaming records to csv file </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> from dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;(id=</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">export_file_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;CSV file </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> already exists. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(Set &#39;overwrite&#39; flag to True if you wish to overwrite)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CSV file </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> already exists and will be overwritten&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">csv_delimiter</span> <span class="o">==</span> <span class="n">flatten_delimiter</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The CSV delimiter &#39;</span><span class="si">{</span><span class="n">csv_delimiter</span><span class="si">}</span><span class="s2">&#39; cannot be identical to the list &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;flattening delimiter &#39;</span><span class="si">{</span><span class="n">flatten_delimiter</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">attribute_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+
+    <span class="c1"># check that specified columns exist</span>
+    <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">_check_columns_subset</span><span class="p">(</span>
+            <span class="n">input_list</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">reference_list</span><span class="o">=</span><span class="n">attribute_names</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset</span><span class="o">.</span><span class="n">status</span><span class="p">()</span><span class="o">.</span><span class="n">is_streamable</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">allow_dataset_refresh</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Refreshing dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> to make streamable.&quot;</span><span class="p">)</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="n">operation</span><span class="o">.</span><span class="n">enforce_success</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not streamable. Refresh it first, or &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;run with allow_dataset_refresh=True&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">_flatten_list</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">flatten_delimiter</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">full_column_name_dict</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">_get_column_mapping_dict</span><span class="p">(</span>
+        <span class="n">dataset_attribute_names</span><span class="o">=</span><span class="n">attribute_names</span><span class="p">,</span> <span class="n">column_name_dict</span><span class="o">=</span><span class="n">column_name_dict</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Open CSV file and use newline=&#39;&#39; as recommended by</span>
+    <span class="c1"># https://docs.python.org/3/library/csv.html#csv.writer</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">export_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+        <span class="n">csv_writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span>
+            <span class="n">csv_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">csv_delimiter</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="n">quote_character</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="n">quoting</span>
+        <span class="p">)</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Set record number to -1 in case the dataset streamed has no records</span>
+        <span class="n">record_number</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">record_number</span><span class="p">,</span> <span class="n">record</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">_yield_records</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="c1"># Obtain and write the header information only on the first pass</span>
+            <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="n">full_column_name_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+            <span class="c1"># Replace empty values with a specific null value</span>
+            <span class="c1"># This also allows nulls to be treated differently from empty strings</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">na_value</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">record</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">full_column_name_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">]</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+            <span class="n">at_max_buffer</span> <span class="o">=</span> <span class="n">buffer_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">buffer_size</span><span class="p">)</span>
+            <span class="n">at_max_rows</span> <span class="o">=</span> <span class="n">nrows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">record_number</span> <span class="o">&gt;=</span> <span class="n">nrows</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">at_max_buffer</span> <span class="ow">or</span> <span class="n">at_max_rows</span><span class="p">:</span>
+                <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Written dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> up to record </span><span class="si">{</span><span class="n">record_number</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">at_max_rows</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Write anything remaining</span>
+        <span class="c1"># This will occur whenever the buffer is non-zero and the number of records</span>
+        <span class="c1"># is not exactly divisible by the buffer number</span>
+        <span class="c1"># For example, writing a dataset with 1100 records using a buffer size of 500</span>
+        <span class="c1"># will write in 3 chunks: 2 x 500 above and the remaining 100 handled here</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Written dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> up to record </span><span class="si">{</span><span class="n">record_number</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">record_number</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># If record number is -1 then no records were streamed, possibly because the dataset</span>
+            <span class="c1"># has no records. We therefore want to simply save the headers</span>
+            <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">attribute_names</span><span class="p">)</span>
+
+    <span class="n">records_written</span> <span class="o">=</span> <span class="n">record_number</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Wrote </span><span class="si">{</span><span class="n">records_written</span><span class="si">}</span><span class="s2"> from dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (id=</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">) &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;to </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">records_written</span></div>
+
+
+<div class="viewcode-block" id="from_taxonomy"><a class="viewcode-back" href="../../../modules/data_io/csv.html#tamr_toolbox.data_io.csv.from_taxonomy">[docs]</a><span class="k">def</span> <span class="nf">from_taxonomy</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span>
+    <span class="n">export_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">csv_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span>
+    <span class="n">flatten_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+    <span class="n">quote_character</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+    <span class="n">quoting</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export a Tamr taxonomy to a csv file. Records are streamed to disk and written according to a</span>
+<span class="sd">    given buffer size.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Tamr Project object</span>
+<span class="sd">        export_file_path: Path to the csv file where the dataset will be saved</span>
+<span class="sd">        csv_delimiter: Delimiter of the csv file</span>
+<span class="sd">        flatten_delimiter: Flatten list types to strings by concatenating with this delimiter</span>
+<span class="sd">        quote_character: Character used to escape value for csv delimiter when it appears in the</span>
+<span class="sd">            value.</span>
+<span class="sd">        quoting: The escape strategy to use according to the Python csv writer.</span>
+<span class="sd">            See https://docs.python.org/2/library/csv.html#csv.QUOTE_MINIMAL</span>
+<span class="sd">        overwrite: if True and export_file_name already exists, overwrite the file.</span>
+<span class="sd">            Otherwise throw an error</span>
+<span class="sd">        encoding: The encoding to use in the written file.</span>
+<span class="sd">            See https://docs.python.org/3/library/functions.html#open</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The total number of records written</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileExistsError: if `export_file_path` exists and `overwrite` is set to False</span>
+<span class="sd">        IOError: if the specified filepath does not exist or cannot be accessed</span>
+<span class="sd">        RuntimeError: if the classification project is not yet associated with a taxonomy or</span>
+<span class="sd">                      taxonomy cannot be written to a csv file</span>
+<span class="sd">        TypeError: if the project type is not classification</span>
+<span class="sd">        ValueError: if `columns` and `flatten_columns` are identical values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Streaming taxonomy to csv file </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> from project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;(project id=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">).&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">as_categorization</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">not_categorization_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not a classification project.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">not_categorization_error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">not_categorization_error</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">export_file_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;CSV file </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> already exists. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(Set &#39;overwrite&#39; flag to True if you wish to overwrite)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CSV file </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> already exists and will be overwritten&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">csv_delimiter</span> <span class="o">==</span> <span class="n">flatten_delimiter</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The CSV delimiter &#39;</span><span class="si">{</span><span class="n">csv_delimiter</span><span class="si">}</span><span class="s2">&#39; cannot be identical to the list &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;flattening delimiter &#39;</span><span class="si">{</span><span class="n">flatten_delimiter</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">taxonomy</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">as_categorization</span><span class="p">()</span><span class="o">.</span><span class="n">taxonomy</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+        <span class="n">no_taxonomy_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not associated with any taxonomy yet.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">no_taxonomy_error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">no_taxonomy_error</span><span class="p">)</span>
+
+    <span class="c1"># obtain categories and store in a list</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">taxonomy</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
+    <span class="n">taxonomy_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+        <span class="n">taxonomy_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># sort the categories</span>
+    <span class="n">taxonomy_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="c1"># Open CSV file and use newline=&#39;&#39; as recommended by</span>
+    <span class="c1"># https://docs.python.org/3/library/csv.html#csv.writer</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">export_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">):</span>
+        <span class="n">cannot_open_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;File path </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2"> could not be opened for writing.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">cannot_open_error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">cannot_open_error</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">csv_writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">csv_delimiter</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="n">quote_character</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="n">quoting</span>
+            <span class="p">)</span>
+            <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">taxonomy_list</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">csv</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">general_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Encountered an error while writing taxonomy categories to &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">general_error</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">general_error</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">records_written</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">taxonomy_list</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Wrote </span><span class="si">{</span><span class="n">records_written</span><span class="si">}</span><span class="s2"> categories from </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> taxonomy (project id&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;=</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">) to </span><span class="si">{</span><span class="n">export_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">records_written</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

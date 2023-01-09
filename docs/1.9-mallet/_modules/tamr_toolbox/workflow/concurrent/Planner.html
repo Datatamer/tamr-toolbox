@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.workflow.concurrent.Planner &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/workflow/concurrent/Planner.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9.0 - Mallet
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.workflow.concurrent.Planner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.workflow.concurrent.Planner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataclasses_json</span> <span class="kn">import</span> <span class="n">dataclass_json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.workflow.concurrent.Graph</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Graph</span><span class="p">,</span>
+    <span class="n">get_projects_by_tier</span><span class="p">,</span>
+    <span class="n">get_all_downstream_nodes</span><span class="p">,</span>
+    <span class="n">get_successors</span><span class="p">,</span>
+    <span class="n">get_predecessors</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.workflow.concurrent</span> <span class="kn">import</span> <span class="n">PlanNodeStatus</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.workflow.concurrent.PlanStatus</span> <span class="kn">import</span> <span class="n">PlanStatus</span><span class="p">,</span> <span class="n">from_planner</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.workflow.concurrent.PlanNode</span> <span class="kn">import</span> <span class="n">PlanNode</span><span class="p">,</span> <span class="n">run_next_step</span><span class="p">,</span> <span class="n">monitor</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Planner"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.Planner">[docs]</a><span class="nd">@dataclass_json</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Planner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dataclass to hold the plan, the starting tier, and the mode of execution.</span>
+<span class="sd">    The plan is a json dict where each key is a project name and the value is a PlanNode object</span>
+
+<span class="sd">    The starting tier is the tier at which to start execution. All jobs at lower tiers are</span>
+<span class="sd">     marked as skippable.</span>
+
+<span class="sd">    The graph is the graph that contains the backing project dependencies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">plan</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PlanNode</span><span class="p">]</span>
+    <span class="n">starting_tier</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span></div>
+
+
+<div class="viewcode-block" id="from_graph"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.from_graph">[docs]</a><span class="k">def</span> <span class="nf">from_graph</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tamr_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">starting_tier</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Planner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a Planner class from a Graph. The plan object is a json dict specifying how</span>
+<span class="sd">    the plan can be executed and its status.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph: the dataset dependency graph to use to create the planner</span>
+<span class="sd">        tamr_client: the tamr client object associated with the instance for which</span>
+<span class="sd">            to create the plan</span>
+<span class="sd">        starting_tier: the tier at which to start executing the plan, every job at lower</span>
+<span class="sd">            tiers is skipped and marked as skippable</span>
+<span class="sd">        train: global config for whether or not to &#39;apply feedback&#39;/train the model in</span>
+<span class="sd">            the workflows</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Planner instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># graphs don&#39;t store tamr project objects themselves just the names so need to build lookup</span>
+    <span class="n">tamr_projects</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tamr_client</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">stream</span><span class="p">()}</span>
+
+    <span class="c1"># start with the project tier dict from the graph</span>
+    <span class="n">tier_graph</span> <span class="o">=</span> <span class="n">get_projects_by_tier</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+    <span class="c1"># start building the plan</span>
+    <span class="n">plan</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">tier</span><span class="p">,</span> <span class="n">project_list</span> <span class="ow">in</span> <span class="n">tier_graph</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">project_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">project_list</span><span class="p">):</span>
+            <span class="c1"># mark things as skippable if the tier is less than the starting tier</span>
+            <span class="k">if</span> <span class="n">tier</span> <span class="o">&lt;</span> <span class="n">starting_tier</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SKIPPABLE</span>
+            <span class="k">elif</span> <span class="n">tier</span> <span class="o">==</span> <span class="n">starting_tier</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">RUNNABLE</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PLANNED</span>
+            <span class="n">plan</span><span class="p">[</span><span class="n">project_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlanNode</span><span class="p">(</span>
+                <span class="n">priority</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">tier</span><span class="p">)</span> <span class="o">+</span> <span class="n">num</span><span class="p">,</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span>
+                <span class="n">current_op</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">operations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">project</span><span class="o">=</span><span class="n">tamr_projects</span><span class="p">[</span><span class="n">project_name</span><span class="p">],</span>
+                <span class="n">train</span><span class="o">=</span><span class="n">train</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Planner</span><span class="p">(</span><span class="n">plan</span><span class="o">=</span><span class="n">plan</span><span class="p">,</span> <span class="n">starting_tier</span><span class="o">=</span><span class="n">starting_tier</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_plan"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.update_plan">[docs]</a><span class="k">def</span> <span class="nf">update_plan</span><span class="p">(</span><span class="n">planner</span><span class="p">:</span> <span class="n">Planner</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">plan_node</span><span class="p">:</span> <span class="n">PlanNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Planner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an new planner object with updated status from an updated PlanNode object</span>
+<span class="sd">    Args:</span>
+<span class="sd">        planner: the original planner</span>
+<span class="sd">        plan_node: an updated set of plan nodes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a copy of the original planner object with an updated status</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first update the planner to have the new node contents</span>
+    <span class="n">original_plan</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span>
+    <span class="n">updated_plan</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">original_plan</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Updating plan with changed project status: </span><span class="si">{</span><span class="n">plan_node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;status changed to </span><span class="si">{</span><span class="n">plan_node</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">plan_node_name</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">updated_plan</span><span class="p">[</span><span class="n">plan_node_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plan_node</span>
+
+    <span class="c1"># now get the status of the updated node</span>
+    <span class="n">node_status</span> <span class="o">=</span> <span class="n">plan_node</span><span class="o">.</span><span class="n">status</span>
+    <span class="c1"># now find downstream affects</span>
+    <span class="n">downstream_nodes</span> <span class="o">=</span> <span class="n">get_all_downstream_nodes</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">plan_node_name</span><span class="p">)</span>
+    <span class="c1"># if status == failed then easy to update them all to blocked</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">node_status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">FAILED</span>
+        <span class="ow">or</span> <span class="n">node_status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">CANCELED</span>
+    <span class="p">):</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">downstream_nodes</span><span class="p">:</span>
+            <span class="n">updated_plan</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">BLOCKED</span>
+    <span class="c1"># else if update is skippable or successful</span>
+    <span class="c1"># then need to see if we can mark successor nodes as runnable</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="n">node_status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SUCCEEDED</span>
+        <span class="ow">or</span> <span class="n">node_status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SKIPPABLE</span>
+    <span class="p">):</span>
+        <span class="c1"># first get immediate downstream nodes</span>
+        <span class="n">successor_nodes</span> <span class="o">=</span> <span class="n">get_successors</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">plan_node_name</span><span class="p">)</span>
+        <span class="c1"># for each of these get the predecessors and if all predecessors are now</span>
+        <span class="c1"># succeeded/skippable mark as runnable</span>
+        <span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">successor_nodes</span><span class="p">:</span>
+            <span class="n">predecessor_nodes</span> <span class="o">=</span> <span class="n">get_predecessors</span><span class="p">(</span><span class="n">planner</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">successor</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="n">updated_plan</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SUCCEEDED</span>
+                <span class="ow">or</span> <span class="n">updated_plan</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">SKIPPABLE</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">predecessor_nodes</span>
+            <span class="p">):</span>
+                <span class="n">updated_plan</span><span class="p">[</span><span class="n">successor</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">RUNNABLE</span>
+
+    <span class="c1"># no other status should change things</span>
+    <span class="c1"># so do nothing else</span>
+
+    <span class="k">return</span> <span class="n">Planner</span><span class="p">(</span><span class="n">plan</span><span class="o">=</span><span class="n">updated_plan</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">planner</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">starting_tier</span><span class="o">=</span><span class="n">planner</span><span class="o">.</span><span class="n">starting_tier</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_json"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.to_json">[docs]</a><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">planner</span><span class="p">:</span> <span class="n">Planner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert planner to a json dict</span>
+<span class="sd">    Args:</span>
+<span class="sd">        planner: the planner to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        representation of a planner in json format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">priority</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="execute"><a class="viewcode-back" href="../../../../modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.execute">[docs]</a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span>
+    <span class="n">planner</span><span class="p">:</span> <span class="n">Planner</span><span class="p">,</span>
+    <span class="n">tamr</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">concurrency_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">save_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">polling_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Planner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes the plan</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        planner: The planner object whose plan will be executed</span>
+<span class="sd">        tamr: the tamr client to use</span>
+<span class="sd">        concurrency_level: the number of concurrent jobs to run at once</span>
+<span class="sd">        save_state: whether or not to save the plan state to json after each update</span>
+<span class="sd">        polling_interval: the amount of time in seconds to wait between polling</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the planner object after execution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the plan and sort by priority</span>
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span>
+    <span class="n">sorted_jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">priority</span><span class="p">)]</span>
+    <span class="c1"># assume you could be given a partially executed plan</span>
+    <span class="c1"># so create runnable, pending, and running queues</span>
+    <span class="n">runnable_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sorted_jobs</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">RUNNABLE</span><span class="p">]</span>
+    <span class="n">running_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sorted_jobs</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">]</span>
+    <span class="n">pending_nodes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sorted_jobs</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PlanNodeStatus</span><span class="o">.</span><span class="n">PENDING_NEXT_STEP</span>
+    <span class="p">]</span>
+
+    <span class="c1"># check status and run if runnable or planned</span>
+    <span class="n">plan_status</span> <span class="o">=</span> <span class="n">from_planner</span><span class="p">(</span><span class="n">planner</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plan_status</span> <span class="o">==</span> <span class="n">PlanStatus</span><span class="o">.</span><span class="n">PLANNED</span> <span class="ow">or</span> <span class="n">plan_status</span> <span class="o">==</span> <span class="n">PlanStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;projects with currently running jobs: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">running_nodes</span><span class="p">])</span> <span class="ow">or</span> <span class="s1">&#39;None&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="c1"># make sure there are fewer jobs running than concurrency specified</span>
+        <span class="n">num_to_submit</span> <span class="o">=</span> <span class="n">concurrency_level</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">running_nodes</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Have room in queue for </span><span class="si">{</span><span class="n">num_to_submit</span><span class="si">}</span><span class="s2"> jobs:&quot;</span><span class="p">)</span>
+
+        <span class="c1"># slice runnable jobs to get the ones to submit</span>
+        <span class="c1"># this line is for type hinting</span>
+        <span class="n">nodes_to_submit</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PlanNode</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># all pending nodes need their next step to be triggered so there is only room</span>
+        <span class="c1"># in the queue for new nodes depending on how many pending nodes there are</span>
+        <span class="n">num_to_add</span> <span class="o">=</span> <span class="n">num_to_submit</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">pending_nodes</span><span class="p">)</span>
+        <span class="n">nodes_to_submit</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pending_nodes</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">num_to_add</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">nodes_to_submit</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">runnable_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_to_add</span><span class="p">]])</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;submitting jobs for projects: [</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes_to_submit</span><span class="p">)</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="c1"># create the list of nodes to monitor</span>
+        <span class="c1"># note that this returns a list of plan nodes AND triggers the job</span>
+        <span class="n">nodes_to_monitor</span> <span class="o">=</span> <span class="p">[</span><span class="n">run_next_step</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes_to_submit</span><span class="p">]</span>
+        <span class="c1"># extend jobs_to_monitor to include running jobs</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Adding currently running projects to queue: </span><span class="si">{</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">running_nodes</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">nodes_to_monitor</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">PlanNode</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">status</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                    <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">current_op</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">current_op</span><span class="p">,</span>
+                    <span class="n">project</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+                    <span class="n">operations</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">operations</span><span class="p">,</span>
+                    <span class="n">steps_to_run</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">steps_to_run</span><span class="p">,</span>
+                    <span class="n">current_step</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">current_step</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">running_nodes</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># now monitor the nodes</span>
+        <span class="c1"># this function returns when there is any change in state</span>
+        <span class="n">nodes_to_monitor</span> <span class="o">=</span> <span class="n">monitor</span><span class="p">(</span><span class="n">nodes_to_monitor</span><span class="p">,</span> <span class="n">polling_interval</span><span class="o">=</span><span class="n">polling_interval</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got updated set of jobs: </span><span class="si">{</span><span class="n">nodes_to_monitor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># now update the plan - only monitored jobs should have a change in status</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes_to_monitor</span><span class="p">:</span>
+            <span class="n">planner</span> <span class="o">=</span> <span class="n">update_plan</span><span class="p">(</span><span class="n">planner</span><span class="p">,</span> <span class="n">plan_node</span><span class="o">=</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;after recent update plan status is </span><span class="si">{</span><span class="n">from_planner</span><span class="p">(</span><span class="n">planner</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># if save state then save a copy of the plan:</span>
+        <span class="k">if</span> <span class="n">save_state</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;current Planner state: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">to_json</span><span class="p">(</span><span class="n">planner</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># planner is updated so now try to execute it again</span>
+        <span class="n">planner</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span>
+            <span class="n">planner</span><span class="p">,</span>
+            <span class="n">tamr</span><span class="o">=</span><span class="n">tamr</span><span class="p">,</span>
+            <span class="n">concurrency_level</span><span class="o">=</span><span class="n">concurrency_level</span><span class="p">,</span>
+            <span class="n">save_state</span><span class="o">=</span><span class="n">save_state</span><span class="p">,</span>
+            <span class="n">polling_interval</span><span class="o">=</span><span class="n">polling_interval</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">planner</span>
+
+    <span class="c1"># if planner isn&#39;t runnable then exit</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plan status is </span><span class="si">{</span><span class="n">plan_status</span><span class="si">}</span><span class="s2"> so returning&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">planner</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
