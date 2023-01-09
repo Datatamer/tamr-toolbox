@@ -1,7 +1,7 @@
 """
 Helper functions related to creating & managing custom UI buttons as yaml files.
 
-Due to how Tamr custom buttons are configured, these functions will 
+Due to how Tamr custom buttons are configured, these functions will
 need to be run on the actual server on which Tamr is installed to work as expected.
 
 Important: Custom buttons are only available to versions 2022.008.0 and later
