@@ -1,6 +1,9 @@
 """
 Helper functions related to creating & managing custom UI buttons as yaml files.
 
+Due to how Tamr custom buttons are configured, these functions will 
+need to be run on the actual server on which Tamr is installed to work as expected.
+
 Important: Custom buttons are only available to versions 2022.008.0 and later
 """
 import logging
@@ -103,7 +106,8 @@ def create_redirect_button(
     button_name: str,
 ) -> str:
     """Create yaml file with all required attributes for
-    a 'REDIRECT' UI button.
+    a 'REDIRECT' UI button. Yaml file is saved locally.
+
     Button features are only available to versions 2022.008.0 and later.
 
     Args:
@@ -178,7 +182,8 @@ def create_post_button(
 ) -> str:
     """
     Create yaml file with all required attributes for
-    a 'POST' UI button.
+    a 'POST' UI button. Yaml file is saved locally.
+
     Button features are only available to versions 2022.008.0 and later.
 
     Args:
@@ -246,6 +251,7 @@ def create_post_button(
 def create_button_extension(*, extension_name: str, buttons: List[str], output_dir: str) -> str:
     """
     Given a list of button yaml files, save it as a grouped extension yaml file.
+    Yaml file is saved locally.
     Button features are only available to versions 2022.008.0 and later.
 
     Args:
@@ -283,7 +289,9 @@ def create_button_extension_from_list(
     *, extension_name: str, output_dir: str, buttons: List[dict]
 ) -> str:
     """
-    Given a list of button dictionaries, save it as a grouped extension yaml file
+    Given a list of button dictionaries, save it as a grouped extension yaml file.
+    Yaml file is saved locally.
+
     Button features are only available to versions 2022.008.0 and later.
 
     Args:
@@ -379,6 +387,9 @@ def register_buttons(
     """
     Registers a list of button(s) in a Tamr instance.
     Requires Tamr restart to display buttons in UI.
+
+    Important: If NOT running this function using a remote client, this function must
+               be run on the server on which Tamr is installed.
 
     Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.
     If an impersonation_username is provided, the command is run as the provided user.
