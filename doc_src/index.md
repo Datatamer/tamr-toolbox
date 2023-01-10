@@ -52,6 +52,14 @@ workflow.jobs.run(my_projects)
 
 ```
 
+## Permissions
+
+Tamr Toolbox functions require appropriate user permissions. A list of user roles and permissions is avaliable on 
+the [Tamr Core documentation](https://docs.tamr.com/new/docs/permissions-matrix-by-user-role) page. 
+
+Because Tamr Toolbox is aimed at advanced functionality not available through the UI, it is recommended to authenticate 
+your client using a user with `admin` permissions.
+
 ## Reference
   * [Installation](installation.md)
   
