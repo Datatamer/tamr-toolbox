@@ -1,8 +1,13 @@
 """Tests for tasks related to schema mapping as part of Tamr projects"""
-import pytest
+import logging
+from json import JSONDecodeError
+from unittest.mock import patch
 
-from tamr_toolbox.project.mastering import schema
+import pytest
+from tamr_unify_client.project.attribute_mapping.collection import AttributeMappingCollection
+
 from tamr_toolbox import utils
+from tamr_toolbox.project.mastering import schema
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
 
@@ -47,6 +52,30 @@ def test_empty_variables_raises_runtime():
             source_dataset_name="",
             unified_attribute_name="",
         )
+
+
+@mock_api()
+def test_not_found_errors():
+
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    test_project = client.projects.by_name("minimal_schema_mapping")
+
+    with pytest.raises(ValueError, match='Dataset nonexistent_dataset.csv not found'):
+        schema.map_attribute(
+            test_project,
+            source_attribute_name='test_attribute',
+            source_dataset_name="nonexistent_dataset.csv",
+            unified_attribute_name="test_unified_attribute",
+        )
+
+    with pytest.raises(ValueError, match='Attribute nonexistent_attribute not found in'):
+        schema.map_attribute(
+            test_project,
+            source_attribute_name='nonexistent_attribute',
+            source_dataset_name="people_tiny.csv",
+            unified_attribute_name="all_names",
+        )
+    return
 
 
 @mock_api()
@@ -96,6 +125,27 @@ def test_map_and_unmap_attribute():
     final_mappings = [x.spec().to_dict() for x in test_project.attribute_mappings().stream()]
 
     assert mapping.spec().to_dict() not in final_mappings
+
+
+@mock_api(enforce_online_test=True)
+def test_unmap_nonexistent_attribute(caplog):
+
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    test_project = client.projects.by_name("minimal_schema_mapping")
+
+    src, dataset, unif = "first_name", "people_tiny.csv", "nonexistent_attribute"
+
+    with caplog.at_level(logging.WARNING):
+        schema.unmap_attribute(
+            test_project,
+            source_attribute_name=src,
+            source_dataset_name=dataset,
+            unified_attribute_name=unif,
+        )
+
+        message = f"Mapping of {src} in dataset {dataset} to unified attribute {unif} not found!"
+        assert message in caplog.text
+    return
 
 
 @mock_api()
@@ -190,3 +240,38 @@ def test_unmapping_dataset_and_remove():
 
     # assert that the dataset is no longer in the project
     assert source_dataset.name not in [x.name for x in project.input_datasets()]
+
+
+@mock_api()
+def test_unmap_unrelated_dataset(caplog):
+
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    source_dataset = client.datasets.by_name("groceries_tiny.csv")
+    project = client.projects.by_name("minimal_schema_mapping")
+
+    with caplog.at_level(logging.WARNING):
+        schema.unmap_dataset(project, source_dataset=source_dataset, skip_if_missing=True)
+        assert "However skip_if_missing flag is set so will do nothing" in caplog.text
+
+    with pytest.raises(RuntimeError, match='and skip_if_missing not set to True so failing!'):
+        schema.unmap_dataset(project, source_dataset=source_dataset)
+
+    return
+
+
+
+@mock_api()
+@patch.object(AttributeMappingCollection, 'stream', new=lambda cls: [])
+def test_uncaught_jsonencode_error():
+
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    test_project = client.projects.by_name("minimal_schema_mapping")
+
+    with pytest.raises(JSONDecodeError):
+        schema.map_attribute(
+            test_project,
+            source_attribute_name='first_name',
+            source_dataset_name="people_tiny.csv",
+            unified_attribute_name="first_name",
+        )
+    return
