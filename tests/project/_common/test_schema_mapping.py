@@ -127,7 +127,7 @@ def test_map_and_unmap_attribute():
     assert mapping.spec().to_dict() not in final_mappings
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_unmap_nonexistent_attribute(caplog):
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
