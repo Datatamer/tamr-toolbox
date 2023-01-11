@@ -60,18 +60,18 @@ def test_not_found_errors():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     test_project = client.projects.by_name("minimal_schema_mapping")
 
-    with pytest.raises(ValueError, match='Dataset nonexistent_dataset.csv not found'):
+    with pytest.raises(ValueError, match="Dataset nonexistent_dataset.csv not found"):
         schema.map_attribute(
             test_project,
-            source_attribute_name='test_attribute',
+            source_attribute_name="test_attribute",
             source_dataset_name="nonexistent_dataset.csv",
             unified_attribute_name="test_unified_attribute",
         )
 
-    with pytest.raises(ValueError, match='Attribute nonexistent_attribute not found in'):
+    with pytest.raises(ValueError, match="Attribute nonexistent_attribute not found in"):
         schema.map_attribute(
             test_project,
-            source_attribute_name='nonexistent_attribute',
+            source_attribute_name="nonexistent_attribute",
             source_dataset_name="people_tiny.csv",
             unified_attribute_name="all_names",
         )
@@ -253,15 +253,14 @@ def test_unmap_unrelated_dataset(caplog):
         schema.unmap_dataset(project, source_dataset=source_dataset, skip_if_missing=True)
         assert "However skip_if_missing flag is set so will do nothing" in caplog.text
 
-    with pytest.raises(RuntimeError, match='and skip_if_missing not set to True so failing!'):
+    with pytest.raises(RuntimeError, match="and skip_if_missing not set to True so failing!"):
         schema.unmap_dataset(project, source_dataset=source_dataset)
 
     return
 
 
-
 @mock_api()
-@patch.object(AttributeMappingCollection, 'stream', new=lambda cls: [])
+@patch.object(AttributeMappingCollection, "stream", new=lambda cls: [])
 def test_uncaught_jsonencode_error():
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
@@ -270,7 +269,7 @@ def test_uncaught_jsonencode_error():
     with pytest.raises(JSONDecodeError):
         schema.map_attribute(
             test_project,
-            source_attribute_name='first_name',
+            source_attribute_name="first_name",
             source_dataset_name="people_tiny.csv",
             unified_attribute_name="first_name",
         )
