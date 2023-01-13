@@ -13,7 +13,7 @@ import os
 
 from tamr_unify_client import Client
 from tamr_toolbox.sysadmin.instance import _run_command
-from tamr_toolbox.utils.version import is_version_condition_met, current
+from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,10 +58,7 @@ def _check_valid_page_name(*, pagename: str):
         "Schema Mapping:Unified Dataset",
     ]
 
-    if pagename not in valid_pagenames:
-        return False
-    else:
-        return True
+    return pagename in valid_pagenames
 
 
 def _check_valid_abs_path(dir: str):
@@ -135,7 +132,7 @@ def create_redirect_button(
 
     # Page name validation
     invalid_pages = [p for p in page_names if not _check_valid_page_name(pagename=p)]
-    if len(invalid_pages) > 0:
+    if invalid_pages:
         value_error_message = (
             f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
         )
@@ -214,7 +211,7 @@ def create_post_button(
 
     # Page name validation
     invalid_pages = [p for p in page_names if not _check_valid_page_name(pagename=p)]
-    if len(invalid_pages) > 0:
+    if invalid_pages:
         value_error_message = (
             f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
         )
@@ -346,17 +343,17 @@ def create_button_extension_from_list(
             p for p in button_dict["pageNames"] if not _check_valid_page_name(pagename=p)
         ]
 
-    if len(invalid_urls) > 0 and len(invalid_pages) > 0:
+    if invalid_urls and invalid_pages:
         value_error_message = f"Invalid url and pagenames. \
             url(s) {invalid_urls} must begin with http:// or https:// \
             invalid page name(s): {invalid_pages}"
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
-    elif len(invalid_urls) > 0 and len(invalid_pages) == 0:
+    elif invalid_urls and not invalid_pages:
         value_error_message = f"Invalid url(s) {invalid_urls}. Must begin with http:// or https://"
         LOGGER.error(value_error_message)
         raise ValueError(value_error_message)
-    elif len(invalid_urls) == 0 and len(invalid_pages) > 0:
+    elif not invalid_urls and invalid_pages:
         value_error_message = (
             f"Invalid pagename(s): {invalid_pages}. See docs for allowed Tamr button page names"
         )
@@ -375,6 +372,7 @@ def create_button_extension_from_list(
     return filepath
 
 
+@requires_tamr_version(min_version=TAMR_RELEASE_VERSION)
 def register_buttons(
     *,
     tamr_client: Client,
@@ -411,14 +409,6 @@ def register_buttons(
 
     Returns:
     """
-    # Tamr version check
-    minimum_tamr_version = TAMR_RELEASE_VERSION
-    tamr_version = current(tamr_client)
-
-    is_version_condition_met(
-        tamr_version=tamr_version, min_version=minimum_tamr_version, raise_error=True
-    )
-
     if isinstance(buttons, str):
         buttons = [buttons]
 
@@ -463,13 +453,13 @@ def delete_buttons(*, button_files: Union[str, List[str]], tamr_install_dir: str
 
     # Check all files exist
     missing_files = [f for f in button_files if not os.path.exists(f)]
-    if len(missing_files) > 0:
+    if missing_files:
         warning_message = f"File(s) {missing_files} not found"
         LOGGER.warning(warning_message)
 
     # Work with present files only
     present_files = [x for x in button_files if x not in set(missing_files)]
-    if len(present_files) == 0:
+    if not present_files:
         error_message = "None of provided files found."
         raise FileNotFoundError(error_message)
 
