@@ -63,7 +63,9 @@ def crawl_through_doc_src(
     target_paths: List[str], extensions: List[str] = [".md", ".rst"]
 ) -> List[str]:
     """
-    Crawls through doc_src folder and reads all files of extensions specified, checking if paths included
+    Crawls through doc_src folder and reads all files with specified extensions and
+    checks if target_paths are present, returning a list of file paths that are
+    missing.
 
     Args:
         target_paths: list of paths to check if present
