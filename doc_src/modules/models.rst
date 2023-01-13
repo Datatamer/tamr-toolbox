@@ -5,6 +5,10 @@ Operation State
 ------------------------
 .. automodule:: tamr_toolbox.models.operation_state
 
+Data Type
+------------------------
+.. automodule:: tamr_toolbox.models.data_type
+
 Project Type
 ------------------------
 .. automodule:: tamr_toolbox.models.project_type

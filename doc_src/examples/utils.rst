@@ -89,3 +89,11 @@ How to get a list of datasets and projects downstream from a specified dataset
   :language: yaml
 .. literalinclude:: ../../examples/scripts/utils/downstream/cleanup_downstream_resources.py
   :language: python
+
+
+Manual Auth
+----------------------------------------------------------------------------------
+How to manually pass credentials when creating a tamr client object during runtime
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/utils/client/manual_auth.py
+  :language: python
