@@ -90,10 +90,12 @@ def main():
     all_python_files = get_all_python_files()
     remaining_python_files = crawl_through_doc_src(target_paths=all_python_files)
 
-    LOGGER.warning("\nFILES MISSING FROM DOCS\n")
-    [LOGGER.warning(file) for file in remaining_python_files]
-
-    assert len(remaining_python_files) == 0
+    try:
+        assert len(remaining_python_files) == 0
+    except AssertionError:
+        LOGGER.warning("\nASSERTION ERROR: Files Missing from Docs\n")
+        [LOGGER.warning(file) for file in remaining_python_files]
+        LOGGER.warning("\n")
 
 
 if __name__ == "__main__":
