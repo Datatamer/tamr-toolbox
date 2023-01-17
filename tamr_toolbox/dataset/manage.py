@@ -485,6 +485,30 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None) -> 
     return dataset
 
 
+def update_records(dataset, updates=None, delete_all=True, *, primary_keys, primary_key_name):
+    if delete_all:
+        updates = ["delete"] * primary_keys
+    else:
+        if updates is None or len(primary_keys) != len(updates):
+            raise ValueError(f"Arguments updates and primary_keys must exist and have equal length")
+    
+    deletions = [primary_keys[i] for i in range(len(primary_keys)) if updates[i] == "delete"]
+    if deletions:
+        dataset.delete_records_by_id(deletions)
+    
+    records = [primary_keys[i] for i in range(len(primary_keys)) if updates[i] != "delete"]
+    for i in range(len(records)):
+        if primary_key_name not in records[i]:
+            records[i][primary_key_name] = primary_keys[i]
+        for k in records[i]:
+            if k not in dataset.attributes:
+                raise KeyError(f"Key {k} is not an attribute of input dataset")
+    
+    dataset.upsert_records(records, primary_key_name)
+
+    return dataset
+
+
 def _make_spec_dict(
     attribute_name: str,
     attribute_types: Dict[str, attribute_type.AttributeType],
