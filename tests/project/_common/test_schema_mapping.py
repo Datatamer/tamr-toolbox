@@ -127,24 +127,26 @@ def test_map_and_unmap_attribute():
     assert mapping.spec().to_dict() not in final_mappings
 
 
-@mock_api()
-def test_unmap_nonexistent_attribute(caplog):
+@mock_api(enforce_online_test=True)
+def test_unmap_nonexistent_attribute():
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     test_project = client.projects.by_name("minimal_schema_mapping")
 
     src, dataset, unif = "first_name", "people_tiny.csv", "nonexistent_attribute"
 
-    with caplog.at_level(logging.WARNING):
+    with patch.object(
+        logging.getLogger("tamr_toolbox.project._common.schema"), "warning"
+    ) as mock_warning_logger:
         schema.unmap_attribute(
             test_project,
             source_attribute_name=src,
             source_dataset_name=dataset,
             unified_attribute_name=unif,
         )
-
         message = f"Mapping of {src} in dataset {dataset} to unified attribute {unif} not found!"
-        assert message in caplog.text
+        mock_warning_logger.assert_called_once_with(message)
+
     return
 
 
@@ -243,15 +245,21 @@ def test_unmapping_dataset_and_remove():
 
 
 @mock_api()
-def test_unmap_unrelated_dataset(caplog):
+def test_unmap_unrelated_dataset():
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     source_dataset = client.datasets.by_name("groceries_tiny.csv")
     project = client.projects.by_name("minimal_schema_mapping")
 
-    with caplog.at_level(logging.WARNING):
+    with patch.object(
+        logging.getLogger("tamr_toolbox.project._common.schema"), "warning"
+    ) as mock_warning_logger:
         schema.unmap_dataset(project, source_dataset=source_dataset, skip_if_missing=True)
-        assert "However skip_if_missing flag is set so will do nothing" in caplog.text
+        message = (
+            f"Dataset to unmap groceries_tiny.csv not in project minimal_schema_mapping! "
+            f"However skip_if_missing flag is set so will do nothing"
+        )
+        mock_warning_logger.assert_called_once_with(message)
 
     with pytest.raises(RuntimeError, match="and skip_if_missing not set to True so failing!"):
         schema.unmap_dataset(project, source_dataset=source_dataset)
