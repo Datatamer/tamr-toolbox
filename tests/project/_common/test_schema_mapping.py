@@ -127,7 +127,7 @@ def test_map_and_unmap_attribute():
     assert mapping.spec().to_dict() not in final_mappings
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_unmap_nonexistent_attribute():
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
@@ -268,17 +268,17 @@ def test_unmap_unrelated_dataset():
 
 
 @mock_api()
-@patch.object(AttributeMappingCollection, "stream", new=lambda cls: [])
 def test_uncaught_jsonencode_error():
 
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     test_project = client.projects.by_name("minimal_schema_mapping")
 
-    with pytest.raises(JSONDecodeError):
-        schema.map_attribute(
-            test_project,
-            source_attribute_name="first_name",
-            source_dataset_name="people_tiny.csv",
-            unified_attribute_name="first_name",
-        )
+    with patch.object(AttributeMappingCollection, "stream", new=lambda cls: []):
+        with pytest.raises(JSONDecodeError):
+            schema.map_attribute(
+                test_project,
+                source_attribute_name="first_name",
+                source_dataset_name="people_tiny.csv",
+                unified_attribute_name="first_name",
+            )
     return
