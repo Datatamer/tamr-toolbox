@@ -492,19 +492,24 @@ def update_records(dataset, updates=None, delete_all=True, *, primary_keys, prim
         if updates is None or len(primary_keys) != len(updates):
             raise ValueError(f"Arguments updates and primary_keys must exist and have equal length")
     
-    deletions = [primary_keys[i] for i in range(len(primary_keys)) if updates[i] == "delete"]
+    deletions = []
+    records = []
+    for i in range(len(updates)):
+        if updates[i] == "delete":
+            deletions.append(primary_keys[i])
+        else:
+            if primary_key_name not in updates[i]:
+                updates[i][primary_key_name] = primary_keys[i]
+            for k in updates[i]:
+                if k not in dataset.attributes:
+                    raise KeyError(f"Key {k} is not an attribute of input dataset")
+            records.append(updates[i])
+
     if deletions:
         dataset.delete_records_by_id(deletions)
     
-    records = [primary_keys[i] for i in range(len(primary_keys)) if updates[i] != "delete"]
-    for i in range(len(records)):
-        if primary_key_name not in records[i]:
-            records[i][primary_key_name] = primary_keys[i]
-        for k in records[i]:
-            if k not in dataset.attributes:
-                raise KeyError(f"Key {k} is not an attribute of input dataset")
-    
-    dataset.upsert_records(records, primary_key_name)
+    if records:
+        dataset.upsert_records(records, primary_key_name)
 
     return dataset
 
