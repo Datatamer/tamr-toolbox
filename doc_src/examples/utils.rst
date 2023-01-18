@@ -97,3 +97,14 @@ How to manually pass credentials when creating a tamr client object during runti
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude:: ../../examples/snippets/utils/client/manual_auth.py
   :language: python
+
+
+Custom UI Buttons
+-------------------------------------------------------
+How to create and register custom UI button yaml files.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**IMPORTANT:** Custom buttons are only available in v2022.008 and later.
+
+.. literalinclude:: ../../examples/scripts/utils/custom_button/create_custom_buttons.py
+  :language: python

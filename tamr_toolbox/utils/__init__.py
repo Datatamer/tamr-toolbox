@@ -7,6 +7,7 @@ from . import operation
 from . import testing
 from . import upstream
 from . import version
+from . import custom_button
 
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "testing",
     "upstream",
     "version",
+    "custom_button",
 ]

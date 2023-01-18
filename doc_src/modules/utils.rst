@@ -9,6 +9,10 @@ Configuration
 ------------------------
 .. automodule:: tamr_toolbox.utils.config
 
+Custom Button
+------------------------
+.. automodule:: tamr_toolbox.utils.custom_button
+
 Logging
 ------------------------
 .. automodule:: tamr_toolbox.utils.logger
