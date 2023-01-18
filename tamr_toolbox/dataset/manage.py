@@ -486,6 +486,29 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None) -> 
 
 
 def update_records(dataset: Dataset, updates: Optional[list] = None, delete_all: bool = False, *, primary_keys: List[str], primary_key_name: str):
+    """Flexibly update the records of a dataset. The user supplies a list of primary keys for a
+    subset of the datasets records, along with a list of updates describing how each record should
+    be altered. An update should either be the string "delete" or a dictionary in
+    "attribute: value" format. In the first case, the record having the corresponding primary key
+    is deleted, and in the second case, the data in the dictionary is upserted to the record having
+    the corresponding primary key. If no such record exists, a new record is created.
+    Alternatively, the user can set a flag to specify that all records indicated by the list of
+    primary keys should be deleted.
+
+    Args:
+        dataset: An existing TUC dataset
+        updates: List of updates to push to the dataset
+        delete_all: Whether all indicated records should be deleted
+        primary_keys: List of primary key values for all target records
+        primary_key_name: Name of the primary key of the target dataset
+
+    Returns:
+        Updated dataset
+
+    Raises:
+        KeyError: If an indicated attribute does not exist
+    """
+    
     if delete_all:
         updates = ["delete"] * primary_keys
     else:
