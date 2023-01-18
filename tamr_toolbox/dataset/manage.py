@@ -485,7 +485,7 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None) -> 
     return dataset
 
 
-def update_records(dataset, updates=None, delete_all=True, *, primary_keys, primary_key_name):
+def update_records(dataset: Dataset, updates: Optional[dict] = None, delete_all: bool = True, *, primary_keys: List[str], primary_key_name: str):
     if delete_all:
         updates = ["delete"] * primary_keys
     else:
