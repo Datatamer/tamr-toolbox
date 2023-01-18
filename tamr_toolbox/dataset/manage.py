@@ -509,12 +509,15 @@ def update_records(dataset: Dataset, updates: Optional[list] = None, delete_all:
         KeyError: If an indicated attribute does not exist
     """
     
+    # If delete_all, create an updates list of all deletes. Otherwise, ensure that the list of
+    # updates and the list of primary keys have the same length.
     if delete_all:
         updates = ["delete"] * primary_keys
     else:
         if updates is None or len(primary_keys) != len(updates):
             raise ValueError(f"Arguments updates and primary_keys must exist and have equal length")
     
+    # Populate list of primary keys for deletion and records to upsert.
     deletions = []
     records = []
     for i in range(len(updates)):
@@ -528,9 +531,11 @@ def update_records(dataset: Dataset, updates: Optional[list] = None, delete_all:
                     raise KeyError(f"Key {k} is not an attribute of input dataset")
             records.append(updates[i])
 
+    # Carry out any deletions.
     if deletions:
         dataset.delete_records_by_id(deletions)
     
+    # Carry out any upserts.
     if records:
         dataset.upsert_records(records, primary_key_name)
 
