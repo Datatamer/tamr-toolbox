@@ -507,6 +507,7 @@ def update_records(dataset: Dataset, updates: Optional[list] = None, delete_all:
 
     Raises:
         KeyError: If an indicated attribute does not exist
+        TypeError: If an update in the list is not "delete" or a dict
     """
     
     # If delete_all, create an updates list of all deletes. Otherwise, ensure that the list of
@@ -524,6 +525,8 @@ def update_records(dataset: Dataset, updates: Optional[list] = None, delete_all:
         if updates[i] == "delete":
             deletions.append(primary_keys[i])
         else:
+            if not isinstance(updates[i], dict):
+                raise TypeError(f"Invalid update at index {i}")
             if primary_key_name not in updates[i]:
                 updates[i][primary_key_name] = primary_keys[i]
             for k in updates[i]:
