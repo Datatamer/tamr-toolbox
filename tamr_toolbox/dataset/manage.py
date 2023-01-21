@@ -485,7 +485,7 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None) -> 
     return dataset
 
 
-def update_records(dataset: Dataset, updates: Optional[list] = None, delete_all: bool = False, *, primary_keys: List[str], primary_key_name: str):
+def update_records(dataset: Dataset, *, updates: Optional[list] = None, delete_all: bool = False, primary_keys: List[str], primary_key_name: str):
     """Flexibly update the records of a dataset. The user supplies a list of primary keys for a
     subset of the datasets records, along with a list of updates describing how each record should
     be altered. An update should either be the string "delete" or a dictionary in
