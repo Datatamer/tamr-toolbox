@@ -530,6 +530,7 @@ def update_records(
     # Populate list of primary keys for deletion and records to upsert.
     deletions = []
     records = []
+    attributes = [attribute.name for attribute in dataset.attributes]
     for i in range(len(updates)):
         if updates[i] == "delete":
             deletions.append(primary_keys[i])
@@ -539,7 +540,7 @@ def update_records(
             if primary_key_name not in updates[i]:
                 updates[i][primary_key_name] = primary_keys[i]
             for k in updates[i]:
-                if k not in dataset.attributes:
+                if k not in attributes:
                     raise KeyError(f"Key {k} is not an attribute of input dataset")
             records.append(updates[i])
 
