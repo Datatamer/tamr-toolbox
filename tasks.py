@@ -60,3 +60,4 @@ def docs(c):
         pty=True,
         env={"TAMR_TOOLBOX_DOCS": "1"},
     )
+    c.run("python doc_src/validate_docs.py")

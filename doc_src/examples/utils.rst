@@ -91,6 +91,14 @@ How to get a list of datasets and projects downstream from a specified dataset
   :language: python
 
 
+Manual Auth
+----------------------------------------------------------------------------------
+How to manually pass credentials when creating a tamr client object during runtime
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/snippets/utils/client/manual_auth.py
+  :language: python
+
+
 Custom UI Buttons
 -------------------------------------------------------
 How to create and register custom UI button yaml files.
@@ -100,4 +108,3 @@ How to create and register custom UI button yaml files.
 
 .. literalinclude:: ../../examples/scripts/utils/custom_button/create_custom_buttons.py
   :language: python
-  

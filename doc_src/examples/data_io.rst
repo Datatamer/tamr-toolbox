@@ -76,6 +76,10 @@ Validate a Dataframe before upserting records to a Tamr Dataset
 .. literalinclude:: ../../examples/snippets/data_io/dataframe/validate_dataframe.py
  :language: python
 
+.. literalinclude:: ../../examples/scripts/data_io/dataframe/validate_dataframe.py
+ :language: python
+
+
 CSV
 ------------------------------------------------------------------------
 

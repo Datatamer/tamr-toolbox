@@ -4,3 +4,4 @@
  * [Mastering](project/mastering.rst)
  * [Schema Mapping](project/schema_mapping.rst)
  * [Project Movement](project/movement.rst)
+ * [Common](project/common.rst)
