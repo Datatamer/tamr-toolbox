@@ -497,10 +497,10 @@ def update_records(
     subset of the datasets records, along with a list of updates describing how each record should
     be altered. An update should either be the string "delete" or a dictionary in
     "attribute: value" format. In the first case, the record having the corresponding primary key
-    is deleted, and in the second case, the data in the dictionary is upserted to the record having
-    the corresponding primary key. If no such record exists, a new record is created.
-    Alternatively, the user can set a flag to specify that all records indicated by the list of
-    primary keys should be deleted.
+    is deleted, and in the second case, the data in the dictionary replaces the record having the
+    corresponding primary key. If no such record exists, a new record is created. Alternatively,
+    the user can set a flag to specify that all records indicated by the list of primary keys
+    should be deleted.
 
     Args:
         dataset: An existing TUC dataset
@@ -521,7 +521,7 @@ def update_records(
     # If delete_all, create an updates list of all deletes. Otherwise, ensure that the list of
     # updates and the list of primary keys have the same length.
     if delete_all:
-        updates = ["delete"] * primary_keys
+        updates = ["delete"] * len(primary_keys)
     else:
         if updates is None or len(primary_keys) != len(updates):
             raise ValueError(
