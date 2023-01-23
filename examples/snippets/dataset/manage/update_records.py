@@ -21,8 +21,5 @@ record with a primary key of "14", assuming that the name of the primary key att
 updates = [{"First_Name": ["John"], "Last_Name": ["Smith"]}, "delete"]
 primary_keys = ["27", "14"]
 dataset = tbox.dataset.manage.update_records(
-    dataset,
-    updates=updates,
-    primary_keys=primary_keys,
-    primary_key_name="primaryKey"
+    dataset, updates=updates, primary_keys=primary_keys, primary_key_name="primaryKey"
 )
