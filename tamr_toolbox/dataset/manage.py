@@ -515,6 +515,7 @@ def update_records(
     Raises:
         KeyError: If an indicated attribute does not exist
         TypeError: If an update in the list is not "delete" or a dict
+        ValueError: If updates and primary_keys have differing lengths
     """
 
     # If delete_all, create an updates list of all deletes. Otherwise, ensure that the list of
