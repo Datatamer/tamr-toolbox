@@ -161,7 +161,10 @@ def _get_query_config(jdbc_info: jdbc_info.JdbcInfo) -> Dict:
 
 
 def _get_export_config(
-    multi_value_delimiter: str = "|", limit_records: int = 0, columns_exclude_regex: str = "", renameFields: Dict[str,str] = None
+    multi_value_delimiter: str = "|", 
+    limit_records: int = 0, 
+    columns_exclude_regex: str = "", 
+    renameFields: Dict[str, str] = None
 ) -> Dict:
     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
      in form of json dictionary
