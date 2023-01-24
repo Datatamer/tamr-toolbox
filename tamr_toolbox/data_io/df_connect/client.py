@@ -171,6 +171,7 @@ def _get_export_config(
         limit_records: number of records to stream. default is 0 (export all records)
         columns_exclude_regex: override config file for columnsExcludeRegex, default is empty
             string
+        renameFields: Dictionary in the format {“field_to_be_renamed”:“new_name”}
 
     Returns:
         A dictionary suitable for usage in all df_connect API calls around jdbc export
