@@ -28,6 +28,7 @@ projects:
     categorization_no_taxonomy: "45"
     first_pairs_estimate: "51"
     minimal_phone_enrichment: "52"
+    attribute_configuration_editing: "56"
 
 datasets:
     minimal_golden_records_golden_records: "47"
