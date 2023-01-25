@@ -13,7 +13,7 @@ CONFIG = utils.config.from_yaml(
 PROJECT_ID = CONFIG["projects"]["attribute_configuration_editing"]
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_no_failures():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
@@ -77,7 +77,7 @@ def test_update_attribute_configuration_no_failures():
     assert attribute_ml_enabled_next ^ attribute_ml_enabled_prev
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_runtime():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
@@ -86,7 +86,7 @@ def test_update_attribute_configuration_runtime():
         attribute_configuration.update_attribute_configuration(project=project, attributeName="")
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_no_values():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
@@ -97,7 +97,7 @@ def test_update_attribute_configuration_no_values():
         )
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_invalid_attributeRole():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
@@ -108,7 +108,7 @@ def test_update_attribute_configuration_invalid_attributeRole():
         )
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_invalid_similarityFunction():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
@@ -119,7 +119,7 @@ def test_update_attribute_configuration_invalid_similarityFunction():
         )
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_invalid_enabledForMl():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
@@ -130,7 +130,7 @@ def test_update_attribute_configuration_invalid_enabledForMl():
         )
 
 
-@mock_api(enforce_online_test=True)
+@mock_api()
 def test_update_attribute_configuration_invalid_tokenizer():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
