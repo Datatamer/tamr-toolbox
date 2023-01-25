@@ -164,7 +164,7 @@ def _get_export_config(
     multi_value_delimiter: str = "|",
     limit_records: int = 0,
     columns_exclude_regex: str = "",
-    renameFields: Dict[str, str] = None,
+    renameFields: Dict[str, str] = {},
 ) -> Dict:
     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
      in form of json dictionary
