@@ -25,8 +25,8 @@ def test_update_attribute_configuration_no_failures():
     attribute_non_ml_name = "attribute_change_ml"
 
     # Check project has attribute present
-    project_attribute_configuration_prev = (
-        attribute_configuration.get_attribute_configurations(project=project)
+    project_attribute_configuration_prev = attribute_configuration.get_attribute_configurations(
+        project=project
     )
     # Get the values from the configurations
 
@@ -53,8 +53,8 @@ def test_update_attribute_configuration_no_failures():
     )
 
     # Get attribute configuration again to check if updated correctly
-    project_attribute_configuration_next = (
-        attribute_configuration.get_attribute_configurations(project=project)
+    project_attribute_configuration_next = attribute_configuration.get_attribute_configurations(
+        project=project
     )
     # Get the values from the configurations
 
@@ -83,10 +83,7 @@ def test_update_attribute_configuration_runtime():
     project = client.projects.by_resource_id(PROJECT_ID)
 
     with pytest.raises(RuntimeError):
-        attribute_configuration.update_attribute_configuration(
-            project=project,
-            attributeName="",
-        )
+        attribute_configuration.update_attribute_configuration(project=project, attributeName="")
 
 
 @mock_api(enforce_online_test=True)

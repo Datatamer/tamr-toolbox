@@ -1,7 +1,5 @@
 """Tasks related to attribute configurations as part of Tamr projects"""
-from tamr_unify_client.project.attribute_configuration.resource import (
-    AttributeConfigurationSpec,
-)
+from tamr_unify_client.project.attribute_configuration.resource import AttributeConfigurationSpec
 
 from tamr_unify_client.project.resource import Project
 
@@ -105,8 +103,7 @@ def get_attribute_configurations(project: Project) -> AttributeConfigurationSpec
 
     # Itterate through all attributes and store in a list
     attribute_configuration_spec = [
-        attribute_configuration.spec()
-        for attribute_configuration in attribute_configuration_all
+        attribute_configuration.spec() for attribute_configuration in attribute_configuration_all
     ]
 
     return attribute_configuration_spec
@@ -167,9 +164,7 @@ def update_attribute_configuration(
             attribute_config_spec = attribute_config_single
             attribute_config = attribute_config_single_dict
     if attribute_found:
-        LOGGER.info(
-            f"Attribute {attributeName} sucessfully found in project {project.name}"
-        )
+        LOGGER.info(f"Attribute {attributeName} sucessfully found in project {project.name}")
         pass
     else:
         raise RuntimeError(f"Attribute {attributeName} not in project {project.name}!")
