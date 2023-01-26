@@ -161,7 +161,10 @@ def _get_query_config(jdbc_info: jdbc_info.JdbcInfo) -> Dict:
 
 
 def _get_export_config(
-    multi_value_delimiter: str = "|", limit_records: int = 0, columns_exclude_regex: str = ""
+    multi_value_delimiter: str = "|",
+    limit_records: int = 0,
+    columns_exclude_regex: str = "",
+    renameFields: Dict[str, str] = {},
 ) -> Dict:
     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
      in form of json dictionary
@@ -171,6 +174,7 @@ def _get_export_config(
         limit_records: number of records to stream. default is 0 (export all records)
         columns_exclude_regex: override config file for columnsExcludeRegex, default is empty
             string
+        renameFields: Dictionary in the format {“field_to_be_renamed”:“new_name”}
 
     Returns:
         A dictionary suitable for usage in all df_connect API calls around jdbc export
@@ -181,6 +185,7 @@ def _get_export_config(
         "mergedArrayValuesDelimiter": multi_value_delimiter,
         "limitRecords": limit_records,
         "columnsExcludeRegex": columns_exclude_regex,
+        "renameFields": renameFields,
     }
     return export_config
 

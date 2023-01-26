@@ -91,6 +91,7 @@ def test_get_export_config_default():
         "mergedArrayValuesDelimiter": "|",
         "limitRecords": 0,
         "columnsExcludeRegex": "",
+        "renameFields": {},
     }
     assert client._get_export_config() == test_export_config
 
@@ -100,6 +101,7 @@ def test_get_export_config_with_args():
         "mergedArrayValuesDelimiter": ",",
         "limitRecords": 10,
         "columnsExcludeRegex": "(origin).*",
+        "renameFields": {},
     }
     assert client._get_export_config(",", 10, "(origin).*") == test_export_config
 
