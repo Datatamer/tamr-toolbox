@@ -18,7 +18,6 @@ def test_update_attribute_configuration_no_failures():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
 
-    #
     # Test changes attribute between ml and non-ml
 
     # Set attribute to check
