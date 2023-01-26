@@ -164,7 +164,7 @@ def _get_export_config(
     multi_value_delimiter: str = "|",
     limit_records: int = 0,
     columns_exclude_regex: str = "",
-    renameFields: Dict[str, str] = {},
+    rename_fields: Dict[str, str] = {},
 ) -> Dict:
     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
      in form of json dictionary
@@ -174,7 +174,7 @@ def _get_export_config(
         limit_records: number of records to stream. default is 0 (export all records)
         columns_exclude_regex: override config file for columnsExcludeRegex, default is empty
             string
-        renameFields: Dictionary in the format {“field_to_be_renamed”:“new_name”}
+        rename_fields: Dictionary in the format {“field_to_be_renamed”:“new_name”}
 
     Returns:
         A dictionary suitable for usage in all df_connect API calls around jdbc export
@@ -185,7 +185,7 @@ def _get_export_config(
         "mergedArrayValuesDelimiter": multi_value_delimiter,
         "limitRecords": limit_records,
         "columnsExcludeRegex": columns_exclude_regex,
-        "renameFields": renameFields,
+        "renameFields": rename_fields,
     }
     return export_config
 
@@ -212,7 +212,7 @@ def get_connect_session(connect_info: Client) -> requests.Session:
         An authenticated session
 
     Raises:
-        RuntimeError: if the a connection to df_connect cannot be established
+        RuntimeError: if a connection to df_connect cannot be established
     """
     auth = UsernamePasswordAuth(connect_info.tamr_username, connect_info.tamr_password)
     s = requests.Session()
