@@ -24,7 +24,7 @@ def _check_tokenizer(value):
     if value not in allowed_values:
         raise ValueError(
             f"Value '{value}' not valid for attribute configuration variable "
-            + "tokenizer. Allowed values: {allowed_values}"
+            + f"tokenizer. Allowed values: {allowed_values}"
         )
 
 
@@ -44,7 +44,7 @@ def _check_similarity_function(value):
     if value not in allowed_values:
         raise ValueError(
             f"Value '{value}' not valid for attribute configuration variable "
-            + "similarityFunction. Allowed values: {allowed_values}"
+            + f"similarityFunction. Allowed values: {allowed_values}"
         )
 
 
@@ -64,7 +64,7 @@ def _check_attribute_role(value):
     if value not in allowed_values:
         raise ValueError(
             f"Value '{value}' not valid for attribute configuration variable "
-            + "attributeRole. Allowed values: {allowed_values}"
+            + f"attributeRole. Allowed values: {allowed_values}"
         )
 
 
@@ -84,7 +84,7 @@ def _check_enabled_for_ml(value):
     if value not in allowed_values:
         raise ValueError(
             f"Value '{value}' not valid for attribute configuration variable "
-            + "enabledForMl. Allowed values: {allowed_values}"
+            + f"enabledForMl. Allowed values: {allowed_values}"
         )
 
 
@@ -97,7 +97,6 @@ def get_attribute_configurations(project: Project) -> AttributeConfigurationSpec
     Returns:
         List of AttributeConfigurationSpec
     """
-
     # Get all the attribute configurations from a project
     attribute_configuration_all = project.attribute_configurations()
 
@@ -111,28 +110,28 @@ def get_attribute_configurations(project: Project) -> AttributeConfigurationSpec
 
 def update_attribute_configuration(
     project: Project,
-    attributeName: str,
-    attributeRole: str = None,
-    similarityFunction: str = None,
-    enabledForMl: bool = None,
+    attribute_name: str,
+    attribute_role: str = None,
+    similarity_function: str = None,
+    enabled_for_ml: bool = None,
     tokenizer: str = None,
-    numericFieldResolution: float = None,
+    numeric_field_resolution: float = None,
 ):
     """Update the attribute configuration variables of a given
     attribute in a project
 
     Args:
         project (Project): Project in which attribute is present
-        attributeName (str): Name of attribute to update configuration
-        attributeRole (str, optional): The specific role, if any, of the attribute in the project.
+        attribute_name (str): Name of attribute to update configuration
+        attribute_role (str, optional): The specific role, if any, of the attribute in the project.
             Defaults to None.
-        similarityFunction (str, optional): The similarity function to use for the unified dataset
+        similarity_function (str, optional): The similarity function to use for the unified dataset
             attribute. Defaults to None.
-        enabledForMl (bool, optional): Whether the unified dataset attribute is being included in
+        enabled_for_ml (bool, optional): Whether the unified dataset attribute is being included in
             machine learning operations. Defaults to None.
         tokenizer (str, optional): The tokenizer used for tokenizing text values. Defaults to
             None.
-        numericFieldResolution (float, optional): Indicates how to process numeric values.
+        numeric_field_resolution (float, optional): Indicates how to process numeric values.
             Defaults to None.
 
     Raises:
@@ -157,25 +156,25 @@ def update_attribute_configuration(
         # Get values from configuration spec
         attribute_config_single_dict = attribute_config_single.to_dict()
         # Check if name matches
-        if attribute_config_single_dict["attributeName"] == attributeName:
+        if attribute_config_single_dict["attributeName"] == attribute_name:
             # Set to true if match
             attribute_found = True
             # Save attribute info
             attribute_config_spec = attribute_config_single
             attribute_config = attribute_config_single_dict
     if attribute_found:
-        LOGGER.info(f"Attribute {attributeName} sucessfully found in project {project.name}")
+        LOGGER.info(f"Attribute {attribute_name} sucessfully found in project {project.name}")
         pass
     else:
-        raise RuntimeError(f"Attribute {attributeName} not in project {project.name}!")
+        raise RuntimeError(f"Attribute {attribute_name} not in project {project.name}!")
 
     # Check there are fields to be updated
     variable_list = [
-        attributeRole,
-        similarityFunction,
-        enabledForMl,
+        attribute_role,
+        similarity_function,
+        enabled_for_ml,
         tokenizer,
-        numericFieldResolution,
+        numeric_field_resolution,
     ]
     empty_variables = all(variable is None for variable in variable_list)
     if empty_variables:
@@ -186,20 +185,20 @@ def update_attribute_configuration(
         )
 
     # Collect configuration variables to update
-    if attributeRole is not None:
-        _check_attribute_role(attributeRole)
-        attribute_variable_dict["attributeRole"] = attributeRole
-    if similarityFunction is not None:
-        _check_similarity_function(similarityFunction)
-        attribute_variable_dict["similarityFunction"] = similarityFunction
-    if enabledForMl is not None:
-        _check_enabled_for_ml(enabledForMl)
-        attribute_variable_dict["enabledForMl"] = enabledForMl
+    if attribute_role is not None:
+        _check_attribute_role(attribute_role)
+        attribute_variable_dict["attributeRole"] = attribute_role
+    if similarity_function is not None:
+        _check_similarity_function(similarity_function)
+        attribute_variable_dict["similarityFunction"] = similarity_function
+    if enabled_for_ml is not None:
+        _check_enabled_for_ml(enabled_for_ml)
+        attribute_variable_dict["enabledForMl"] = enabled_for_ml
     if tokenizer is not None:
         _check_tokenizer(tokenizer)
         attribute_variable_dict["tokenizer"] = tokenizer
-    if numericFieldResolution is not None:
-        attribute_variable_dict["numericFieldResolution"] = numericFieldResolution
+    if numeric_field_resolution is not None:
+        attribute_variable_dict["numericFieldResolution"] = numeric_field_resolution
 
     # Loop through new config values and check for changes
     for key, value in attribute_variable_dict.items():

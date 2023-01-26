@@ -47,8 +47,8 @@ def test_update_attribute_configuration_no_failures():
     # Update attribute configurations
     attribute_configuration.update_attribute_configuration(
         project=project,
-        attributeName=attribute_non_ml_name,
-        enabledForMl=attribute_ml_enabled_change,
+        attribute_name=attribute_non_ml_name,
+        enabled_for_ml=attribute_ml_enabled_change,
     )
 
     # Get attribute configuration again to check if updated correctly
@@ -82,7 +82,7 @@ def test_update_attribute_configuration_runtime():
     project = client.projects.by_resource_id(PROJECT_ID)
 
     with pytest.raises(RuntimeError):
-        attribute_configuration.update_attribute_configuration(project=project, attributeName="")
+        attribute_configuration.update_attribute_configuration(project=project, attribute_name="")
 
 
 @mock_api()
@@ -92,40 +92,40 @@ def test_update_attribute_configuration_no_values():
 
     with pytest.raises(ValueError):
         attribute_configuration.update_attribute_configuration(
-            project=project, attributeName="attribute_1"
+            project=project, attribute_name="attribute_1"
         )
 
 
 @mock_api()
-def test_update_attribute_configuration_invalid_attributeRole():
+def test_update_attribute_configuration_invalid_attribute_role():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
 
     with pytest.raises(ValueError):
         attribute_configuration.update_attribute_configuration(
-            project=project, attributeName="attribute_1", attributeRole="invalid"
+            project=project, attribute_name="attribute_1", attribute_role="invalid"
         )
 
 
 @mock_api()
-def test_update_attribute_configuration_invalid_similarityFunction():
+def test_update_attribute_configuration_invalid_similarity_function():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
 
     with pytest.raises(ValueError):
         attribute_configuration.update_attribute_configuration(
-            project=project, attributeName="attribute_1", similarityFunction="invalid"
+            project=project, attribute_name="attribute_1", similarity_function="invalid"
         )
 
 
 @mock_api()
-def test_update_attribute_configuration_invalid_enabledForMl():
+def test_update_attribute_configuration_invalid_enabled_for_ml():
     client = utils.client.create(**CONFIG["toolbox_test_instance"])
     project = client.projects.by_resource_id(PROJECT_ID)
 
     with pytest.raises(ValueError):
         attribute_configuration.update_attribute_configuration(
-            project=project, attributeName="attribute_1", enabledForMl="invalid"
+            project=project, attribute_name="attribute_1", enabled_for_ml="invalid"
         )
 
 
@@ -136,5 +136,5 @@ def test_update_attribute_configuration_invalid_tokenizer():
 
     with pytest.raises(ValueError):
         attribute_configuration.update_attribute_configuration(
-            project=project, attributeName="attribute_1", tokenizer="invalid"
+            project=project, attribute_name="attribute_1", tokenizer="invalid"
         )
