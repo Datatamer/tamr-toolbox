@@ -23,3 +23,12 @@ primary_keys = ["27", "14"]
 dataset = tbox.dataset.manage.update_records(
     dataset, updates=updates, primary_keys=primary_keys, primary_key_name="primaryKey"
 )
+
+"""
+The following example deletes the records having primary keys "7" and "13" in the same dataset as
+above.
+"""
+primary_keys = ["7", "13"]
+dataset = tbox.dataset.manage.update_records(
+    dataset, delete_all=True, primary_keys=primary_keys, primary_key_name="primaryKey"
+)
