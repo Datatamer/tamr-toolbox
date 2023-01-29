@@ -2,6 +2,6 @@
 from . import jobs
 from . import metrics
 from . import taxonomy
-from .._common import schema, transformations
+from .._common import attribute_configuration, schema, transformations
 
-__all__ = ["jobs", "schema", "transformations", "metrics", "taxonomy"]
+__all__ = ["jobs", "attribute_configuration", "schema", "transformations", "metrics", "taxonomy"]

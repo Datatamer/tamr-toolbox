@@ -1,5 +1,5 @@
 """Tasks related to Tamr Mastering projects"""
 from . import jobs
-from .._common import schema, transformations
+from .._common import attribute_configuration, schema, transformations
 
-__all__ = ["jobs", "schema", "transformations"]
+__all__ = ["jobs", "attribute_configuration", "schema", "transformations"]
