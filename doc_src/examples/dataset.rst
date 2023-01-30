@@ -29,6 +29,11 @@ Remove an attribute from a dataset
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. literalinclude :: ../../examples/snippets/dataset/manage/delete_attribute.py
  :language: python
+
+Update records within a dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude :: ../../examples/snippets/dataset/manage/update_records.py
+ :language: python
  
 Dataset Profiles
 ------------------------------------------------------------------------

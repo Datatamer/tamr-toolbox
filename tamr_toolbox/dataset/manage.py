@@ -485,6 +485,77 @@ def delete_attributes(*, dataset: Dataset, attributes: Iterable[str] = None) -> 
     return dataset
 
 
+def update_records(
+    dataset: Dataset,
+    *,
+    updates: Optional[list] = None,
+    delete_all: bool = False,
+    primary_keys: List[str],
+    primary_key_name: str,
+):
+    """Flexibly update the records of a dataset. The user supplies a list of primary keys for a
+    subset of the datasets records, along with a list of updates describing how each record should
+    be altered. An update should either be the string "delete" or a dictionary in
+    "attribute: value" format. In the first case, the record having the corresponding primary key
+    is deleted, and in the second case, the data in the dictionary replaces the record having the
+    corresponding primary key. If no such record exists, a new record is created. Alternatively,
+    the user can set a flag to specify that all records indicated by the list of primary keys
+    should be deleted.
+
+    Args:
+        dataset: An existing TUC dataset
+        updates: List of updates to push to the dataset
+        delete_all: Whether all indicated records should be deleted
+        primary_keys: List of primary key values for all target records
+        primary_key_name: Name of the primary key of the target dataset
+
+    Returns:
+        Updated dataset
+
+    Raises:
+        KeyError: If an indicated attribute does not exist
+        TypeError: If an update in the list is not "delete" or a dict
+        ValueError: If updates and primary_keys have differing lengths
+    """
+
+    # If delete_all, create an updates list of all deletes. Otherwise, ensure that the list of
+    # updates and the list of primary keys have the same length.
+    if delete_all:
+        updates = ["delete"] * len(primary_keys)
+    else:
+        if updates is None or len(primary_keys) != len(updates):
+            raise ValueError(
+                f"Arguments updates and primary_keys must exist and have equal length"
+            )
+
+    # Populate list of primary keys for deletion and records to upsert.
+    deletions = []
+    records = []
+    attributes = [attribute.name for attribute in dataset.attributes]
+    for i in range(len(updates)):
+        if updates[i] == "delete":
+            deletions.append(primary_keys[i])
+        else:
+            if not isinstance(updates[i], dict):
+                raise TypeError(f"Invalid update at index {i}")
+            if primary_key_name not in updates[i]:
+                updates[i][primary_key_name] = primary_keys[i]
+            for k in updates[i]:
+                if k not in attributes:
+                    raise KeyError(f"Key {k} is not an attribute of input dataset")
+            records.append(updates[i])
+
+    # Carry out any deletions.
+    if deletions:
+        dataset.delete_records_by_id(deletions)
+
+    # Carry out any upserts.
+    if records:
+        dataset.upsert_records(records, primary_key_name)
+
+    return dataset
+
+
 def _make_spec_dict(
     attribute_name: str,
     attribute_types: Dict[str, attribute_type.AttributeType],
