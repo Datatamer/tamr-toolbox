@@ -13,7 +13,7 @@ from tamr_unify_client import Client
 from tamr_unify_client.auth import UsernamePasswordAuth
 from tamr_unify_client.auth import JwtTokenAuth
 
-from tamr_toolbox.utils.version import current, is_version_condition_met
+from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
 
@@ -90,6 +90,7 @@ def create(
     return client
 
 
+@requires_tamr_version(min_version=TAMR_JWT_RELEASE_VERSION)
 def create_with_jwt(
     *,
     token: str,
@@ -127,15 +128,6 @@ def create_with_jwt(
         base_path=base_path,
         session=session,
         store_auth_cookie=store_auth_cookie,
-    )
-
-    # Check if the version of Tamr is compatible with JWT Auth:
-    LOGGER.info("Checking if JWT Auth is compatible with current Tamr version")
-    minimum_tamr_version = TAMR_JWT_RELEASE_VERSION
-    tamr_version = current(client)
-
-    is_version_condition_met(
-        tamr_version=tamr_version, min_version=minimum_tamr_version, raise_error=True
     )
 
     if enforce_healthy:
