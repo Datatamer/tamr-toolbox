@@ -68,6 +68,16 @@ def test_client_enforce_healthy():
 
 
 @mock_api()
+def test_client_with_jwt_auth():
+    my_client = utils.client.create_with_jwt(**CONFIG["my_jwt_instance"])
+    assert my_client.host == CONFIG["my_jwt_instance"]["host"]
+    assert my_client.port == int(CONFIG["my_jwt_instance"]["port"])
+    assert my_client.protocol == CONFIG["my_jwt_instance"]["protocol"]
+    assert my_client.base_path == "/api/versioned/v1/"
+    assert my_client.auth.token == CONFIG["my_jwt_instance"]["token"]
+
+
+@mock_api()
 def test_get_with_connection_retry():
     # Create temp directory. Remember to cleanup!
     tempdir = tempfile.TemporaryDirectory()

@@ -4,6 +4,12 @@ my_instance_name:
     port: "9100"
     username: "admin"
     password: $TAMR_TOOLBOX_PASSWORD
+    
+my_jwt_instance:
+    host: $TAMR_TOOLBOX_HOST
+    protocol: "http"
+    port: "9100"
+    token: "fake.jwt.token"
 
 my_other_instance:
     host: "1.2.3.4"
