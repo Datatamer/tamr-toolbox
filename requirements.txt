@@ -2,5 +2,5 @@ dataclasses-json==0.5.6
 networkx>=2.5
 PyYAML==6.0
 requests>=2.22
-tamr_unify_client>=1.6.0
+tamr_unify_client>=1.7.0
 packaging>=21.3
