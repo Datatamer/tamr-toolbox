@@ -1,6 +1,6 @@
 """Tasks related to efficiently translating data not present in existing translation
 dictionaries"""
-from typing import Union, List, Any, Dict
+from typing import Union, List, Dict
 from tamr_toolbox.enrichment.dictionary import TranslationDictionary
 
 from tamr_toolbox.enrichment.dictionary import update, save
@@ -9,6 +9,8 @@ from tamr_toolbox.enrichment.api_client import google
 import math
 import logging
 import os
+
+from tamr_toolbox.enrichment.enrichment_utils import _yield_chunk
 
 # Building our documentation requires access to all dependencies, including optional ones
 # This environments variable is set automatically when `invoke docs` is used
@@ -19,24 +21,6 @@ if BUILDING_DOCS:
 
 
 LOGGER = logging.getLogger(__name__)
-
-
-def _yield_chunk(list_to_split: List[Any], chunk_size: int) -> List[List[Any]]:
-    """
-    Split a list into a List of List with constant length
-
-    Args:
-        list_to_split: List to split into chunks
-        chunk_size: number of items to have in each list after splitting
-
-    Returns:
-        A List of List
-    """
-
-    # For item i in a range that is a length of l,
-    for i in range(0, len(list_to_split), chunk_size):
-        # Create an index range for l of n items:
-        yield list_to_split[i : i + chunk_size]
 
 
 def _filter_numeric_and_null_phrases(phrase: Union[str, None]) -> str:

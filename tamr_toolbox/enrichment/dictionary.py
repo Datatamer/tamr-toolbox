@@ -1,15 +1,17 @@
 """Tasks related to creating, updating, saving and moving translation dictionaries
 in and out of Tamr"""
-from typing import Dict, Set, List, Optional, Union
-from dataclasses import dataclass, asdict, field
+import json
+import logging
+import os
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+from typing import Dict, List, Optional, Set, Union
+
+from requests.exceptions import HTTPError
 from tamr_unify_client.dataset.collection import DatasetCollection
 from tamr_unify_client.dataset.resource import Dataset
-from requests.exceptions import HTTPError
-from pathlib import Path
 
-import json
-import os
-import logging
+from tamr_toolbox.enrichment.enrichment_utils import SetEncoder
 
 LOGGER = logging.getLogger(__name__)
 
@@ -32,27 +34,7 @@ class TranslationDictionary:
     standardized_phrase: str = None
     translated_phrase: str = None
     detected_language: str = None
-    original_phrases: Set[str] = field(default_factory=lambda: set())
-
-
-class SetEncoder(json.JSONEncoder):
-    """
-    A Class to transform type 'set' to type 'list' when saving objects to JSON format
-    """
-
-    def default(self, python_object):
-        """
-        Transform a set into a list if input is a set
-
-        Args:
-            python_object: the python object to be saved to a json format
-
-        Returns:
-            Default json encoder format of input object or List if input is a Set
-        """
-        if isinstance(python_object, set):
-            return list(python_object)
-        return json.JSONEncoder.default(self, python_object)
+    original_phrases: Set[str] = field(default_factory=set)
 
 
 def filename(
