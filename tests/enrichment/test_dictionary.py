@@ -6,7 +6,7 @@ from tamr_toolbox import utils
 from tamr_toolbox import enrichment
 
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.enrichment.dictionary import SetEncoder
+from tamr_toolbox.enrichment.dictionary import CustomJsonEncoder
 from tests._common import get_toolbox_root_dir
 
 from pathlib import Path
@@ -93,7 +93,7 @@ TEST_TRANSLATION_DICTIONARY_DICT = [
 
 def test_default():
     non_set = [1, 2, 3]
-    set_encoder = SetEncoder()
+    set_encoder = CustomJsonEncoder()
     with pytest.raises(TypeError):
         set_encoder.default(non_set)
 

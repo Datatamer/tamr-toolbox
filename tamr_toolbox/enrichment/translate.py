@@ -1,15 +1,12 @@
 """Tasks related to efficiently translating data not present in existing translation
 dictionaries"""
-from typing import Union, List, Dict
-from tamr_toolbox.enrichment.dictionary import TranslationDictionary
-
-from tamr_toolbox.enrichment.dictionary import update, save
-from tamr_toolbox.enrichment.api_client import google
-
-import math
 import logging
+import math
 import os
+from typing import Dict, List, Union
 
+from tamr_toolbox.enrichment.api_client import google_translate
+from tamr_toolbox.enrichment.dictionary import TranslationDictionary, save, update
 from tamr_toolbox.enrichment.enrichment_utils import _yield_chunk
 
 # Building our documentation requires access to all dependencies, including optional ones
@@ -183,7 +180,7 @@ def from_list(
         tmp_dictionary = {}
         for ix, chunk_of_phrases in enumerate(_yield_chunk(phrases_to_translate, chunk_size)):
             LOGGER.debug(f"Translating chunk {ix + 1} out of {number_of_chunks}.")
-            translated_phrases = google.translate(
+            translated_phrases = google_translate.translate(
                 phrases_to_translate=chunk_of_phrases,
                 client=client,
                 source_language=source_language,

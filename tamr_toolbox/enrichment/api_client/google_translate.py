@@ -1,11 +1,11 @@
 """Tasks related to translating data with the google translation API"""
-from typing import List, Dict, Optional
-from tamr_toolbox.enrichment.dictionary import TranslationDictionary
-
-import logging
-import time
 import html
+import logging
 import os
+import time
+from typing import Dict, List, Optional
+
+from tamr_toolbox.enrichment.dictionary import TranslationDictionary
 
 # Building our documentation requires access to all dependencies, including optional ones
 # This environments variable is set automatically when `invoke doc_src` is used
@@ -45,7 +45,7 @@ def _check_valid_translation_language(
             else:
                 error_message = (
                     f"Translation from {language} to {target_language} is supported by the "
-                    f"Google Translation API. "
+                    "Google Translation API. "
                     f"Valid source languages for {target_language} are: {valid_source_languages}"
                 )
             LOGGER.error(error_message)
@@ -76,8 +76,8 @@ def _check_valid_translation_languages(
 
     if source_language == "auto":
         LOGGER.info(
-            f"Source language is set to 'auto', "
-            f"the Google Translation API will automatically detect the source language"
+            "Source language is set to 'auto', "
+            "the Google Translation API will automatically detect the source language"
         )
     else:
         _check_valid_translation_language(client, source_language, target_language=target_language)
@@ -141,8 +141,8 @@ def translate(
     while num_attempts <= num_of_tries:
         if num_attempts == num_of_tries and num_of_tries > 1:
             LOGGER.warning(
-                f"WARNING: Tried and failed to translate current "
-                f"chunk of phrases {num_of_tries - 1} times. Final try."
+                "WARNING: Failed to translate current chunk of phrases %s times. Final try.",
+                num_of_tries - 1,
             )
             last_attempt = True
         try:
@@ -174,8 +174,8 @@ def translate(
 
         # TODO: check which exception returns the User Rate Limit error
         #  to better handle the exceptions
-        except Exception as e:
-            if "User Rate Limit Exceeded" in str(e) and not last_attempt:
+        except Exception as excp:
+            if "User Rate Limit Exceeded" in str(excp) and not last_attempt:
                 LOGGER.warning(
                     "Google api_client API user rate limit exceeded, "
                     "waiting 10 seconds and retrying."
@@ -184,11 +184,10 @@ def translate(
                 num_attempts += 1
                 continue
             else:
-                error_message = f"Could not translate current chunk of phrases. Error: {e}"
+                error_message = f"Could not translate current chunk of phrases. Error: {excp}"
                 LOGGER.error(error_message)
                 num_attempts += 1
                 continue
-    else:
-        error_message = f"Ran out of number of tries. Skipping."
-        LOGGER.error(error_message)
-        return None
+
+    LOGGER.error("Ran out of number of tries. Skipping.")
+    return None

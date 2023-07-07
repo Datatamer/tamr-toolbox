@@ -35,7 +35,6 @@ TEST_AUTO_TRANSLATION_DICTIONARY = {
 def _mock_translate_response(
     target_language: str, source_language: str, model: str, values: List[str]
 ) -> List[Dict[str, str]]:
-
     if sum(len(value) for value in values) > 100000:
         raise RuntimeError("User Rate Limit Exceeded")
 
@@ -189,13 +188,13 @@ def _mock_get_languages_response(target_language: Optional[str] = None) -> List[
 def test_google_check_valid_translation_language(Client):
     Client().get_languages = MagicMock(side_effect=_mock_get_languages_response)
     mock_client = Client()
-    enrichment.api_client.google._check_valid_translation_language(
+    enrichment.api_client.google_translate._check_valid_translation_language(
         mock_client, "fr", target_language="en"
     )
-    enrichment.api_client.google._check_valid_translation_language(
+    enrichment.api_client.google_translate._check_valid_translation_language(
         mock_client, "auto", target_language="en"
     )
-    enrichment.api_client.google._check_valid_translation_language(mock_client, "fr")
+    enrichment.api_client.google_translate._check_valid_translation_language(mock_client, "fr")
 
 
 @patch("google.cloud.translate_v2.Client")
@@ -204,17 +203,17 @@ def test_google_check_valid_translation_language_incorrect_language(Client):
     mock_client = Client()
 
     with pytest.raises(ValueError):
-        enrichment.api_client.google._check_valid_translation_language(
+        enrichment.api_client.google_translate._check_valid_translation_language(
             mock_client, "a_language_that_does_not_exists"
         )
 
     with pytest.raises(ValueError):
-        enrichment.api_client.google._check_valid_translation_language(
+        enrichment.api_client.google_translate._check_valid_translation_language(
             mock_client, "a_language_that_does_not_exists", target_language="fr"
         )
 
     with pytest.raises(ValueError):
-        enrichment.api_client.google._check_valid_translation_language(
+        enrichment.api_client.google_translate._check_valid_translation_language(
             mock_client, "a_language_that_does_not_exists", target_language="auto"
         )
 
@@ -225,7 +224,7 @@ def test_translate(Client):
     Client().translate = MagicMock(side_effect=_mock_translate_response)
     mock_client = Client()
 
-    tmp_dictionary = enrichment.api_client.google.translate(
+    tmp_dictionary = enrichment.api_client.google_translate.translate(
         phrases_to_translate=["cheddar cheese", "ground beef"],
         client=mock_client,
         source_language="en",
@@ -240,7 +239,7 @@ def test_translate_with_auto_detect_source_language(Client):
     Client().translate = MagicMock(side_effect=_mock_translate_response)
     mock_client = Client()
 
-    tmp_dictionary = enrichment.api_client.google.translate(
+    tmp_dictionary = enrichment.api_client.google_translate.translate(
         phrases_to_translate=["cheddar cheese", "ground beef"],
         client=mock_client,
         source_language="auto",
@@ -255,7 +254,7 @@ def test_translate_with_rate_limit_exceeded(Client):
     Client().translate = MagicMock(side_effect=_mock_translate_response)
     mock_client = Client()
 
-    tmp_dictionary = enrichment.api_client.google.translate(
+    tmp_dictionary = enrichment.api_client.google_translate.translate(
         phrases_to_translate=["".join(["a" for i in range(200000)])],
         client=mock_client,
         source_language="auto",
@@ -267,4 +266,6 @@ def test_translate_with_rate_limit_exceeded(Client):
 def test_translation_client_from_json():
     mock_client = GoogleTranslateClient
     mock_client.from_service_account_json = MagicMock(return_value=True)
-    assert enrichment.api_client.google.translation_client_from_json("a_path_to_a_json_file")
+    assert enrichment.api_client.google_translate.translation_client_from_json(
+        "a_path_to_a_json_file"
+    )

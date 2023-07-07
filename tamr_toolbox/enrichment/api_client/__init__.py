@@ -1,3 +1,3 @@
-from . import google
+from . import google_translate
 
-__all__ = ["google", "address_validation_response"]
+__all__ = ["google_address_validate", "google_translate"]

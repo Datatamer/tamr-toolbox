@@ -2,17 +2,28 @@
 import copy
 import json
 import logging
-from dataclasses import asdict, dataclass, fields
 import os
-from typing import Dict, List, Optional, Set, Union
+from dataclasses import asdict, dataclass, fields
+from typing import Dict, List, Literal, Optional, Union
 
 from requests.exceptions import HTTPError
 from tamr_unify_client.dataset.collection import DatasetCollection
 from tamr_unify_client.dataset.resource import Dataset
 
-from tamr_toolbox.enrichment.enrichment_utils import SetEncoder
+from tamr_toolbox.enrichment.enrichment_utils import CustomJsonEncoder, create_empty_mapping
 
 LOGGER = logging.getLogger(__name__)
+
+
+Granularity = Literal[
+    "GRANULARITY_UNSPECIFIED",
+    "SUB_PREMISE",
+    "PREMISE",
+    "PREMISE_PROMXIMITY",
+    "BLOCK",
+    "ROUTE",
+    "OTHER",
+]
 
 
 @dataclass
@@ -21,33 +32,63 @@ class AddressValidationMapping:
     DataClass for address validation data.
 
     Args:
-        input_formatted_address: input address with basic cleaning, formatting applied
-        original_input_addresses: set of addresses corresponding to same formatted input address
+        input_address: input address
         validated_formatted_address: the "formattedAddress" returns by the validation API, if any
         expiration: the expiration timestamp of the data, 30 days from API call
-        confidence: an indicator of the confidence of the validation
-        region: the region code used in the API call
+        region_code: region code returned by the validation API
+        postal_code: postal code returned by the validation API
+        admin_area: administrative area returned by the validation API (state for US addresses)
+        locality: locality returned by the validation API (city/town for US addresses)
+        address_lines: address lines returned by the validation API (e.g. ['66 Church St'])
+        usps_firstAddressLine: first address line in validated USPS format, if available
+        usps_cityStateZipAddressLine: : second address line in validated USPS format, if available
+        usps_city: city in validated USPS format, if available
+        usps_state: state in validated USPS format, if available
+        usps_zipCode: str = "
         latitude: latitude associated with validated address, if any
         longitude: longitude associated with validated address, if any
-        placeId: the google placeId -- the only result field not subject to the `expiration`
+        place_id: the google placeId -- the only result field not subject to the `expiration`
+        input_granularity: granularity of input given by validation API
+        validation_granularity: granularity of validation given by validation API
+        geocode_granularity: granularity of geocode given by validation API
+        has_inferred: whether the result has inferred components
+        has_unconfirmed: whether the result has unconfirmed components
+        has_replaced: whether the result has replaced components
+        address_complete: whether the input was complete
     """
 
-    input_formatted_address: str
-    original_input_addresses: Set[str]
+    input_address: str
     validated_formatted_address: Optional[str]
-    expiration: str
-    confidence: float
-    region: str = "US"
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    place_id: Optional[str] = None
+    expiration: str  # timestamp in the format given by `str(datetime.now())`
+    region_code: Optional[str]
+    postal_code: Optional[str]
+    admin_area: Optional[str]
+    locality: Optional[str]
+    address_lines: List[str]
+    usps_first_address_line: Optional[str]
+    usps_city_state_zip_line: Optional[str]
+    usps_city: Optional[str]
+    usps_state: Optional[str]
+    usps_zip_code: Optional[str]
+    latitude: Optional[float]
+    longitude: Optional[float]
+    place_id: Optional[str]
+    input_granularity: Granularity
+    validation_granularity: Granularity
+    geocode_granularity: Granularity
+    has_inferred: bool
+    has_unconfirmed: bool
+    has_replaced: bool
+    address_complete: bool
 
 
-def to_dict(dictionary: Dict[str, AddressValidationMapping]) -> List[Dict[str, Union[str, List]]]:
+def to_dict(
+    dictionary: Dict[str, AddressValidationMapping]
+) -> List[Dict[str, Union[str, List[str], float, None]]]:
     """
     Convert a toolbox address validation mapping entries to a dictionary format.
 
-    Set object are converted to lists.
+    Set objects are converted to lists.
 
     Args:
         dictionary: a toolbox address validation mapping
@@ -55,7 +96,7 @@ def to_dict(dictionary: Dict[str, AddressValidationMapping]) -> List[Dict[str, U
     Returns:
         A list of toolbox address validation mapping entries in dictionary format
     """
-    return [json.loads(json.dumps(asdict(t), cls=SetEncoder)) for t in dictionary.values()]
+    return [json.loads(json.dumps(asdict(t), cls=CustomJsonEncoder)) for t in dictionary.values()]
 
 
 def update(
@@ -69,42 +110,13 @@ def update(
         main_dictionary: the main toolbox address validation mapping containing prior results
         tmp_dictionary: a temporary toolbox address validation mapping containing new data
     """
-    for formatted_input_addr, mapping in tmp_dictionary.items():
-        if formatted_input_addr in main_dictionary:
-            existing = main_dictionary[formatted_input_addr]
-            for att in [f.name for f in fields(AddressValidationMapping)]:
-                if att == "original_input_addresses":
-                    existing.original_input_addresses = existing.original_input_addresses.union(
-                        mapping.original_input_addresses
-                    )
-                else:
-                    setattr(existing, att, getattr(mapping.attr))
-
-        else:
-            main_dictionary[formatted_input_addr] = copy.copy(mapping)
-
-
-def convert_to_mappings(dictionary: Dict[str, AddressValidationMapping]) -> Dict[str, str]:
-    """
-    Transform a address validation mapping into a mapping of original addresses to standardized.
-
-    Args:
-        dictionary: a toolbox address validation mapping
-
-    Returns:
-        a dictionary with original address as key and validated/standardized address as value
-    """
-    mapping_from_dictionary = {
-        orig: t.validated_formatted_address
-        for t in dictionary.values()
-        for orig in t.original_input_addresses
-    }
-    return mapping_from_dictionary
+    for input_addr, mapping in tmp_dictionary.items():
+        main_dictionary[input_addr] = copy.copy(mapping)
 
 
 def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
     """
-    Stream a dictionary from Tamr
+    Stream an address validation mapping dataset from Tamr.
 
     Args:
         dataset: Tamr Dataset object
@@ -119,7 +131,7 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
         RuntimeError: if there is any other problem while reading the `dataset` as a
             toolbox address validation mapping
     """
-    if dataset.key_attribute_names[0] != "validated_formatted_address":
+    if dataset.key_attribute_names[0] != "input_address":
         error_message = "Provided Tamr Dataset is not a toolbox address validation mapping"
         LOGGER.error(error_message)
         raise ValueError(error_message)
@@ -129,19 +141,46 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
         try:
             # Values are returned as a length-1 list of string, we change this to strings
             entry = AddressValidationMapping(
-                input_formatted_address=record["input_formatted_address"][0],
+                input_address=record["input_address"][0],
                 validated_formatted_address=record["validated_formatted_address"][0],
                 expiration=record["expiration"][0],
-                confidence=float(record["confidence"][0]),
-                region=record["region"][0],
+                region_code=record["region_code"][0] if record["region_code"] else None,
+                postal_code=record["postal_code"][0] if record["postal_code"] else None,
+                admin_area=record["admin_area"][0] if record["admin_area"] else None,
+                locality=record["locality"][0] if record["locality"] else None,
+                address_lines=record["address_lines"] if record["address_lines"] else [],
+                usps_first_address_line=record["usps_first_address_line"]
+                if record["usps_first_address_line"]
+                else None,
+                usps_city_state_zip_line=record["usps_city_state_zip_line"]
+                if record["usps_city_state_zip_line"]
+                else None,
+                usps_city=record["usps_city"] if record["usps_city"] else None,
+                usps_state=record["usps_state"] if record["usps_state"] else None,
+                usps_zip_code=record["usps_zip_code"] if record["usps_zip_code"] else None,
                 latitude=float(record["latitude"][0]) if record["latitude"] else None,
                 longitude=float(record["longitude"][0]) if record["longitude"] else None,
                 place_id=record["place_id"][0] if record["place_id"] else None,
-                # Original addresses are stored on Tamr as lists, we save it as a set
-                original_input_addresses=set(record["original_input_addresses"]),
+                input_granularity=record["input_granularity"][0]
+                if record["input_granularity"]
+                else "GRANULARITY_UNSPECIFIED",
+                validation_granularity=record["validation_granularity"][0]
+                if record["validation_granularity"]
+                else "GRANULARITY_UNSPECIFIED",
+                geocode_granularity=record["geocode_granularity"][0]
+                if record["geocode_granularity"]
+                else "GRANULARITY_UNSPECIFIED",
+                has_inferred=record["has_inferred"][0] if record["has_inferred"] else False,
+                has_unconfirmed=record["has_unconfirmed"][0]
+                if record["has_unconfirmed"]
+                else False,
+                has_replaced=record["has_replaced"][0] if record["has_replaced"] else False,
+                address_complete=record["address_complete"][0]
+                if record["address_complete"]
+                else False,
             )
 
-        except NameError as exp:
+        except KeyError as exp:
             error_message = (
                 f"Supplied Tamr dataset is not in toolbox address validation mapping format: {exp}"
             )
@@ -152,7 +191,7 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
             LOGGER.error(error_message)
             raise RuntimeError(error_message) from exp
 
-        dictionary.update({entry.input_formatted_address: entry})
+        dictionary.update({entry.input_address: entry})
     return dictionary
 
 
@@ -192,7 +231,7 @@ def to_dataset(
             LOGGER.error(error_message)
             raise ValueError(error_message)
 
-        if dataset.key_attribute_names[0] != "validated_formatted_address":
+        if dataset.key_attribute_names[0] != "input_address":
             error_message = "Provided Tamr Dataset is not a toolbox address validation mapping"
             LOGGER.error(error_message)
             raise ValueError(error_message)
@@ -218,15 +257,12 @@ def to_dataset(
             raise ValueError(error_message)
 
         LOGGER.info("Creating toolbox address validation dataset %s on Tamr", dataset_name)
-        creation_spec = {
-            "name": dataset_name,
-            "keyAttributeNames": ["validated_formatted_address"],
-        }
+        creation_spec = {"name": dataset_name, "keyAttributeNames": ["input_address"]}
         dataset = datasets_collection.create(creation_spec)
 
         attributes = dataset.attributes
         for attribute in [att.name for att in fields(AddressValidationMapping)]:
-            if attribute == "validated_formatted_address":
+            if attribute == "input_address":
                 continue
 
             attr_spec = {
@@ -243,25 +279,8 @@ def to_dataset(
                 raise RuntimeError(error_message) from exp
 
     LOGGER.info("Ingesting toolbox address validation mapping to Tamr")
-    dataset.upsert_records(
-        records=to_dict(dictionary), primary_key_name="validated_formatted_address"
-    )
+    dataset.upsert_records(records=to_dict(dictionary), primary_key_name="input_address")
     return dataset.name
-
-
-def create(path: str) -> str:
-    """
-    Create an empty mapping on disk.
-
-    Args:
-        path: location where empty mapping is created
-
-    Returns:
-        A path to the new empty file
-    """
-    with open(path, "w") as f:
-        f.write(json.dumps({}))
-    return path
 
 
 def to_json(dictionary: Dict[str, AddressValidationMapping]) -> List[str]:
@@ -275,7 +294,7 @@ def to_json(dictionary: Dict[str, AddressValidationMapping]) -> List[str]:
     Returns:
         A list of toolbox address validation mapping entries in json format
     """
-    return [json.dumps(asdict(t), cls=SetEncoder) for t in dictionary.values()]
+    return [json.dumps(asdict(t), cls=CustomJsonEncoder) for t in dictionary.values()]
 
 
 def save(
@@ -320,7 +339,7 @@ def load(
 
     if not os.path.exists(filepath):
         LOGGER.info("Dictionary %s does not exist, creating an empty one.", filepath)
-        filepath = create(path=filepath)
+        filepath = create_empty_mapping(path=filepath)
 
     with open(filepath, "r") as f:
         mapping_lst = [json.loads(line) for line in f.readlines()]
@@ -332,9 +351,7 @@ def load(
                 dictionary.original_phrases = set(dictionary.original_phrases)
             # Make the standardized phrase the main key of the address validation mapping
             # to access each translation easily
-            mapping_dict = {
-                t.standardized_phrase: t for t in mapping_lst if t.standardized_phrase is not None
-            }
+            mapping_dict = {t.input_formatted_address: t for t in mapping_lst}
         except Exception as excp:
             error_message = (
                 f"Could not read address validation mapping at {filepath}. "
