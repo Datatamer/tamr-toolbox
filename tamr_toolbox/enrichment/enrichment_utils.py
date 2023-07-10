@@ -80,7 +80,7 @@ def dataframe_to_tuples(
     df_columns = dataframe.columns
     if not all([x in df_columns for x in columns_to_join]):
         raise ValueError(
-            f"Not all columnss {columns_to_join} exist in input dataframe columns {df_columns}"
+            f"Not all columns {columns_to_join} exist in input dataframe columns {df_columns}"
         )
 
     tuples = [
@@ -103,4 +103,4 @@ def join_clean_tuple(tup: Tuple[Optional[str], ...]) -> str:
     Returns:
         uppercased string made from joining tuple entries.
     """
-    return " ".join([x.strip().upper() for x in tup if x is not None])
+    return " ".join([x.strip().upper() for x in tup if x])
