@@ -44,7 +44,7 @@ def _check_valid_translation_language(
                 )
             else:
                 error_message = (
-                    f"Translation from {language} to {target_language} is supported by the "
+                    f"Translation from {language} to {target_language} is not supported by the "
                     "Google Translation API. "
                     f"Valid source languages for {target_language} are: {valid_source_languages}"
                 )

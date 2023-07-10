@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from tamr_unify_client.dataset.collection import DatasetCollection
 from tamr_unify_client.dataset.resource import Dataset
 
-from tamr_toolbox.enrichment.enrichment_utils import CustomJsonEncoder, create_empty_mapping
+from tamr_toolbox.enrichment.enrichment_utils import SetEncoder, create_empty_mapping
 
 LOGGER = logging.getLogger(__name__)
 
@@ -97,7 +97,7 @@ def to_json(dictionary: Dict[str, TranslationDictionary]) -> List[str]:
     Returns:
         A list of toolbox translation dictionary entries in json format
     """
-    return [json.dumps(asdict(t), cls=CustomJsonEncoder) for t in dictionary.values()]
+    return [json.dumps(asdict(t), cls=SetEncoder) for t in dictionary.values()]
 
 
 def to_dict(dictionary: Dict[str, TranslationDictionary]) -> List[Dict[str, Union[str, List]]]:
@@ -111,7 +111,7 @@ def to_dict(dictionary: Dict[str, TranslationDictionary]) -> List[Dict[str, Unio
     Returns:
         A list of toolbox translation dictionary entries in dictionary format
     """
-    return [json.loads(json.dumps(asdict(t), cls=CustomJsonEncoder)) for t in dictionary.values()]
+    return [json.loads(json.dumps(asdict(t), cls=SetEncoder)) for t in dictionary.values()]
 
 
 def save(

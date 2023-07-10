@@ -10,7 +10,7 @@ from requests.exceptions import HTTPError
 from tamr_unify_client.dataset.collection import DatasetCollection
 from tamr_unify_client.dataset.resource import Dataset
 
-from tamr_toolbox.enrichment.enrichment_utils import CustomJsonEncoder, create_empty_mapping
+from tamr_toolbox.enrichment.enrichment_utils import create_empty_mapping
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,8 +28,7 @@ Granularity = Literal[
 
 @dataclass
 class AddressValidationMapping:
-    """
-    DataClass for address validation data.
+    """DataClass for address validation data.
 
     Args:
         input_address: input address
@@ -86,9 +85,7 @@ def to_dict(
     dictionary: Dict[str, AddressValidationMapping]
 ) -> List[Dict[str, Union[str, List[str], float, None]]]:
     """
-    Convert a toolbox address validation mapping entries to a dictionary format.
-
-    Set objects are converted to lists.
+    Convert a toolbox address validation mapping entries to  list-of-dictionary format.
 
     Args:
         dictionary: a toolbox address validation mapping
@@ -96,7 +93,7 @@ def to_dict(
     Returns:
         A list of toolbox address validation mapping entries in dictionary format
     """
-    return [json.loads(json.dumps(asdict(t), cls=CustomJsonEncoder)) for t in dictionary.values()]
+    return [asdict(t) for t in dictionary.values()]
 
 
 def update(
@@ -290,7 +287,7 @@ def to_json(dictionary: Dict[str, AddressValidationMapping]) -> List[str]:
     Returns:
         A list of toolbox address validation mapping entries in json format
     """
-    return [json.dumps(asdict(t), cls=CustomJsonEncoder) for t in dictionary.values()]
+    return [json.dumps(asdict(t)) for t in dictionary.values()]
 
 
 def save(

@@ -1,14 +1,13 @@
 """Utilities shared by enrichment services."""
 import json
-import math
 from typing import Any, List, Optional, Tuple
 
 import pandas as pd
 
 
-class CustomJsonEncoder(json.JSONEncoder):
+class SetEncoder(json.JSONEncoder):
     """
-    A Class to transform type 'set' to type 'list' and NaN to None when saving objects to JSON.
+    A Class to transform type 'set' to type 'list' when saving objects to JSON.
     """
 
     def default(self, python_object):
@@ -23,8 +22,6 @@ class CustomJsonEncoder(json.JSONEncoder):
         """
         if isinstance(python_object, set):
             return list(python_object)
-        if math.isnan(python_object):
-            return None
         return json.JSONEncoder.default(self, python_object)
 
 
@@ -88,6 +85,7 @@ def dataframe_to_tuples(
         for x in dataframe[columns_to_join]
         .astype(str)
         .replace("nan", None)
+        .replace("None", None)
         .to_records(index=False)
     ]
 
