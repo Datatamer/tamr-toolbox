@@ -141,7 +141,7 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
         try:
             # Values are returned as a length-1 list of string, we change this to strings
             entry = AddressValidationMapping(
-                input_address=record["input_address"][0],
+                input_address=record["input_address"],
                 validated_formatted_address=record["validated_formatted_address"][0],
                 expiration=record["expiration"][0],
                 region_code=record["region_code"][0] if record["region_code"] else None,
@@ -196,21 +196,22 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
 
 
 def to_dataset(
-    dictionary: Dict[str, AddressValidationMapping],
+    addr_mapping: Dict[str, AddressValidationMapping],
     *,
     dataset: Optional[Dataset] = None,
     datasets_collection: Optional[DatasetCollection] = None,
     create_dataset: bool = False,
+    dataset_name: str = "address_validation_mapping",
 ) -> str:
-    """
-    Ingest a toolbox dictionary in Tamr, creates the source dataset if it doesn't exists
+    """Ingest a toolbox address validation mapping in Tamr, creating the source dataset if needed.
 
     Args:
-        dictionary: a toolbox address validation mapping
+        addr_mapping: a toolbox address validation mapping
         dataset: a Tamr client dataset
         datasets_collection: a Tamr client datasets collection
         create_dataset: flag to create or upsert to an existing address validation mapping
             source dataset
+        dataset_name: name to use if creating new dataset
 
     Returns:
         The name of the created or updated Tamr Dataset
@@ -237,21 +238,16 @@ def to_dataset(
             raise ValueError(error_message)
 
     else:
-        if not (datasets_collection):
+        if not datasets_collection:
             error_message = (
-                "A Tamr Datasets Collection must be input if creating the toolbox "
-                "address validation dataset."
+                "Tamr Datasets Collection must be specified to create address validation dataset."
             )
             LOGGER.error(error_message)
             raise ValueError(error_message)
 
-        # Get dataset name using filename function
-        # The value of dictionary folder here is unimportant
-        dataset_name = "address_validation_mapping"
         if dataset_name in [d.name for d in datasets_collection]:
             error_message = (
-                f"Tamr Dataset {dataset_name} already exists on Tamr, you cannot "
-                f"create a dataset with the same name as another one"
+                f"Tamr Dataset {dataset_name} already exists on Tamr, you cannot duplicate it."
             )
             LOGGER.error(error_message)
             raise ValueError(error_message)
@@ -279,7 +275,7 @@ def to_dataset(
                 raise RuntimeError(error_message) from exp
 
     LOGGER.info("Ingesting toolbox address validation mapping to Tamr")
-    dataset.upsert_records(records=to_dict(dictionary), primary_key_name="input_address")
+    dataset.upsert_records(records=to_dict(addr_mapping), primary_key_name="input_address")
     return dataset.name
 
 
@@ -340,18 +336,15 @@ def load(
     if not os.path.exists(filepath):
         LOGGER.info("Dictionary %s does not exist, creating an empty one.", filepath)
         filepath = create_empty_mapping(path=filepath)
+        return {}
 
     with open(filepath, "r") as f:
         mapping_lst = [json.loads(line) for line in f.readlines()]
         try:
             # Tranform the loaded dictionaries into a AddressValidationMapping
-            mapping_lst = [AddressValidationMapping(**t) for t in mapping_lst]
-            # Change original phrases from List to Set
-            for dictionary in mapping_lst:
-                dictionary.original_phrases = set(dictionary.original_phrases)
+            mapping_lst = [AddressValidationMapping(**t) for t in mapping_lst if t]
             # Make the standardized phrase the main key of the address validation mapping
-            # to access each translation easily
-            mapping_dict = {t.input_formatted_address: t for t in mapping_lst}
+            mapping_dict = {t.input_address: t for t in mapping_lst}
         except Exception as excp:
             error_message = (
                 f"Could not read address validation mapping at {filepath}. "

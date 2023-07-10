@@ -1,3 +1,4 @@
+"""Tasks related to validation and refresh of address data using Google Maps API"""
 import logging
 import math
 import os
@@ -6,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 from tamr_toolbox.enrichment.address_mapping import AddressValidationMapping, save, update
 from tamr_toolbox.enrichment.api_client.google_address_validate import validate
+from tamr_toolbox.enrichment.enrichment_utils import join_clean_tuple
 
 # Building our documentation requires access to all dependencies, including optional ones
 # This environments variable is set automatically when `invoke docs` is used
@@ -22,7 +24,7 @@ def get_addr_to_validate(
     addr_mapping: Dict[str, AddressValidationMapping],
     expiration_date_buffer: timedelta = timedelta(days=1),
 ) -> List[str]:
-    """Find addresses not previously validated or validated too long ago and validate them.
+    """Find addresses not previously validated or validated too long ago.
 
     Args:
         input_addresses: list of addresses to validate
@@ -40,27 +42,25 @@ def get_addr_to_validate(
         raise ValueError("Buffer time for expiration date cannot be negative.")
 
     count_new_addr = 0
+    count_stale_addr = 0
     addr_to_validate = []
 
     for addr in input_addresses:
-        joined_addr = " ".join([x.strip() for x in addr if x is not None])
+        joined_addr = join_clean_tuple(addr)
         if joined_addr not in addr_mapping.keys():
             addr_to_validate.append(joined_addr)
             count_new_addr += 1
+        elif addr_mapping[joined_addr].expiration < str(datetime.now() + expiration_date_buffer):
+            addr_to_validate.append(joined_addr)
+            count_stale_addr += 1
 
     LOGGER.info(
-        "From %s sent for validation, %s have been previously validated; %s need validation.",
+        "From %s sent for validation, %s have been not been validated before and %s are stale.",
         len(input_addresses),
-        len(input_addresses) - count_new_addr,
         count_new_addr,
+        count_stale_addr,
     )
 
-    addr_to_validate += [
-        k
-        for k, v in addr_mapping.items()
-        if v.expiration < str(datetime.now() + expiration_date_buffer)
-    ]
-    LOGGER.info("Also, %s addresses need to be refreshed.", len(addr_to_validate) - count_new_addr)
     LOGGER.debug("Items to validate: %s", addr_to_validate)
     return addr_to_validate
 
@@ -75,6 +75,7 @@ def from_list(
     intermediate_save_every_n: Optional[int] = None,
     intermediate_save_to_disk: bool = False,
     intermediate_folder: str = "/tmp",
+    expiration_date_buffer: timedelta = timedelta(days=1)
 ) -> Dict[str, AddressValidationMapping]:
     """Validate a list of addresses.
 
@@ -82,7 +83,7 @@ def from_list(
     main dictionary.
 
     Args:
-        all_addresses: List of standardized addresses to validate.
+        all_addresses: List of addresses to validate
         client: a googlemaps api client
         dictionary: a toolbox validation dictionary
         region_code: optional region code, e.g. 'US' or 'FR', to pass to the maps API
@@ -93,6 +94,7 @@ def from_list(
             avoid loss of validation data if code breaks
         intermediate_folder: path to folder where dictionary will be save periodically to avoid
             loss of validation data
+        expiration_date_buffer: re-validate addresses if they are within this period of expiring
 
     Returns:
         The updated validation dictionary
@@ -103,7 +105,9 @@ def from_list(
     unique_all_addresses = list(set(all_addresses))
     nbr_of_unique_addresses = len(unique_all_addresses)
 
-    addresses_to_validate = get_addr_to_validate(unique_all_addresses, dictionary)
+    addresses_to_validate = get_addr_to_validate(
+        unique_all_addresses, dictionary, expiration_date_buffer=expiration_date_buffer
+    )
     nbr_addresses_to_validate = len(addresses_to_validate)
 
     if nbr_addresses_to_validate == 0:
@@ -111,7 +115,7 @@ def from_list(
 
     else:
         LOGGER.info(
-            "Of %s addresses to validate, %s were not found in the dictionary or were too old.",
+            "Of %s addresses to validate, %s were not found in the dictionary or were expired.",
             nbr_of_unique_addresses,
             nbr_addresses_to_validate,
         )
@@ -121,7 +125,7 @@ def from_list(
             validated_address = validate(
                 address_to_validate=address,
                 client=client,
-                locality=None,  # TODO: decide how to pass this through
+                locality=None,
                 region_code=region_code,
                 enable_usps_cass=enable_usps_cass,
             )

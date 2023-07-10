@@ -1,7 +1,9 @@
 """Utilities shared by enrichment services."""
 import json
 import math
-from typing import Any, List
+from typing import Any, List, Optional, Tuple
+
+import pandas as pd
 
 
 class CustomJsonEncoder(json.JSONEncoder):
@@ -57,3 +59,48 @@ def create_empty_mapping(path: str) -> str:
     with open(path, "w") as file:
         file.write(json.dumps({}))
     return path
+
+
+def dataframe_to_tuples(
+    dataframe: pd.DataFrame, columns_to_join: List[str]
+) -> List[Tuple[Optional[str], ...]]:
+    """_summary_
+
+    Args:
+        dataframe: a dataframe
+        columns_to_join: list of columns to join in the output
+
+    Raises:
+        ValueError: if any of the `columns_to_join` do not appear in the dataframe
+
+    Returns:
+        list of strig tuples generated from specified columns of the dataframe
+    """
+    # Check that expexted columns exist
+    df_columns = dataframe.columns
+    if not all([x in df_columns for x in columns_to_join]):
+        raise ValueError(
+            f"Not all columnss {columns_to_join} exist in input dataframe columns {df_columns}"
+        )
+
+    tuples = [
+        tuple(x)
+        for x in dataframe[columns_to_join]
+        .astype(str)
+        .replace("nan", None)
+        .to_records(index=False)
+    ]
+
+    return tuples
+
+
+def join_clean_tuple(tup: Tuple[Optional[str], ...]) -> str:
+    """Join tuple entries, stripping extra leading/trailing whitespace and uppercasing.
+
+    Args:
+        tup: tuple of string or None values
+
+    Returns:
+        uppercased string made from joining tuple entries.
+    """
+    return " ".join([x.strip().upper() for x in tup if x is not None])
