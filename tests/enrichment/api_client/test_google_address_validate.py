@@ -171,11 +171,7 @@ def test_no_result():
     client = google_address_validate.get_maps_client()
 
     with pytest.raises(RuntimeError, match="Got no result"):
-        google_address_validate.validate(
-            address_to_validate="",
-            client=client,
-            region_code="US",
-        )
+        google_address_validate.validate(address_to_validate="", client=client, region_code="US")
 
     # Reset to state before test started
     if existing_var:
