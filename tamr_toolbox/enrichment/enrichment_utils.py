@@ -6,9 +6,7 @@ import pandas as pd
 
 
 class SetEncoder(json.JSONEncoder):
-    """
-    A Class to transform type 'set' to type 'list' when saving objects to JSON.
-    """
+    """A Class to transform type 'set' to type 'list' when saving objects to JSON."""
 
     def default(self, python_object):
         """

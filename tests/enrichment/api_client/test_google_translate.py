@@ -217,6 +217,11 @@ def test_google_check_valid_translation_language_incorrect_language(Client):
             mock_client, "a_language_that_does_not_exists", target_language="auto"
         )
 
+    with pytest.raises(ValueError, match="'auto' is not a valid target language for translation"):
+        enrichment.api_client.google_translate._check_valid_translation_languages(
+            mock_client, "a_language_that_does_not_exists", target_language="auto"
+        )
+
 
 @patch("google.cloud.translate_v2.Client")
 def test_translate(Client):

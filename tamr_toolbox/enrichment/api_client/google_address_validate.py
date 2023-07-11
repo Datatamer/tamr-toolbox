@@ -87,16 +87,20 @@ def validate(
         raise RuntimeError(message)
 
     if not json_resp.get("result"):
-        LOGGER.warning("Got no result for %s: API returned %s", address_to_validate, json_resp)
-        return None
+        message = f"Got no result for {address_to_validate}: API returned {json_resp}."
+        LOGGER.error(message)
+        raise RuntimeError(message)
 
+    # Parse the response to extract the desired fields
     json_resp = json_resp["result"]
 
+    # Get USPS address components
     usps_address: JsonDict = json_resp.get("uspsData", dict()).get("standardizedAddress", dict())
     usps_zipcode = usps_address.get("zipCode")
     if usps_zipcode and usps_address.get("zipCodeExtension"):
         usps_zipcode += "-" + usps_address.get("zipCodeExtension")
 
+    # Get postal address components
     postal_address = json_resp.get("address", dict()).get("postalAddress", dict())
 
     return AddressValidationMapping(
