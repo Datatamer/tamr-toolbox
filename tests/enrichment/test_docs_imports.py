@@ -7,10 +7,11 @@ def test_docs_imports():
     existing_var = os.getenv("TAMR_TOOLBOX_DOCS")
     os.environ["TAMR_TOOLBOX_DOCS"] = "1"
 
-    from tamr_toolbox.enrichment import address_validation, translate
+    from tamr_toolbox.enrichment import address_validation, enrichment_utils, translate
     from tamr_toolbox.enrichment.api_client import google_address_validate, google_translate
 
     reload(address_validation)
+    reload(enrichment_utils)
     reload(translate)
     reload(google_address_validate)
     reload(google_translate)

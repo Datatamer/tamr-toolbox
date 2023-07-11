@@ -1,8 +1,15 @@
 """Utilities shared by enrichment services."""
 import json
+import os
 from typing import Any, List, Optional, Tuple
 
-import pandas as pd
+
+# Building our documentation requires access to all dependencies, including optional ones
+# This environments variable is set automatically when `invoke docs` is used
+BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
+if BUILDING_DOCS:
+    # Import relevant optional dependencies
+    import pandas as pd
 
 
 class SetEncoder(json.JSONEncoder):
@@ -57,9 +64,9 @@ def create_empty_mapping(path: str) -> str:
 
 
 def dataframe_to_tuples(
-    dataframe: pd.DataFrame, columns_to_join: List[str]
+    dataframe: "pd.DataFrame", columns_to_join: List[str]
 ) -> List[Tuple[Optional[str], ...]]:
-    """_summary_
+    """Generate list of string tuples from specified dataframe columns.
 
     Args:
         dataframe: a dataframe
