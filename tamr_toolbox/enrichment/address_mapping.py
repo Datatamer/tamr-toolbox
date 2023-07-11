@@ -4,11 +4,12 @@ import json
 import logging
 import os
 from dataclasses import asdict, dataclass, fields
-from typing import Dict, List, Literal, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from requests.exceptions import HTTPError
 from tamr_unify_client.dataset.collection import DatasetCollection
 from tamr_unify_client.dataset.resource import Dataset
+from typing_extensions import Literal
 
 from tamr_toolbox.enrichment.enrichment_utils import create_empty_mapping
 
