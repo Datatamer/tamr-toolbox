@@ -5,10 +5,10 @@ my_tamr_instance:
     username: 'admin' 
     password: $TAMR_TOOLBOX_PASSWORD  # Example: "abc123"
 
-logging_dir: "/Users/erin.compaan/Repos/tamr-toolbox/scratch" # "/full/path/to/logging/directory"
+logging_dir: "/full/path/to/logging/directory"
 
 address_validation:
-    address_mapping_folder: "/Users/erin.compaan/Repos/tamr-toolbox/scratch" #"path/to/local/address/mapping/"
+    address_mapping_folder: "path/to/local/address/mapping/"
     address_columns:    # Ordered list of address column names -- only needed if validating locally
       - addressLine1
       - city
