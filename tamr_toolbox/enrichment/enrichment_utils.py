@@ -89,8 +89,7 @@ def dataframe_to_tuples(
         tuple(x)
         for x in dataframe[columns_to_join]
         .astype(str)
-        .replace("nan", None)
-        .replace("None", None)
+        .replace({"nan": None, "None": None})
         .to_records(index=False)
     ]
 
