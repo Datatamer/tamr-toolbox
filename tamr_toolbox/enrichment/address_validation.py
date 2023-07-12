@@ -55,12 +55,11 @@ def get_addr_to_validate(
             count_stale_addr += 1
 
     LOGGER.info(
-        "From %s sent for validation, %s have been not been validated before and %s are stale.",
+        "From %s sent for validation, %s have been not been validated before; %s are stale.",
         len(input_addresses),
         count_new_addr,
         count_stale_addr,
     )
-
     LOGGER.debug("Items to validate: %s", addr_to_validate)
     return addr_to_validate
 
