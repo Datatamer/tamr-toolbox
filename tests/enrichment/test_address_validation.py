@@ -75,6 +75,9 @@ def test_stale_addr_mapping():
 
 
 def test_from_list_all_in_dict():
+    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
+    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
+
     with patch.object(
         logging.getLogger("tamr_toolbox.enrichment.address_validation"), "info"
     ) as mock_logger:
@@ -91,6 +94,12 @@ def test_from_list_all_in_dict():
         mock_logger.assert_called_with(
             "All addresses to validate are found in the local dictionary."
         )
+
+    # Reset to state before test started
+    if existing_var:
+        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
+    else:
+        os.environ.pop("GOOGLEMAPS_API_KEY")
 
 
 @mock_api()
