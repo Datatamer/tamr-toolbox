@@ -1,19 +1,19 @@
 """Tasks related to validation and refresh of address data using Google Maps API"""
 
 import logging
+import os
 from dataclasses import replace
 from datetime import datetime, timedelta
-import os
 from unittest.mock import patch
 
 import pytest
 
-from tamr_toolbox.enrichment import address_mapping
+import tamr_toolbox
 from tamr_toolbox.enrichment.address_validation import from_list, get_addr_to_validate
 from tamr_toolbox.enrichment.api_client.google_address_validate import get_maps_client
 from tamr_toolbox.utils.testing import mock_api
 
-ADDR_VAL_MAPPING_0 = address_mapping.AddressValidationMapping(
+ADDR_VAL_MAPPING_0 = tamr_toolbox.enrichment.address_mapping.AddressValidationMapping(
     input_address="66 CHURCH ST CAMBRIDGE MASS 02138",
     validated_formatted_address="66 Church Street, Cambridge, MA 02138-3733, USA",
     expiration="2023-07-11 11:21:21.784829",
@@ -122,6 +122,43 @@ def test_from_list():
     )
 
     # Reset to state before test started
+    if existing_var:
+        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
+    else:
+        os.environ.pop("GOOGLEMAPS_API_KEY")
+
+
+@mock_api()
+def test_from_list_intermediate_save():
+    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
+    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
+
+    # Test saving after every lookup
+    with patch.object(tamr_toolbox.enrichment.address_validation, "save") as mock_save:
+        result = from_list(
+            all_addresses=[("66 church st", "cambridge", "mass", "02138")],
+            client=get_maps_client(),
+            dictionary={},
+            region_code="US",
+            intermediate_save_to_disk=True,
+            intermediate_save_every_n=1,
+        )
+        mock_save.assert_called_with(addr_mapping=result, addr_folder="/tmp")
+
+    # Test saving only at end
+    with patch.object(tamr_toolbox.enrichment.address_validation, "save") as mock_save:
+        result = from_list(
+            all_addresses=[("66 church st", "cambridge", "mass", "02138")],
+            client=get_maps_client(),
+            dictionary={},
+            region_code="US",
+            intermediate_save_to_disk=True,
+        )
+        mock_save.assert_called_once_with(addr_mapping=result, addr_folder="/tmp")
+
+    # Reset to state before test started
+    if os.path.exists("/tmp/address_validation_mapping.json"):
+        os.remove("/tmp/address_validation_mapping.json")
     if existing_var:
         os.environ["GOOGLEMAPS_API_KEY"] = existing_var
     else:

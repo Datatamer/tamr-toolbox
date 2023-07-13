@@ -87,8 +87,8 @@ def from_list(
         dictionary: a toolbox validation dictionary
         region_code: optional region code, e.g. 'US' or 'FR', to pass to the maps API
         enable_usps_cass: bool: whether to use USPS validation; only for 'US'/'PR' regions
-        intermediate_save_every_n: save periodically api_client dictionary to disk every n
-            addresses validated
+        intermediate_save_every_n: save periodically api_client dictionary every n
+            addresses validated; if not set, will save only at end of processing
         intermediate_save_to_disk: decide whether to save periodically the dictionary to disk to
             avoid loss of validation data if code breaks
         intermediate_folder: path to folder where dictionary will be save periodically to avoid
@@ -131,7 +131,7 @@ def from_list(
             if validated_address is not None:
                 tmp_dictionary.update({address: validated_address})
 
-            if (idx % intermediate_save_every_n) == 0:
+            if ((idx + 1) % intermediate_save_every_n) == 0:
                 LOGGER.info("Saving intermediate outputs")
                 update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
                 if intermediate_save_to_disk:
