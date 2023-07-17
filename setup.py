@@ -37,6 +37,7 @@ setup(
             "boto3-stubs-lite[essential]>=1.21.21",
         ],
         # Individual sets of dependencies
+        "address-validation": ["googlemaps==4.10.0"],
         "pandas": ["pandas>=0.21.0"],
         "slack": ["aiohttp==3.7.4.post0", "slackclient==2.7.2"],
         "testing": ["responses==0.10.14"],

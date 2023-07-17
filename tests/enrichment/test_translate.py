@@ -259,6 +259,11 @@ def test_translate__yield_chunk(chunk_size: int, expected_result: List[List[str]
     assert expected_result == list(enrichment.translate._yield_chunk(a_list_of_tests, chunk_size))
 
 
+def test_bad_chunk_size():
+    with pytest.raises(ValueError, match="Translation chunk size cannot be of size 0"):
+        enrichment.translate.from_list(all_phrases=[], client=None, dictionary={}, chunk_size=0)
+
+
 def test_translate__filter_numeric_and_null_phrases():
     a_simple_list = [None, "2", "a test phrase"]
     expected_result = ["", "", "a test phrase"]

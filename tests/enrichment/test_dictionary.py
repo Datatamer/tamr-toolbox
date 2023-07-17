@@ -6,7 +6,6 @@ from tamr_toolbox import utils
 from tamr_toolbox import enrichment
 
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.enrichment.dictionary import SetEncoder
 from tests._common import get_toolbox_root_dir
 
 from pathlib import Path
@@ -89,13 +88,6 @@ TEST_TRANSLATION_DICTIONARY_DICT = [
         "original_phrases": ["ground beef"],
     },
 ]
-
-
-def test_default():
-    non_set = [1, 2, 3]
-    set_encoder = SetEncoder()
-    with pytest.raises(TypeError):
-        set_encoder.default(non_set)
 
 
 def test_dictionary_filename():
