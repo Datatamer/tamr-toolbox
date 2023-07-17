@@ -10,6 +10,7 @@ from tamr_toolbox.enrichment.enrichment_utils import join_clean_tuple
 
 
 def main(
+    googlemaps_api_key: str,
     mapping_folder: str,
     address_columns: List[str],
     path_to_csv_to_validate: str,
@@ -22,16 +23,16 @@ def main(
     read from the csv, and saves it at `path_to_validated_csv`.
 
     Args:
+        googlemaps_api_key: API key for the Google Maps address validation API
         mapping_folder: path to the folder on disk where local validation data is saved
         address_columns: ordered list of address columns from the local csv file
         path_to_csv_to_validate: Path to the CSV file to validate
         path_to_validated_csv: path to the CSV file augmented with validation data
-
-    Returns:
-
     """
     # Make Google Maps API client
-    maps_client = tbox.enrichment.api_client.google_address_validate.get_maps_client()
+    maps_client = tbox.enrichment.api_client.google_address_validate.get_maps_client(
+        googlemaps_api_key
+    )
 
     # Read CSV file from disk
     dataframe = pd.read_csv(path_to_csv_to_validate, dtype=object)
@@ -94,6 +95,7 @@ if __name__ == "__main__":
 
     # Run the main function
     main(
+        googlemaps_api_key=CONFIG["address_validation"]["googlemaps_api_key"],
         mapping_folder=CONFIG["address_validation"]["address_mapping_folder"],
         address_columns=CONFIG["address_validation"]["address_columns"],
         path_to_csv_to_validate="/path/to/data.csv",

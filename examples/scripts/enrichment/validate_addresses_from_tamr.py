@@ -12,6 +12,7 @@ def main(
     dataset_id: str,
     dataset_addr_columns: List[str],
     mapping_dataset_id: str,
+    googlemaps_api_key: str,
 ) -> None:
     """Validate address data streamed from Tamr and save results on Tamr.
 
@@ -24,8 +25,7 @@ def main(
         dataset_id: id of the Tamr dataset containing the data to validate
         dataset_addr_columns: ordered list of columns in the unified dataset with address info
         mapping_dataset_id: id of the Tamr toolbox address validation mapping dataset
-
-    Returns:
+        googlemaps_api_key: API key for the Google Maps address validation API
 
     """
     # Make Tamr Client
@@ -45,7 +45,9 @@ def main(
     mapping = tbox.enrichment.address_mapping.from_dataset(mapping_dataset)
 
     LOGGER.info("Starting address validation.")
-    maps_client = tbox.enrichment.api_client.google_address_validate.get_maps_client()
+    maps_client = tbox.enrichment.api_client.google_address_validate.get_maps_client(
+        googlemaps_api_key
+    )
 
     tuples = tbox.enrichment.enrichment_utils.dataframe_to_tuples(
         dataframe=dataframe, columns_to_join=dataset_addr_columns
@@ -94,4 +96,5 @@ if __name__ == "__main__":
             "address_columns"
         ],
         mapping_dataset_id=CONFIG["datasets"]["my_addr_validation_mapping"]["id"],
+        googlemaps_api_key=CONFIG["address_validation"]["googlemaps_api_key"],
     )

@@ -1,7 +1,5 @@
 """Tests for Google Address Validation API functions."""
 
-import os
-
 import pytest
 
 from tamr_toolbox.enrichment.address_mapping import AddressValidationMapping
@@ -9,42 +7,18 @@ from tamr_toolbox.enrichment.api_client import google_address_validate
 from tamr_toolbox.utils.testing import mock_api
 
 
-def test_client_env_variable_not_set():
-    # Remove the environment variable if it's set
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    if existing_var:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
-
-    with pytest.raises(RuntimeError, match="GOOGLEMAPS_API_KEY is not set"):
-        google_address_validate.get_maps_client()
-
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-
-
 def test_client_bad_key_format():
     # Set the env to something not starting with "AIza"
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "TestTestKeyTestKeyTestKeyTestKeyTestKey"
+    key = "TestTestKeyTestKeyTestKeyTestKeyTestKey"
 
     with pytest.raises(ValueError, match="Invalid API key provided"):
-        google_address_validate.get_maps_client()
-
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
+        google_address_validate.get_maps_client(key)
 
 
 @mock_api()
 def test_client_invalid_key():
-    # Set to filler key for mock API
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
-
-    client = google_address_validate.get_maps_client()
+    key = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
+    client = google_address_validate.get_maps_client(key)
 
     with pytest.raises(RuntimeError, match="Invalid API key"):
         google_address_validate.validate(
@@ -54,20 +28,10 @@ def test_client_invalid_key():
             enable_usps_cass=False,
         )
 
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
-
 
 @mock_api()
 def test_validate():
-    # Set to filler key for mock API
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
-
-    client = google_address_validate.get_maps_client()
+    client = google_address_validate.get_maps_client("AIzaTestKeyTestKeyTestKeyTestKeyTestKey")
 
     result = google_address_validate.validate(
         address_to_validate="66 Church St Cambridge Massachusetts 02138",
@@ -104,20 +68,10 @@ def test_validate():
 
     assert result == expected
 
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
-
 
 @mock_api()
 def test_with_cass_and_locality():
-    # Set to filler key for mock API
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
-
-    client = google_address_validate.get_maps_client()
+    client = google_address_validate.get_maps_client("AIzaTestKeyTestKeyTestKeyTestKeyTestKey")
 
     result = google_address_validate.validate(
         address_to_validate="66 Church St Cambridge Massachusetts 02138",
@@ -155,26 +109,10 @@ def test_with_cass_and_locality():
 
     assert result == expected
 
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
-
 
 @mock_api()
 def test_no_result():
-    # Set to filler key for mock API
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
-
-    client = google_address_validate.get_maps_client()
+    client = google_address_validate.get_maps_client("AIzaTestKeyTestKeyTestKeyTestKeyTestKey")
 
     with pytest.raises(RuntimeError, match="Got no result"):
         google_address_validate.validate(address_to_validate="", client=client, region_code="US")
-
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")

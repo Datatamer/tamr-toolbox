@@ -75,15 +75,14 @@ def test_stale_addr_mapping():
 
 
 def test_from_list_all_in_dict():
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
+    googlemaps_api_key = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
 
     with patch.object(
         logging.getLogger("tamr_toolbox.enrichment.address_validation"), "info"
     ) as mock_logger:
         from_list(
             all_addresses=[("test", "address 1")],
-            client=get_maps_client(),
+            client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
             dictionary={
                 "TEST ADDRESS 1": replace(
                     ADDR_VAL_MAPPING_0, expiration=str(datetime.now() + timedelta(days=2))
@@ -95,22 +94,14 @@ def test_from_list_all_in_dict():
             "All addresses to validate are found in the local dictionary."
         )
 
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
-
 
 @mock_api()
 def test_from_list():
-    # Set to filler key for mock API
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
+    googlemaps_api_key = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
 
     result = from_list(
         all_addresses=[("66 church st", "cambridge", "mass", "02138")],
-        client=get_maps_client(),
+        client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
         dictionary={},
         region_code="US",
     )
@@ -121,23 +112,16 @@ def test_from_list():
         == ADDR_VAL_MAPPING_0.validated_formatted_address
     )
 
-    # Reset to state before test started
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")
-
 
 @mock_api()
 def test_from_list_intermediate_save():
-    existing_var = os.getenv("GOOGLEMAPS_API_KEY")
-    os.environ["GOOGLEMAPS_API_KEY"] = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
+    googlemaps_api_key = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
 
     # Test saving after every lookup
     with patch.object(tamr_toolbox.enrichment.address_validation, "save") as mock_save:
         result = from_list(
             all_addresses=[("66 church st", "cambridge", "mass", "02138")],
-            client=get_maps_client(),
+            client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
             dictionary={},
             region_code="US",
             intermediate_save_to_disk=True,
@@ -149,7 +133,7 @@ def test_from_list_intermediate_save():
     with patch.object(tamr_toolbox.enrichment.address_validation, "save") as mock_save:
         result = from_list(
             all_addresses=[("66 church st", "cambridge", "mass", "02138")],
-            client=get_maps_client(),
+            client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
             dictionary={},
             region_code="US",
             intermediate_save_to_disk=True,
@@ -159,7 +143,3 @@ def test_from_list_intermediate_save():
     # Reset to state before test started
     if os.path.exists("/tmp/address_validation_mapping.json"):
         os.remove("/tmp/address_validation_mapping.json")
-    if existing_var:
-        os.environ["GOOGLEMAPS_API_KEY"] = existing_var
-    else:
-        os.environ.pop("GOOGLEMAPS_API_KEY")

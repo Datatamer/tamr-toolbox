@@ -8,6 +8,7 @@ my_tamr_instance:
 logging_dir: "/full/path/to/logging/directory"
 
 address_validation:
+    googlemaps_api_key: $GOOGLEMAPS_API_KEY
     address_mapping_folder: "path/to/local/address/mapping/"
     address_columns:    # Ordered list of address column names -- only needed if validating locally
       - addressLine1

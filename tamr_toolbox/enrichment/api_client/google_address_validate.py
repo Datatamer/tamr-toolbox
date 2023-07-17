@@ -18,25 +18,18 @@ LOGGER = logging.getLogger(__name__)
 _ADDRESSVALIDATION_BASE_URL = "https://addressvalidation.googleapis.com"
 
 
-def get_maps_client() -> "googlemaps.Client":
-    """Get GoogleMaps client using the environment variable 'GOOGLEMAPS_API_KEY'
+def get_maps_client(googlemaps_api_key: str) -> "googlemaps.Client":
+    """Get GoogleMaps client.
+
+    Args:
+        googlemaps_api_key: API key for the Google Maps address validation API
 
     Returns:
-      API client linekd to specified key
-
-    Raises:
-      RuntimeError: if environment variable is not set
+        API client linekd to specified key
     """
-    key = os.getenv("GOOGLEMAPS_API_KEY")
-
-    if not key:
-        error_message = "Environment variable GOOGLEMAPS_API_KEY is not set."
-        LOGGER.error(error_message)
-        raise RuntimeError(error_message)
-
     import googlemaps
 
-    return googlemaps.Client(key=key)
+    return googlemaps.Client(key=googlemaps_api_key)
 
 
 def validate(
