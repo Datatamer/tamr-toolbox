@@ -136,6 +136,8 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
         for handler in package_logger.handlers:
             found_file_handler = found_file_handler or type(handler) == logging.FileHandler
             found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+            package_logger.removeHandler(handler)
+            handler.close()
 
         assert found_file_handler and found_stream_handler
 
@@ -156,5 +158,7 @@ def test_enable_toolbox_logging_with_only_file_handler():
         for handler in package_logger.handlers:
             found_file_handler = found_file_handler or type(handler) == logging.FileHandler
             found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+            package_logger.removeHandler(handler)
+            handler.close()
 
         assert found_file_handler and not found_stream_handler
