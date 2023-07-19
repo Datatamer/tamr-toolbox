@@ -100,6 +100,7 @@ def test_is_version_condition_met():
 @mock_api()
 def test_get_tamr_versions_from_function_args():
     tamr_client = client.create(**CONFIG["toolbox_test_instance"])
+    realtime_client = client.create(**CONFIG["toolbox_realtime_match_instance"])
     tamr_project = tamr_client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
     tamr_dataset = tamr_client.datasets.by_resource_id(CONFIG["datasets"]["groceries_tiny"])
 
@@ -107,6 +108,9 @@ def test_get_tamr_versions_from_function_args():
 
     assert version._get_tamr_versions_from_function_args(tamr_client) == [
         version.current(tamr_client)
+    ]
+    assert version._get_tamr_versions_from_function_args(realtime_client) == [
+        version.current(realtime_client)
     ]
     assert version._get_tamr_versions_from_function_args(tamr_project) == [
         version.current(tamr_client)

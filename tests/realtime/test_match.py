@@ -7,6 +7,7 @@ import pytest
 from tamr_toolbox import utils
 from tamr_toolbox.realtime.matching import (
     match_query,
+    transform_and_match_query,
     poll_realtime_match_status,
     update_realtime_match_data,
 )
@@ -26,7 +27,7 @@ MATCH_TEST_DATA = [
         "all_names": ["", "Rob"],
         "full_name": ["Rob Cohen"],
     },
-    {"ssn": ["456"], "last_name": ["Ames"], "first_name": ["Jen"]},
+    {"ssn": ["456"], "last_name": ["Ames"], "first_name": ["Jen"], "nickname": ["Jenny"]},
     {"ssn": ["999"], "first_name": ["Ben"], "all_names": ["", "Ben"], "full_name": ["Ben Brown"]},
     {
         "ssn": ["123"],
@@ -92,6 +93,90 @@ def test_match_query_with_match(type: str, batch_size: int, primary_key: Optiona
     assert result["rec4" if primary_key else 4] == []  # testing that we don't get an index error
 
     return None
+
+
+@pytest.mark.parametrize(
+    "type, batch_size, primary_key",
+    [
+        ("records", 1000, None),
+        ("clusters", 1000, None),
+        ("records", 1, None),
+        ("clusters", 1, None),
+        ("records", 1000, "testkey"),
+        ("clusters", 1000, "testkey"),
+        ("records", 1, "testkey"),
+        ("clusters", 1, "testkey"),
+    ],
+)
+@mock_api()
+def test_transform_match_query_with_match(type: str, batch_size: int, primary_key: Optional[str]):
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_mastering")
+    match_client = utils.client.create(**CONFIG["toolbox_realtime_match_instance"])
+
+    data = (
+        MATCH_TEST_DATA
+        if primary_key is None
+        else [{**d, primary_key: f"rec{k}"} for k, d in enumerate(MATCH_TEST_DATA)]
+    )
+
+    result = transform_and_match_query(
+        match_client=match_client,
+        project=project,
+        records=data,
+        type=type,
+        batch_size=batch_size,
+        primary_key=primary_key,
+        default_source_name="people_tiny.csv",
+    )
+
+    if type == "records":
+        assert {"7279808247767404449", "8878137442375545950"} == {
+            x["matchedRecordId"] for x in result["rec0" if primary_key else 0]
+        }
+        assert {"-198958353428908929", "1134804050832671496"} == {
+            x["matchedRecordId"] for x in result["rec1" if primary_key else 1]
+        }
+    else:
+        assert {"218c3f66-b240-3b08-b688-2c8d0506f12f"} == {
+            x["clusterId"] for x in result["rec0" if primary_key else 0]
+        }
+        assert {
+            "565e03e5-9349-34ef-a779-c4bcd9dcc49c",
+            "8762d70e-b8a5-39f8-a387-8c9148e8254f",
+        } == {x["clusterId"] for x in result["rec1" if primary_key else 1]}
+    assert result["rec2" if primary_key else 2]
+    assert result["rec3" if primary_key else 3]
+    assert result["rec4" if primary_key else 4] == []  # testing that we don't get an index error
+
+    return None
+
+
+@mock_api()
+@pytest.mark.parametrize("source", ["people_tiny.csv", None])
+def test_llt_in_match_query(source: Optional[str]):
+    client = utils.client.create(**CONFIG["toolbox_test_instance"])
+    project = client.projects.by_name("minimal_mastering")
+    match_client = utils.client.create(**CONFIG["toolbox_realtime_match_instance"])
+
+    data = [
+        {"ssn": ["123"], "last_name": ["Cohen"], "first_name": ["Robert"], "nickname": ["Rob"]}
+    ]
+
+    result = transform_and_match_query(
+        match_client=match_client,
+        project=project,
+        records=data,
+        type="records",
+        batch_size=1,
+        primary_key=None,
+        default_source_name=source,
+    )
+    if source:
+        print(result)
+        assert result[0][0]["attributeSimilarities"].get("all_names") is not None
+    else:
+        assert not result[0][0]["attributeSimilarities"].get("all_names")
 
 
 @pytest.mark.parametrize("type", ["records", "clusters"])
