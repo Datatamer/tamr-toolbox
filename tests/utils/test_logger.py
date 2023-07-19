@@ -32,7 +32,7 @@ def test_filename():
 def test_create_logger_with_stream_and_file_handler():
     with tempfile.TemporaryDirectory() as tempdir:
         logger = tamr_toolbox.utils.logger.create(
-            "test_logging_stream_and_file", log_to_terminal=True, log_directory=tempdir.name
+            "test_logging_stream_and_file", log_to_terminal=True, log_directory=tempdir
         )
 
         assert len(logger.handlers) == 2
@@ -65,7 +65,7 @@ def test_create_logger_with_only_stream_handler():
 def test_create_logger_with_only_file_handler():
     with tempfile.TemporaryDirectory() as tempdir:
         logger = tamr_toolbox.utils.logger.create(
-            "test_logging_file_only", log_to_terminal=False, log_directory=tempdir.name
+            "test_logging_file_only", log_to_terminal=False, log_directory=tempdir
         )
 
         assert len(logger.handlers) == 1
@@ -120,7 +120,7 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
         # Reset package logger to have no handlers
         package_logger.handlers.clear()
         tamr_toolbox.utils.logger.enable_toolbox_logging(
-            log_to_terminal=True, log_directory=tempdir.name
+            log_to_terminal=True, log_directory=tempdir
         )
 
         assert len(package_logger.handlers) == 2
@@ -140,7 +140,7 @@ def test_enable_toolbox_logging_with_only_file_handler():
         # Reset package logger to have no handlers
         package_logger.handlers.clear()
         tamr_toolbox.utils.logger.enable_toolbox_logging(
-            log_to_terminal=False, log_directory=tempdir.name
+            log_to_terminal=False, log_directory=tempdir
         )
 
         assert len(package_logger.handlers) == 1
