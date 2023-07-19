@@ -1,9 +1,16 @@
+"""Utility to ensure that all examples are included in built documentation"""
+
 import logging
 import os
+from pathlib import Path
 from typing import List
-from tests._common import get_toolbox_root_dir
 
 LOGGER = logging.getLogger(__name__)
+
+
+def _get_root_dir():
+    """Get parent Tamr toolbox directory for use during validation."""
+    return Path(__file__).parent.parent.resolve()
 
 
 def get_all_python_files() -> List[str]:
@@ -13,7 +20,7 @@ def get_all_python_files() -> List[str]:
     Returns:
         List of all python files with relative paths to the root directory
     """
-    root_dir = get_toolbox_root_dir()
+    root_dir = _get_root_dir()
     all_python_files = []
     for full_path, _, files in os.walk(root_dir):
         rel_path = os.path.relpath(full_path, root_dir)
@@ -73,7 +80,7 @@ def crawl_through_doc_src(
     Returns:
         Remaining paths that weren't found in doc_src files with extensions specified
     """
-    root_dir = get_toolbox_root_dir()
+    root_dir = _get_root_dir()
     for full_path, _, files in os.walk(root_dir):
         rel_path = os.path.relpath(full_path, root_dir)
         first_dir = rel_path.split("/", 1)[0]
