@@ -109,9 +109,15 @@ logger = tamr_toolbox.utils.logger.create(
 1/0
 """
             )
+        if not f.closed:
+            f.close()
+
         os.system(f"python {script_path}")
 
-        assert "ZeroDivisionError" in open(log_file_path).read()
+        with open(log_file_path) as f:
+            assert "ZeroDivisionError" in f.read()
+        if not f.closed:
+            f.close()
 
 
 def test_enable_toolbox_logging_with_stream_and_file_handler():

@@ -97,3 +97,5 @@ def test_get_with_connection_retry():
         with open(log_file_path, "r") as f:
             # confirm that the intended warning was written to the log
             assert "Caught exception in connect" in f.read()
+        if not f.closed:
+            f.close()
