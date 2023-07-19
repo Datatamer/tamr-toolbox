@@ -119,9 +119,11 @@ def _run_local_command(
     process = subprocess.Popen(
         command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, stdin=subprocess.PIPE, shell=True
     )
+    print("PROCESS is", process, process.__dict__)
 
     # Provide input to command (such as a password) if given
     if command_input is not None:
+        LOGGER.debug("Writing %s to stdin", command_input)
         process.stdin.write(command_input)
     process.stdin.close()
 
@@ -135,6 +137,7 @@ def _run_local_command(
     while True:
         time.sleep(1)
         stdout = process.stdout.peek().decode("utf-8")
+        LOGGER.debug(stdout)
         stderr = process.stderr.peek().decode("utf-8")
         if len(stdout) > 0:
             full_stdout += stdout
