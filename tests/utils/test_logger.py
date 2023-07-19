@@ -148,6 +148,8 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             package_logger.removeHandler(handler)
             handler.close()
 
+        package_logger.handlers.clear()
+
 
 def test_enable_toolbox_logging_with_only_file_handler():
     with tempfile.TemporaryDirectory() as tempdir:

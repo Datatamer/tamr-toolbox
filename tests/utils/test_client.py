@@ -99,8 +99,12 @@ def test_get_with_connection_retry():
             # confirm that the intended warning was written to the log
             contents = f.read()
             assert "Caught exception in connect" in contents
+
+        if not f.closed:
             f.close()
 
         for handler in package_logger.handlers:
             package_logger.removeHandler(handler)
             handler.close()
+        package_logger.handlers.clear()
+        del log_file_path
