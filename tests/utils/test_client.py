@@ -1,4 +1,5 @@
 """Tests for tasks related to connecting to a Tamr instance"""
+import logging
 import os
 import pytest
 import tempfile
@@ -79,8 +80,8 @@ def test_client_with_jwt_auth():
 
 @mock_api()
 def test_get_with_connection_retry():
-    # Create temp directory. Remember to cleanup!
     with tempfile.TemporaryDirectory() as tempdir:
+        package_logger = logging.getLogger("tamr_toolbox")
         log_prefix = "caught_connection_error"
         log_file_path = os.path.join(tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}")
 
@@ -97,6 +98,9 @@ def test_get_with_connection_retry():
         with open(log_file_path, "r") as f:
             # confirm that the intended warning was written to the log
             contents = f.read()
+            assert "Caught exception in connect" in contents
             f.close()
 
-        assert "Caught exception in connect" in contents
+        for handler in package_logger.handlers:
+            package_logger.removeHandler(handler)
+            handler.close()
