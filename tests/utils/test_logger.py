@@ -166,8 +166,7 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             logf.close()
         if os.path.exists(log_file_path):
             os.remove(log_file_path)
-        del handlers
-        del package_logger
+        logging.shutdown()
 
 
 def test_enable_toolbox_logging_with_only_file_handler():
