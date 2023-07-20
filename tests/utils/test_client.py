@@ -106,4 +106,5 @@ def test_get_with_connection_retry():
         for handler in package_logger.handlers:
             package_logger.removeHandler(handler)
             handler.close()
+        package_logger.handlers.clear()
         logging.shutdown()
