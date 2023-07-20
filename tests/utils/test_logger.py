@@ -144,11 +144,14 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
         assert found_file_handler and found_stream_handler
 
+        del found_file_handler
+        del found_stream_handler
+
+        package_logger.handlers.clear()
         for handler in package_logger.handlers:
             package_logger.removeHandler(handler)
             handler.close()
 
-        package_logger.handlers.clear()
         del handler
         del package_logger
 
