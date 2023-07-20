@@ -45,9 +45,11 @@ def test_create_logger_with_stream_and_file_handler():
 
         assert found_file_handler and found_stream_handler
 
-        for handler in logger.handlers:
+        handlers = logger.handlers
+        for handler in handlers:
             logger.removeHandler(handler)
             handler.close()
+        del handlers
 
 
 def test_create_logger_with_only_stream_handler():
@@ -82,9 +84,11 @@ def test_create_logger_with_only_file_handler():
 
         assert found_file_handler and not found_stream_handler
 
-        for handler in logger.handlers:
+        handlers = logger.handlers
+        for handler in handlers:
             logger.removeHandler(handler)
             handler.close()
+        del handlers
 
 
 def test_log_uncaught_exception():
@@ -147,12 +151,11 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             )
         assert found_file_handler and found_stream_handler
 
-        del found_file_handler
-        del found_stream_handler
-
-        for handler in package_logger.handlers:
+        handlers = package_logger.handlers
+        for handler in handlers:
             package_logger.removeHandler(handler)
             handler.close()
+        del handlers
 
 
 def test_enable_toolbox_logging_with_only_file_handler():
@@ -173,6 +176,8 @@ def test_enable_toolbox_logging_with_only_file_handler():
             found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
         assert found_file_handler and not found_stream_handler
 
-        for handler in package_logger.handlers:
+        handlers = package_logger.handlers
+        for handler in handlers:
             package_logger.removeHandler(handler)
             handler.close()
+        del handlers
