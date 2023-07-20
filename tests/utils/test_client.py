@@ -103,7 +103,7 @@ def test_get_with_connection_retry():
         if not f.closed:
             f.close()
 
-        # for handler in package_logger.handlers:
-        #     package_logger.removeHandler(handler)
-        #     handler.close()
+        for handler in package_logger.handlers:
+            package_logger.removeHandler(handler)
+            handler.close()
         logging.shutdown()
