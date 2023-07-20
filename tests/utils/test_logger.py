@@ -159,6 +159,11 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             package_logger.removeHandler(handler)
             handler.close()
         del handler
+
+        log_file_path = os.path.join(tempdir, tamr_toolbox.utils.logger._get_log_filename)
+        with open(log_file_path, "r") as logf:
+            logf.close()
+
         del handlers
         del package_logger
 
