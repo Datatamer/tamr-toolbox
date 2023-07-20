@@ -49,7 +49,7 @@ def test_create_logger_with_stream_and_file_handler():
         for handler in handlers:
             logger.removeHandler(handler)
             handler.close()
-        del hanl
+        del handler
         del handlers
 
 
