@@ -128,9 +128,10 @@ logger = tamr_toolbox.utils.logger.create(
 
 def test_enable_toolbox_logging_with_stream_and_file_handler():
     with tempfile.TemporaryDirectory() as tempdir:
+        # Get package logger and make sure it has no handlers
         package_logger = logging.getLogger("tamr_toolbox")
-        # Reset package logger to have no handlers
         package_logger.handlers.clear()
+
         tamr_toolbox.utils.logger.enable_toolbox_logging(
             log_to_terminal=True, log_directory=tempdir
         )
@@ -140,20 +141,18 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
         found_file_handler = False
         found_stream_handler = False
         for handler in package_logger.handlers:
-            found_file_handler = found_file_handler or type(handler) == logging.FileHandler
-            found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
+            found_file_handler = found_file_handler or isinstance(handler, logging.FileHandler)
+            found_stream_handler = found_stream_handler or isinstance(
+                handler, logging.StreamHandler
+            )
         assert found_file_handler and found_stream_handler
 
         del found_file_handler
         del found_stream_handler
 
-        package_logger.handlers.clear()
         for handler in package_logger.handlers:
             package_logger.removeHandler(handler)
             handler.close()
-
-        del handler
-        del package_logger
 
 
 def test_enable_toolbox_logging_with_only_file_handler():
