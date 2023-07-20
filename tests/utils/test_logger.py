@@ -46,10 +46,10 @@ def test_create_logger_with_stream_and_file_handler():
         assert found_file_handler and found_stream_handler
 
         # Shut down the logger thoroughly -- otherwise Windows may not release files in tempdir
-        handlers = logger.handlers[:]
-        for handler in handlers:
-            logger.removeHandler(handler)
-            handler.close()
+        # handlers = logger.handlers[:]
+        # for handler in handlers:
+        #     logger.removeHandler(handler)
+        #     handler.close()
         logging.shutdown()
 
 
@@ -86,10 +86,10 @@ def test_create_logger_with_only_file_handler():
         assert found_file_handler and not found_stream_handler
 
         # Shut down the logger thoroughly -- otherwise Windows may not release files in tempdir
-        handlers = logger.handlers[:]
-        for handler in handlers:
-            logger.removeHandler(handler)
-            handler.close()
+        # handlers = logger.handlers[:]
+        # for handler in handlers:
+        #     logger.removeHandler(handler)
+        #     handler.close()
         logging.shutdown()
 
 
@@ -152,10 +152,10 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
         assert found_file_handler and found_stream_handler
 
         # Shut down the logger thoroughly -- otherwise Windows may not release files in tempdir
-        handlers = package_logger.handlers[:]
-        for handler in handlers:
-            package_logger.removeHandler(handler)
-            handler.close()
+        # handlers = package_logger.handlers[:]
+        # for handler in handlers:
+        #     package_logger.removeHandler(handler)
+        #     handler.close()
         logging.shutdown()
 
 
@@ -178,8 +178,8 @@ def test_enable_toolbox_logging_with_only_file_handler():
         assert found_file_handler and not found_stream_handler
 
         # Shut down the logger thoroughly -- otherwise Windows may not release files in tempdir
-        handlers = package_logger.handlers[:]
-        for handler in handlers:
-            package_logger.removeHandler(handler)
-            handler.close()
+        # handlers = package_logger.handlers[:]
+        # for handler in handlers:
+        #     package_logger.removeHandler(handler)
+        #     handler.close()
         logging.shutdown()
