@@ -24,7 +24,10 @@ def current(client: Client) -> str:
     Returns:
         String representation of Tamr version
     """
-    url = "/api/versioned/service/version"
+    if client.port == 9100:
+        url = "/api/versioned/service/version"
+    else:
+        url = "/api/service/version"
     response = client.get(url).successful()
     return json.loads(response.content)["version"]
 
