@@ -10,8 +10,8 @@ def main(*, python_exec: Path) -> None:
         python_exec: path to python executable
 
     """
-    run([str(python_exec), "-m", "pip", "install", "--upgrade", "pip==21.3.1"])
-    run([str(python_exec), "-m", "pip", "install", "--upgrade", "setuptools==45.1.0"])
+    run([str(python_exec), "-m", "pip", "install", "--upgrade", "pip==23.2"])
+    run([str(python_exec), "-m", "pip", "install", "--upgrade", "setuptools==68.0.0"])
     run([str(python_exec), "-m", "pip", "install", "-r", "dev_requirements.txt"])
     run([str(python_exec), "-m", "pip", "install", "-r", "optional_requirements.txt"])
     run([str(python_exec), "-m", "pip", "install", "--editable", "."])

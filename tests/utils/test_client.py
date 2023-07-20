@@ -1,4 +1,5 @@
 """Tests for tasks related to connecting to a Tamr instance"""
+import logging
 import os
 import pytest
 import tempfile
@@ -79,29 +80,31 @@ def test_client_with_jwt_auth():
 
 @mock_api()
 def test_get_with_connection_retry():
-    # Create temp directory. Remember to cleanup!
-    tempdir = tempfile.TemporaryDirectory()
+    with tempfile.TemporaryDirectory() as tempdir:
+        package_logger = logging.getLogger("tamr_toolbox")
+        log_prefix = "caught_connection_error"
+        log_file_path = os.path.join(tempdir, f"{log_prefix}_{utils.logger._get_log_filename()}")
 
-    log_prefix = "caught_connection_error"
-    log_file_path = os.path.join(tempdir.name, f"{log_prefix}_{utils.logger._get_log_filename()}")
-
-    my_client = utils.client.create(**CONFIG["my_other_instance"])
-    utils.logger.enable_toolbox_logging(
-        log_to_terminal=False, log_directory=tempdir.name, log_prefix=log_prefix
-    )
-
-    with pytest.raises(TimeoutError):
-        utils.client.get_with_connection_retry(
-            my_client, "/api/service/health", timeout_seconds=10, sleep_seconds=1
+        my_client = utils.client.create(**CONFIG["my_other_instance"])
+        utils.logger.enable_toolbox_logging(
+            log_to_terminal=False, log_directory=tempdir, log_prefix=log_prefix
         )
 
-    with open(log_file_path, "r") as f:
-        # confirm that the intended warning was written to the log
-        assert "Caught exception in connect" in f.read()
+        with pytest.raises(TimeoutError):
+            utils.client.get_with_connection_retry(
+                my_client, "/api/service/health", timeout_seconds=10, sleep_seconds=1
+            )
 
-    # Cleanup temp directory
-    try:
-        tempdir.cleanup()
-    except (PermissionError, NotADirectoryError):
-        # Windows sometimes fails so try one more time
-        tempdir.cleanup()
+        with open(log_file_path, "r") as f:
+            # confirm that the intended warning was written to the log
+            contents = f.read()
+            assert "Caught exception in connect" in contents
+
+        if not f.closed:
+            f.close()
+
+        for handler in package_logger.handlers:
+            package_logger.removeHandler(handler)
+            handler.close()
+        package_logger.handlers.clear()
+        logging.shutdown()
