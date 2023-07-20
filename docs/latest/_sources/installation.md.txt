@@ -37,6 +37,17 @@ Library: [GoogleTranslate](https://github.com/googleapis/python-translate) (`tam
 
 Note: You will additionally need your own google API key in order to use translation capabilities.
 
+***Optional Feature: Google Address Validation***
+
+Install instructions:
+`pip install 'tamr-toolbox[address-validation]'`
+
+Required for [Address Validation](modules/enrichment/address_validation.md)
+
+Library: [Google Maps API](https://github.com/googlemaps/google-maps-services-python) (`tamr-toolbox` uses version == 4.10.0)
+
+Note: You will additionally need your own Google Maps API key in order to use address validation capabilities.
+
 ***Optional Feature: Mock API Testing***
 
 Install instructions:

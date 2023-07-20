@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -189,14 +194,14 @@
            <div itemprop="articleBody">
             
   <div class="section" id="slack">
-<h1>Slack<a class="headerlink" href="#slack" title="Permalink to this headline">¶</a></h1>
+<h1>Slack<a class="headerlink" href="#slack" title="Permalink to this heading">¶</a></h1>
 <p>This module requires an optional dependency. See <a class="reference internal" href="../../installation.html"><span class="doc">Installation</span></a> for details.</p>
 <div class="section" id="module-tamr_toolbox.notifications.slack">
-<span id="slack-notifications"></span><h2>Slack Notifications<a class="headerlink" href="#module-tamr_toolbox.notifications.slack" title="Permalink to this headline">¶</a></h2>
+<span id="slack-notifications"></span><h2>Slack Notifications<a class="headerlink" href="#module-tamr_toolbox.notifications.slack" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to creation of Slack notifications</p>
 <dl class="py function">
-<dt id="tamr_toolbox.notifications.slack.send_message">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.notifications.slack.</span></code><code class="sig-name descname"><span class="pre">send_message</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slack_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/notifications/slack.html#send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.notifications.slack.send_message" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.notifications.slack.send_message">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.notifications.slack.</span></span><span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slack_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/notifications/slack.html#send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.notifications.slack.send_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message to a pre-defined Slack channel</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -221,8 +226,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.notifications.slack.monitor_job">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.notifications.slack.</span></code><code class="sig-name descname"><span class="pre">monitor_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slack_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notify_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/notifications/slack.html#monitor_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.notifications.slack.monitor_job" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.notifications.slack.monitor_job">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.notifications.slack.</span></span><span class="sig-name descname"><span class="pre">monitor_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slack_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notify_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/notifications/slack.html#monitor_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.notifications.slack.monitor_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Monitors a Tamr Operation and sends a Slack message to a channel when the job status is updated</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

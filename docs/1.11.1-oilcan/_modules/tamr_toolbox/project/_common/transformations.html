@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.project._common.transformations &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/project/_common/transformations.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.11.1 - Oilcan
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.project._common.transformations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.project._common.transformations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to transformations with Tamr projects&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">response</span><span class="p">,</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.version</span> <span class="kn">import</span> <span class="n">requires_tamr_version</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">TX_RELEASE_VERSION</span> <span class="o">=</span> <span class="s2">&quot;2020.009.0&quot;</span>
+
+
+<div class="viewcode-block" id="InputTransformation"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.transformations.InputTransformation">[docs]</a><span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">InputTransformation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A transformation scoped to input datasets</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        transformation: The text of a transformations script</span>
+<span class="sd">        datasets: The list of input datasets that the script should be applied to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">transformation</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TransformationGroup"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.transformations.TransformationGroup">[docs]</a><span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">TransformationGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A group of input transformations and unified transformations</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_scope: A list of transformation to apply to input datasets</span>
+<span class="sd">        unified_scope: A list of transformation scripts to apply to the unified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_scope</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">InputTransformation</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">unified_scope</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_input_transformation_from_json</span><span class="p">(</span><span class="n">tamr_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputTransformation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make input transformation from JSON data (deserialize)</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_client: A Tamr client</span>
+<span class="sd">        data: Input scoped transformation JSON data from Tamr server</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A single input transformation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># &quot;datasets&quot; is a dictionary with 3 keys: name, datasetId and relativeDatasetId</span>
+    <span class="c1"># The datasetId is formatted like: &quot;datasetId&quot;: &quot;unify://unified-data/v1/datasets/3&quot;</span>
+    <span class="c1"># If we split that string on / , the last value will be the dataset resource id</span>
+    <span class="n">dataset_resource_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;datasetId&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">]]</span>
+    <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">tamr_client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">d_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">d_id</span> <span class="ow">in</span> <span class="n">dataset_resource_ids</span><span class="p">]</span>
+    <span class="c1"># &quot;transformation&quot; is the text of the transformation script</span>
+    <span class="k">return</span> <span class="n">InputTransformation</span><span class="p">(</span><span class="n">transformation</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;transformation&quot;</span><span class="p">],</span> <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_from_json</span><span class="p">(</span><span class="n">tamr_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">JsonDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformationGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make transformations from JSON data (deserialize)</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_client: A Tamr client</span>
+<span class="sd">        data: Transformation JSON data from Tamr server</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        All input transformations and unified transformations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TransformationGroup</span><span class="p">(</span>
+        <span class="c1"># &quot;unified&quot; is a list of transformations for the unified dataset</span>
+        <span class="n">unified_scope</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;unified&quot;</span><span class="p">],</span>
+        <span class="c1"># &quot;parameterized&quot; is a list of dictionaries representing input transformations</span>
+        <span class="n">input_scope</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">_input_transformation_from_json</span><span class="p">(</span><span class="n">tamr_client</span><span class="p">,</span> <span class="n">tx</span><span class="p">)</span> <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;parameterized&quot;</span><span class="p">]</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_input_transformation_to_json</span><span class="p">(</span><span class="n">tx</span><span class="p">:</span> <span class="n">InputTransformation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert input transformations to JSON data (serialize)</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tx: Input transformation to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON representation of a single input transformation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># datasetId omitted, only one of &quot;datasetId&quot; or &quot;relativeDatasetId&quot; is required</span>
+    <span class="n">dataset_json</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;relativeDatasetId&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;datasets/</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">resource_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">tx</span><span class="o">.</span><span class="n">datasets</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;datasets&quot;</span><span class="p">:</span> <span class="n">dataset_json</span><span class="p">,</span> <span class="s2">&quot;transformation&quot;</span><span class="p">:</span> <span class="n">tx</span><span class="o">.</span><span class="n">transformation</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_to_json</span><span class="p">(</span><span class="n">tx</span><span class="p">:</span> <span class="n">TransformationGroup</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonDict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert transformations to JSON data (serialize)</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tx: Transformations to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JSON representation of all input transformations and unified transformations</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;parameterized&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">_input_transformation_to_json</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tx</span><span class="o">.</span><span class="n">input_scope</span><span class="p">],</span>
+        <span class="s2">&quot;unified&quot;</span><span class="p">:</span> <span class="n">tx</span><span class="o">.</span><span class="n">unified_scope</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_all"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.transformations.get_all">[docs]</a><span class="nd">@requires_tamr_version</span><span class="p">(</span><span class="n">min_version</span><span class="o">=</span><span class="n">TX_RELEASE_VERSION</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformationGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the transformations of a Project</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Project containing transformations</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        All input transformations and unified transformations of a project</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting transformations from project </span><span class="si">{</span><span class="n">project</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">api_path</span><span class="si">}</span><span class="s2">/transformations&quot;</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">successful</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_from_json</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="set_all"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.transformations.set_all">[docs]</a><span class="nd">@requires_tamr_version</span><span class="p">(</span><span class="n">min_version</span><span class="o">=</span><span class="n">TX_RELEASE_VERSION</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">set_all</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="n">tx</span><span class="p">:</span> <span class="n">TransformationGroup</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the transformations of a Project</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Project to place transformations within</span>
+<span class="sd">        tx: Transformations to put into project</span>
+<span class="sd">        allow_overwrite: Whether existing transformations can be overwritten</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response object created when transformations of a project are replaced</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if `allow_overwrite` is set to False but transformations already exists</span>
+<span class="sd">            in `project`</span>
+<span class="sd">        ValueError: if provided `tx` are invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_overwrite</span><span class="p">:</span>
+        <span class="c1"># Fail if any transformations already exist</span>
+        <span class="n">current_tx</span> <span class="o">=</span> <span class="n">get_all</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current_tx</span><span class="o">.</span><span class="n">unified_scope</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_tx</span><span class="o">.</span><span class="n">input_scope</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot set transformations in project </span><span class="si">{</span><span class="n">project</span><span class="si">}</span><span class="s2"> because &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;transformations already exist in that project and allow_overwrite &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;is set to False.)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Replaces transformations in project </span><span class="si">{</span><span class="n">project</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">_to_json</span><span class="p">(</span><span class="n">tx</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">api_path</span><span class="si">}</span><span class="s2">/transformations&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+
+    <span class="c1"># Raise a specific exception for invalid transformation input</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to set transformations in project </span><span class="si">{</span><span class="n">project</span><span class="si">}</span><span class="s2"> due to invalid &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;transformations: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># Other issue with set are caught here</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">successful</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_all_unified"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.transformations.get_all_unified">[docs]</a><span class="k">def</span> <span class="nf">get_all_unified</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the unified transformations of a Project</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Project containing transformations</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        All unified transformations of a project</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_all</span><span class="p">(</span><span class="n">project</span><span class="p">)</span><span class="o">.</span><span class="n">unified_scope</span></div>
+
+
+<div class="viewcode-block" id="set_all_unified"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.transformations.set_all_unified">[docs]</a><span class="k">def</span> <span class="nf">set_all_unified</span><span class="p">(</span><span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="n">tx</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the unified transformations of a Project.</span>
+<span class="sd">    Any input transformations will not be altered</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2020.009.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: Project to place transformations within</span>
+<span class="sd">        tx: Unified transformations to put into project</span>
+<span class="sd">        allow_overwrite: Whether existing unified transformations can be overwritten</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response object created when transformations of a project are replaced</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if `allow_overwrite` is set to False but transformations already exists</span>
+<span class="sd">            in `project`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_tx</span> <span class="o">=</span> <span class="n">get_all</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_overwrite</span><span class="p">:</span>
+        <span class="c1"># Fail if any unified transformations already exist</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_tx</span><span class="o">.</span><span class="n">unified_scope</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot set unified transformations in project </span><span class="si">{</span><span class="n">project</span><span class="si">}</span><span class="s2"> because &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;unified transformations already exist in that project and &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;allow_overwrite is set to False.)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="n">new_tx</span> <span class="o">=</span> <span class="n">TransformationGroup</span><span class="p">(</span><span class="n">unified_scope</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">input_scope</span><span class="o">=</span><span class="n">current_tx</span><span class="o">.</span><span class="n">input_scope</span><span class="p">)</span>
+
+    <span class="c1"># Here allow_overwrite is true, as input transformations are allowed to be present</span>
+    <span class="k">return</span> <span class="n">set_all</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">new_tx</span><span class="p">,</span> <span class="n">allow_overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

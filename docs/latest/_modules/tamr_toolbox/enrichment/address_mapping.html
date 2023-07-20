@@ -1,0 +1,567 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.enrichment.address_mapping &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/enrichment/address_mapping.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.11.1 - Oilcan
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.enrichment.address_mapping</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.enrichment.address_mapping</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to creating, updating, saving, and moving address validation data from Tamr&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.collection</span> <span class="kn">import</span> <span class="n">DatasetCollection</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.enrichment_utils</span> <span class="kn">import</span> <span class="n">create_empty_mapping</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">Granularity</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SUB_PREMISE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PREMISE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PREMISE_PROMXIMITY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BLOCK&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ROUTE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OTHER&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="AddressValidationMapping"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.AddressValidationMapping">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AddressValidationMapping</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DataClass for address validation data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_address: input address</span>
+<span class="sd">        validated_formatted_address: the &quot;formattedAddress&quot; returns by the validation API, if any</span>
+<span class="sd">        expiration: the expiration timestamp of the data, 30 days from API call</span>
+<span class="sd">        region_code: region code returned by the validation API</span>
+<span class="sd">        postal_code: postal code returned by the validation API</span>
+<span class="sd">        admin_area: administrative area returned by the validation API (state for US addresses)</span>
+<span class="sd">        locality: locality returned by the validation API (city/town for US addresses)</span>
+<span class="sd">        address_lines: address lines returned by the validation API (e.g. [&#39;66 Church St&#39;])</span>
+<span class="sd">        usps_firstAddressLine: first address line in validated USPS format, if available</span>
+<span class="sd">        usps_cityStateZipAddressLine: : second address line in validated USPS format, if available</span>
+<span class="sd">        usps_city: city in validated USPS format, if available</span>
+<span class="sd">        usps_state: state in validated USPS format, if available</span>
+<span class="sd">        usps_zipCode: str = &quot;</span>
+<span class="sd">        latitude: latitude associated with validated address, if any</span>
+<span class="sd">        longitude: longitude associated with validated address, if any</span>
+<span class="sd">        place_id: the google placeId -- the only result field not subject to the `expiration`</span>
+<span class="sd">        input_granularity: granularity of input given by validation API</span>
+<span class="sd">        validation_granularity: granularity of validation given by validation API</span>
+<span class="sd">        geocode_granularity: granularity of geocode given by validation API</span>
+<span class="sd">        has_inferred: whether the result has inferred components</span>
+<span class="sd">        has_unconfirmed: whether the result has unconfirmed components</span>
+<span class="sd">        has_replaced: whether the result has replaced components</span>
+<span class="sd">        address_complete: whether the input was complete</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_address</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">validated_formatted_address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">expiration</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># timestamp in the format given by `str(datetime.now())`</span>
+    <span class="n">region_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">postal_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">admin_area</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">locality</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">address_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">usps_first_address_line</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">usps_city_state_zip_line</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">usps_city</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">usps_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">usps_zip_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">latitude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">longitude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">place_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">input_granularity</span><span class="p">:</span> <span class="n">Granularity</span>
+    <span class="n">validation_granularity</span><span class="p">:</span> <span class="n">Granularity</span>
+    <span class="n">geocode_granularity</span><span class="p">:</span> <span class="n">Granularity</span>
+    <span class="n">has_inferred</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">has_unconfirmed</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">has_replaced</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">address_complete</span><span class="p">:</span> <span class="nb">bool</span></div>
+
+
+<div class="viewcode-block" id="to_dict"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.to_dict">[docs]</a><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a toolbox address validation mapping entries to  list-of-dictionary format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a toolbox address validation mapping</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of toolbox address validation mapping entries in dictionary format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">asdict</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.update">[docs]</a><span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+    <span class="n">main_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">],</span>
+    <span class="n">tmp_dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update a toolbox address validation mapping with another temporary address validation mapping</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        main_dictionary: the main toolbox address validation mapping containing prior results</span>
+<span class="sd">        tmp_dictionary: a temporary toolbox address validation mapping containing new data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">input_addr</span><span class="p">,</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">tmp_dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">main_dictionary</span><span class="p">[</span><span class="n">input_addr</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_dataset"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.from_dataset">[docs]</a><span class="k">def</span> <span class="nf">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stream an address validation mapping dataset from Tamr.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: Tamr Dataset object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A toolbox address validation mapping</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the provided `dataset` is not a toolbox address validation mapping dataset</span>
+<span class="sd">        NameError: if the provided `dataset` does not contain all the attributes of a</span>
+<span class="sd">            toolbox address validation mapping</span>
+<span class="sd">        RuntimeError: if there is any other problem while reading the `dataset` as a</span>
+<span class="sd">            toolbox address validation mapping</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">key_attribute_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;input_address&quot;</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Provided Tamr Dataset is not a toolbox address validation mapping&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">records</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Values are returned as a length-1 list of string, we change this to strings</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="n">AddressValidationMapping</span><span class="p">(</span>
+                <span class="n">input_address</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;input_address&quot;</span><span class="p">],</span>
+                <span class="n">validated_formatted_address</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;validated_formatted_address&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">expiration</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;expiration&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">region_code</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;region_code&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;region_code&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">postal_code</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;postal_code&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;postal_code&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">admin_area</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;admin_area&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;admin_area&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">locality</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;locality&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;locality&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">address_lines</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;address_lines&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;address_lines&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="p">[],</span>
+                <span class="n">usps_first_address_line</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_first_address_line&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_first_address_line&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">usps_city_state_zip_line</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_city_state_zip_line&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_city_state_zip_line&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">usps_city</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_city&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_city&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">usps_state</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_state&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_state&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">usps_zip_code</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_zip_code&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;usps_zip_code&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">latitude</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">longitude</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">place_id</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;place_id&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;place_id&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">input_granularity</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;input_granularity&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;input_granularity&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span><span class="p">,</span>
+                <span class="n">validation_granularity</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;validation_granularity&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;validation_granularity&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span><span class="p">,</span>
+                <span class="n">geocode_granularity</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;geocode_granularity&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;geocode_granularity&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span><span class="p">,</span>
+                <span class="n">has_inferred</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;has_inferred&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;has_inferred&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">has_unconfirmed</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;has_unconfirmed&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;has_unconfirmed&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">has_replaced</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;has_replaced&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;has_replaced&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">address_complete</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;address_complete&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;address_complete&quot;</span><span class="p">]</span>
+                <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Supplied Tamr dataset is not in toolbox address validation mapping format: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exp</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error while reading Tamr dataset address validation mapping: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exp</span>
+
+        <span class="n">dictionary</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">entry</span><span class="o">.</span><span class="n">input_address</span><span class="p">:</span> <span class="n">entry</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">dictionary</span></div>
+
+
+<div class="viewcode-block" id="to_dataset"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.to_dataset">[docs]</a><span class="k">def</span> <span class="nf">to_dataset</span><span class="p">(</span>
+    <span class="n">addr_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dataset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">datasets_collection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetCollection</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">create_dataset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;address_validation_mapping&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ingest a toolbox address validation mapping in Tamr, creating the source dataset if needed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        addr_mapping: a toolbox address validation mapping</span>
+<span class="sd">        dataset: a Tamr client dataset</span>
+<span class="sd">        datasets_collection: a Tamr client datasets collection</span>
+<span class="sd">        create_dataset: flag to create or upsert to an existing address validation mapping</span>
+<span class="sd">            source dataset</span>
+<span class="sd">        dataset_name: name to use if creating new dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The name of the created or updated Tamr Dataset</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if `create_dataset` is False and `dataset` is not provided or is not a</span>
+<span class="sd">            toolbox address validation mapping dataset.</span>
+<span class="sd">            If `create_dataset` is True but `datasets_collection` or `target_language` or</span>
+<span class="sd">            `source_language` is missing or the Tamr dataset already exists</span>
+<span class="sd">        RuntimeError: if there is an error during the creation of the Tamr dataset attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">create_dataset</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Tamr Client Dataset missing from inputs. Please provide a Tamr &quot;</span>
+                <span class="s2">&quot;Client Dataset if updating an existing address validation dataset&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">key_attribute_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;input_address&quot;</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Provided Tamr Dataset is not a toolbox address validation mapping&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">datasets_collection</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Tamr Datasets Collection must be specified to create address validation dataset.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets_collection</span><span class="p">]:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Tamr Dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> already exists on Tamr, you cannot duplicate it.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating toolbox address validation dataset </span><span class="si">%s</span><span class="s2"> on Tamr&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+        <span class="n">creation_spec</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="s2">&quot;keyAttributeNames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;input_address&quot;</span><span class="p">]}</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">datasets_collection</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">creation_spec</span><span class="p">)</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">attributes</span>
+        <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">AddressValidationMapping</span><span class="p">)]:</span>
+            <span class="k">if</span> <span class="n">attribute</span> <span class="o">==</span> <span class="s2">&quot;input_address&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">attr_spec</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">attribute</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="s2">&quot;ARRAY&quot;</span><span class="p">,</span> <span class="s2">&quot;innerType&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;baseType&quot;</span><span class="p">:</span> <span class="s2">&quot;STRING&quot;</span><span class="p">}},</span>
+            <span class="p">}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">attr_spec</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error while creating attribute </span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2"> for dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exp</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ingesting toolbox address validation mapping to Tamr&quot;</span><span class="p">)</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">upsert_records</span><span class="p">(</span><span class="n">records</span><span class="o">=</span><span class="n">to_dict</span><span class="p">(</span><span class="n">addr_mapping</span><span class="p">),</span> <span class="n">primary_key_name</span><span class="o">=</span><span class="s2">&quot;input_address&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataset</span><span class="o">.</span><span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="to_json"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.to_json">[docs]</a><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a toolbox address validation mapping entries to a json format where set object are</span>
+<span class="sd">    converted to list</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a toolbox address validation mapping</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of toolbox address validation mapping entries in json format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="save"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.save">[docs]</a><span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+    <span class="n">addr_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">],</span>
+    <span class="n">addr_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;address_validation_mapping.json&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a toolbox address validation mapping to disk</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        addr_mapping: dictionary object to be saved to disk</span>
+<span class="sd">        addr_folder: base directory where mapping is saved</span>
+<span class="sd">        filename: filename to use to save</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">addr_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">addr_folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">addr_mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing address mapping to file&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">addr_filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_json</span><span class="p">(</span><span class="n">addr_mapping</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+    <span class="n">addr_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;address_validation_mapping.json&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AddressValidationMapping</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a toolbox address validation mapping from disk to memory</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        addr_folder: base directory where mapping is saved</span>
+<span class="sd">        filename: filename where mapping is saved</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A toolbox address validation mapping</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if the file was found on disk but is not of a valid toolbox address</span>
+<span class="sd">          validation mapping type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">addr_folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dictionary </span><span class="si">%s</span><span class="s2"> does not exist, creating an empty one.&quot;</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">create_empty_mapping</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">mapping_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Tranform the loaded dictionaries into a AddressValidationMapping</span>
+            <span class="n">mapping_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">AddressValidationMapping</span><span class="p">(</span><span class="o">**</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">mapping_lst</span> <span class="k">if</span> <span class="n">t</span><span class="p">]</span>
+            <span class="c1"># Make the standardized phrase the main key of the address validation mapping</span>
+            <span class="n">mapping_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">input_address</span><span class="p">:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">mapping_lst</span><span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">excp</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not read address validation mapping at </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Check that the dictionary is of the correct type. Error: </span><span class="si">{</span><span class="n">excp</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">excp</span>
+
+    <span class="k">return</span> <span class="n">mapping_dict</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

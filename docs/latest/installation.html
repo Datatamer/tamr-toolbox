@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -164,7 +169,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
 <p><strong>Pip Install</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'tamr-toolbox[all]'</span></code></p>
 <p><strong>Optional Features</strong></p>
@@ -187,6 +192,12 @@ your existing version.</p>
 <p>Required for <a class="reference internal" href="modules/enrichment/translation.html"><span class="doc">Translation Enrichment</span></a></p>
 <p>Library: <a class="reference external" href="https://github.com/googleapis/python-translate">GoogleTranslate</a> (<code class="docutils literal notranslate"><span class="pre">tamr-toolbox</span></code> uses version == 2.0.1)</p>
 <p>Note: You will additionally need your own google API key in order to use translation capabilities.</p>
+<p><em><strong>Optional Feature: Google Address Validation</strong></em></p>
+<p>Install instructions:
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'tamr-toolbox[address-validation]'</span></code></p>
+<p>Required for <a class="reference internal" href="modules/enrichment/address_validation.html"><span class="doc">Address Validation</span></a></p>
+<p>Library: <a class="reference external" href="https://github.com/googlemaps/google-maps-services-python">Google Maps API</a> (<code class="docutils literal notranslate"><span class="pre">tamr-toolbox</span></code> uses version == 4.10.0)</p>
+<p>Note: You will additionally need your own Google Maps API key in order to use address validation capabilities.</p>
 <p><em><strong>Optional Feature: Mock API Testing</strong></em></p>
 <p>Install instructions:
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'tamr-toolbox[testing]'</span></code></p>

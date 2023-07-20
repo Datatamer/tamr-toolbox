@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -201,11 +206,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="data-input-output">
-<h1>Data Input/Output<a class="headerlink" href="#data-input-output" title="Permalink to this headline">¶</a></h1>
+<h1>Data Input/Output<a class="headerlink" href="#data-input-output" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="df-connect">
-<h2>DF-Connect<a class="headerlink" href="#df-connect" title="Permalink to this headline">¶</a></h2>
+<h2>DF-Connect<a class="headerlink" href="#df-connect" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="connecting-to-tamr-s-auxiliary-service-df-connect">
-<h3>Connecting to Tamr’s Auxiliary Service Df-Connect<a class="headerlink" href="#connecting-to-tamr-s-auxiliary-service-df-connect" title="Permalink to this headline">¶</a></h3>
+<h3>Connecting to Tamr’s Auxiliary Service Df-Connect<a class="headerlink" href="#connecting-to-tamr-s-auxiliary-service-df-connect" title="Permalink to this heading">¶</a></h3>
 <p>Connecting to Tamr’s df-connect auxiliary service is straightforward using the tamr-toolbox.
 The module that does this is <cite>tamr_toolbox/data_io/df_connect</cite> and the main object is an instance of type <cite>ConnectInfo</cite>.
 The easiest way to generate such an object is via reading in a configuration file like so:</p>
@@ -225,7 +230,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="ingesting-a-table-as-a-tamr-dataset">
-<h3>Ingesting a table as a Tamr dataset<a class="headerlink" href="#ingesting-a-table-as-a-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Ingesting a table as a Tamr dataset<a class="headerlink" href="#ingesting-a-table-as-a-tamr-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The below code is an example that reads a config file, shows how to use it to create a</span>
 <span class="sd"> `Client` object, and then streams an example table into Tamr. Relies on default values and</span>
@@ -245,7 +250,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="ingesting-multiple-tables-from-multiple-sources">
-<h3>Ingesting multiple tables from multiple sources<a class="headerlink" href="#ingesting-multiple-tables-from-multiple-sources" title="Permalink to this headline">¶</a></h3>
+<h3>Ingesting multiple tables from multiple sources<a class="headerlink" href="#ingesting-multiple-tables-from-multiple-sources" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">df_connect</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_HOST</span>
 <span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span>
@@ -296,7 +301,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="profiling-tables-and-writing-results-to-a-tamr-dataset">
-<h3>Profiling tables and writing results to a Tamr dataset<a class="headerlink" href="#profiling-tables-and-writing-results-to-a-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Profiling tables and writing results to a Tamr dataset<a class="headerlink" href="#profiling-tables-and-writing-results-to-a-tamr-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The below code is an example that reads in the above config file, shows how to use it to create a</span>
 <span class="sd"> `Client` object, and then profiles example tables, writing the results into Tamr.</span>
@@ -318,7 +323,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="exporting-a-tamr-dataset-to-a-single-target">
-<h3>Exporting a Tamr dataset to a single target<a class="headerlink" href="#exporting-a-tamr-dataset-to-a-single-target" title="Permalink to this headline">¶</a></h3>
+<h3>Exporting a Tamr dataset to a single target<a class="headerlink" href="#exporting-a-tamr-dataset-to-a-single-target" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Export data from Tamr using df-connect. An example where everything is default in config file,</span>
 <span class="sd">which implies exported data is written back to same database as ingested from.</span>
@@ -336,7 +341,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="exporting-a-tamr-dataset-to-multiple-targets">
-<h3>Exporting a Tamr dataset to multiple targets<a class="headerlink" href="#exporting-a-tamr-dataset-to-multiple-targets" title="Permalink to this headline">¶</a></h3>
+<h3>Exporting a Tamr dataset to multiple targets<a class="headerlink" href="#exporting-a-tamr-dataset-to-multiple-targets" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">df_connect</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$CONNECT_HOST</span>
 <span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https&quot;</span>
@@ -407,7 +412,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="exporting-a-tamr-dataset-to-hive">
-<h3>Exporting a Tamr dataset to Hive<a class="headerlink" href="#exporting-a-tamr-dataset-to-hive" title="Permalink to this headline">¶</a></h3>
+<h3>Exporting a Tamr dataset to Hive<a class="headerlink" href="#exporting-a-tamr-dataset-to-hive" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Export data from Tamr to Hive using df-connect. Df-connect supports making *external* tables in</span>
 <span class="sd">Hive see https://cwiki.apache.org/confluence/display/Hive/Managed+vs.+External+Tables</span>
@@ -530,7 +535,7 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="check-if-tamr-dataset-is-streamable">
-<h3>Check if Tamr dataset is streamable<a class="headerlink" href="#check-if-tamr-dataset-is-streamable" title="Permalink to this headline">¶</a></h3>
+<h3>Check if Tamr dataset is streamable<a class="headerlink" href="#check-if-tamr-dataset-is-streamable" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet explicitly check that a dataset is streamable when exporting with df_connect&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 
@@ -566,12 +571,12 @@ The easiest way to generate such an object is via reading in a configuration fil
 </div>
 </div>
 <div class="section" id="dataframe">
-<h2>Dataframe<a class="headerlink" href="#dataframe" title="Permalink to this headline">¶</a></h2>
+<h2>Dataframe<a class="headerlink" href="#dataframe" title="Permalink to this heading">¶</a></h2>
 <p>tamr-toolbox provides functions to create a pandas Dataframe from a Tamr dataset and optionally flatten it.
 It can also perform basic profiling and validation of pandas Dataframes,
 intended to be used for data quality checks before upserting records into Tamr.</p>
 <div class="section" id="create-dataframe-from-tamr-dataset">
-<h3>Create Dataframe from Tamr Dataset<a class="headerlink" href="#create-dataframe-from-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Create Dataframe from Tamr Dataset<a class="headerlink" href="#create-dataframe-from-tamr-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for exporting a dataset from Tamr as a pandas.Dataframe&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 
@@ -598,7 +603,7 @@ intended to be used for data quality checks before upserting records into Tamr.<
 </div>
 </div>
 <div class="section" id="validate-a-dataframe-before-upserting-records-to-a-tamr-dataset">
-<h3>Validate a Dataframe before upserting records to a Tamr Dataset<a class="headerlink" href="#validate-a-dataframe-before-upserting-records-to-a-tamr-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Validate a Dataframe before upserting records to a Tamr Dataset<a class="headerlink" href="#validate-a-dataframe-before-upserting-records-to-a-tamr-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for validating the contents of a pandas.Dataframe followed by ingestion into a</span>
 <span class="sd">Tamr dataset&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
@@ -696,9 +701,9 @@ intended to be used for data quality checks before upserting records into Tamr.<
 </div>
 </div>
 <div class="section" id="csv">
-<h2>CSV<a class="headerlink" href="#csv" title="Permalink to this headline">¶</a></h2>
+<h2>CSV<a class="headerlink" href="#csv" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="export-csv-from-tamr-dataset-to-a-designated-filepath">
-<h3>Export CSV from Tamr Dataset to a designated filepath<a class="headerlink" href="#export-csv-from-tamr-dataset-to-a-designated-filepath" title="Permalink to this headline">¶</a></h3>
+<h3>Export CSV from Tamr Dataset to a designated filepath<a class="headerlink" href="#export-csv-from-tamr-dataset-to-a-designated-filepath" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset.config.yaml</span>
 
 <span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
@@ -789,7 +794,7 @@ intended to be used for data quality checks before upserting records into Tamr.<
 </div>
 </div>
 <div class="section" id="export-csv-from-taxonomy-to-a-designated-filepath">
-<h3>Export CSV from taxonomy to a designated filepath<a class="headerlink" href="#export-csv-from-taxonomy-to-a-designated-filepath" title="Permalink to this headline">¶</a></h3>
+<h3>Export CSV from taxonomy to a designated filepath<a class="headerlink" href="#export-csv-from-taxonomy-to-a-designated-filepath" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for exporting taxonomy of a Tamr Categorization project to a csv file&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>

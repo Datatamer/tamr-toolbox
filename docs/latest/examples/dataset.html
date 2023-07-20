@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -192,11 +197,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="dataset">
-<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h1>
+<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="manage-datasets">
-<h2>Manage Datasets<a class="headerlink" href="#manage-datasets" title="Permalink to this headline">¶</a></h2>
+<h2>Manage Datasets<a class="headerlink" href="#manage-datasets" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="create-a-dataset">
-<h3>Create a dataset<a class="headerlink" href="#create-a-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Create a dataset<a class="headerlink" href="#create-a-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># create_dataset.config.yaml</span>
 
 <span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
@@ -281,7 +286,7 @@
 </div>
 </div>
 <div class="section" id="migrate-dataset-definition-changes-from-a-source-to-target-instance">
-<h3>Migrate dataset definition changes from a source to target instance<a class="headerlink" href="#migrate-dataset-definition-changes-from-a-source-to-target-instance" title="Permalink to this headline">¶</a></h3>
+<h3>Migrate dataset definition changes from a source to target instance<a class="headerlink" href="#migrate-dataset-definition-changes-from-a-source-to-target-instance" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># migrate_dataset.config.yaml</span>
 
 <span class="nt">source_migration_instance</span><span class="p">:</span>
@@ -356,7 +361,7 @@
 </div>
 </div>
 <div class="section" id="add-attributes-to-a-dataset">
-<h3>Add attributes to a dataset<a class="headerlink" href="#add-attributes-to-a-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Add attributes to a dataset<a class="headerlink" href="#add-attributes-to-a-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to change dataset attributes for a Tamr dataset</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -393,7 +398,7 @@
 </div>
 </div>
 <div class="section" id="remove-an-attribute-from-a-dataset">
-<h3>Remove an attribute from a dataset<a class="headerlink" href="#remove-an-attribute-from-a-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Remove an attribute from a dataset<a class="headerlink" href="#remove-an-attribute-from-a-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to delete attributes from a Tamr dataset</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -419,7 +424,7 @@
 </div>
 </div>
 <div class="section" id="update-records-within-a-dataset">
-<h3>Update records within a dataset<a class="headerlink" href="#update-records-within-a-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Update records within a dataset<a class="headerlink" href="#update-records-within-a-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to add and delete a dataset&#39;s records</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -459,9 +464,9 @@
 </div>
 </div>
 <div class="section" id="dataset-profiles">
-<h2>Dataset Profiles<a class="headerlink" href="#dataset-profiles" title="Permalink to this headline">¶</a></h2>
+<h2>Dataset Profiles<a class="headerlink" href="#dataset-profiles" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="create-and-retrieve-a-profile-for-a-dataset">
-<h3>Create and retrieve a profile for a dataset<a class="headerlink" href="#create-and-retrieve-a-profile-for-a-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>Create and retrieve a profile for a dataset<a class="headerlink" href="#create-and-retrieve-a-profile-for-a-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to create and/or retrieve a dataset profile</span>
 <span class="sd">&quot;&quot;&quot;</span>

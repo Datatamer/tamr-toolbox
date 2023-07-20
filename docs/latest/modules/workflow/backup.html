@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -107,7 +112,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../workflow.html">Workflow</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Backup</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Backup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.list_backups"><code class="docutils literal notranslate"><span class="pre">list_backups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.get_backup_by_id"><code class="docutils literal notranslate"><span class="pre">get_backup_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.initiate_backup"><code class="docutils literal notranslate"><span class="pre">initiate_backup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.initiate_restore"><code class="docutils literal notranslate"><span class="pre">initiate_restore()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.validate_backup"><code class="docutils literal notranslate"><span class="pre">validate_backup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.delete_backups"><code class="docutils literal notranslate"><span class="pre">delete_backups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.classify_backups"><code class="docutils literal notranslate"><span class="pre">classify_backups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.delete_old_backups"><code class="docutils literal notranslate"><span class="pre">delete_old_backups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.backup.delete_old_spark_event_logs"><code class="docutils literal notranslate"><span class="pre">delete_old_spark_event_logs()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="concurrent.html">Concurrent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="jobs.html">Jobs</a></li>
 </ul>
@@ -186,11 +202,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-tamr_toolbox.workflow.backup">
-<span id="backup"></span><h1>Backup<a class="headerlink" href="#module-tamr_toolbox.workflow.backup" title="Permalink to this headline">¶</a></h1>
+<span id="backup"></span><h1>Backup<a class="headerlink" href="#module-tamr_toolbox.workflow.backup" title="Permalink to this heading">¶</a></h1>
 <p>Tasks related to backup and restore of Tamr instances</p>
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.list_backups">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">list_backups</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#list_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.list_backups" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.list_backups">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">list_backups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#list_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.list_backups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lists all backups available to Tamr client. Will list both succeeded and failed backups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -206,8 +222,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.get_backup_by_id">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">get_backup_by_id</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#get_backup_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.get_backup_by_id" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.get_backup_by_id">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">get_backup_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#get_backup_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.get_backup_by_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches the json object for a given backup ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -229,8 +245,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.initiate_backup">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">initiate_backup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_retry_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#initiate_backup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.initiate_backup" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.initiate_backup">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">initiate_backup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_retry_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#initiate_backup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.initiate_backup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a backup of Tamr client and waits until it is finished.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -243,7 +259,7 @@ connection retry</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Json dict of response from API request.</p>
@@ -252,8 +268,8 @@ connection retry</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.initiate_restore">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">initiate_restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_retry_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#initiate_restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.initiate_restore" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.initiate_restore">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">initiate_restore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_retry_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#initiate_restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.initiate_restore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Restores the Tamr client to the state of the supplied backup.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -267,7 +283,7 @@ connection retry</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Json dict of response from API request.</p>
@@ -282,8 +298,8 @@ connection retry</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.validate_backup">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">validate_backup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#validate_backup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.validate_backup" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.validate_backup">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">validate_backup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#validate_backup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.validate_backup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validates that a directory is a valid backup. A valid backup has a
 manifest file, a completion file (_SUCCEEDED, _FAILED, or _CANCELED),
 the folder has a valid date format, and the date is prior to the current time</p>
@@ -304,8 +320,8 @@ the folder has a valid date format, and the date is prior to the current time</p
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.delete_backups">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">delete_backups</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#delete_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.delete_backups" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.delete_backups">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">delete_backups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#delete_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.delete_backups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes backup folders recursively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -325,8 +341,8 @@ the folder has a valid date format, and the date is prior to the current time</p
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.classify_backups">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">classify_backups</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backup_directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#classify_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.classify_backups" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.classify_backups">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">classify_backups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backup_directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#classify_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.classify_backups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes stock of successful and failed valid backups in the backup directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -349,8 +365,8 @@ the folder has a valid date format, and the date is prior to the current time</p
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.delete_old_backups">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">delete_old_backups</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backup_directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_successful_backups_to_keep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_failed_backups_to_keep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#delete_old_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.delete_old_backups" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.delete_old_backups">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">delete_old_backups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backup_directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_successful_backups_to_keep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_failed_backups_to_keep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup_datetime_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d_%H-%M-%S-%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#delete_old_backups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.delete_old_backups" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Deletes old backups. Keeps the most recent num_successful_backups_to_keep successful backups</dt><dd><p>and the most recent num_failed_backups_to_keep failed backups</p>
 </dd>
@@ -377,8 +393,8 @@ the folder has a valid date format, and the date is prior to the current time</p
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.backup.delete_old_spark_event_logs">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></code><code class="sig-name descname"><span class="pre">delete_old_spark_event_logs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr_home_directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_days_to_keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#delete_old_spark_event_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.delete_old_spark_event_logs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.backup.delete_old_spark_event_logs">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.backup.</span></span><span class="sig-name descname"><span class="pre">delete_old_spark_event_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr_home_directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_days_to_keep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/backup.html#delete_old_spark_event_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.backup.delete_old_spark_event_logs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes sparkEventLogs older than the specified number of days.
 This assumes that Spark is running locally on the same VM as Tamr
 and that the logs are on the local filesystem.</p>

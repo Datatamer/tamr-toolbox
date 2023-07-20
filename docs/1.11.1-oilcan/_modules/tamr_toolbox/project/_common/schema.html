@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.project._common.schema &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/project/_common/schema.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.11.1 - Oilcan
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.project._common.schema</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.project._common.schema</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tasks related to schema mapping as part of Tamr projects&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.attribute_mapping.resource</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AttributeMappingSpec</span><span class="p">,</span>
+    <span class="n">AttributeMapping</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.project.resource</span> <span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">JSONDecodeError</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_mapping_spec_for_ud</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">source_ds_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unified_attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unified_ds_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttributeMappingSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes an AttributeMappingSpec to be used to map attributes.</span>
+<span class="sd">    Is a wrapper for its creation to hide internals in one place.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_ds_name: the name of the source dataset</span>
+<span class="sd">        source_attr_name: the name of the source attribute</span>
+<span class="sd">        unified_attr_name: the name of the unified attribute</span>
+<span class="sd">        unified_ds_name: the name of the unified dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AttributeMappingSpec containing the passed information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">AttributeMappingSpec</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">with_input_attribute_name</span><span class="p">(</span><span class="n">source_attr_name</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_input_dataset_name</span><span class="p">(</span><span class="n">source_ds_name</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_unified_dataset_name</span><span class="p">(</span><span class="n">unified_ds_name</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_unified_attribute_name</span><span class="p">(</span>
+            <span class="n">unified_attr_name</span>
+        <span class="p">)</span>  <span class="c1"># rest can be empty - Tamr will fill them in</span>
+        <span class="o">.</span><span class="n">with_input_attribute_id</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_relative_input_attribute_id</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_unified_attribute_id</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">with_relative_unified_attribute_id</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+
+<div class="viewcode-block" id="map_attribute"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.schema.map_attribute">[docs]</a><span class="k">def</span> <span class="nf">map_attribute</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">source_dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">unified_attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AttributeMapping</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maps source_attribute in source_dataset to unified_attribute in unified_dataset.</span>
+<span class="sd">    If the mapping already exists it will log</span>
+<span class="sd">    a warning and return the existing AttributeMapping from the project&#39;s collection.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_attribute_name: Source attribute name to map</span>
+<span class="sd">        source_dataset_name: Source dataset containing the source attribute</span>
+<span class="sd">        unified_attribute_name: Unified attribute to which to map the source attribute</span>
+<span class="sd">        project: The project in which to perform the mapping</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The created AttributeMapping</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if input variables `source_attribute_name` or `source_dataset_name` or</span>
+<span class="sd">            `unified_attribute_name` are set to empty strings;</span>
+<span class="sd">            or if the dataset `source_dataset_name` is not found on Tamr;</span>
+<span class="sd">            or if `source_attribute_name` is missing from the attributes of `source_attribute_name`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># simple validation, nothing should be empty</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">source_attribute_name</span><span class="p">,</span> <span class="n">source_dataset_name</span><span class="p">,</span> <span class="n">unified_attribute_name</span><span class="p">]</span>
+    <span class="n">empty_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variables</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">empty_variables</span><span class="p">:</span>
+        <span class="n">empty_variable_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">empty_variables</span><span class="p">)</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The following variables are set to empty strings and &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;need to be filled in: </span><span class="si">{</span><span class="n">empty_variable_string</span><span class="si">}</span><span class="s2"> !&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># also validate that the dataset exists and has this column</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">source_dataset</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">source_dataset_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">source_dataset_name</span><span class="si">}</span><span class="s2"> not found!&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">source_attribute_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">]:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">source_attribute_name</span><span class="si">}</span><span class="s2"> not found in </span><span class="si">{</span><span class="n">source_dataset_name</span><span class="si">}</span><span class="s2">!&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="c1"># generate mapping spec</span>
+    <span class="n">mapping_spec</span> <span class="o">=</span> <span class="n">_get_mapping_spec_for_ud</span><span class="p">(</span>
+        <span class="n">source_attr_name</span><span class="o">=</span><span class="n">source_attribute_name</span><span class="p">,</span>
+        <span class="n">source_ds_name</span><span class="o">=</span><span class="n">source_dataset_name</span><span class="p">,</span>
+        <span class="n">unified_attr_name</span><span class="o">=</span><span class="n">unified_attribute_name</span><span class="p">,</span>
+        <span class="n">unified_ds_name</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">unified_dataset</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># add the mapping to the project&#39;s collection - this is what does the actual mapping</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">project</span><span class="o">.</span><span class="n">attribute_mappings</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">mapping_spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+    <span class="k">except</span> <span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># can get a jsondecode error if the attribute is already mapped.</span>
+        <span class="c1"># If it is, then log a warning and return empty mapping</span>
+        <span class="c1"># if it is not already mapped break loudly</span>
+        <span class="n">m</span><span class="p">:</span> <span class="n">AttributeMapping</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">attribute_mappings</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">input_dataset_name</span> <span class="o">==</span> <span class="n">source_dataset_name</span>
+                <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">input_attribute_name</span> <span class="o">==</span> <span class="n">source_attribute_name</span>
+                <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">unified_attribute_name</span> <span class="o">==</span> <span class="n">unified_attribute_name</span>
+            <span class="p">):</span>
+                <span class="c1"># mapping exists, log warning and return existing mapping</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;mapping of attribute </span><span class="si">{</span><span class="n">source_attribute_name</span><span class="si">}</span><span class="s2"> in dataset &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_dataset_name</span><span class="si">}</span><span class="s2"> to unified attribute </span><span class="si">{</span><span class="n">unified_attribute_name</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;already exists! Returning existing mapping spec&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">m</span>
+
+        <span class="c1"># if haven&#39;t returned then throw the JSONDecodeError</span>
+        <span class="k">raise</span> <span class="n">e</span></div>
+
+
+<div class="viewcode-block" id="unmap_attribute"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.schema.unmap_attribute">[docs]</a><span class="k">def</span> <span class="nf">unmap_attribute</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">source_dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">unified_attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unmaps a source attribute.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_attribute_name: the name of the source attribute to unmap</span>
+<span class="sd">        source_dataset_name: the name of the source dataset containing that source attribute</span>
+<span class="sd">        unified_attribute_name: the unified attribute from which to unmap</span>
+<span class="sd">        project: the project in which to unmap the attribute</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Trying to remove mapping of source attribute </span><span class="si">{</span><span class="n">source_attribute_name</span><span class="si">}</span><span class="s2"> in dataset &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source_dataset_name</span><span class="si">}</span><span class="s2"> from unified attribute </span><span class="si">{</span><span class="n">unified_attribute_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># get mapping collection</span>
+    <span class="n">mapping_collection</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">attribute_mappings</span><span class="p">()</span>
+
+    <span class="c1"># run through and get the resource id of the mapping to remove</span>
+    <span class="n">resource_id_to_remove</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">mapping_collection</span><span class="o">.</span><span class="n">stream</span><span class="p">():</span>
+        <span class="c1"># consider it match if all of source attribute, source dataset and unified attribute</span>
+        <span class="c1"># are equal</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">source_attribute_name</span> <span class="o">==</span> <span class="n">mapping</span><span class="o">.</span><span class="n">input_attribute_name</span>
+            <span class="ow">and</span> <span class="n">source_dataset_name</span> <span class="o">==</span> <span class="n">mapping</span><span class="o">.</span><span class="n">input_dataset_name</span>
+            <span class="ow">and</span> <span class="n">unified_attribute_name</span> <span class="o">==</span> <span class="n">mapping</span><span class="o">.</span><span class="n">unified_attribute_name</span>
+        <span class="p">):</span>
+            <span class="n">resource_id_to_remove</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">resource_id</span>
+            <span class="k">break</span>
+
+    <span class="c1"># log warning if resource id wasn&#39;t found</span>
+    <span class="k">if</span> <span class="n">resource_id_to_remove</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Mapping of </span><span class="si">{</span><span class="n">source_attribute_name</span><span class="si">}</span><span class="s2"> in dataset </span><span class="si">{</span><span class="n">source_dataset_name</span><span class="si">}</span><span class="s2"> to &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;unified attribute </span><span class="si">{</span><span class="n">unified_attribute_name</span><span class="si">}</span><span class="s2"> not found!&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># if found remove it</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mapping_collection</span><span class="o">.</span><span class="n">delete_by_resource_id</span><span class="p">(</span><span class="n">resource_id_to_remove</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bootstrap_dataset"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.schema.bootstrap_dataset">[docs]</a><span class="k">def</span> <span class="nf">bootstrap_dataset</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source_dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">force_add_dataset_to_project</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AttributeMapping</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bootstraps a dataset (i.e. maps all source columns to themselves)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_dataset: the source dataset (a Dataset object not a string)</span>
+<span class="sd">        project: the project to do the mapping ing</span>
+<span class="sd">        force_add_dataset_to_project: boolean whether to add the dataset to the project</span>
+<span class="sd">            if it is not already a part of it</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of the AttributeMappings generated</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if `source_dataset` is not part of the given `project`, set</span>
+<span class="sd">            &#39;force_add_dataset_to_project&#39; flag to True to automatically add it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check if dataset is in the project - python doesn&#39;t handle comparison of Dataset objects</span>
+    <span class="c1"># well so check on name</span>
+    <span class="k">if</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">input_datasets</span><span class="p">()]:</span>
+        <span class="k">if</span> <span class="n">force_add_dataset_to_project</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;adding dataset </span><span class="si">{</span><span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> to project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">project</span><span class="o">.</span><span class="n">add_input_dataset</span><span class="p">(</span><span class="n">source_dataset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;dataset </span><span class="si">{</span><span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not in project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Set &#39;force_add_dataset_to_project&#39; flag to True to automatically add it&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># for each attribute map it</span>
+    <span class="n">source_dataset_name</span> <span class="o">=</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">completed_mappings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+        <span class="n">attribute_name</span> <span class="o">=</span> <span class="n">attribute</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="n">map_attribute</span><span class="p">(</span>
+            <span class="n">source_attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+            <span class="n">source_dataset_name</span><span class="o">=</span><span class="n">source_dataset_name</span><span class="p">,</span>
+            <span class="n">unified_attribute_name</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+            <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">completed_mappings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">completed_mappings</span></div>
+
+
+<div class="viewcode-block" id="unmap_dataset"><a class="viewcode-back" href="../../../../modules/project/common.html#tamr_toolbox.project._common.schema.unmap_dataset">[docs]</a><span class="k">def</span> <span class="nf">unmap_dataset</span><span class="p">(</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">Project</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">source_dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">remove_dataset_from_project</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">skip_if_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wholly unmaps a dataset and optionally removes it from a project.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_dataset: the source dataset (Dataset object not a string) to unmap</span>
+<span class="sd">        project: the project in which to unmap the dataset</span>
+<span class="sd">        remove_dataset_from_project: boolean to also remove the dataset from the project</span>
+<span class="sd">        skip_if_missing: boolean to skip if dataset is not in project. If set to false and</span>
+<span class="sd">            dataset is not in project will raise a RuntimeError</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if `source_dataset` is not in `project` and `skip_if_missing` not set to True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check to make sure dataset is in project and log a warning if it is not</span>
+    <span class="k">if</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">input_datasets</span><span class="p">()]:</span>
+        <span class="k">if</span> <span class="n">skip_if_missing</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dataset to unmap </span><span class="si">{</span><span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not in project </span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">! &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;However skip_if_missing flag is set so will do nothing&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dataset to unmap </span><span class="si">{</span><span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not in project &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> and skip_if_missing not set to True so failing! &quot;</span>
+            <span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># the resource ids of attribute mappings unfortunately change when you delete one</span>
+    <span class="c1"># so need to just do this until there are no mappings left for the source dataset of interest</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">mappings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">x</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">attribute_mappings</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">input_dataset_name</span> <span class="o">==</span> <span class="n">source_dataset</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">]</span>
+        <span class="c1"># if no mappings found for this dataset then break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mappings</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">mappings</span><span class="p">:</span>
+            <span class="c1"># can only delete one then have to break out of inner loop</span>
+            <span class="n">project</span><span class="o">.</span><span class="n">attribute_mappings</span><span class="p">()</span><span class="o">.</span><span class="n">delete_by_resource_id</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">resource_id</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="c1"># optionally remove dataset from the project</span>
+    <span class="k">if</span> <span class="n">remove_dataset_from_project</span><span class="p">:</span>
+        <span class="n">project</span><span class="o">.</span><span class="n">remove_input_dataset</span><span class="p">(</span><span class="n">source_dataset</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

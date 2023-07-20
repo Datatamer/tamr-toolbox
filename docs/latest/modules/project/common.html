@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -194,13 +199,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="common">
-<h1>Common<a class="headerlink" href="#common" title="Permalink to this headline">¶</a></h1>
+<h1>Common<a class="headerlink" href="#common" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="module-tamr_toolbox.project._common.movement">
-<span id="movement"></span><h2>Movement<a class="headerlink" href="#module-tamr_toolbox.project._common.movement" title="Permalink to this headline">¶</a></h2>
+<span id="movement"></span><h2>Movement<a class="headerlink" href="#module-tamr_toolbox.project._common.movement" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to project movement as part of Tamr projects</p>
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.movement.export_artifacts">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.movement.</span></code><code class="sig-name descname"><span class="pre">export_artifacts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_directory_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/movement.html#export_artifacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.movement.export_artifacts" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.movement.export_artifacts">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.movement.</span></span><span class="sig-name descname"><span class="pre">export_artifacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_directory_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/movement.html#export_artifacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.movement.export_artifacts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export project artifacts for project movement</p>
 <p>Requires Tamr 2021.005.0 or later</p>
 <dl class="field-list simple">
@@ -222,8 +227,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.movement.import_artifacts">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.movement.</span></code><code class="sig-name descname"><span class="pre">import_artifacts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_artifact_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_project_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_unified_dataset_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_additive_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_destructive_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_if_not_present</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/movement.html#import_artifacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.movement.import_artifacts" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.movement.import_artifacts">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.movement.</span></span><span class="sig-name descname"><span class="pre">import_artifacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_artifact_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_project_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_unified_dataset_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_additive_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_destructive_artifacts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_if_not_present</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_existing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/movement.html#import_artifacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.movement.import_artifacts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import project artifacts into a tamr instance</p>
 <p>Requires Tamr 2021.005.0 or later</p>
 <dl class="field-list simple">
@@ -253,11 +258,11 @@
 
 </div>
 <div class="section" id="module-tamr_toolbox.project._common.transformations">
-<span id="transformations"></span><h2>Transformations<a class="headerlink" href="#module-tamr_toolbox.project._common.transformations" title="Permalink to this headline">¶</a></h2>
+<span id="transformations"></span><h2>Transformations<a class="headerlink" href="#module-tamr_toolbox.project._common.transformations" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to transformations with Tamr projects</p>
 <dl class="py class">
-<dt id="tamr_toolbox.project._common.transformations.InputTransformation">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></code><code class="sig-name descname"><span class="pre">InputTransformation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">transformation</span></em>, <em class="sig-param"><span class="pre">datasets=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#InputTransformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.InputTransformation" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.transformations.InputTransformation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></span><span class="sig-name descname"><span class="pre">InputTransformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transformation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#InputTransformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.InputTransformation" title="Permalink to this definition">¶</a></dt>
 <dd><p>A transformation scoped to input datasets</p>
 <dl class="simple">
 <dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
@@ -274,8 +279,8 @@
 </dd></dl>
 
 <dl class="py class">
-<dt id="tamr_toolbox.project._common.transformations.TransformationGroup">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></code><code class="sig-name descname"><span class="pre">TransformationGroup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input_scope=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">unified_scope=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#TransformationGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.TransformationGroup" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.transformations.TransformationGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></span><span class="sig-name descname"><span class="pre">TransformationGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_scope=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_scope=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#TransformationGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.TransformationGroup" title="Permalink to this definition">¶</a></dt>
 <dd><p>A group of input transformations and unified transformations</p>
 <dl class="simple">
 <dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
@@ -292,8 +297,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.transformations.get_all">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.get_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.transformations.get_all">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></span><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.get_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the transformations of a Project</p>
 <dl class="simple">
 <dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
@@ -313,8 +318,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.transformations.set_all">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#set_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.set_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.transformations.set_all">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></span><span class="sig-name descname"><span class="pre">set_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#set_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.set_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the transformations of a Project</p>
 <dl class="simple">
 <dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
@@ -329,7 +334,7 @@
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
@@ -345,8 +350,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.transformations.get_all_unified">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></code><code class="sig-name descname"><span class="pre">get_all_unified</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#get_all_unified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.get_all_unified" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.transformations.get_all_unified">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></span><span class="sig-name descname"><span class="pre">get_all_unified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#get_all_unified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.get_all_unified" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the unified transformations of a Project</p>
 <dl class="simple">
 <dt>Version:</dt><dd><p>Requires Tamr 2020.009.0 or later</p>
@@ -366,8 +371,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.transformations.set_all_unified">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></code><code class="sig-name descname"><span class="pre">set_all_unified</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#set_all_unified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.set_all_unified" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.transformations.set_all_unified">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.transformations.</span></span><span class="sig-name descname"><span class="pre">set_all_unified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/transformations.html#set_all_unified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.transformations.set_all_unified" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the unified transformations of a Project.
 Any input transformations will not be altered</p>
 <dl class="simple">
@@ -383,7 +388,7 @@ Any input transformations will not be altered</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Response object created when transformations of a project are replaced</p>
@@ -397,11 +402,11 @@ Any input transformations will not be altered</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.project._common.schema">
-<span id="schema"></span><h2>Schema<a class="headerlink" href="#module-tamr_toolbox.project._common.schema" title="Permalink to this headline">¶</a></h2>
+<span id="schema"></span><h2>Schema<a class="headerlink" href="#module-tamr_toolbox.project._common.schema" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to schema mapping as part of Tamr projects</p>
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.schema.map_attribute">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></code><code class="sig-name descname"><span class="pre">map_attribute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#map_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.map_attribute" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.schema.map_attribute">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></span><span class="sig-name descname"><span class="pre">map_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#map_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.map_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps source_attribute in source_dataset to unified_attribute in unified_dataset.
 If the mapping already exists it will log
 a warning and return the existing AttributeMapping from the project’s collection.</p>
@@ -430,8 +435,8 @@ a warning and return the existing AttributeMapping from the project’s collecti
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.schema.unmap_attribute">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></code><code class="sig-name descname"><span class="pre">unmap_attribute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#unmap_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.unmap_attribute" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.schema.unmap_attribute">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></span><span class="sig-name descname"><span class="pre">unmap_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unified_attribute_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#unmap_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.unmap_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unmaps a source attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -452,8 +457,8 @@ a warning and return the existing AttributeMapping from the project’s collecti
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.schema.bootstrap_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></code><code class="sig-name descname"><span class="pre">bootstrap_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_add_dataset_to_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#bootstrap_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.bootstrap_dataset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.schema.bootstrap_dataset">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></span><span class="sig-name descname"><span class="pre">bootstrap_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_add_dataset_to_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#bootstrap_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.bootstrap_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bootstraps a dataset (i.e. maps all source columns to themselves)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -478,8 +483,8 @@ if it is not already a part of it</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.project._common.schema.unmap_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></code><code class="sig-name descname"><span class="pre">unmap_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_dataset_from_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#unmap_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.unmap_dataset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.project._common.schema.unmap_dataset">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.project._common.schema.</span></span><span class="sig-name descname"><span class="pre">unmap_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_dataset_from_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_if_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/project/_common/schema.html#unmap_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.project._common.schema.unmap_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wholly unmaps a dataset and optionally removes it from a project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

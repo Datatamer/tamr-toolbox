@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -187,14 +192,14 @@
            <div itemprop="articleBody">
             
   <div class="section" id="notifications">
-<h1>Notifications<a class="headerlink" href="#notifications" title="Permalink to this headline">¶</a></h1>
+<h1>Notifications<a class="headerlink" href="#notifications" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="slack-notifications">
-<h2>Slack Notifications<a class="headerlink" href="#slack-notifications" title="Permalink to this headline">¶</a></h2>
+<h2>Slack Notifications<a class="headerlink" href="#slack-notifications" title="Permalink to this heading">¶</a></h2>
 <p>To send Slack notifications, you’ll need to have your own Slack app. If you don’t have one,
 you may follow steps 1 and 2 to create it. Otherwise, please proceed to Step 3.</p>
 <p>Note: This module also requires an optional dependency. See <a class="reference internal" href="../installation.html"><span class="doc">Installation</span></a> for details.</p>
 <div class="section" id="step-1-set-up-a-slack-environment-to-receive-messages">
-<h3>Step 1: Set up a Slack environment to receive messages<a class="headerlink" href="#step-1-set-up-a-slack-environment-to-receive-messages" title="Permalink to this headline">¶</a></h3>
+<h3>Step 1: Set up a Slack environment to receive messages<a class="headerlink" href="#step-1-set-up-a-slack-environment-to-receive-messages" title="Permalink to this heading">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Create a <a class="reference external" href="https://api.slack.com/apps/new">Slack app</a></p></li>
 <li><p>Specify the app Name, such as <strong>my_slack_app</strong></p></li>
@@ -208,12 +213,12 @@ you may follow steps 1 and 2 to create it. Otherwise, please proceed to Step 3.<
 </ol>
 </div>
 <div class="section" id="step-2-add-the-slack-app-to-a-slack-channel">
-<h3>Step 2: Add the Slack app to a Slack channel<a class="headerlink" href="#step-2-add-the-slack-app-to-a-slack-channel" title="Permalink to this headline">¶</a></h3>
+<h3>Step 2: Add the Slack app to a Slack channel<a class="headerlink" href="#step-2-add-the-slack-app-to-a-slack-channel" title="Permalink to this heading">¶</a></h3>
 <p>Make sure you add the Slack app to a <em>public</em> Slack channel via <strong>Details</strong> -&gt; <strong>More</strong> -&gt; <strong>Add apps</strong> on the channel UI.
 You may locate <strong>Details</strong> using a circled exclamation mark on its left side.</p>
 </div>
 <div class="section" id="step-3-use-cases">
-<h3>Step 3: Use Cases<a class="headerlink" href="#step-3-use-cases" title="Permalink to this headline">¶</a></h3>
+<h3>Step 3: Use Cases<a class="headerlink" href="#step-3-use-cases" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>You can customize and send any Slack messages by calling <code class="code docutils literal notranslate"><span class="pre">notifications.slack.send_message()</span></code>.</p></li>
 <li><p>If you have already created a <em>slack client</em> (<em>NOT</em> your <a class="reference external" href="https://api.slack.com/apps/new">Slack app</a>!), you can directly pass it via the argument <strong>slack_client</strong>, otherwise you may create one using <code class="code docutils literal notranslate"><span class="pre">WebClient(token=slack_api_token)</span></code></p></li>
@@ -258,7 +263,7 @@ You may locate <strong>Details</strong> using a circled exclamation mark on its 
 </div>
 </div>
 <div class="section" id="email-notifications">
-<h2>Email Notifications<a class="headerlink" href="#email-notifications" title="Permalink to this headline">¶</a></h2>
+<h2>Email Notifications<a class="headerlink" href="#email-notifications" title="Permalink to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for generating Email notifications based on Tamr jobs&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 <span class="kn">from</span> <span class="nn">tamr_toolbox.models.operation_state</span> <span class="kn">import</span> <span class="n">OperationState</span>

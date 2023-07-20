@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -106,15 +111,67 @@
 <li class="toctree-l2"><a class="reference internal" href="project.html">Project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sysadmin.html">Sysadmin</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Utilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.client">Client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.config">Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.custom_button">Custom Button</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.logger">Logging</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.operation">Operation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.testing">Testing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.downstream">Downstream</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.upstream">Upstream</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.version">Version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.client">Client</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.client.health_check"><code class="docutils literal notranslate"><span class="pre">health_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.client.create"><code class="docutils literal notranslate"><span class="pre">create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.client.create_with_jwt"><code class="docutils literal notranslate"><span class="pre">create_with_jwt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.client.get_with_connection_retry"><code class="docutils literal notranslate"><span class="pre">get_with_connection_retry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.client.poll_endpoint"><code class="docutils literal notranslate"><span class="pre">poll_endpoint()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.config">Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.config.from_yaml"><code class="docutils literal notranslate"><span class="pre">from_yaml()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.custom_button">Custom Button</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.custom_button.create_redirect_button"><code class="docutils literal notranslate"><span class="pre">create_redirect_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.custom_button.create_post_button"><code class="docutils literal notranslate"><span class="pre">create_post_button()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.custom_button.create_button_extension"><code class="docutils literal notranslate"><span class="pre">create_button_extension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.custom_button.create_button_extension_from_list"><code class="docutils literal notranslate"><span class="pre">create_button_extension_from_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.custom_button.register_buttons"><code class="docutils literal notranslate"><span class="pre">register_buttons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.custom_button.delete_buttons"><code class="docutils literal notranslate"><span class="pre">delete_buttons()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.logger">Logging</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.logger.create"><code class="docutils literal notranslate"><span class="pre">create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.logger.set_logging_level"><code class="docutils literal notranslate"><span class="pre">set_logging_level()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.logger.enable_package_logging"><code class="docutils literal notranslate"><span class="pre">enable_package_logging()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.logger.enable_toolbox_logging"><code class="docutils literal notranslate"><span class="pre">enable_toolbox_logging()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.operation">Operation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.enforce_success"><code class="docutils literal notranslate"><span class="pre">enforce_success()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.from_resource_id"><code class="docutils literal notranslate"><span class="pre">from_resource_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.get_latest"><code class="docutils literal notranslate"><span class="pre">get_latest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.get_details"><code class="docutils literal notranslate"><span class="pre">get_details()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.get_all"><code class="docutils literal notranslate"><span class="pre">get_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.get_active"><code class="docutils literal notranslate"><span class="pre">get_active()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.wait"><code class="docutils literal notranslate"><span class="pre">wait()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.monitor"><code class="docutils literal notranslate"><span class="pre">monitor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.operation.safe_estimate_counts"><code class="docutils literal notranslate"><span class="pre">safe_estimate_counts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.testing">Testing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.testing.mock_api"><code class="docutils literal notranslate"><span class="pre">mock_api()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.downstream">Downstream</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.downstream.datasets"><code class="docutils literal notranslate"><span class="pre">datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.downstream.projects"><code class="docutils literal notranslate"><span class="pre">projects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.upstream">Upstream</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.upstream.datasets"><code class="docutils literal notranslate"><span class="pre">datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.upstream.projects"><code class="docutils literal notranslate"><span class="pre">projects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.utils.version">Version</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.version.current"><code class="docutils literal notranslate"><span class="pre">current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.version.is_version_condition_met"><code class="docutils literal notranslate"><span class="pre">is_version_condition_met()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.version.requires_tamr_version"><code class="docutils literal notranslate"><span class="pre">requires_tamr_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.utils.version.enforce_after_or_equal"><code class="docutils literal notranslate"><span class="pre">enforce_after_or_equal()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="workflow.html">Workflow</a></li>
@@ -190,13 +247,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="utilities">
-<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="module-tamr_toolbox.utils.client">
-<span id="client"></span><h2>Client<a class="headerlink" href="#module-tamr_toolbox.utils.client" title="Permalink to this headline">¶</a></h2>
+<span id="client"></span><h2>Client<a class="headerlink" href="#module-tamr_toolbox.utils.client" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to connecting to a Tamr instance</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.client.health_check">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></code><code class="sig-name descname"><span class="pre">health_check</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#health_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.health_check" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.client.health_check">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></span><span class="sig-name descname"><span class="pre">health_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#health_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.health_check" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query the health check API and check if each service is healthy (returns True)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -212,8 +269,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.client.create">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'http'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/api/versioned/v1/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_auth_cookie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_healthy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.create" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.client.create">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'http'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/api/versioned/v1/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_auth_cookie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_healthy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a Tamr client from the provided configuration values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -224,7 +281,7 @@
 <li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – The port of the Tamr UI. Pass a value of <cite>None</cite> to specify an address with no port</p></li>
 <li><p><strong>protocol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – https or http</p></li>
 <li><p><strong>base_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Optional argument to specify a different base path</p></li>
-<li><p><strong>session</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]) – Optional argument to pass an existing requests Session</p></li>
+<li><p><strong>session</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]) – Optional argument to pass an existing requests Session</p></li>
 <li><p><strong>store_auth_cookie</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true will allow Tamr authentication cookie to be stored and reused</p></li>
 <li><p><strong>enforce_healthy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true will enforce a healthy state upon creation</p></li>
 </ul>
@@ -239,8 +296,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.client.create_with_jwt">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></code><code class="sig-name descname"><span class="pre">create_with_jwt</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'http'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/api/versioned/v1/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_auth_cookie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_healthy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#create_with_jwt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.create_with_jwt" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.client.create_with_jwt">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></span><span class="sig-name descname"><span class="pre">create_with_jwt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'http'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/api/versioned/v1/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_auth_cookie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_healthy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#create_with_jwt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.create_with_jwt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a Tamr client from the provided configuration values using a JWT token instead
 of a username and password. Note that this feature is only available on v2022.010.0 or later.</p>
 <dl class="field-list simple">
@@ -251,7 +308,7 @@ of a username and password. Note that this feature is only available on v2022.01
 <li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – The port of the Tamr UI. Pass a value of <cite>None</cite> to specify an address with no port</p></li>
 <li><p><strong>protocol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – https or http</p></li>
 <li><p><strong>base_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Optional argument to specify a different base path</p></li>
-<li><p><strong>session</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]) – Optional argument to pass an existing requests Session</p></li>
+<li><p><strong>session</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]) – Optional argument to pass an existing requests Session</p></li>
 <li><p><strong>store_auth_cookie</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true will allow Tamr authentication cookie to be stored and reused</p></li>
 <li><p><strong>enforce_healthy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true will enforce a healthy state upon creation</p></li>
 </ul>
@@ -266,8 +323,8 @@ of a username and password. Note that this feature is only available on v2022.01
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.client.get_with_connection_retry">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></code><code class="sig-name descname"><span class="pre">get_with_connection_retry</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#get_with_connection_retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.get_with_connection_retry" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.client.get_with_connection_retry">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></span><span class="sig-name descname"><span class="pre">get_with_connection_retry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#get_with_connection_retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.get_with_connection_retry" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Will handle exceptions when attempting to connect to the Tamr API.</dt><dd><p>This is used to handle connection issues when Tamr restarts due to a restore.</p>
 </dd>
@@ -282,7 +339,7 @@ of a username and password. Note that this feature is only available on v2022.01
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A response object from API request.</p>
@@ -291,8 +348,8 @@ of a username and password. Note that this feature is only available on v2022.01
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.client.poll_endpoint">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></code><code class="sig-name descname"><span class="pre">poll_endpoint</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_retry_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#poll_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.poll_endpoint" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.client.poll_endpoint">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.client.</span></span><span class="sig-name descname"><span class="pre">poll_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_retry_timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/client.html#poll_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.client.poll_endpoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits until job has a state of Canceled, Succeeded, or Failed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -306,7 +363,7 @@ during connection retry.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Response" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A response object from API request.</p>
@@ -316,11 +373,11 @@ during connection retry.</p></li>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.config">
-<span id="configuration"></span><h2>Configuration<a class="headerlink" href="#module-tamr_toolbox.utils.config" title="Permalink to this headline">¶</a></h2>
+<span id="configuration"></span><h2>Configuration<a class="headerlink" href="#module-tamr_toolbox.utils.config" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to loading and using configuration files</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.config.from_yaml">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.config.</span></code><code class="sig-name descname"><span class="pre">from_yaml</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_path_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/config.html#from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.config.from_yaml" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.config.from_yaml">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.config.</span></span><span class="sig-name descname"><span class="pre">from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_path_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/config.html#from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.config.from_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a yaml file and creates a dictionary. Input values can be retrieved from environment
 variables</p>
 <dl class="field-list simple">
@@ -341,14 +398,14 @@ variables</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.custom_button">
-<span id="custom-button"></span><h2>Custom Button<a class="headerlink" href="#module-tamr_toolbox.utils.custom_button" title="Permalink to this headline">¶</a></h2>
+<span id="custom-button"></span><h2>Custom Button<a class="headerlink" href="#module-tamr_toolbox.utils.custom_button" title="Permalink to this heading">¶</a></h2>
 <p>Helper functions related to creating &amp; managing custom UI buttons as yaml files.</p>
 <p>Due to how Tamr custom buttons are configured, these functions will
 need to be run on the actual server on which Tamr is installed to work as expected.</p>
 <p>Important: Custom buttons are only available to versions 2022.008.0 and later</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.custom_button.create_redirect_button">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></code><code class="sig-name descname"><span class="pre">create_redirect_button</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_in_new_tab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_redirect_button"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_redirect_button" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.custom_button.create_redirect_button">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></span><span class="sig-name descname"><span class="pre">create_redirect_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_in_new_tab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_redirect_button"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_redirect_button" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create yaml file with all required attributes for
 a ‘REDIRECT’ UI button. Yaml file is saved locally.</p>
 <p>Button features are only available to versions 2022.008.0 and later.</p>
@@ -376,8 +433,8 @@ body of a POST call or a redirect URL path substitution.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.custom_button.create_post_button">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></code><code class="sig-name descname"><span class="pre">create_post_button</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_body_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_post_button"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_post_button" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.custom_button.create_post_button">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></span><span class="sig-name descname"><span class="pre">create_post_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_body_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_post_button"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_post_button" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create yaml file with all required attributes for
 a ‘POST’ UI button. Yaml file is saved locally.</p>
 <p>Button features are only available to versions 2022.008.0 and later.</p>
@@ -408,8 +465,8 @@ body of a POST call or a redirect URL path substitution.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.custom_button.create_button_extension">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></code><code class="sig-name descname"><span class="pre">create_button_extension</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_button_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_button_extension" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.custom_button.create_button_extension">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></span><span class="sig-name descname"><span class="pre">create_button_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_button_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_button_extension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of button yaml files, save it as a grouped extension yaml file.
 Yaml file is saved locally.
 Button features are only available to versions 2022.008.0 and later.</p>
@@ -431,8 +488,8 @@ Button features are only available to versions 2022.008.0 and later.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.custom_button.create_button_extension_from_list">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></code><code class="sig-name descname"><span class="pre">create_button_extension_from_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_button_extension_from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_button_extension_from_list" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.custom_button.create_button_extension_from_list">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></span><span class="sig-name descname"><span class="pre">create_button_extension_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#create_button_extension_from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.create_button_extension_from_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of button dictionaries, save it as a grouped extension yaml file.
 Yaml file is saved locally.</p>
 <p>Button features are only available to versions 2022.008.0 and later.</p>
@@ -477,8 +534,8 @@ Yaml file is saved locally.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.custom_button.register_buttons">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></code><code class="sig-name descname"><span class="pre">register_buttons</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_install_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_client</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impersonation_username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impersonation_password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#register_buttons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.register_buttons" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.custom_button.register_buttons">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></span><span class="sig-name descname"><span class="pre">register_buttons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_install_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_client</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impersonation_username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">impersonation_password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#register_buttons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.register_buttons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a list of button(s) in a Tamr instance.
 Requires Tamr restart to display buttons in UI.</p>
 <dl class="simple">
@@ -511,8 +568,8 @@ this should be the tamr install user</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.custom_button.delete_buttons">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></code><code class="sig-name descname"><span class="pre">delete_buttons</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_install_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#delete_buttons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.delete_buttons" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.custom_button.delete_buttons">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.custom_button.</span></span><span class="sig-name descname"><span class="pre">delete_buttons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_install_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/custom_button.html#delete_buttons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.custom_button.delete_buttons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of button yaml files, delete them thus removing the button from UI.</p>
 <blockquote>
 <div><dl class="simple">
@@ -534,11 +591,11 @@ Button features are only available to versions 2022.008.0 and later.</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.logger">
-<span id="logging"></span><h2>Logging<a class="headerlink" href="#module-tamr_toolbox.utils.logger" title="Permalink to this headline">¶</a></h2>
+<span id="logging"></span><h2>Logging<a class="headerlink" href="#module-tamr_toolbox.utils.logger" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to logging within scripts</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.logger.create">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_terminal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.create" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.logger.create">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_terminal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return logger object with pre-defined format.
 Log file will be located under log_directory with file name
 &lt;log_prefix&gt;_&lt;date&gt;.log, quashing extra separating underscores. Defaults to &lt;date&gt;.log.</p>
@@ -569,8 +626,8 @@ To change the filename use log_prefix</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.logger.set_logging_level">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></code><code class="sig-name descname"><span class="pre">set_logging_level</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#set_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.set_logging_level" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.logger.set_logging_level">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></span><span class="sig-name descname"><span class="pre">set_logging_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#set_logging_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.set_logging_level" title="Permalink to this definition">¶</a></dt>
 <dd><p>A useful method for setting logging level for all a given logger and its handlers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -587,8 +644,8 @@ To change the filename use log_prefix</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.logger.enable_package_logging">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></code><code class="sig-name descname"><span class="pre">enable_package_logging</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_terminal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#enable_package_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.enable_package_logging" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.logger.enable_package_logging">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></span><span class="sig-name descname"><span class="pre">enable_package_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_terminal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#enable_package_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.enable_package_logging" title="Permalink to this definition">¶</a></dt>
 <dd><p>A helper function to enable package logging for any package following
 python best practices for logging names (i.e. logger name == package.module.submodule).</p>
 <dl class="field-list simple">
@@ -609,8 +666,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.logger.enable_toolbox_logging">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></code><code class="sig-name descname"><span class="pre">enable_toolbox_logging</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_terminal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#enable_toolbox_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.enable_toolbox_logging" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.logger.enable_toolbox_logging">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.logger.</span></span><span class="sig-name descname"><span class="pre">enable_toolbox_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_terminal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y-%m-%d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/logger.html#enable_toolbox_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.logger.enable_toolbox_logging" title="Permalink to this definition">¶</a></dt>
 <dd><p>A simple wrapper to enable_package_logging to give friendly call for users.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -631,11 +688,11 @@ python best practices for logging names (i.e. logger name == package.module.subm
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.operation">
-<span id="operation"></span><h2>Operation<a class="headerlink" href="#module-tamr_toolbox.utils.operation" title="Permalink to this headline">¶</a></h2>
+<span id="operation"></span><h2>Operation<a class="headerlink" href="#module-tamr_toolbox.utils.operation" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to Tamr operations (or jobs)</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.enforce_success">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">enforce_success</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#enforce_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.enforce_success" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.enforce_success">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">enforce_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#enforce_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.enforce_success" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raises an error if an operation fails</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -648,8 +705,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.from_resource_id">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">from_resource_id</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#from_resource_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.from_resource_id" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.from_resource_id">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">from_resource_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#from_resource_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.from_resource_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an operation from a job id</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -668,8 +725,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.get_latest">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">get_latest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_latest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_latest" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.get_latest">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">get_latest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_latest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_latest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the latest operation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -685,8 +742,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.get_details">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">get_details</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_details" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.get_details">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">get_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_details" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a text describing the information of a job</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -702,8 +759,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.get_all">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.get_all">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all jobs or operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -719,8 +776,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.get_active">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">get_active</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_active" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.get_active">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">get_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tamr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#get_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.get_active" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of pending and running jobs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -736,8 +793,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.wait">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">wait</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.wait" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.wait">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Continuously polls for this operation’s server-side state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -757,8 +814,8 @@ python best practices for logging names (i.e. logger name == package.module.subm
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.monitor">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">monitor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#monitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.monitor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.monitor">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">monitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#monitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.monitor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Continuously polls for this operation’s server-side state and returns operation
 when there is a state change</p>
 <dl class="field-list simple">
@@ -779,8 +836,8 @@ when there is a state change</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.operation.safe_estimate_counts">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></code><code class="sig-name descname"><span class="pre">safe_estimate_counts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#safe_estimate_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.safe_estimate_counts" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.operation.safe_estimate_counts">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.operation.</span></span><span class="sig-name descname"><span class="pre">safe_estimate_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/operation.html#safe_estimate_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.operation.safe_estimate_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the estimate counts job of project that works if it is the first
 :param project: A Tamr project object</p>
 <dl class="field-list simple">
@@ -795,11 +852,11 @@ when there is a state change</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.testing">
-<span id="testing"></span><h2>Testing<a class="headerlink" href="#module-tamr_toolbox.utils.testing" title="Permalink to this headline">¶</a></h2>
+<span id="testing"></span><h2>Testing<a class="headerlink" href="#module-tamr_toolbox.utils.testing" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to testing code</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.testing.mock_api">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.testing.</span></code><code class="sig-name descname"><span class="pre">mock_api</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_logs_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_online_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/testing.html#mock_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.testing.mock_api" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.testing.mock_api">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.testing.</span></span><span class="sig-name descname"><span class="pre">mock_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_logs_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_online_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/testing.html#mock_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.testing.mock_api" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator for <cite>pytest</cite> tests that mocks API requests by reading a file of
 pre-generated responses. Will generate responses file based on a real connection
 if pre-generated responses are not found.</p>
@@ -823,10 +880,10 @@ already exists</p></li>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.downstream">
-<span id="downstream"></span><h2>Downstream<a class="headerlink" href="#module-tamr_toolbox.utils.downstream" title="Permalink to this headline">¶</a></h2>
+<span id="downstream"></span><h2>Downstream<a class="headerlink" href="#module-tamr_toolbox.utils.downstream" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.downstream.datasets">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.downstream.</span></code><code class="sig-name descname"><span class="pre">datasets</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dependencies_by_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/downstream.html#datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.downstream.datasets" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.downstream.datasets">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.downstream.</span></span><span class="sig-name descname"><span class="pre">datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dependencies_by_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/downstream.html#datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.downstream.datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dataset’s downstream datasets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -853,8 +910,8 @@ dependencies can depend on each other.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.downstream.projects">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.downstream.</span></code><code class="sig-name descname"><span class="pre">projects</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dependencies_by_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/downstream.html#projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.downstream.projects" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.downstream.projects">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.downstream.</span></span><span class="sig-name descname"><span class="pre">projects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dependencies_by_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/downstream.html#projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.downstream.projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return list of downstream project_list for a dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -881,11 +938,11 @@ regex (dataset name has suffix ‘unified_dataset’).</p></li>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.upstream">
-<span id="upstream"></span><h2>Upstream<a class="headerlink" href="#module-tamr_toolbox.utils.upstream" title="Permalink to this headline">¶</a></h2>
+<span id="upstream"></span><h2>Upstream<a class="headerlink" href="#module-tamr_toolbox.utils.upstream" title="Permalink to this heading">¶</a></h2>
 <p>Functions related to projects upstream of a specified project</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.upstream.datasets">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.upstream.</span></code><code class="sig-name descname"><span class="pre">datasets</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/upstream.html#datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.upstream.datasets" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.upstream.datasets">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.upstream.</span></span><span class="sig-name descname"><span class="pre">datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/upstream.html#datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.upstream.datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check for upstream datasets associated with a specified dataset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -901,8 +958,8 @@ regex (dataset name has suffix ‘unified_dataset’).</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.upstream.projects">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.upstream.</span></code><code class="sig-name descname"><span class="pre">projects</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/upstream.html#projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.upstream.projects" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.upstream.projects">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.upstream.</span></span><span class="sig-name descname"><span class="pre">projects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/upstream.html#projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.upstream.projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check for upstream projects associated with a specified project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -919,11 +976,11 @@ regex (dataset name has suffix ‘unified_dataset’).</p></li>
 
 </div>
 <div class="section" id="module-tamr_toolbox.utils.version">
-<span id="version"></span><h2>Version<a class="headerlink" href="#module-tamr_toolbox.utils.version" title="Permalink to this headline">¶</a></h2>
+<span id="version"></span><h2>Version<a class="headerlink" href="#module-tamr_toolbox.utils.version" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to the version of Tamr instances</p>
 <dl class="py function">
-<dt id="tamr_toolbox.utils.version.current">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></code><code class="sig-name descname"><span class="pre">current</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.current" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.version.current">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></span><span class="sig-name descname"><span class="pre">current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.current" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the version of Tamr for provided client</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -939,8 +996,8 @@ regex (dataset name has suffix ‘unified_dataset’).</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.version.is_version_condition_met">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></code><code class="sig-name descname"><span class="pre">is_version_condition_met</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#is_version_condition_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.is_version_condition_met" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.version.is_version_condition_met">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></span><span class="sig-name descname"><span class="pre">is_version_condition_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#is_version_condition_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.is_version_condition_met" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if Tamr version is valid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -975,8 +1032,8 @@ If exact_version is True, max_version will be ignored</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.version.requires_tamr_version">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></code><code class="sig-name descname"><span class="pre">requires_tamr_version</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#requires_tamr_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.requires_tamr_version" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.version.requires_tamr_version">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></span><span class="sig-name descname"><span class="pre">requires_tamr_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#requires_tamr_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.requires_tamr_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pie decorator for Tamr version checking</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1018,8 +1075,8 @@ function, and not new instances of Tamr referred to within functional code</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.utils.version.enforce_after_or_equal">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></code><code class="sig-name descname"><span class="pre">enforce_after_or_equal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compare_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#enforce_after_or_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.enforce_after_or_equal" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.utils.version.enforce_after_or_equal">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.utils.version.</span></span><span class="sig-name descname"><span class="pre">enforce_after_or_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compare_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/utils/version.html#enforce_after_or_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.utils.version.enforce_after_or_equal" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Raises an exception if the version of the Tamr client is before the provided compare version</dt><dd><p>Will be deprecated in favour of raise_warn_tamr_version()</p>
 </dd>

@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -65,7 +70,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -162,15 +167,14 @@
   <h1>Source code for tamr_toolbox.enrichment.translate</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Tasks related to efficiently translating data not present in existing translation</span>
 <span class="sd">dictionaries&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
-<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.dictionary</span> <span class="kn">import</span> <span class="n">TranslationDictionary</span>
-
-<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.dictionary</span> <span class="kn">import</span> <span class="n">update</span><span class="p">,</span> <span class="n">save</span>
-<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.api_client</span> <span class="kn">import</span> <span class="n">google</span>
-
-<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.api_client</span> <span class="kn">import</span> <span class="n">google_translate</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.dictionary</span> <span class="kn">import</span> <span class="n">TranslationDictionary</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">update</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.enrichment_utils</span> <span class="kn">import</span> <span class="n">_yield_chunk</span>
 
 <span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
 <span class="c1"># This environments variable is set automatically when `invoke docs` is used</span>
@@ -181,24 +185,6 @@
 
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_yield_chunk</span><span class="p">(</span><span class="n">list_to_split</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Split a list into a List of List with constant length</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        list_to_split: List to split into chunks</span>
-<span class="sd">        chunk_size: number of items to have in each list after splitting</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A List of List</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># For item i in a range that is a length of l,</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_to_split</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">):</span>
-        <span class="c1"># Create an index range for l of n items:</span>
-        <span class="k">yield</span> <span class="n">list_to_split</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_filter_numeric_and_null_phrases</span><span class="p">(</span><span class="n">phrase</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -361,7 +347,7 @@
         <span class="n">tmp_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">chunk_of_phrases</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_yield_chunk</span><span class="p">(</span><span class="n">phrases_to_translate</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)):</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Translating chunk </span><span class="si">{</span><span class="n">ix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="n">number_of_chunks</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-            <span class="n">translated_phrases</span> <span class="o">=</span> <span class="n">google</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span>
+            <span class="n">translated_phrases</span> <span class="o">=</span> <span class="n">google_translate</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span>
                 <span class="n">phrases_to_translate</span><span class="o">=</span><span class="n">chunk_of_phrases</span><span class="p">,</span>
                 <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
                 <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span><span class="p">,</span>

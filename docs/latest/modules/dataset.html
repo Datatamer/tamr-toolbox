@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -98,8 +103,20 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_io.html">Data Input/Output</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Dataset</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.dataset.manage">Manage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.dataset._dataset">Profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.dataset.manage">Manage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.exists"><code class="docutils literal notranslate"><span class="pre">exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.create"><code class="docutils literal notranslate"><span class="pre">create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.update"><code class="docutils literal notranslate"><span class="pre">update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.create_attributes"><code class="docutils literal notranslate"><span class="pre">create_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.edit_attributes"><code class="docutils literal notranslate"><span class="pre">edit_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.delete_attributes"><code class="docutils literal notranslate"><span class="pre">delete_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset.manage.update_records"><code class="docutils literal notranslate"><span class="pre">update_records()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.dataset._dataset">Profile</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.dataset._dataset.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
@@ -183,12 +200,12 @@
            <div itemprop="articleBody">
             
   <div class="section" id="dataset">
-<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h1>
+<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="module-tamr_toolbox.dataset.manage">
-<span id="manage"></span><h2>Manage<a class="headerlink" href="#module-tamr_toolbox.dataset.manage" title="Permalink to this headline">¶</a></h2>
+<span id="manage"></span><h2>Manage<a class="headerlink" href="#module-tamr_toolbox.dataset.manage" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.exists">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">exists</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.exists" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.exists">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a dataset exists in a Tamr instance</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -207,8 +224,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.create">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.create" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.create">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flexibly create a source dataset in Tamr</p>
 <p>A template dataset object can be passed in to create a duplicate dataset with a new name. If
 the template dataset is not provided, the primary_keys must be defined for the dataset to be
@@ -241,7 +258,7 @@ and the attribute description is the value</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.30.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.31.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If both dataset and primary_keys are not defined</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the dataset already exists</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
@@ -263,8 +280,8 @@ and the attribute description is the value</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.update">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_existing_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.update" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.update">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_existing_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flexibly update a source dataset in Tamr</p>
 <p>All the attributes that should exist in the dataset must be defined in the attributes argument.
 This function will add/remove attributes in the dataset until the dataset attributes matches
@@ -296,7 +313,7 @@ key and the attribute description is the value</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.30.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.31.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the dataset is not a source dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
 </ul>
@@ -319,8 +336,8 @@ key and the attribute description is the value</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.create_attributes">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">create_attributes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#create_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.create_attributes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.create_attributes">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">create_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#create_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.create_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create new attributes in a dataset</p>
 <p>The default attribute type will be ARRAY STRING. To set non-default attribute types, they must
 be defined in the attribute_types dictionary. Any attribute descriptions can be specified in
@@ -344,7 +361,7 @@ key and the attribute description is the value</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.30.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.31.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – If the attributes argument is not an Iterable</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the dataset is a unified dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If an attribute passed in already exists in the dataset</p></li>
@@ -354,8 +371,8 @@ key and the attribute description is the value</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.edit_attributes">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">edit_attributes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_existing_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#edit_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.edit_attributes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.edit_attributes">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">edit_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_existing_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#edit_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.edit_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Edit existing attributes in a dataset</p>
 <p>The attribute type and/or descriptions can be updated to new values. Attributes that will be
 updated must be in either the attribute_types or attribute_descriptions dictionaries or
@@ -382,7 +399,7 @@ key and the attribute description is the value</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.30.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.HTTPError" title="(in Requests v2.31.0)"><strong>requests.HTTPError</strong></a> – If any HTTP error is encountered</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the dataset is not a source dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If a passed attribute does not exist in the dataset</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If a passed attribute is a primary key and can’t be removed</p></li>
@@ -394,8 +411,8 @@ key and the attribute description is the value</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.delete_attributes">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">delete_attributes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#delete_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.delete_attributes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.delete_attributes">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">delete_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#delete_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.delete_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove attributes from dataset by attribute name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -422,8 +439,8 @@ key and the attribute description is the value</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.dataset.manage.update_records">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></code><code class="sig-name descname"><span class="pre">update_records</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#update_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.update_records" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset.manage.update_records">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset.manage.</span></span><span class="sig-name descname"><span class="pre">update_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/manage.html#update_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset.manage.update_records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flexibly update the records of a dataset. The user supplies a list of primary keys for a
 subset of the datasets records, along with a list of updates describing how each record should
 be altered. An update should either be the string “delete” or a dictionary in
@@ -457,11 +474,11 @@ should be deleted.</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.dataset._dataset">
-<span id="profile"></span><h2>Profile<a class="headerlink" href="#module-tamr_toolbox.dataset._dataset" title="Permalink to this headline">¶</a></h2>
+<span id="profile"></span><h2>Profile<a class="headerlink" href="#module-tamr_toolbox.dataset._dataset" title="Permalink to this heading">¶</a></h2>
 <p>Additional functions to manipulate the profile of the dataset.</p>
 <dl class="py function">
-<dt id="tamr_toolbox.dataset._dataset.get_profile">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset._dataset.</span></code><code class="sig-name descname"><span class="pre">get_profile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_create_or_refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/_dataset.html#get_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset._dataset.get_profile" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.dataset._dataset.get_profile">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.dataset._dataset.</span></span><span class="sig-name descname"><span class="pre">get_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_create_or_refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/dataset/_dataset.html#get_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.dataset._dataset.get_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dataset profile object.  Optionally can refresh or create profile if missing or
 out-of-date.
 :type dataset: <a class="reference external" href="https://tamr-client.readthedocs.io/en/stable/reference/dataset.html#tamr_unify_client.dataset.resource.Dataset" title="(in Tamr - Python Client v0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>

@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -192,13 +197,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="df-connect">
-<h1>DF-Connect<a class="headerlink" href="#df-connect" title="Permalink to this headline">¶</a></h1>
+<h1>DF-Connect<a class="headerlink" href="#df-connect" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="module-tamr_toolbox.data_io.df_connect.client">
-<span id="client"></span><h2>Client<a class="headerlink" href="#module-tamr_toolbox.data_io.df_connect.client" title="Permalink to this headline">¶</a></h2>
+<span id="client"></span><h2>Client<a class="headerlink" href="#module-tamr_toolbox.data_io.df_connect.client" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to interacting with the Tamr auxiliary service DF-connect</p>
 <dl class="py class">
-<dt id="tamr_toolbox.data_io.df_connect.client.Client">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">Client</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#Client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.Client" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.Client">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#Client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.Client" title="Permalink to this definition">¶</a></dt>
 <dd><p>A data class for interacting with df_connect via jdbc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -217,8 +222,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.from_config">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">from_config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'df_connect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ingest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.from_config" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.from_config">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'df_connect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ingest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.from_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a Client object from a json dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -239,8 +244,8 @@ used for picking up database connection information. Defaults to ‘ingest’</p
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.create">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.create" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.create">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tamr_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper for creating an instance of <cite>Client</cite> dataclass object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -265,8 +270,8 @@ used for picking up database connection information. Defaults to ‘ingest’</p
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.get_connect_session">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">get_connect_session</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#get_connect_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.get_connect_session" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.get_connect_session">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">get_connect_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#get_connect_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.get_connect_session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an authenticated session using Tamr credentials from configuration.
 Raises an exception if df_connect is not installed or running correctly.</p>
 <dl class="field-list simple">
@@ -274,7 +279,7 @@ Raises an exception if df_connect is not installed or running correctly.</p>
 <dd class="field-odd"><p><strong>connect_info</strong> (<a class="reference internal" href="#tamr_toolbox.data_io.df_connect.client.Client" title="tamr_toolbox.data_io.df_connect.client.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>) – An instance of a Client object</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.30.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://requests.readthedocs.io/en/latest/api/#requests.Session" title="(in Requests v2.31.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An authenticated session</p>
@@ -286,8 +291,8 @@ Raises an exception if df_connect is not installed or running correctly.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.ingest_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">ingest_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#ingest_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.ingest_dataset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.ingest_dataset">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">ingest_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#ingest_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.ingest_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ingest a dataset into Tamr via df-df_connect given dataset name, query string, and optional
 list of columns for primary key</p>
 <dl class="field-list simple">
@@ -313,8 +318,8 @@ its own primary key</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.export_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">export_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_before_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.export_dataset">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">export_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_before_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export a dataset via jdbc to a target database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -340,8 +345,8 @@ See examples directory for usage</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.execute_statement">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">execute_statement</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#execute_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.execute_statement" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.execute_statement">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">execute_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#execute_statement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.execute_statement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls the execute statement endpoint of df-df_connect.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -363,8 +368,8 @@ See examples directory for usage</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.profile_query_results">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">profile_query_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#profile_query_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.profile_query_results" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.profile_query_results">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">profile_query_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#profile_query_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.profile_query_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Profile the contents of JDBC queries via df_connect and write results to a Tamr dataset.
 For example the query “select * from table A” means that all rows from table A will be
 profiled, while “select * from table A where name==”my_name”” will only profile rows meeting
@@ -392,8 +397,8 @@ profiled</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">export_dataset_avro_schema</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset_avro_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">export_dataset_avro_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset_avro_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset_avro_schema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a connect info object and writes the avro schema to specified url for specified
 dataset. By default assumes HDFS but if local_fs is set to true writes to server file system.</p>
 <dl class="field-list simple">
@@ -418,8 +423,8 @@ dataset. By default assumes HDFS but if local_fs is set to true writes to server
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></code><code class="sig-name descname"><span class="pre">export_dataset_as_avro</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset_as_avro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.client.</span></span><span class="sig-name descname"><span class="pre">export_dataset_as_avro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_info</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/client.html#export_dataset_as_avro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.client.export_dataset_as_avro" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a connect info object and writes the corresponding avro file to specified url for
 specified dataset. By default assumes HDFS but if local_fs is set to true writes to server
 file system.</p>
@@ -449,11 +454,11 @@ file system.</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.data_io.df_connect.jdbc_info">
-<span id="jdbcinfo"></span><h2>JdbcInfo<a class="headerlink" href="#module-tamr_toolbox.data_io.df_connect.jdbc_info" title="Permalink to this headline">¶</a></h2>
+<span id="jdbcinfo"></span><h2>JdbcInfo<a class="headerlink" href="#module-tamr_toolbox.data_io.df_connect.jdbc_info" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to handling jdbc information for the Tamr auxiliary service DF-connect</p>
 <dl class="py class">
-<dt id="tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></code><code class="sig-name descname"><span class="pre">JdbcInfo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jdbc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#JdbcInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></span><span class="sig-name descname"><span class="pre">JdbcInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jdbc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#JdbcInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.JdbcInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dataclass to tie together relevant data to ingest data into df_connect.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -468,8 +473,8 @@ file system.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.jdbc_info.from_config">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></code><code class="sig-name descname"><span class="pre">from_config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'df_connect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ingest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.from_config" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.jdbc_info.from_config">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></span><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'df_connect'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ingest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.from_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an instance of JdbcInfo from a json object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -488,8 +493,8 @@ object or yaml file. See example configs and exports for more context.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.data_io.df_connect.jdbc_info.create">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.create" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.data_io.df_connect.jdbc_info.create">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.data_io.df_connect.jdbc_info.</span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jdbc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/data_io/df_connect/jdbc_info.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.data_io.df_connect.jdbc_info.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>A simple wrapper to create an object of type <cite>JdbcInfo</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

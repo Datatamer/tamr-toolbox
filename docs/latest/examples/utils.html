@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -209,11 +214,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="utilities">
-<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="logging">
-<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-log">
-<h3>How to log<a class="headerlink" href="#how-to-log" title="Permalink to this headline">¶</a></h3>
+<h3>How to log<a class="headerlink" href="#how-to-log" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet showing how the logger module of tamr_toolbox works&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 
@@ -259,9 +264,9 @@
 </div>
 </div>
 <div class="section" id="operation">
-<h2>Operation<a class="headerlink" href="#operation" title="Permalink to this headline">¶</a></h2>
+<h2>Operation<a class="headerlink" href="#operation" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-use-operation-functions">
-<h3>How to use operation functions<a class="headerlink" href="#how-to-use-operation-functions" title="Permalink to this headline">¶</a></h3>
+<h3>How to use operation functions<a class="headerlink" href="#how-to-use-operation-functions" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Snippet for interacting with Tamr operations (or jobs)&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 
@@ -301,9 +306,9 @@
 </div>
 </div>
 <div class="section" id="testing">
-<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-use-the-mock-api-decorator-for-testing-your-code">
-<h3>How to use the mock_api decorator for testing your code<a class="headerlink" href="#how-to-use-the-mock-api-decorator-for-testing-your-code" title="Permalink to this headline">¶</a></h3>
+<h3>How to use the mock_api decorator for testing your code<a class="headerlink" href="#how-to-use-the-mock-api-decorator-for-testing-your-code" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
 
 <span class="nt">my_tamr_instance</span><span class="p">:</span>
@@ -434,9 +439,9 @@
 </div>
 </div>
 <div class="section" id="upstream">
-<h2>Upstream<a class="headerlink" href="#upstream" title="Permalink to this headline">¶</a></h2>
+<h2>Upstream<a class="headerlink" href="#upstream" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-get-a-list-of-projects-upstream-from-a-specified-project">
-<h3>How to get a list of projects upstream from a specified project<a class="headerlink" href="#how-to-get-a-list-of-projects-upstream-from-a-specified-project" title="Permalink to this headline">¶</a></h3>
+<h3>How to get a list of projects upstream from a specified project<a class="headerlink" href="#how-to-get-a-list-of-projects-upstream-from-a-specified-project" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
 
 <span class="nt">my_tamr_instance</span><span class="p">:</span>
@@ -526,7 +531,7 @@
 </div>
 </div>
 <div class="section" id="how-to-get-a-list-of-datasets-upstream-from-a-specified-dataset">
-<h3>How to get a list of datasets upstream from a specified dataset<a class="headerlink" href="#how-to-get-a-list-of-datasets-upstream-from-a-specified-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>How to get a list of datasets upstream from a specified dataset<a class="headerlink" href="#how-to-get-a-list-of-datasets-upstream-from-a-specified-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># dataset.config.yaml</span>
 
 <span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
@@ -616,9 +621,9 @@
 </div>
 </div>
 <div class="section" id="downstream">
-<h2>Downstream<a class="headerlink" href="#downstream" title="Permalink to this headline">¶</a></h2>
+<h2>Downstream<a class="headerlink" href="#downstream" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-get-a-list-of-datasets-and-projects-downstream-from-a-specified-dataset">
-<h3>How to get a list of datasets and projects downstream from a specified dataset<a class="headerlink" href="#how-to-get-a-list-of-datasets-and-projects-downstream-from-a-specified-dataset" title="Permalink to this headline">¶</a></h3>
+<h3>How to get a list of datasets and projects downstream from a specified dataset<a class="headerlink" href="#how-to-get-a-list-of-datasets-and-projects-downstream-from-a-specified-dataset" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$TAMR_PROJECT_LOGGING_DIR</span><span class="w"> </span><span class="c1"># Example: &quot;/home/users/jane/my-project/logs&quot;</span>
 
 <span class="nt">my_tamr_instance</span><span class="p">:</span>
@@ -718,9 +723,9 @@
 </div>
 </div>
 <div class="section" id="manual-auth">
-<h2>Manual Auth<a class="headerlink" href="#manual-auth" title="Permalink to this headline">¶</a></h2>
+<h2>Manual Auth<a class="headerlink" href="#manual-auth" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-manually-pass-credentials-when-creating-a-tamr-client-object-during-runtime">
-<h3>How to manually pass credentials when creating a tamr client object during runtime<a class="headerlink" href="#how-to-manually-pass-credentials-when-creating-a-tamr-client-object-during-runtime" title="Permalink to this headline">¶</a></h3>
+<h3>How to manually pass credentials when creating a tamr client object during runtime<a class="headerlink" href="#how-to-manually-pass-credentials-when-creating-a-tamr-client-object-during-runtime" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Snippet for creating a tamr client object with manual passing of credentials during runtime.</span>
 
@@ -745,9 +750,9 @@
 </div>
 </div>
 <div class="section" id="custom-ui-buttons">
-<h2>Custom UI Buttons<a class="headerlink" href="#custom-ui-buttons" title="Permalink to this headline">¶</a></h2>
+<h2>Custom UI Buttons<a class="headerlink" href="#custom-ui-buttons" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="how-to-create-and-register-custom-ui-button-yaml-files">
-<h3>How to create and register custom UI button yaml files.<a class="headerlink" href="#how-to-create-and-register-custom-ui-button-yaml-files" title="Permalink to this headline">¶</a></h3>
+<h3>How to create and register custom UI button yaml files.<a class="headerlink" href="#how-to-create-and-register-custom-ui-button-yaml-files" title="Permalink to this heading">¶</a></h3>
 <p><strong>IMPORTANT:</strong> Custom buttons are only available in v2022.008 and later.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Example script for creating, saving &amp; registering custom button yaml files.</span>
