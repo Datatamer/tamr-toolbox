@@ -45,10 +45,11 @@ def test_create_logger_with_stream_and_file_handler():
 
         assert found_file_handler and found_stream_handler
 
-        handlers = logger.handlers
+        handlers = logger.handlers[:]
         for handler in handlers:
             logger.removeHandler(handler)
             handler.close()
+        del hanl
         del handlers
 
 
@@ -84,12 +85,18 @@ def test_create_logger_with_only_file_handler():
 
         assert found_file_handler and not found_stream_handler
 
-        handlers = logger.handlers
+        handlers = logger.handlers[:]
         for handler in handlers:
             logger.removeHandler(handler)
             handler.close()
         del handler
-        del handlers
+
+        # log_file_path = os.path.join(tempdir, tamr_toolbox.utils.logger._get_log_filename())
+        # with open(log_file_path, "r") as logf:
+        #     logf.close()
+        # if os.path.exists(log_file_path):
+        #     os.remove(log_file_path)
+        logging.shutdown()
 
 
 def test_log_uncaught_exception():
@@ -146,14 +153,9 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
         found_file_handler = False
         found_stream_handler = False
         for handler in package_logger.handlers:
-            found_file_handler = found_file_handler or isinstance(handler, logging.FileHandler)
-            found_stream_handler = found_stream_handler or isinstance(
-                handler, logging.StreamHandler
-            )
+            found_file_handler = found_file_handler or type(handler) == logging.FileHandler
+            found_stream_handler = found_stream_handler or type(handler) == logging.StreamHandler
         assert found_file_handler and found_stream_handler
-
-        del found_file_handler
-        del found_stream_handler
 
         handlers = package_logger.handlers[:]
         for handler in handlers:
