@@ -149,6 +149,8 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             handler.close()
 
         package_logger.handlers.clear()
+        del handler
+        del package_logger
 
 
 def test_enable_toolbox_logging_with_only_file_handler():
