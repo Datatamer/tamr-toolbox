@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.0 - Oilcan
               </div>
             
           
@@ -102,6 +102,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#translate-data-within-a-pandas-dataframe-and-save-dictionaries-on-disk">Translate data within a pandas DataFrame and save dictionaries on disk</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#translate-data-from-tamr-and-update-dictionary-saved-as-a-source-dataset-on-tamr">Translate data from Tamr and update dictionary saved as a source dataset on Tamr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#initiate-a-translation-dictionary-on-tamr">Initiate a translation dictionary on Tamr</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#address-validation">Address Validation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validate-data-within-a-local-csv-and-save-results-on-disk">Validate data within a local CSV and save results on disk</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validate-data-from-tamr-and-update-validation-data-mapping-saved-as-a-source-dataset-on-tamr">Validate data from Tamr and update validation data mapping saved as a source dataset on Tamr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initiate-an-address-validation-mapping-dataset-on-tamr">Initiate an address validation mapping dataset on Tamr</a></li>
 </ul>
 </li>
 </ul>
@@ -469,6 +475,298 @@ These translation capabilities can be applied to a Tamr dataset or a Pandas Data
         <span class="n">dictionary_folder</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;translation&quot;</span><span class="p">][</span><span class="s2">&quot;my_dictionary_folder&quot;</span><span class="p">],</span>
         <span class="n">source_language</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
         <span class="n">target_language</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="address-validation">
+<h2>Address Validation<a class="headerlink" href="#address-validation" title="Permalink to this headline">¶</a></h2>
+<p>The tamr-toolbox provides functions to validate address data and store it (up to the cache time
+limit) to ensure addresses are not repeatedly validated.
+These validation capabilities can be applied to a Tamr dataset or local data.</p>
+<div class="section" id="validate-data-within-a-local-csv-and-save-results-on-disk">
+<h3>Validate data within a local CSV and save results on disk<a class="headerlink" href="#validate-data-within-a-local-csv-and-save-results-on-disk" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;An example script to validate address data from disk and save results on disk.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.enrichment_utils</span> <span class="kn">import</span> <span class="n">join_clean_tuple</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">googlemaps_api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">mapping_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">address_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">path_to_csv_to_validate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">path_to_validated_csv</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate data located on disk and save results to disk.</span>
+
+<span class="sd">    Uses the address validation mapping data found in the mapping folder, adding to it any new</span>
+<span class="sd">    lookups needed. Adds columns corresponding to `AddressValidationMapping` fields to the data</span>
+<span class="sd">    read from the csv, and saves it at `path_to_validated_csv`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        googlemaps_api_key: API key for the Google Maps address validation API</span>
+<span class="sd">        mapping_folder: path to the folder on disk where local validation data is saved</span>
+<span class="sd">        address_columns: ordered list of address columns from the local csv file</span>
+<span class="sd">        path_to_csv_to_validate: Path to the CSV file to validate</span>
+<span class="sd">        path_to_validated_csv: path to the CSV file augmented with validation data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make Google Maps API client</span>
+    <span class="n">maps_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">api_client</span><span class="o">.</span><span class="n">google_address_validate</span><span class="o">.</span><span class="n">get_maps_client</span><span class="p">(</span>
+        <span class="n">googlemaps_api_key</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Read CSV file from disk</span>
+    <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path_to_csv_to_validate</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="c1"># Load any existing validation data</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting address validation.&quot;</span><span class="p">)</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">addr_folder</span><span class="o">=</span><span class="n">mapping_folder</span><span class="p">)</span>
+
+    <span class="c1"># Validate attributes</span>
+    <span class="n">tuples</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">enrichment_utils</span><span class="o">.</span><span class="n">dataframe_to_tuples</span><span class="p">(</span>
+        <span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">columns_to_join</span><span class="o">=</span><span class="n">address_columns</span>
+    <span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generated </span><span class="si">%s</span><span class="s2"> tuples; beginning API validation&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tuples</span><span class="p">))</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_validation</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
+        <span class="n">all_addresses</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tuples</span><span class="p">)),</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">maps_client</span><span class="p">,</span>
+        <span class="n">dictionary</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span>
+        <span class="n">region_code</span><span class="o">=</span><span class="s2">&quot;US&quot;</span><span class="p">,</span>
+        <span class="n">intermediate_save_every_n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">intermediate_save_to_disk</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">intermediate_folder</span><span class="o">=</span><span class="n">mapping_folder</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Save to disk new mapping with added validation data</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving updated address validation data to disk.&quot;</span><span class="p">)</span>
+    <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">addr_mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span> <span class="n">addr_folder</span><span class="o">=</span><span class="n">mapping_folder</span><span class="p">)</span>
+
+    <span class="c1"># Augmenting dataframe in situ</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Augmenting dataframe with validation data&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Add empty columns for each entry from the AddressValidation Mapping</span>
+    <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">AddressValidationMapping</span><span class="p">):</span>
+        <span class="n">dataframe</span><span class="p">[</span><span class="n">att</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_from_address_validation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">dataframe</span><span class="p">[</span><span class="s2">&quot;lookup_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">join_clean_tuple</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span> <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">tuples</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">AddressValidationMapping</span><span class="p">):</span>
+            <span class="n">col_name</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_from_address_validation&quot;</span>
+            <span class="n">dataframe</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mapping</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">lookup_key</span><span class="p">],</span> <span class="n">att</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># Then save dataframe to disk</span>
+    <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_to_validated_csv</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/address_validation.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">googlemaps_api_key</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;address_validation&quot;</span><span class="p">][</span><span class="s2">&quot;googlemaps_api_key&quot;</span><span class="p">],</span>
+        <span class="n">mapping_folder</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;address_validation&quot;</span><span class="p">][</span><span class="s2">&quot;address_mapping_folder&quot;</span><span class="p">],</span>
+        <span class="n">address_columns</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;address_validation&quot;</span><span class="p">][</span><span class="s2">&quot;address_columns&quot;</span><span class="p">],</span>
+        <span class="n">path_to_csv_to_validate</span><span class="o">=</span><span class="s2">&quot;/path/to/data.csv&quot;</span><span class="p">,</span>
+        <span class="n">path_to_validated_csv</span><span class="o">=</span><span class="s2">&quot;/path/to/augmented_data.csv&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validate-data-from-tamr-and-update-validation-data-mapping-saved-as-a-source-dataset-on-tamr">
+<h3>Validate data from Tamr and update validation data mapping saved as a source dataset on Tamr<a class="headerlink" href="#validate-data-from-tamr-and-update-validation-data-mapping-saved-as-a-source-dataset-on-tamr" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;An example script to validate address data from Tamr and save results in Tamr&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dataset_addr_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">mapping_dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">googlemaps_api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate address data streamed from Tamr and save results on Tamr.</span>
+
+<span class="sd">    Note that this does not update the dataset corresponding to the input `dataset_id` -- it</span>
+<span class="sd">    performs lookups based on data in that dataset, and updates the dataset corresponding to the</span>
+<span class="sd">    `mapping_dataset_id` with the new data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        dataset_id: id of the Tamr dataset containing the data to validate</span>
+<span class="sd">        dataset_addr_columns: ordered list of columns in the unified dataset with address info</span>
+<span class="sd">        mapping_dataset_id: id of the Tamr toolbox address validation mapping dataset</span>
+<span class="sd">        googlemaps_api_key: API key for the Google Maps address validation API</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make Tamr Client</span>
+    <span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="c1"># Get dataframe from Tamr dataset.</span>
+    <span class="c1"># For large datasets, it is to preferable to use a delta dataset with only unvalidated/expired</span>
+    <span class="c1"># data. To do this, set up a SM project connected to current validated dataset and filter to</span>
+    <span class="c1"># records with null/expired values in the validation columns</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+    <span class="n">dataframe</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">data_io</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">dataset_addr_columns</span><span class="p">,</span> <span class="n">flatten_delimiter</span><span class="o">=</span><span class="s2">&quot; | &quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Stream address mapping data from Tamr -- must match Toolbox AddressValidationMapping class</span>
+    <span class="n">mapping_dataset</span> <span class="o">=</span> <span class="n">tamr</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">by_resource_id</span><span class="p">(</span><span class="n">mapping_dataset_id</span><span class="p">)</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">from_dataset</span><span class="p">(</span><span class="n">mapping_dataset</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting address validation.&quot;</span><span class="p">)</span>
+    <span class="n">maps_client</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">api_client</span><span class="o">.</span><span class="n">google_address_validate</span><span class="o">.</span><span class="n">get_maps_client</span><span class="p">(</span>
+        <span class="n">googlemaps_api_key</span>
+    <span class="p">)</span>
+
+    <span class="n">tuples</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">enrichment_utils</span><span class="o">.</span><span class="n">dataframe_to_tuples</span><span class="p">(</span>
+        <span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">columns_to_join</span><span class="o">=</span><span class="n">dataset_addr_columns</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Update the `region_code` below to match the expected region of your dataset, or remove it if</span>
+    <span class="c1"># no `region_code` can be inferred</span>
+    <span class="c1"># Update the expiration date buffer depending on update frequency of your pipeline</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_validation</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
+        <span class="n">all_addresses</span><span class="o">=</span><span class="n">tuples</span><span class="p">,</span>
+        <span class="n">client</span><span class="o">=</span><span class="n">maps_client</span><span class="p">,</span>
+        <span class="n">dictionary</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span>
+        <span class="n">enable_usps_cass</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">region_code</span><span class="o">=</span><span class="s2">&quot;US&quot;</span><span class="p">,</span>
+        <span class="n">expiration_date_buffer</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Update address validation mapping on Tamr</span>
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
+        <span class="n">addr_mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">mapping_dataset</span>
+    <span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tamr dataset </span><span class="si">%s</span><span class="s2"> updated with new validation data&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Script complete.&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/conf/address_validation.config.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">dataset_id</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_dataset_to_be_addr_validated&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="n">dataset_addr_columns</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_dataset_to_be_addr_validated&quot;</span><span class="p">][</span>
+            <span class="s2">&quot;address_columns&quot;</span>
+        <span class="p">],</span>
+        <span class="n">mapping_dataset_id</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;datasets&quot;</span><span class="p">][</span><span class="s2">&quot;my_addr_validation_mapping&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+        <span class="n">googlemaps_api_key</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;address_validation&quot;</span><span class="p">][</span><span class="s2">&quot;googlemaps_api_key&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initiate-an-address-validation-mapping-dataset-on-tamr">
+<h3>Initiate an address validation mapping dataset on Tamr<a class="headerlink" href="#initiate-an-address-validation-mapping-dataset-on-tamr" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;An example script to create an address validation mapping on Tamr.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">instance_connection_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">existing_mapping_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a toolbox address validation mapping dataset on Tamr.</span>
+
+<span class="sd">    If a mapping is found in the `existing_mapping_folder`, it will be loaded to Tamr; otherwise</span>
+<span class="sd">    an empty dataset is created in Tamr (no file will be created on the local filesystem).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        instance_connection_info: Information for connecting to Tamr (host, port, username etc)</span>
+<span class="sd">        existing_mapping_folder: Path to the folder on disk for existing validation data</span>
+<span class="sd">        dataset_name: name for the new address validation dataset in Tamr</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Connect to tamr</span>
+    <span class="n">tamr</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">instance_connection_info</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initializing address validation mapping dataset on Tamr.&quot;</span><span class="p">)</span>
+    <span class="c1"># Load existing data. If existing data is saved under another name than the default</span>
+    <span class="c1"># &quot;address_validation_mapping.json&quot;, pass the filename to the `load` function here</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">addr_folder</span><span class="o">=</span><span class="n">existing_mapping_folder</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Alert: address validation mapping in </span><span class="si">%s</span><span class="s2"> already exists and is not empty&quot;</span><span class="p">,</span>
+            <span class="n">existing_mapping_folder</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">enrichment</span><span class="o">.</span><span class="n">address_mapping</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
+        <span class="n">addr_mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span>
+        <span class="n">datasets_collection</span><span class="o">=</span><span class="n">tamr</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span>
+        <span class="n">create_dataset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dataset </span><span class="si">%s</span><span class="s2"> created as a source dataset on Tamr&quot;</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up command line arguments</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to a YAML configuration file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the configuration from the file path provided or the default file path specified</span>
+    <span class="n">CONFIG</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span>
+        <span class="n">path_to_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">default_path_to_file</span><span class="o">=</span><span class="s2">&quot;/path/to/my/address_validation.config.yaml&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Use the configuration to create a global logger</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">tbox</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">log_directory</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;logging_dir&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Run the main function</span>
+    <span class="c1"># Use config name for `my_addr_validation_mapping` if supplied, otherwise use default</span>
+    <span class="n">main</span><span class="p">(</span>
+        <span class="n">instance_connection_info</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;my_tamr_instance&quot;</span><span class="p">],</span>
+        <span class="n">existing_mapping_folder</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">[</span><span class="s2">&quot;address_validation&quot;</span><span class="p">][</span><span class="s2">&quot;address_mapping_folder&quot;</span><span class="p">],</span>
+        <span class="n">dataset_name</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;datasets&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+        <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my_addr_validation_mapping&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+        <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;address_validation_mapping&quot;</span><span class="p">),</span>
     <span class="p">)</span>
 </pre></div>
 </div>

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.0 - Oilcan
               </div>
             
           
@@ -190,6 +190,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.add_edges">add_edges() (in module tamr_toolbox.workflow.concurrent.Graph)</a>
 </li>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.AddressValidationMapping">AddressValidationMapping (class in tamr_toolbox.enrichment.address_mapping)</a>
+</li>
       <li><a href="modules/project/categorization.html#tamr_toolbox.project.categorization.jobs.apply_feedback">apply_feedback() (in module tamr_toolbox.project.categorization.jobs)</a>
 
       <ul>
@@ -286,8 +288,6 @@
       </ul></li>
       <li><a href="modules/models.html#tamr_toolbox.models.attribute_type.DEFAULT">DEFAULT (in module tamr_toolbox.models.attribute_type)</a>
 </li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder.default">default() (tamr_toolbox.enrichment.dictionary.SetEncoder method)</a>
-</li>
       <li><a href="modules/dataset.html#tamr_toolbox.dataset.manage.delete_attributes">delete_attributes() (in module tamr_toolbox.dataset.manage)</a>
 </li>
       <li><a href="modules/workflow/backup.html#tamr_toolbox.workflow.backup.delete_backups">delete_backups() (in module tamr_toolbox.workflow.backup)</a>
@@ -318,18 +318,16 @@
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.logger.enable_toolbox_logging">enable_toolbox_logging() (in module tamr_toolbox.utils.logger)</a>
 </li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder.encode">encode() (tamr_toolbox.enrichment.dictionary.SetEncoder method)</a>
-</li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.version.enforce_after_or_equal">enforce_after_or_equal() (in module tamr_toolbox.utils.version)</a>
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.operation.enforce_success">enforce_success() (in module tamr_toolbox.utils.operation)</a>
 </li>
       <li><a href="modules/project/mastering.html#tamr_toolbox.project.mastering.jobs.estimate_pair_counts">estimate_pair_counts() (in module tamr_toolbox.project.mastering.jobs)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.execute">execute() (in module tamr_toolbox.workflow.concurrent.Planner)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data_io/df_connect.html#tamr_toolbox.data_io.df_connect.client.execute_statement">execute_statement() (in module tamr_toolbox.data_io.df_connect.client)</a>
 </li>
       <li><a href="modules/dataset.html#tamr_toolbox.dataset.manage.exists">exists() (in module tamr_toolbox.dataset.manage)</a>
@@ -369,6 +367,8 @@
       <ul>
         <li><a href="modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.from_dataset">(in module tamr_toolbox.data_io.dataframe)</a>
 </li>
+        <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.from_dataset">(in module tamr_toolbox.enrichment.address_mapping)</a>
+</li>
         <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.from_dataset">(in module tamr_toolbox.enrichment.dictionary)</a>
 </li>
       </ul></li>
@@ -380,8 +380,12 @@
 </li>
       <li><a href="modules/models.html#tamr_toolbox.models.attribute_type.from_json">from_json() (in module tamr_toolbox.models.attribute_type)</a>
 </li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.from_list">from_list() (in module tamr_toolbox.enrichment.translate)</a>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_validation.from_list">from_list() (in module tamr_toolbox.enrichment.address_validation)</a>
+
+      <ul>
+        <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.from_list">(in module tamr_toolbox.enrichment.translate)</a>
 </li>
+      </ul></li>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanNodeStatus.from_plan_node">from_plan_node() (in module tamr_toolbox.workflow.concurrent.PlanNodeStatus)</a>
 </li>
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.PlanStatus.from_planner">from_planner() (in module tamr_toolbox.workflow.concurrent.PlanStatus)</a>
@@ -409,6 +413,8 @@
       <li><a href="modules/models.html#tamr_toolbox.models.attribute_type.GEOSPATIAL">GEOSPATIAL (in module tamr_toolbox.models.attribute_type)</a>
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.operation.get_active">get_active() (in module tamr_toolbox.utils.operation)</a>
+</li>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_validation.get_addr_to_validate">get_addr_to_validate() (in module tamr_toolbox.enrichment.address_validation)</a>
 </li>
       <li><a href="modules/project/common.html#tamr_toolbox.project._common.transformations.get_all">get_all() (in module tamr_toolbox.project._common.transformations)</a>
 
@@ -449,6 +455,8 @@
       <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Graph.get_end_nodes">get_end_nodes() (in module tamr_toolbox.workflow.concurrent.Graph)</a>
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.operation.get_latest">get_latest() (in module tamr_toolbox.utils.operation)</a>
+</li>
+      <li><a href="modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google_address_validate.get_maps_client">get_maps_client() (in module tamr_toolbox.enrichment.api_client.google_address_validate)</a>
 </li>
       <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.get_phrases_to_translate">get_phrases_to_translate() (in module tamr_toolbox.enrichment.translate)</a>
 </li>
@@ -504,6 +512,8 @@
 </li>
       <li><a href="modules/workflow/backup.html#tamr_toolbox.workflow.backup.initiate_restore">initiate_restore() (in module tamr_toolbox.workflow.backup)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/project/common.html#tamr_toolbox.project._common.transformations.InputTransformation">InputTransformation (class in tamr_toolbox.project._common.transformations)</a>
 
       <ul>
@@ -514,13 +524,9 @@
         <li><a href="modules/project/schema_mapping.html#tamr_toolbox.project.schema_mapping.transformations.InputTransformation">(class in tamr_toolbox.project.schema_mapping.transformations)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/models.html#tamr_toolbox.models.attribute_type.INT">INT (in module tamr_toolbox.models.attribute_type)</a>
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.version.is_version_condition_met">is_version_condition_met() (in module tamr_toolbox.utils.version)</a>
-</li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder.iterencode">iterencode() (tamr_toolbox.enrichment.dictionary.SetEncoder method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -538,10 +544,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/workflow/backup.html#tamr_toolbox.workflow.backup.list_backups">list_backups() (in module tamr_toolbox.workflow.backup)</a>
 </li>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.load">load() (in module tamr_toolbox.enrichment.address_mapping)</a>
+
+      <ul>
+        <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.load">(in module tamr_toolbox.enrichment.dictionary)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.load">load() (in module tamr_toolbox.enrichment.dictionary)</a>
-</li>
       <li><a href="modules/models.html#tamr_toolbox.models.attribute_type.LONG">LONG (in module tamr_toolbox.models.attribute_type)</a>
 </li>
   </ul></td>
@@ -588,7 +598,13 @@
 </li>
         <li><a href="modules/dataset.html#module-tamr_toolbox.dataset.manage">tamr_toolbox.dataset.manage</a>
 </li>
-        <li><a href="modules/enrichment/api_client.html#module-tamr_toolbox.enrichment.api_client.google">tamr_toolbox.enrichment.api_client.google</a>
+        <li><a href="modules/enrichment/address_validation.html#module-tamr_toolbox.enrichment.address_mapping">tamr_toolbox.enrichment.address_mapping</a>
+</li>
+        <li><a href="modules/enrichment/address_validation.html#module-tamr_toolbox.enrichment.address_validation">tamr_toolbox.enrichment.address_validation</a>
+</li>
+        <li><a href="modules/enrichment/api_client.html#module-tamr_toolbox.enrichment.api_client.google_address_validate">tamr_toolbox.enrichment.api_client.google_address_validate</a>
+</li>
+        <li><a href="modules/enrichment/api_client.html#module-tamr_toolbox.enrichment.api_client.google_translate">tamr_toolbox.enrichment.api_client.google_translate</a>
 </li>
         <li><a href="modules/enrichment/translation.html#module-tamr_toolbox.enrichment.dictionary">tamr_toolbox.enrichment.dictionary</a>
 </li>
@@ -781,8 +797,12 @@
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.operation.safe_estimate_counts">safe_estimate_counts() (in module tamr_toolbox.utils.operation)</a>
 </li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.save">save() (in module tamr_toolbox.enrichment.dictionary)</a>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.save">save() (in module tamr_toolbox.enrichment.address_mapping)</a>
+
+      <ul>
+        <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.save">(in module tamr_toolbox.enrichment.dictionary)</a>
 </li>
+      </ul></li>
       <li><a href="modules/models.html#tamr_toolbox.models.project_artifacts.SchemaMappingArtifacts">SchemaMappingArtifacts (class in tamr_toolbox.models.project_artifacts)</a>
 </li>
       <li><a href="modules/models.html#tamr_toolbox.models.project_steps.SchemaMappingSteps">SchemaMappingSteps (class in tamr_toolbox.models.project_steps)</a>
@@ -818,8 +838,6 @@
       <li><a href="modules/sysadmin.html#tamr_toolbox.sysadmin.instance.set_configs">set_configs() (in module tamr_toolbox.sysadmin.instance)</a>
 </li>
       <li><a href="modules/utils.html#tamr_toolbox.utils.logger.set_logging_level">set_logging_level() (in module tamr_toolbox.utils.logger)</a>
-</li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder">SetEncoder (class in tamr_toolbox.enrichment.dictionary)</a>
 </li>
       <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.translate.standardize_phrases">standardize_phrases() (in module tamr_toolbox.enrichment.translate)</a>
 </li>
@@ -892,10 +910,31 @@
 </li>
       </ul></li>
       <li>
-    tamr_toolbox.enrichment.api_client.google
+    tamr_toolbox.enrichment.address_mapping
 
       <ul>
-        <li><a href="modules/enrichment/api_client.html#module-tamr_toolbox.enrichment.api_client.google">module</a>
+        <li><a href="modules/enrichment/address_validation.html#module-tamr_toolbox.enrichment.address_mapping">module</a>
+</li>
+      </ul></li>
+      <li>
+    tamr_toolbox.enrichment.address_validation
+
+      <ul>
+        <li><a href="modules/enrichment/address_validation.html#module-tamr_toolbox.enrichment.address_validation">module</a>
+</li>
+      </ul></li>
+      <li>
+    tamr_toolbox.enrichment.api_client.google_address_validate
+
+      <ul>
+        <li><a href="modules/enrichment/api_client.html#module-tamr_toolbox.enrichment.api_client.google_address_validate">module</a>
+</li>
+      </ul></li>
+      <li>
+    tamr_toolbox.enrichment.api_client.google_translate
+
+      <ul>
+        <li><a href="modules/enrichment/api_client.html#module-tamr_toolbox.enrichment.api_client.google_translate">module</a>
 </li>
       </ul></li>
       <li>
@@ -1184,18 +1223,30 @@
         <li><a href="modules/workflow/jobs.html#module-tamr_toolbox.workflow.jobs">module</a>
 </li>
       </ul></li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_dataset">to_dataset() (in module tamr_toolbox.enrichment.dictionary)</a>
-</li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_dict">to_dict() (in module tamr_toolbox.enrichment.dictionary)</a>
-</li>
-      <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_json">to_json() (in module tamr_toolbox.enrichment.dictionary)</a>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.to_dataset">to_dataset() (in module tamr_toolbox.enrichment.address_mapping)</a>
 
       <ul>
+        <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_dataset">(in module tamr_toolbox.enrichment.dictionary)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.to_dict">to_dict() (in module tamr_toolbox.enrichment.address_mapping)</a>
+
+      <ul>
+        <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_dict">(in module tamr_toolbox.enrichment.dictionary)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.to_json">to_json() (in module tamr_toolbox.enrichment.address_mapping)</a>
+
+      <ul>
+        <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.to_json">(in module tamr_toolbox.enrichment.dictionary)</a>
+</li>
         <li><a href="modules/models.html#tamr_toolbox.models.attribute_type.to_json">(in module tamr_toolbox.models.attribute_type)</a>
 </li>
         <li><a href="modules/workflow/concurrent.html#tamr_toolbox.workflow.concurrent.Planner.to_json">(in module tamr_toolbox.workflow.concurrent.Planner)</a>
 </li>
       </ul></li>
+      <li><a href="modules/realtime.html#tamr_toolbox.realtime.matching.transform_and_match_query">transform_and_match_query() (in module tamr_toolbox.realtime.matching)</a>
+</li>
       <li><a href="modules/project/common.html#tamr_toolbox.project._common.transformations.TransformationGroup">TransformationGroup (class in tamr_toolbox.project._common.transformations)</a>
 
       <ul>
@@ -1206,9 +1257,9 @@
         <li><a href="modules/project/schema_mapping.html#tamr_toolbox.project.schema_mapping.transformations.TransformationGroup">(class in tamr_toolbox.project.schema_mapping.transformations)</a>
 </li>
       </ul></li>
-      <li><a href="modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google.translate">translate() (in module tamr_toolbox.enrichment.api_client.google)</a>
+      <li><a href="modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google_translate.translate">translate() (in module tamr_toolbox.enrichment.api_client.google_translate)</a>
 </li>
-      <li><a href="modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google.translation_client_from_json">translation_client_from_json() (in module tamr_toolbox.enrichment.api_client.google)</a>
+      <li><a href="modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google_translate.translation_client_from_json">translation_client_from_json() (in module tamr_toolbox.enrichment.api_client.google_translate)</a>
 </li>
       <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.TranslationDictionary">TranslationDictionary (class in tamr_toolbox.enrichment.dictionary)</a>
 </li>
@@ -1241,6 +1292,8 @@
       <li><a href="modules/dataset.html#tamr_toolbox.dataset.manage.update">update() (in module tamr_toolbox.dataset.manage)</a>
 
       <ul>
+        <li><a href="modules/enrichment/address_validation.html#tamr_toolbox.enrichment.address_mapping.update">(in module tamr_toolbox.enrichment.address_mapping)</a>
+</li>
         <li><a href="modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.update">(in module tamr_toolbox.enrichment.dictionary)</a>
 </li>
       </ul></li>
@@ -1283,7 +1336,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data_io/dataframe.html#tamr_toolbox.data_io.dataframe.validate">validate() (in module tamr_toolbox.data_io.dataframe)</a>
+
+      <ul>
+        <li><a href="modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google_address_validate.validate">(in module tamr_toolbox.enrichment.api_client.google_address_validate)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/workflow/backup.html#tamr_toolbox.workflow.backup.validate_backup">validate_backup() (in module tamr_toolbox.workflow.backup)</a>

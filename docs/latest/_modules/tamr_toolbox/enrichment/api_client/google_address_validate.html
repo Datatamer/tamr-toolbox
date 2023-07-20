@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.enrichment.api_client.google_address_validate &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/enrichment/api_client/google_address_validate.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.11.0 - Oilcan
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.enrichment.api_client.google_address_validate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.enrichment.api_client.google_address_validate</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.address_mapping</span> <span class="kn">import</span> <span class="n">AddressValidationMapping</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
+
+<span class="c1"># Building our documentation requires access to all dependencies, including optional ones</span>
+<span class="c1"># This environments variable is set automatically when `invoke docs` is used</span>
+<span class="n">BUILDING_DOCS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TAMR_TOOLBOX_DOCS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+<span class="k">if</span> <span class="n">BUILDING_DOCS</span><span class="p">:</span>
+    <span class="c1"># Import relevant optional dependencies</span>
+    <span class="kn">import</span> <span class="nn">googlemaps</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">_ADDRESSVALIDATION_BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://addressvalidation.googleapis.com&quot;</span>
+
+
+<div class="viewcode-block" id="get_maps_client"><a class="viewcode-back" href="../../../../modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google_address_validate.get_maps_client">[docs]</a><span class="k">def</span> <span class="nf">get_maps_client</span><span class="p">(</span><span class="n">googlemaps_api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;googlemaps.Client&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get GoogleMaps client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        googlemaps_api_key: API key for the Google Maps address validation API</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        API client linekd to specified key</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">googlemaps</span>
+
+    <span class="k">return</span> <span class="n">googlemaps</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">googlemaps_api_key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../../../modules/enrichment/api_client.html#tamr_toolbox.enrichment.api_client.google_address_validate.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">address_to_validate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;googlemaps.Client&quot;</span><span class="p">,</span>
+    <span class="n">locality</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">region_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">enable_usps_cass</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AddressValidationMapping</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate an address using google&#39;s address validation API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        address_to_validate:  address to validate</span>
+<span class="sd">        client: client for Google Maps API</span>
+<span class="sd">        region_code: region to use for validation, optional</span>
+<span class="sd">        locality: locality to use for validation, optional</span>
+<span class="sd">        enable_usps_cass: whether to use USPS validation</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        toolbox address validation mapping, or None if API call fails</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if API key is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;addressLines&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">address_to_validate</span><span class="p">]}}</span>
+
+    <span class="k">if</span> <span class="n">region_code</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">][</span><span class="s2">&quot;regionCode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_code</span>
+
+    <span class="k">if</span> <span class="n">locality</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">][</span><span class="s2">&quot;locality&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">locality</span>
+
+    <span class="k">if</span> <span class="n">enable_usps_cass</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;enableUspsCass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">json_resp</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+        <span class="s2">&quot;/v1:validateAddress&quot;</span><span class="p">,</span>
+        <span class="p">{},</span>  <span class="c1"># No GET params</span>
+        <span class="n">base_url</span><span class="o">=</span><span class="n">_ADDRESSVALIDATION_BASE_URL</span><span class="p">,</span>
+        <span class="n">extract_body</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">json</span><span class="p">(),</span>
+        <span class="n">post_json</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;api key not valid&quot;</span> <span class="ow">in</span> <span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Invalid API key supplied to Google Maps address validation&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Got no result for </span><span class="si">{</span><span class="n">address_to_validate</span><span class="si">}</span><span class="s2">: API returned </span><span class="si">{</span><span class="n">json_resp</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="c1"># Parse the response to extract the desired fields</span>
+    <span class="n">json_resp</span> <span class="o">=</span> <span class="n">json_resp</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Get USPS address components</span>
+    <span class="n">usps_address</span><span class="p">:</span> <span class="n">JsonDict</span> <span class="o">=</span> <span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uspsData&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;standardizedAddress&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+    <span class="n">usps_zipcode</span> <span class="o">=</span> <span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;zipCode&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">usps_zipcode</span> <span class="ow">and</span> <span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;zipCodeExtension&quot;</span><span class="p">):</span>
+        <span class="n">usps_zipcode</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;zipCodeExtension&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get postal address components</span>
+    <span class="n">postal_address</span> <span class="o">=</span> <span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;postalAddress&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">AddressValidationMapping</span><span class="p">(</span>
+        <span class="n">input_address</span><span class="o">=</span><span class="n">address_to_validate</span><span class="p">,</span>
+        <span class="n">validated_formatted_address</span><span class="o">=</span><span class="n">json_resp</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">][</span><span class="s2">&quot;formattedAddress&quot;</span><span class="p">],</span>
+        <span class="n">expiration</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)),</span>
+        <span class="n">region_code</span><span class="o">=</span><span class="n">postal_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;regionCode&quot;</span><span class="p">),</span>
+        <span class="n">postal_code</span><span class="o">=</span><span class="n">postal_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;postalCode&quot;</span><span class="p">),</span>
+        <span class="n">admin_area</span><span class="o">=</span><span class="n">postal_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;administrativeArea&quot;</span><span class="p">),</span>
+        <span class="n">locality</span><span class="o">=</span><span class="n">postal_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locality&quot;</span><span class="p">),</span>
+        <span class="n">address_lines</span><span class="o">=</span><span class="n">postal_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;addressLines&quot;</span><span class="p">),</span>
+        <span class="n">usps_first_address_line</span><span class="o">=</span><span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;firstAddressLine&quot;</span><span class="p">),</span>
+        <span class="n">usps_city_state_zip_line</span><span class="o">=</span><span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cityStateZipAddressLine&quot;</span><span class="p">),</span>
+        <span class="n">usps_city</span><span class="o">=</span><span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;city&quot;</span><span class="p">),</span>
+        <span class="n">usps_state</span><span class="o">=</span><span class="n">usps_address</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">),</span>
+        <span class="n">usps_zip_code</span><span class="o">=</span><span class="n">usps_zipcode</span><span class="p">,</span>
+        <span class="n">latitude</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;geocode&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">),</span>
+        <span class="n">longitude</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;geocode&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">),</span>
+        <span class="n">place_id</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;geocode&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;placeId&quot;</span><span class="p">),</span>
+        <span class="n">input_granularity</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;inputGranularity&quot;</span><span class="p">,</span> <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span>
+        <span class="p">),</span>
+        <span class="n">validation_granularity</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;validationGranularity&quot;</span><span class="p">,</span> <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span>
+        <span class="p">),</span>
+        <span class="n">geocode_granularity</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;geocodeGranularity&quot;</span><span class="p">,</span> <span class="s2">&quot;GRANULARITY_UNSPECIFIED&quot;</span>
+        <span class="p">),</span>
+        <span class="n">has_inferred</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hasInferredComponents&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">has_unconfirmed</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hasUnconfirmedComponents&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">has_replaced</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hasReplacedComponents&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">address_complete</span><span class="o">=</span><span class="n">json_resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verdict&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;addressComplete&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

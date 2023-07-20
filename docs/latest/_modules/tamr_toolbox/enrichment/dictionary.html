@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.0 - Oilcan
               </div>
             
           
@@ -162,16 +162,18 @@
   <h1>Source code for tamr_toolbox.enrichment.dictionary</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Tasks related to creating, updating, saving and moving translation dictionaries</span>
 <span class="sd">in and out of Tamr&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
 <span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.collection</span> <span class="kn">import</span> <span class="n">DatasetCollection</span>
 <span class="kn">from</span> <span class="nn">tamr_unify_client.dataset.resource</span> <span class="kn">import</span> <span class="n">Dataset</span>
-<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.enrichment.enrichment_utils</span> <span class="kn">import</span> <span class="n">SetEncoder</span><span class="p">,</span> <span class="n">create_empty_mapping</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -194,27 +196,7 @@
     <span class="n">standardized_phrase</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">translated_phrase</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">detected_language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">original_phrases</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">set</span><span class="p">())</span></div>
-
-
-<div class="viewcode-block" id="SetEncoder"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder">[docs]</a><span class="k">class</span> <span class="nc">SetEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A Class to transform type &#39;set&#39; to type &#39;list&#39; when saving objects to JSON format</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="SetEncoder.default"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.SetEncoder.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_object</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Transform a set into a list if input is a set</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            python_object: the python object to be saved to a json format</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Default json encoder format of input object or List if input is a Set</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">python_object</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">python_object</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_object</span><span class="p">)</span></div></div>
+    <span class="n">original_phrases</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="filename"><a class="viewcode-back" href="../../../modules/enrichment/translation.html#tamr_toolbox.enrichment.dictionary.filename">[docs]</a><span class="k">def</span> <span class="nf">filename</span><span class="p">(</span>
@@ -262,8 +244,7 @@
     <span class="n">dictionary_filepath</span> <span class="o">=</span> <span class="n">filename</span><span class="p">(</span>
         <span class="n">dictionary_folder</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="n">target_language</span><span class="p">,</span> <span class="n">source_language</span><span class="o">=</span><span class="n">source_language</span>
     <span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dictionary_filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({}))</span>
+    <span class="n">create_empty_mapping</span><span class="p">(</span><span class="n">dictionary_filepath</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dictionary_filepath</span></div>
 
 

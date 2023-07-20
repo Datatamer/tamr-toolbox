@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.0 - Oilcan
               </div>
             
           
@@ -100,10 +100,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../dataset.html">Dataset</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../enrichment.html">Enrichment</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">API clients</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.enrichment.api_client.google">Google</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-tamr_toolbox.enrichment.api_client.google_address_validate">Google</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="translation.html">Translation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="address_validation.html">Address validation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
@@ -189,12 +190,55 @@
             
   <div class="section" id="api-client">
 <h1>API Client<a class="headerlink" href="#api-client" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-tamr_toolbox.enrichment.api_client.google">
-<span id="google"></span><h2>Google<a class="headerlink" href="#module-tamr_toolbox.enrichment.api_client.google" title="Permalink to this headline">¶</a></h2>
-<p>Tasks related to translating data with the google translation API</p>
+<div class="section" id="module-tamr_toolbox.enrichment.api_client.google_address_validate">
+<span id="google"></span><h2>Google<a class="headerlink" href="#module-tamr_toolbox.enrichment.api_client.google_address_validate" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.api_client.google.translation_client_from_json">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.api_client.google.</span></code><code class="sig-name descname"><span class="pre">translation_client_from_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_credential_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/api_client/google.html#translation_client_from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.api_client.google.translation_client_from_json" title="Permalink to this definition">¶</a></dt>
+<dt id="tamr_toolbox.enrichment.api_client.google_address_validate.get_maps_client">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.api_client.google_address_validate.</span></code><code class="sig-name descname"><span class="pre">get_maps_client</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">googlemaps_api_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/api_client/google_address_validate.html#get_maps_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.api_client.google_address_validate.get_maps_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get GoogleMaps client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>googlemaps_api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – API key for the Google Maps address validation API</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>API client linekd to specified key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.api_client.google_address_validate.validate">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.api_client.google_address_validate.</span></code><code class="sig-name descname"><span class="pre">validate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address_to_validate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_usps_cass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/api_client/google_address_validate.html#validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.api_client.google_address_validate.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate an address using google’s address validation API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address_to_validate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – address to validate</p></li>
+<li><p><strong>client</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code>) – client for Google Maps API</p></li>
+<li><p><strong>region_code</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – region to use for validation, optional</p></li>
+<li><p><strong>locality</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – locality to use for validation, optional</p></li>
+<li><p><strong>enable_usps_cass</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – whether to use USPS validation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="address_validation.html#tamr_toolbox.enrichment.address_mapping.AddressValidationMapping" title="tamr_toolbox.enrichment.address_mapping.AddressValidationMapping"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressValidationMapping</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>toolbox address validation mapping, or None if API call fails</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if API key is invalid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-tamr_toolbox.enrichment.api_client.google_translate"></span><p>Tasks related to translating data with the google translation API</p>
+<dl class="py function">
+<dt id="tamr_toolbox.enrichment.api_client.google_translate.translation_client_from_json">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.api_client.google_translate.</span></code><code class="sig-name descname"><span class="pre">translation_client_from_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_credential_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/api_client/google_translate.html#translation_client_from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.api_client.google_translate.translation_client_from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Google translation client based on credentials stored in a Google credential
 json file</p>
 <dl class="field-list simple">
@@ -211,8 +255,8 @@ json file</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.api_client.google.translate">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.api_client.google.</span></code><code class="sig-name descname"><span class="pre">translate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phrases_to_translate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nmt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_of_tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/api_client/google.html#translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.api_client.google.translate" title="Permalink to this definition">¶</a></dt>
+<dt id="tamr_toolbox.enrichment.api_client.google_translate.translate">
+<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.api_client.google_translate.</span></code><code class="sig-name descname"><span class="pre">translate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phrases_to_translate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nmt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_of_tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/api_client/google_translate.html#translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.api_client.google_translate.translate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translate a list of text to a target language using google’s translation api</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

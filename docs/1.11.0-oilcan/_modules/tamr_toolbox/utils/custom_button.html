@@ -1,0 +1,688 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tamr_toolbox.utils.custom_button &mdash; Tamr Toolbox  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+    <link rel="canonical" href="tamr-toolbox/_modules/tamr_toolbox/utils/custom_button.html" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Tamr Toolbox
+          
+
+          
+            
+            <img src="../../../_static/tamr.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.11.0 - Oilcan
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tamr Toolbox</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tamr_toolbox.utils.custom_button</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tamr_toolbox.utils.custom_button</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Helper functions related to creating &amp; managing custom UI buttons as yaml files.</span>
+
+<span class="sd">Due to how Tamr custom buttons are configured, these functions will</span>
+<span class="sd">need to be run on the actual server on which Tamr is installed to work as expected.</span>
+
+<span class="sd">Important: Custom buttons are only available to versions 2022.008.0 and later</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">tamr_unify_client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.sysadmin.instance</span> <span class="kn">import</span> <span class="n">_run_command</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.version</span> <span class="kn">import</span> <span class="n">requires_tamr_version</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">TAMR_RELEASE_VERSION</span> <span class="o">=</span> <span class="s2">&quot;2022.008.0&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_check_valid_page_name</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">pagename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks that pagename provided is a valid Tamr button page name</span>
+<span class="sd">    Args:</span>
+<span class="sd">        pagename: Name of page provided</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if page name is acceptable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_pagenames</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;Dataset Catalog&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Home&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Jobs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Policies&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Users and Groups&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Categorizations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Category Details&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Dashboard&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Project Datasets&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Schema Mapping&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Taxonomy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Categorization:Unified Dataset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Enrichment:Enrichment&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Golden Records:Golden Records&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Golden Records:Rules&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Binning&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Clusters&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Dashboard&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Group Records&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Pairs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Project Datasets&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Schema Mapping&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Mastering:Unified Dataset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Schema Mapping:Dashboard&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Schema Mapping:Project Datasets&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Schema Mapping:Schema Mapping&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Schema Mapping:Unified Dataset&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">pagename</span> <span class="ow">in</span> <span class="n">valid_pagenames</span>
+
+
+<span class="k">def</span> <span class="nf">_check_valid_abs_path</span><span class="p">(</span><span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to check provided path is absolute path</span>
+<span class="sd">    and is not $TAMR_HOME/tamr/auxiliary-sevrices/conf</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dir: directory provided</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If path is not absolute or equal to</span>
+<span class="sd">                    $TAMR_HOME/tamr/auxiliary-sevrices/conf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check absolute</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Output directory must be absolute path.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="n">bad_paths</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;tamr/auxiliary-sevrices/conf&quot;</span><span class="p">,</span> <span class="s2">&quot;tamr/auxiliary-sevrices/conf/&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">dir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">bad_paths</span><span class="p">):</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Output directory must not be $TAMR_HOME/tamr/auxiliary-sevrices/conf.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="create_redirect_button"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.custom_button.create_redirect_button">[docs]</a><span class="k">def</span> <span class="nf">create_redirect_button</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">extension_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">button_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">button_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">page_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">redirect_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">open_in_new_tab</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">button_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create yaml file with all required attributes for</span>
+<span class="sd">    a &#39;REDIRECT&#39; UI button. Yaml file is saved locally.</span>
+
+<span class="sd">    Button features are only available to versions 2022.008.0 and later.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        extension_name: Name of button extension</span>
+<span class="sd">        button_id: A short identifier for the button to use in the,</span>
+<span class="sd">                   body of a POST call or a redirect URL path substitution.</span>
+<span class="sd">        button_text: The button label to display in the UI.</span>
+<span class="sd">        page_names: The pages of the UI on which to display the button.</span>
+<span class="sd">        redirect_url: The URL that the browser should load</span>
+<span class="sd">        open_in_new_tab: If true, the specified URL opens in a new browser tab.</span>
+<span class="sd">        output_dir: Directory to save yaml file (absolute path)</span>
+<span class="sd">        button_name: Name of yaml file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to yaml file created</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Path validation</span>
+    <span class="n">_check_valid_abs_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="c1"># Minor url validation</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">redirect_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid url. Must begin with http:// or https://&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="c1"># Page name validation</span>
+    <span class="n">invalid_pages</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">page_names</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_check_valid_page_name</span><span class="p">(</span><span class="n">pagename</span><span class="o">=</span><span class="n">p</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">invalid_pages</span><span class="p">:</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid pagename(s): </span><span class="si">{</span><span class="n">invalid_pages</span><span class="si">}</span><span class="s2">. See docs for allowed Tamr button page names&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="n">button_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;extensionName&quot;</span><span class="p">:</span> <span class="n">extension_name</span><span class="p">,</span>
+        <span class="s2">&quot;buttons&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;buttonType&quot;</span><span class="p">:</span> <span class="s2">&quot;redirectButton&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;buttonId&quot;</span><span class="p">:</span> <span class="n">button_id</span><span class="p">,</span>
+                <span class="s2">&quot;buttonText&quot;</span><span class="p">:</span> <span class="n">button_text</span><span class="p">,</span>
+                <span class="s2">&quot;pageNames&quot;</span><span class="p">:</span> <span class="n">page_names</span><span class="p">,</span>
+                <span class="s2">&quot;redirectUrl&quot;</span><span class="p">:</span> <span class="n">redirect_url</span><span class="p">,</span>
+                <span class="s2">&quot;openInNewTab&quot;</span><span class="p">:</span> <span class="n">open_in_new_tab</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">button_name</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">button_dict</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+<div class="viewcode-block" id="create_post_button"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.custom_button.create_post_button">[docs]</a><span class="k">def</span> <span class="nf">create_post_button</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">extension_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">button_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">button_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">page_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">post_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">post_body_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">success_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">fail_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">display_response</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">button_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create yaml file with all required attributes for</span>
+<span class="sd">    a &#39;POST&#39; UI button. Yaml file is saved locally.</span>
+
+<span class="sd">    Button features are only available to versions 2022.008.0 and later.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        extension_name: Name of button extension</span>
+<span class="sd">        button_id: A short identifier for the button to use in the,</span>
+<span class="sd">                   body of a POST call or a redirect URL path substitution.</span>
+<span class="sd">        button_text: The button label to display in the UI.</span>
+<span class="sd">        page_names: The pages of the UI on which to display the button.</span>
+<span class="sd">        post_url: The target URL for a POST API call</span>
+<span class="sd">        post_body_keys: Specifies the keys to request in the body of the POST call</span>
+<span class="sd">        success_message: The message that displays to the user when the POST call succeeds.</span>
+<span class="sd">        fail_message: The message that displays to the user when the POST call fails.</span>
+<span class="sd">        display_response: Whether the contents of the API response body should display to the user.</span>
+<span class="sd">        output_dir: Directory to save yaml file (absolute path)</span>
+<span class="sd">        button_name: Name of yaml file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to yaml file created</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Path validation</span>
+    <span class="n">_check_valid_abs_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="c1"># Minor url validation</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">post_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid url. Must begin with http:// or https://&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="c1"># Page name validation</span>
+    <span class="n">invalid_pages</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">page_names</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_check_valid_page_name</span><span class="p">(</span><span class="n">pagename</span><span class="o">=</span><span class="n">p</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">invalid_pages</span><span class="p">:</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid pagename(s): </span><span class="si">{</span><span class="n">invalid_pages</span><span class="si">}</span><span class="s2">. See docs for allowed Tamr button page names&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="n">button_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;extensionName&quot;</span><span class="p">:</span> <span class="n">extension_name</span><span class="p">,</span>
+        <span class="s2">&quot;buttons&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;buttonType&quot;</span><span class="p">:</span> <span class="s2">&quot;postButton&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;buttonId&quot;</span><span class="p">:</span> <span class="n">button_id</span><span class="p">,</span>
+                <span class="s2">&quot;buttonText&quot;</span><span class="p">:</span> <span class="n">button_text</span><span class="p">,</span>
+                <span class="s2">&quot;pageNames&quot;</span><span class="p">:</span> <span class="n">page_names</span><span class="p">,</span>
+                <span class="s2">&quot;postUrl&quot;</span><span class="p">:</span> <span class="n">post_url</span><span class="p">,</span>
+                <span class="s2">&quot;postBodyKeys&quot;</span><span class="p">:</span> <span class="n">post_body_keys</span><span class="p">,</span>
+                <span class="s2">&quot;successMessage&quot;</span><span class="p">:</span> <span class="n">success_message</span><span class="p">,</span>
+                <span class="s2">&quot;failMessage&quot;</span><span class="p">:</span> <span class="n">fail_message</span><span class="p">,</span>
+                <span class="s2">&quot;displayResponse&quot;</span><span class="p">:</span> <span class="n">display_response</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">button_name</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">button_dict</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+<div class="viewcode-block" id="create_button_extension"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.custom_button.create_button_extension">[docs]</a><span class="k">def</span> <span class="nf">create_button_extension</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">extension_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">buttons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of button yaml files, save it as a grouped extension yaml file.</span>
+<span class="sd">    Yaml file is saved locally.</span>
+<span class="sd">    Button features are only available to versions 2022.008.0 and later.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        extension_name: Name of button extension to save</span>
+<span class="sd">        buttons: List of button yaml files (absolute paths)</span>
+<span class="sd">        output_dir: directory in which to save yaml extension file (absolute path)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to yaml file created</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Path validation</span>
+    <span class="n">_check_valid_abs_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="c1"># Create dicts from the yaml files</span>
+    <span class="n">dict_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">buttons</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">loaded_file</span><span class="p">:</span>
+            <span class="n">button_object</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">loaded_file</span><span class="p">)</span>
+            <span class="n">button_dict</span> <span class="o">=</span> <span class="n">button_object</span><span class="p">[</span><span class="s2">&quot;buttons&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dict_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">button_dict</span><span class="p">)</span>
+
+    <span class="n">file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">extension_name</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;extensionName&quot;</span><span class="p">:</span> <span class="n">extension_name</span><span class="p">,</span> <span class="s2">&quot;buttons&quot;</span><span class="p">:</span> <span class="n">dict_list</span><span class="p">}</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output_dict</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+<div class="viewcode-block" id="create_button_extension_from_list"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.custom_button.create_button_extension_from_list">[docs]</a><span class="k">def</span> <span class="nf">create_button_extension_from_list</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">extension_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">buttons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of button dictionaries, save it as a grouped extension yaml file.</span>
+<span class="sd">    Yaml file is saved locally.</span>
+
+<span class="sd">    Button features are only available to versions 2022.008.0 and later.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        extension_name: Name of button extension to save</span>
+<span class="sd">        output_dir: directory in which to save yaml extension file (absolute path)</span>
+<span class="sd">        buttons: List of button dictionaries. Either redirect or post.</span>
+<span class="sd">        Format examples:</span>
+<span class="sd">        ---</span>
+<span class="sd">        redirect:</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;buttonType&quot;: &quot;redirectButton&quot;,</span>
+<span class="sd">            &quot;buttonId&quot;: button_id,</span>
+<span class="sd">            &quot;buttonText&quot;: button_text,</span>
+<span class="sd">            &quot;pageNames&quot;: page_names,</span>
+<span class="sd">            &quot;redirectUrl&quot;: redirect_url,</span>
+<span class="sd">            &quot;openInNewTab&quot;: open_in_new_tab</span>
+<span class="sd">        }</span>
+<span class="sd">        ---</span>
+<span class="sd">        post:</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;buttonType&quot;: &quot;postButton&quot;,</span>
+<span class="sd">            &quot;buttonId&quot;: button_id,</span>
+<span class="sd">            &quot;buttonText&quot;: button_text,</span>
+<span class="sd">            &quot;pageNames&quot;: page_names,</span>
+<span class="sd">            &quot;postUrl&quot;: post_url,</span>
+<span class="sd">            &quot;postBodyKeys&quot;: post_body_keys,</span>
+<span class="sd">            &quot;successMessage&quot;: success_message,</span>
+<span class="sd">            &quot;failMessage&quot;: fail_message,</span>
+<span class="sd">            &quot;displayResponse&quot;: display_response</span>
+<span class="sd">        }</span>
+<span class="sd">        ---</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to yaml file created</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Path Validation</span>
+    <span class="n">_check_valid_abs_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="c1"># URL &amp; pagename validation</span>
+    <span class="n">invalid_urls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">invalid_pages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">button_dict</span> <span class="ow">in</span> <span class="n">buttons</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">button_dict</span><span class="p">[</span><span class="s2">&quot;buttonType&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;postButton&quot;</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">button_dict</span><span class="p">[</span><span class="s2">&quot;postUrl&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">button_dict</span><span class="p">[</span><span class="s2">&quot;redirectUrl&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
+            <span class="n">invalid_urls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="n">invalid_pages</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">button_dict</span><span class="p">[</span><span class="s2">&quot;pageNames&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_check_valid_page_name</span><span class="p">(</span><span class="n">pagename</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">invalid_urls</span> <span class="ow">and</span> <span class="n">invalid_pages</span><span class="p">:</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid url and pagenames. </span><span class="se">\</span>
+<span class="s2">            url(s) </span><span class="si">{</span><span class="n">invalid_urls</span><span class="si">}</span><span class="s2"> must begin with http:// or https:// </span><span class="se">\</span>
+<span class="s2">            invalid page name(s): </span><span class="si">{</span><span class="n">invalid_pages</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">invalid_urls</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">invalid_pages</span><span class="p">:</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid url(s) </span><span class="si">{</span><span class="n">invalid_urls</span><span class="si">}</span><span class="s2">. Must begin with http:// or https://&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">invalid_urls</span> <span class="ow">and</span> <span class="n">invalid_pages</span><span class="p">:</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid pagename(s): </span><span class="si">{</span><span class="n">invalid_pages</span><span class="si">}</span><span class="s2">. See docs for allowed Tamr button page names&quot;</span>
+        <span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="n">file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">extension_name</span><span class="si">}</span><span class="s2">.yaml&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;extensionName&quot;</span><span class="p">:</span> <span class="n">extension_name</span><span class="p">,</span> <span class="s2">&quot;buttons&quot;</span><span class="p">:</span> <span class="n">buttons</span><span class="p">}</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output_dict</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+<div class="viewcode-block" id="register_buttons"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.custom_button.register_buttons">[docs]</a><span class="nd">@requires_tamr_version</span><span class="p">(</span><span class="n">min_version</span><span class="o">=</span><span class="n">TAMR_RELEASE_VERSION</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">register_buttons</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tamr_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">buttons</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">remote_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;paramiko.SSHClient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">impersonation_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registers a list of button(s) in a Tamr instance.</span>
+<span class="sd">    Requires Tamr restart to display buttons in UI.</span>
+
+<span class="sd">    Important: If NOT running this function using a remote client, this function must</span>
+<span class="sd">               be run on the server on which Tamr is installed.</span>
+
+<span class="sd">    Runs in a remote environment if an ssh client is specified otherwise runs in the local shell.</span>
+<span class="sd">    If an impersonation_username is provided, the command is run as the provided user.</span>
+<span class="sd">    If an impersonation_password is provided, password authentication is used for impersonation,</span>
+<span class="sd">    otherwise sudo is used.</span>
+<span class="sd">    Button features are only available to versions 2022.008.0 and later.</span>
+
+<span class="sd">    Version:</span>
+<span class="sd">        Requires Tamr 2022.008.0 or later</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tamr_client: Tamr Client object</span>
+<span class="sd">        buttons: An individual string or a list of yaml files (absolute paths) with button configs</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed</span>
+<span class="sd">        remote_client: An ssh client providing a remote connection</span>
+<span class="sd">        impersonation_username: A bash user to run the command as,</span>
+<span class="sd">            this should be the tamr install user</span>
+<span class="sd">        impersonation_password: The password for the impersonation_username</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buttons</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">buttons</span> <span class="o">=</span> <span class="p">[</span><span class="n">buttons</span><span class="p">]</span>
+
+    <span class="c1"># Clean up path</span>
+    <span class="n">_check_valid_abs_path</span><span class="p">(</span><span class="n">tamr_install_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tamr_install_dir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+        <span class="n">tamr_install_dir</span> <span class="o">=</span> <span class="n">tamr_install_dir</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registering the following buttons in Tamr: </span><span class="si">{</span><span class="n">buttons</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="n">buttons</span><span class="p">:</span>
+        <span class="c1"># Run the register command</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tamr_install_dir</span><span class="si">}</span><span class="s2">/tamr/utils/unify-admin.sh ui:config --extensionConfig </span><span class="si">{</span><span class="n">button</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registering </span><span class="si">{</span><span class="n">button</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_run_command</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">,</span>
+            <span class="n">remote_client</span><span class="o">=</span><span class="n">remote_client</span><span class="p">,</span>
+            <span class="n">impersonation_username</span><span class="o">=</span><span class="n">impersonation_username</span><span class="p">,</span>
+            <span class="n">impersonation_password</span><span class="o">=</span><span class="n">impersonation_password</span><span class="p">,</span>
+            <span class="n">enforce_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_buttons"><a class="viewcode-back" href="../../../modules/utils.html#tamr_toolbox.utils.custom_button.delete_buttons">[docs]</a><span class="k">def</span> <span class="nf">delete_buttons</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">button_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">tamr_install_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a list of button yaml files, delete them thus removing the button from UI.</span>
+
+<span class="sd">       NB: Registered buttons are located in $TAMR_HOME/tamr/auxiliary-sevrices/conf</span>
+<span class="sd">           Requires restart of Tamr to register deletion.</span>
+<span class="sd">           Button features are only available to versions 2022.008.0 and later.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        button_files: Individual string or list of button yaml files (absolute paths)</span>
+<span class="sd">        tamr_install_dir: Full path to directory where Tamr is installed (absolute path)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">button_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">button_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">button_files</span><span class="p">]</span>
+
+    <span class="c1"># Check all files exist</span>
+    <span class="n">missing_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">button_files</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">missing_files</span><span class="p">:</span>
+        <span class="n">warning_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;File(s) </span><span class="si">{</span><span class="n">missing_files</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+
+    <span class="c1"># Work with present files only</span>
+    <span class="n">present_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">button_files</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">missing_files</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">present_files</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;None of provided files found.&quot;</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="n">button_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tamr_install_dir</span><span class="p">,</span> <span class="s2">&quot;tamr/auxiliary-services/conf&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check present button files provided reside in correct folder.</span>
+    <span class="n">path_list</span> <span class="o">=</span> <span class="n">present_files</span> <span class="o">+</span> <span class="p">[</span><span class="n">button_dir</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonpath</span><span class="p">(</span><span class="n">path_list</span><span class="p">)</span> <span class="o">!=</span> <span class="n">button_dir</span><span class="p">:</span>
+        <span class="n">value_error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;All button files provided must belong to </span><span class="si">{</span><span class="n">button_dir</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">             otherwise deletion will not register.&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value_error_message</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing yaml files from </span><span class="si">{</span><span class="n">button_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">present_files</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deleted </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Tamr.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
