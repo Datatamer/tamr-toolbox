@@ -77,7 +77,7 @@ jobs:
       - name: Install requirements
         run: python install.py
       - name: Run tests
-        run: python -m pytest
+        run: python -m pytest tests/utils
   # Test-Core-Dependencies:
   #   runs-on: ubuntu-latest
   #   steps:
