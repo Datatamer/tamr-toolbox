@@ -88,6 +88,7 @@ def test_create_logger_with_only_file_handler():
         for handler in handlers:
             logger.removeHandler(handler)
             handler.close()
+        del handler
         del handlers
 
 
@@ -160,7 +161,7 @@ def test_enable_toolbox_logging_with_stream_and_file_handler():
             handler.close()
         del handler
 
-        log_file_path = os.path.join(tempdir, tamr_toolbox.utils.logger._get_log_filename)
+        log_file_path = os.path.join(tempdir, tamr_toolbox.utils.logger._get_log_filename())
         with open(log_file_path, "r") as logf:
             logf.close()
 
