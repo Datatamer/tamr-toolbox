@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -189,9 +194,9 @@
            <div itemprop="articleBody">
             
   <div class="section" id="filesystem">
-<h1>Filesystem<a class="headerlink" href="#filesystem" title="Permalink to this headline">¶</a></h1>
+<h1>Filesystem<a class="headerlink" href="#filesystem" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="create-a-list-of-directories-from-a-config-file">
-<h2>Create a list of directories from a config file<a class="headerlink" href="#create-a-list-of-directories-from-a-config-file" title="Permalink to this headline">¶</a></h2>
+<h2>Create a list of directories from a config file<a class="headerlink" href="#create-a-list-of-directories-from-a-config-file" title="Permalink to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for creating directories in Bash&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">tamr_toolbox</span> <span class="k">as</span> <span class="nn">tbox</span>
 
@@ -200,7 +205,7 @@
 </div>
 </div>
 <div class="section" id="clean-old-files-recursively-from-a-directory">
-<h2>Clean old files recursively from a directory<a class="headerlink" href="#clean-old-files-recursively-from-a-directory" title="Permalink to this headline">¶</a></h2>
+<h2>Clean old files recursively from a directory<a class="headerlink" href="#clean-old-files-recursively-from-a-directory" title="Permalink to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example script for cleaning up old files&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">tamr_toolbox</span> <span class="kn">import</span> <span class="n">filesystem</span>
 
@@ -216,9 +221,9 @@
 </div>
 </div>
 <div class="section" id="cloud">
-<h2>Cloud<a class="headerlink" href="#cloud" title="Permalink to this headline">¶</a></h2>
+<h2>Cloud<a class="headerlink" href="#cloud" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="upload-object-to-gcs-bucket">
-<h3>Upload object to GCS bucket<a class="headerlink" href="#upload-object-to-gcs-bucket" title="Permalink to this headline">¶</a></h3>
+<h3>Upload object to GCS bucket<a class="headerlink" href="#upload-object-to-gcs-bucket" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to demonstrate the use of the gcs_upload function to upload file.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -240,7 +245,7 @@
 </div>
 </div>
 <div class="section" id="download-object-from-gcs-bucket">
-<h3>Download object from GCS bucket<a class="headerlink" href="#download-object-from-gcs-bucket" title="Permalink to this headline">¶</a></h3>
+<h3>Download object from GCS bucket<a class="headerlink" href="#download-object-from-gcs-bucket" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to demonstrate the use of the gcs_download function to download file,</span>
 <span class="sd">from a GCS bucket.</span>
@@ -263,7 +268,7 @@
 </div>
 </div>
 <div class="section" id="upload-object-to-aws-s3-bucket">
-<h3>Upload object to AWS S3 bucket<a class="headerlink" href="#upload-object-to-aws-s3-bucket" title="Permalink to this headline">¶</a></h3>
+<h3>Upload object to AWS S3 bucket<a class="headerlink" href="#upload-object-to-aws-s3-bucket" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to demonstrate the use of the s3 function to upload file</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -285,7 +290,7 @@
 </div>
 </div>
 <div class="section" id="download-object-from-aws-s3-bucket">
-<h3>Download object from AWS S3 bucket<a class="headerlink" href="#download-object-from-aws-s3-bucket" title="Permalink to this headline">¶</a></h3>
+<h3>Download object from AWS S3 bucket<a class="headerlink" href="#download-object-from-aws-s3-bucket" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An example script to demonstrate the use of the s3_download function to download file,</span>
 <span class="sd">from an S3 bucket.</span>

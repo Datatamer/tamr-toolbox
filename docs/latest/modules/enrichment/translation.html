@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,16 +32,19 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Filesystem" href="../filesystem.html" />
+    <link rel="next" title="Address Validation" href="address_validation.html" />
     <link rel="prev" title="API Client" href="api_client.html" /> 
 </head>
 
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -105,6 +110,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#dictionary">Dictionary</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="address_validation.html">Address validation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../filesystem.html">Filesystem</a></li>
@@ -189,15 +195,15 @@
            <div itemprop="articleBody">
             
   <div class="section" id="translation">
-<h1>Translation<a class="headerlink" href="#translation" title="Permalink to this headline">¶</a></h1>
+<h1>Translation<a class="headerlink" href="#translation" title="Permalink to this heading">¶</a></h1>
 <p>This module requires an optional dependency. See <a class="reference internal" href="../../installation.html"><span class="doc">Installation</span></a> for details.</p>
 <div class="section" id="module-tamr_toolbox.enrichment.translate">
-<span id="translate"></span><h2>Translate<a class="headerlink" href="#module-tamr_toolbox.enrichment.translate" title="Permalink to this headline">¶</a></h2>
+<span id="translate"></span><h2>Translate<a class="headerlink" href="#module-tamr_toolbox.enrichment.translate" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to efficiently translating data not present in existing translation
 dictionaries</p>
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.translate.standardize_phrases">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></code><code class="sig-name descname"><span class="pre">standardize_phrases</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_phrases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#standardize_phrases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.standardize_phrases" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.translate.standardize_phrases">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></span><span class="sig-name descname"><span class="pre">standardize_phrases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_phrases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#standardize_phrases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.standardize_phrases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardize phrases to translate to avoid re-translating previously translated phrases but
 with different formating</p>
 <dl class="field-list simple">
@@ -214,8 +220,8 @@ with different formating</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.translate.get_phrases_to_translate">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></code><code class="sig-name descname"><span class="pre">get_phrases_to_translate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_phrases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#get_phrases_to_translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.get_phrases_to_translate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.translate.get_phrases_to_translate">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></span><span class="sig-name descname"><span class="pre">get_phrases_to_translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_phrases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#get_phrases_to_translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.get_phrases_to_translate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find phrases not previously translated and initiate dictionary entry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -234,8 +240,8 @@ with different formating</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.translate.from_list">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></code><code class="sig-name descname"><span class="pre">from_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_phrases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nmt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_save_every_n_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_save_to_disk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/tmp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.from_list" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.translate.from_list">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.translate.</span></span><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_phrases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translation_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nmt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_save_every_n_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_save_to_disk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/tmp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/translate.html#from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.translate.from_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translate a list of phrases from source language to target language.
 The translation is saved in a dictionary on your local file system before updating the
 main dictionary</p>
@@ -274,7 +280,7 @@ loss of translation data</p></li>
 
 </div>
 <div class="section" id="dictionary">
-<h2>Dictionary<a class="headerlink" href="#dictionary" title="Permalink to this headline">¶</a></h2>
+<h2>Dictionary<a class="headerlink" href="#dictionary" title="Permalink to this heading">¶</a></h2>
 <p>Toolbox translation dictionaries have the following general format:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TranslationDictionary</span><span class="p">(</span>
     <span class="n">standardized_phrase</span><span class="o">=</span><span class="s2">&quot;cheddar cheese&quot;</span><span class="p">,</span>
@@ -312,8 +318,8 @@ the primary key and the following attributes:</p>
 <br /><span class="target" id="module-tamr_toolbox.enrichment.dictionary"></span><p>Tasks related to creating, updating, saving and moving translation dictionaries
 in and out of Tamr</p>
 <dl class="py class">
-<dt id="tamr_toolbox.enrichment.dictionary.TranslationDictionary">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">TranslationDictionary</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">standardized_phrase=None</span></em>, <em class="sig-param"><span class="pre">translated_phrase=None</span></em>, <em class="sig-param"><span class="pre">detected_language=None</span></em>, <em class="sig-param"><span class="pre">original_phrases=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#TranslationDictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.TranslationDictionary">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">TranslationDictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">standardized_phrase=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translated_phrase=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detected_language=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_phrases=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#TranslationDictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="Permalink to this definition">¶</a></dt>
 <dd><p>A DataClass for translation dictionaries</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -330,52 +336,9 @@ when applying standardization</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py class">
-<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">SetEncoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#SetEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Class to transform type ‘set’ to type ‘list’ when saving objects to JSON format</p>
-<dl class="py method">
-<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder.default">
-<code class="sig-name descname"><span class="pre">default</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">python_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#SetEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder.default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform a set into a list if input is a set</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>python_object</strong> – the python object to be saved to a json format</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Default json encoder format of input object or List if input is a Set</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder.encode">
-<code class="sig-name descname"><span class="pre">encode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder.encode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a JSON string representation of a Python data structure.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">json.encoder</span> <span class="kn">import</span> <span class="n">JSONEncoder</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">JSONEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">({</span><span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]})</span>
-<span class="go">&#39;{&quot;foo&quot;: [&quot;bar&quot;, &quot;baz&quot;]}&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="tamr_toolbox.enrichment.dictionary.SetEncoder.iterencode">
-<code class="sig-name descname"><span class="pre">iterencode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_one_shot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.SetEncoder.iterencode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encode the given object and yield each string
-representation as available.</p>
-<p>For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">JSONEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">iterencode</span><span class="p">(</span><span class="n">bigobject</span><span class="p">):</span>
-    <span class="n">mysocket</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.filename">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">filename</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.filename" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.filename">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.filename" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a toolbox translation dictionary file path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -396,8 +359,8 @@ representation as available.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.create">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.create" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.create">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an empty dictionary on disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -418,8 +381,8 @@ representation as available.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.to_json">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">to_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_json" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.to_json">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a toolbox translation dictionary entries to a json format where set object are
 converted to list</p>
 <dl class="field-list simple">
@@ -436,8 +399,8 @@ converted to list</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.to_dict">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">to_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.to_dict">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a toolbox translation dictionary entries to a dictionary format where set object are
 converted to list</p>
 <dl class="field-list simple">
@@ -454,8 +417,8 @@ converted to list</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.save">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.save" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.save">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a toolbox translation dictionary to disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -477,8 +440,8 @@ converted to list</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.load">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.load" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.load">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a toolbox translation dictionary from disk to memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -503,8 +466,8 @@ converted to list</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.update">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.update" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.update">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a toolbox translation dictionary with another temporary translation dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -524,8 +487,8 @@ translation results</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.convert_to_mappings">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">convert_to_mappings</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#convert_to_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.convert_to_mappings" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.convert_to_mappings">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">convert_to_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#convert_to_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.convert_to_mappings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform a translation dictionary into a mapping of original phrases to translated phrases
 :type dictionary: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#tamr_toolbox.enrichment.dictionary.TranslationDictionary" title="tamr_toolbox.enrichment.dictionary.TranslationDictionary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TranslationDictionary</span></code></a>]
 :param dictionary: a toolbox translation dictionary</p>
@@ -540,8 +503,8 @@ translation results</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.from_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">from_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#from_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.from_dataset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.from_dataset">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">from_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#from_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.from_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stream a dictionary from Tamr</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -566,8 +529,8 @@ translation results</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.enrichment.dictionary.to_dataset">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></code><code class="sig-name descname"><span class="pre">to_dataset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_dataset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.enrichment.dictionary.to_dataset">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.enrichment.dictionary.</span></span><span class="sig-name descname"><span class="pre">to_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datasets_collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/enrichment/dictionary.html#to_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.enrichment.dictionary.to_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ingest a toolbox dictionary in Tamr, creates the source dataset if it doesn’t exists</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -608,7 +571,7 @@ source dataset</p></li>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../filesystem.html" class="btn btn-neutral float-right" title="Filesystem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="address_validation.html" class="btn btn-neutral float-right" title="Address Validation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="api_client.html" class="btn btn-neutral float-left" title="API Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

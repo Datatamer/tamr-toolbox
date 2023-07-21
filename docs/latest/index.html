@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -66,7 +71,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -163,15 +168,15 @@
            <div itemprop="articleBody">
             
   <div class="section" id="tamr-toolbox">
-<h1>Tamr Toolbox<a class="headerlink" href="#tamr-toolbox" title="Permalink to this headline">¶</a></h1>
+<h1>Tamr Toolbox<a class="headerlink" href="#tamr-toolbox" title="Permalink to this heading">¶</a></h1>
 <p>The Tamr Toolbox is a Python library created to provide a simple interface for common interactions with Tamr and common data workflows that include Tamr. The more specialized <a class="reference external" href="https://github.com/Datatamer/tamr-client">Tamr Python Client</a> library is used for direct interactions with Tamr in both the development of the Tamr Toolbox and in the recommended use of the Tamr Toolbox.</p>
 <div class="section" id="basic-installation">
-<h2>Basic Installation<a class="headerlink" href="#basic-installation" title="Permalink to this headline">¶</a></h2>
+<h2>Basic Installation<a class="headerlink" href="#basic-installation" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'tamr-toolbox[all]'</span></code></p>
 <p><a class="reference internal" href="installation.html"><span class="doc">See more installation options</span></a></p>
 </div>
 <div class="section" id="basic-example">
-<h2>Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this headline">¶</a></h2>
+<h2>Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading">¶</a></h2>
 <p><strong>project.config.yaml</strong></p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logging_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/home/data/project/logs&quot;</span>
 
@@ -214,14 +219,14 @@
 </div>
 </div>
 <div class="section" id="permissions">
-<h2>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h2>
+<h2>Permissions<a class="headerlink" href="#permissions" title="Permalink to this heading">¶</a></h2>
 <p>Tamr Toolbox functions require appropriate user permissions. A list of user roles and permissions is avaliable on
 the <a class="reference external" href="https://docs.tamr.com/new/docs/permissions-matrix-by-user-role">Tamr Core documentation</a> page.</p>
 <p>Because Tamr Toolbox is aimed at advanced functionality not available through the UI, it is recommended to authenticate
 your client using a user with <code class="docutils literal notranslate"><span class="pre">admin</span></code> permissions.</p>
 </div>
 <div class="section" id="reference">
-<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>

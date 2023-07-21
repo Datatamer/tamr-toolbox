@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -66,7 +71,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -108,7 +113,12 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../workflow.html">Workflow</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="backup.html">Backup</a></li>
 <li class="toctree-l3"><a class="reference internal" href="concurrent.html">Concurrent</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Jobs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Jobs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.jobs.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.jobs.get_upstream_projects"><code class="docutils literal notranslate"><span class="pre">get_upstream_projects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.workflow.jobs.get_project_output_datasets"><code class="docutils literal notranslate"><span class="pre">get_project_output_datasets()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -185,11 +195,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-tamr_toolbox.workflow.jobs">
-<span id="jobs"></span><h1>Jobs<a class="headerlink" href="#module-tamr_toolbox.workflow.jobs" title="Permalink to this headline">¶</a></h1>
+<span id="jobs"></span><h1>Jobs<a class="headerlink" href="#module-tamr_toolbox.workflow.jobs" title="Permalink to this heading">¶</a></h1>
 <p>Tasks related to running jobs for groups of Tamr projects</p>
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.jobs.run">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></code><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_estimate_pair_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_profile_unified_datasets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.run" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.jobs.run">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_apply_feedback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_estimate_pair_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_profile_unified_datasets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run multiple projects in order</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -216,8 +226,8 @@ Useful in some pipeline situations</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.jobs.get_upstream_projects">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></code><code class="sig-name descname"><span class="pre">get_upstream_projects</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#get_upstream_projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.get_upstream_projects" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.jobs.get_upstream_projects">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></span><span class="sig-name descname"><span class="pre">get_upstream_projects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#get_upstream_projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.get_upstream_projects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check for upstream projects associated with a specified project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -230,8 +240,8 @@ Useful in some pipeline situations</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.workflow.jobs.get_project_output_datasets">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></code><code class="sig-name descname"><span class="pre">get_project_output_datasets</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#get_project_output_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.get_project_output_datasets" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.workflow.jobs.get_project_output_datasets">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.workflow.jobs.</span></span><span class="sig-name descname"><span class="pre">get_project_output_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tamr_toolbox/workflow/jobs.html#get_project_output_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.workflow.jobs.get_project_output_datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves datasets produced by a given Tamr project</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

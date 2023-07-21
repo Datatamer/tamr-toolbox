@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -65,7 +70,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -173,6 +178,7 @@
 
 <span class="kn">from</span> <span class="nn">tamr_toolbox.models.data_type</span> <span class="kn">import</span> <span class="n">JsonDict</span>
 <span class="kn">from</span> <span class="nn">tamr_toolbox.utils.operation</span> <span class="kn">import</span> <span class="n">from_resource_id</span>
+<span class="kn">from</span> <span class="nn">tamr_toolbox.utils.version</span> <span class="kn">import</span> <span class="n">requires_tamr_version</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -325,6 +331,111 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">match_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_recs</span><span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RealTime match query failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="c1"># Process responses</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">:</span>  <span class="c1"># handle null response</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># If data was found, decode, identify source record, and add match to corresponding</span>
+        <span class="c1"># list of results in the result dictionary</span>
+        <span class="k">for</span> <span class="n">resp_block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">resp_block</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp_block</span><span class="p">)</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">record_key</span><span class="p">])</span> <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result</span><span class="p">[</span><span class="n">record_key</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">max_num_matches</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">max_num_matches</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">min_match_prob</span> <span class="ow">and</span> <span class="n">result</span><span class="p">[</span><span class="n">prob_key</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_match_prob</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">result_dict</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result_dict</span></div>
+
+
+<div class="viewcode-block" id="transform_and_match_query"><a class="viewcode-back" href="../../../modules/realtime.html#tamr_toolbox.realtime.matching.transform_and_match_query">[docs]</a><span class="nd">@requires_tamr_version</span><span class="p">(</span><span class="n">min_version</span><span class="o">=</span><span class="s2">&quot;2022.009.0&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">transform_and_match_query</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">project</span><span class="p">:</span> <span class="n">MasteringProject</span><span class="p">,</span>
+    <span class="n">match_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">],</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">primary_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">min_match_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_num_matches</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">default_source_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">JsonDict</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the best matching clusters or records for each supplied record. Returns a dictionary where</span>
+<span class="sd">    each key correpsonds to an input record and the value is a list of the RealTime match results</span>
+<span class="sd">    for that record. An empty result list indicates a null response from matching (or no responses</span>
+<span class="sd">    above the `min_match_prob`, if that parameter was supplied). Will run schema mapping and</span>
+<span class="sd">    transformations prior to realtime match. If LLT, is not enabled will just run default LLM with</span>
+<span class="sd">    no transformation or schema mapping</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project: the mastering project to query for matches</span>
+<span class="sd">        match_client: a Tamr client set to use the port of the Match API</span>
+<span class="sd">        records: list of records to match</span>
+<span class="sd">        type: one of &quot;records&quot; or  &quot;clusters&quot; -- whether to pull record or cluster matches</span>
+<span class="sd">        primary_key: a primary key for the data; if supplied, this must be a field in input records</span>
+<span class="sd">        batch_size: split input into this batch size for match query calls (e.g. to prevent network</span>
+<span class="sd">            timeouts), default None sends a single query with all records</span>
+<span class="sd">        min_match_prob: if set, only matches with probability above minimum will be returned,</span>
+<span class="sd">            default None</span>
+<span class="sd">        max_num_matches: if set, at most max_num_matches will be returned for each input record in</span>
+<span class="sd">            records, default None</span>
+<span class="sd">        default_source_name: the default source name used for schema mapping in LLT, default None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict keyed by integers (indices of inputs), or by `primary_key` if `primary_key` is</span>
+<span class="sd">        supplied, with value a list containing matched data</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if match `type` is not &quot;records&quot; or &quot;clusters&quot;, or if `batch_size` is invalid</span>
+<span class="sd">        RuntimeError: if query fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[])</span>  <span class="c1"># dict which defaults to empty list to hold results</span>
+
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">_get_internal_project_name</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+    <span class="c1"># Set up keys to read results</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;records&quot;</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/v1/projects/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">:matchRecords?transform=true&quot;</span>
+        <span class="n">record_key</span> <span class="o">=</span> <span class="s2">&quot;queryRecordId&quot;</span>
+        <span class="n">prob_key</span> <span class="o">=</span> <span class="s2">&quot;matchProbability&quot;</span>
+    <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;clusters&quot;</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/v1/projects/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">:matchClusters?transform=true&quot;</span>
+        <span class="n">record_key</span> <span class="o">=</span> <span class="s2">&quot;entityId&quot;</span>
+        <span class="n">prob_key</span> <span class="o">=</span> <span class="s2">&quot;avgMatchProb&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported match type </span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">default_source_name</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&amp;defaultSourceName=</span><span class="si">{</span><span class="n">default_source_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Check batch size and set if not supplied</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No input supplied to match_query -- returning empty result.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result_dict</span>
+    <span class="k">elif</span> <span class="n">batch_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch size must be non-negative: received </span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Split into batches and convert to match query format</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">json_recs</span> <span class="o">=</span> <span class="n">_prepare_json</span><span class="p">(</span><span class="n">records</span><span class="p">[</span><span class="n">j</span> <span class="p">:</span> <span class="n">j</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">],</span> <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">match_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_recs</span><span class="p">)</span><span class="o">.</span><span class="n">successful</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RealTime match query failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>

@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -30,9 +32,12 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -40,7 +45,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="RealTime" href="realtime.html" />
-    <link rel="prev" title="Translation" href="enrichment/translation.html" /> 
+    <link rel="prev" title="Address Validation" href="enrichment/address_validation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -67,7 +72,7 @@
             
             
               <div class="version">
-                1.10.1 - Nail
+                1.11.1 - Oilcan
               </div>
             
           
@@ -100,8 +105,19 @@
 <li class="toctree-l2"><a class="reference internal" href="dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enrichment.html">Enrichment</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Filesystem</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.filesystem.bash">Bash</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.filesystem.cloud">Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.filesystem.bash">Bash</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.bash.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.bash.remove_directories"><code class="docutils literal notranslate"><span class="pre">remove_directories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.bash.delete_old_files"><code class="docutils literal notranslate"><span class="pre">delete_old_files()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tamr_toolbox.filesystem.cloud">Cloud</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.cloud.gcs_upload"><code class="docutils literal notranslate"><span class="pre">gcs_upload()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.cloud.gcs_download"><code class="docutils literal notranslate"><span class="pre">gcs_download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.cloud.s3_upload"><code class="docutils literal notranslate"><span class="pre">s3_upload()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tamr_toolbox.filesystem.cloud.s3_download"><code class="docutils literal notranslate"><span class="pre">s3_download()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="realtime.html">RealTime</a></li>
@@ -183,13 +199,13 @@
            <div itemprop="articleBody">
             
   <div class="section" id="filesystem">
-<h1>Filesystem<a class="headerlink" href="#filesystem" title="Permalink to this headline">¶</a></h1>
+<h1>Filesystem<a class="headerlink" href="#filesystem" title="Permalink to this heading">¶</a></h1>
 <div class="section" id="module-tamr_toolbox.filesystem.bash">
-<span id="bash"></span><h2>Bash<a class="headerlink" href="#module-tamr_toolbox.filesystem.bash" title="Permalink to this headline">¶</a></h2>
+<span id="bash"></span><h2>Bash<a class="headerlink" href="#module-tamr_toolbox.filesystem.bash" title="Permalink to this heading">¶</a></h2>
 <p>Tasks related to managing unix-level operations like file and directory management</p>
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.bash.create_directories">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.bash.</span></code><code class="sig-name descname"><span class="pre">create_directories</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_absolute_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_if_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/bash.html#create_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.bash.create_directories" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.bash.create_directories">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.bash.</span></span><span class="sig-name descname"><span class="pre">create_directories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_absolute_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_if_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/bash.html#create_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.bash.create_directories" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates directories recursively from a list of target directories if not already created</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -210,8 +226,8 @@ that already exists.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.bash.remove_directories">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.bash.</span></code><code class="sig-name descname"><span class="pre">remove_directories</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_absolute_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_if_not_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_recursive_deletes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/bash.html#remove_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.bash.remove_directories" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.bash.remove_directories">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.bash.</span></span><span class="sig-name descname"><span class="pre">remove_directories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directories</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_absolute_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_if_not_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_recursive_deletes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/bash.html#remove_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.bash.remove_directories" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes directories from a list of target directories if created.
 The directory must be empty</p>
 <dl class="field-list simple">
@@ -234,8 +250,8 @@ that does not exist.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.bash.delete_old_files">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.bash.</span></code><code class="sig-name descname"><span class="pre">delete_old_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_days_to_keep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/bash.html#delete_old_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.bash.delete_old_files" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.bash.delete_old_files">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.bash.</span></span><span class="sig-name descname"><span class="pre">delete_old_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_days_to_keep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/bash.html#delete_old_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.bash.delete_old_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all files in the directory data_path and its subdirectory which have not been modified for
 a specified number of days and delete them except if their subdirectory is specified in the
 folders to exclude</p>
@@ -264,10 +280,10 @@ folders to exclude</p>
 
 </div>
 <div class="section" id="module-tamr_toolbox.filesystem.cloud">
-<span id="cloud"></span><h2>Cloud<a class="headerlink" href="#module-tamr_toolbox.filesystem.cloud" title="Permalink to this headline">¶</a></h2>
+<span id="cloud"></span><h2>Cloud<a class="headerlink" href="#module-tamr_toolbox.filesystem.cloud" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.cloud.gcs_upload">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">gcs_upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#gcs_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.gcs_upload" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.cloud.gcs_upload">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></span><span class="sig-name descname"><span class="pre">gcs_upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#gcs_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.gcs_upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload data to a Google storage bucket
 :type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
 :param source_filepath: file path of source file being uploaded
@@ -280,8 +296,8 @@ folders to exclude</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.cloud.gcs_download">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">gcs_download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#gcs_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.gcs_download" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.cloud.gcs_download">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></span><span class="sig-name descname"><span class="pre">gcs_download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#gcs_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.gcs_download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download data to a Google storage bucket
 :type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
 :param source_filepath: Path to file being downloaded on Google
@@ -294,8 +310,8 @@ folders to exclude</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.cloud.s3_upload">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">s3_upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#s3_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.s3_upload" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.cloud.s3_upload">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></span><span class="sig-name descname"><span class="pre">s3_upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#s3_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.s3_upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload data to Amazon AWS bucket
 :type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
 :param source_filepath: file path of source file being uploaded
@@ -309,8 +325,8 @@ folders to exclude</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="tamr_toolbox.filesystem.cloud.s3_download">
-<code class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></code><code class="sig-name descname"><span class="pre">s3_download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#s3_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.s3_download" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tamr_toolbox.filesystem.cloud.s3_download">
+<span class="sig-prename descclassname"><span class="pre">tamr_toolbox.filesystem.cloud.</span></span><span class="sig-name descname"><span class="pre">s3_download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tamr_toolbox/filesystem/cloud.html#s3_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tamr_toolbox.filesystem.cloud.s3_download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download data from an Amazon AWS bucket
 :type source_filepath: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
 :param source_filepath: Path to file being downloaded on AWS
@@ -332,7 +348,7 @@ folders to exclude</p>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="realtime.html" class="btn btn-neutral float-right" title="RealTime" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="enrichment/translation.html" class="btn btn-neutral float-left" title="Translation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="enrichment/address_validation.html" class="btn btn-neutral float-left" title="Address Validation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
