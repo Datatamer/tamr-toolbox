@@ -9,22 +9,22 @@ import tamr_toolbox as tbox
 def main(
     *,
     instance_connection_info: Dict[str, Any],
-    dataset_id: str,
+    dataset_name: str,
     dataset_addr_columns: List[str],
-    mapping_dataset_id: str,
+    mapping_dataset_name: str,
     googlemaps_api_key: str,
 ) -> None:
     """Validate address data streamed from Tamr and save results on Tamr.
 
-    Note that this does not update the dataset corresponding to the input `dataset_id` -- it
+    Note that this does not update the dataset corresponding to the input `dataset_name` -- it
     performs lookups based on data in that dataset, and updates the dataset corresponding to the
-    `mapping_dataset_id` with the new data.
+    `mapping_dataset_name` with the new data.
 
     Args:
         instance_connection_info: Information for connecting to Tamr (host, port, username etc)
-        dataset_id: id of the Tamr dataset containing the data to validate
+        dataset_name: name of the Tamr dataset containing the data to validate
         dataset_addr_columns: ordered list of columns in the unified dataset with address info
-        mapping_dataset_id: id of the Tamr toolbox address validation mapping dataset
+        mapping_dataset_name: name of the Tamr toolbox address validation mapping dataset
         googlemaps_api_key: API key for the Google Maps address validation API
 
     """
@@ -35,13 +35,13 @@ def main(
     # For large datasets, it is to preferable to use a delta dataset with only unvalidated/expired
     # data. To do this, set up a SM project connected to current validated dataset and filter to
     # records with null/expired values in the validation columns
-    dataset = tamr.datasets.by_resource_id(dataset_id)
+    dataset = tamr.datasets.by_name(dataset_name)
     dataframe = tbox.data_io.dataframe.from_dataset(
         dataset, columns=dataset_addr_columns, flatten_delimiter=" | "
     )
 
     # Stream address mapping data from Tamr -- must match Toolbox AddressValidationMapping class
-    mapping_dataset = tamr.datasets.by_resource_id(mapping_dataset_id)
+    mapping_dataset = tamr.datasets.by_name(mapping_dataset_name)
     mapping = tbox.enrichment.address_mapping.from_dataset(mapping_dataset)
 
     LOGGER.info("Starting address validation.")
@@ -53,8 +53,8 @@ def main(
         dataframe=dataframe, columns_to_join=dataset_addr_columns
     )
 
-    # Update the `region_code` below to match the expected region of your dataset, or remove it if
-    # no `region_code` can be inferred
+    # Update the `region_code` below to match the expected region of your dataset, or set it to
+    # `None` if no region code can be inferred.
     # Update the expiration date buffer depending on update frequency of your pipeline
     mapping = tbox.enrichment.address_validation.from_list(
         all_addresses=tuples,
@@ -87,14 +87,18 @@ if __name__ == "__main__":
 
     # Use the configuration to create a global logger
     LOGGER = tbox.utils.logger.create(__name__, log_directory=CONFIG["logging_dir"])
+    tbox.utils.logger.enable_package_logging("tamr_toolbox", log_directory=CONFIG["logging_dir"])
+    tbox.utils.logger.enable_package_logging(
+        "tamr_unify_client", log_directory=CONFIG["logging_dir"]
+    )
 
     # Run the main function
     main(
         instance_connection_info=CONFIG["my_tamr_instance"],
-        dataset_id=CONFIG["datasets"]["my_dataset_to_be_addr_validated"]["id"],
+        dataset_name=CONFIG["datasets"]["my_dataset_to_be_addr_validated"]["name"],
         dataset_addr_columns=CONFIG["datasets"]["my_dataset_to_be_addr_validated"][
             "address_columns"
         ],
-        mapping_dataset_id=CONFIG["datasets"]["my_addr_validation_mapping"]["id"],
+        mapping_dataset_name=CONFIG["datasets"]["my_addr_validation_mapping"]["name"],
         googlemaps_api_key=CONFIG["address_validation"]["googlemaps_api_key"],
     )

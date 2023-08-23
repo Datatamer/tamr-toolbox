@@ -19,7 +19,6 @@ address_validation:
 datasets:
     my_dataset_to_be_addr_validated:
         name: "address_validation_demo.csv"
-        id: "1144"
         address_columns:    # Ordered list of address column names in this dataset
           - addressLine1
           - city
@@ -27,4 +26,3 @@ datasets:
           - postalCode
     my_addr_validation_mapping:
         name: "address_validation_mapping"
-        id: "1147"
