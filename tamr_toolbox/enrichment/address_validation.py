@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 from tamr_toolbox.enrichment.address_mapping import AddressValidationMapping, save, update
 from tamr_toolbox.enrichment.api_client.google_address_validate import validate
+
 from tamr_toolbox.enrichment.enrichment_utils import join_clean_tuple
 
 # Building our documentation requires access to all dependencies, including optional ones
@@ -128,8 +129,8 @@ def from_list(
                 region_code=region_code,
                 enable_usps_cass=enable_usps_cass,
             )
-            if validated_address is not None:
-                tmp_dictionary.update({address: validated_address})
+
+            tmp_dictionary.update({address: validated_address})
 
             if ((idx + 1) % intermediate_save_every_n) == 0:
                 LOGGER.info("Saving intermediate outputs")
