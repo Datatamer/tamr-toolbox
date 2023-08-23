@@ -157,7 +157,7 @@ def get_empty_address_validation(input_addr: str) -> AddressValidationMapping:
     return AddressValidationMapping(
         input_address=input_addr,
         validated_formatted_address=None,
-        expiration=str(datetime.datetime(2100, 1, 1)),
+        expiration=str(datetime(2100, 1, 1)),
         region_code=None,
         postal_code=None,
         admin_area=None,
