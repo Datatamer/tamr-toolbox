@@ -112,37 +112,37 @@ def from_list(
 
     if nbr_addresses_to_validate == 0:
         LOGGER.info("All addresses to validate are found in the local dictionary.")
+        return dictionary
 
-    else:
-        LOGGER.info(
-            "Of %s addresses to validate, %s were not found in the dictionary or were expired.",
-            nbr_of_unique_addresses,
-            nbr_addresses_to_validate,
+    LOGGER.info(
+        "Of %s addresses to validate, %s were not found in the dictionary or were expired.",
+        nbr_of_unique_addresses,
+        nbr_addresses_to_validate,
+    )
+
+    tmp_dictionary = {}
+    for idx, address in enumerate(addresses_to_validate):
+        validated_address = validate(
+            address_to_validate=address,
+            client=client,
+            locality=None,
+            region_code=region_code,
+            enable_usps_cass=enable_usps_cass,
         )
 
-        tmp_dictionary = {}
-        for idx, address in enumerate(addresses_to_validate):
-            validated_address = validate(
-                address_to_validate=address,
-                client=client,
-                locality=None,
-                region_code=region_code,
-                enable_usps_cass=enable_usps_cass,
-            )
+        tmp_dictionary.update({address: validated_address})
 
-            tmp_dictionary.update({address: validated_address})
+        if ((idx + 1) % intermediate_save_every_n) == 0:
+            LOGGER.info("Saving intermediate outputs")
+            update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
+            if intermediate_save_to_disk:
+                save(addr_mapping=dictionary, addr_folder=intermediate_folder)
+            # Reset temporary results after saving
+            tmp_dictionary = {}
 
-            if ((idx + 1) % intermediate_save_every_n) == 0:
-                LOGGER.info("Saving intermediate outputs")
-                update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
-                if intermediate_save_to_disk:
-                    save(addr_mapping=dictionary, addr_folder=intermediate_folder)
-                # Reset temporary results after saving
-                tmp_dictionary = {}
-
-        # update dictionary
-        update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
-        if intermediate_save_to_disk:
-            save(addr_mapping=dictionary, addr_folder=intermediate_folder)
+    # update dictionary
+    update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
+    if intermediate_save_to_disk:
+        save(addr_mapping=dictionary, addr_folder=intermediate_folder)
 
     return dictionary
