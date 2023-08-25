@@ -105,4 +105,4 @@ def join_clean_tuple(tup: Tuple[Optional[str], ...]) -> str:
     Returns:
         uppercased string made from joining tuple entries.
     """
-    return " ".join([x.strip().upper() for x in tup if x])
+    return " ".join([x.strip().upper() for x in tup if x and x.strip()])

@@ -19,10 +19,13 @@ address_validation:
 datasets:
     my_dataset_to_be_addr_validated:
         name: "address_validation_demo.csv"
-        address_columns:    # Ordered list of address column names in this dataset
+        address_cols:    # Ordered list of address column names in this dataset
           - addressLine1
           - city
           - state
           - postalCode
+        required_cols:  # (Optional) list of columns which must be non-null for a validation call
+          - addressLine1
+          - city
     my_addr_validation_mapping:
         name: "address_validation_mapping"

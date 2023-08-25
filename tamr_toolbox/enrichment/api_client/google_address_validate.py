@@ -42,6 +42,7 @@ def validate(
     region_code: Optional[str] = None,
     enable_usps_cass: bool = False,
     fail_on_api_error: bool = False,
+    ignore_bad_matches: bool = True,
 ) -> AddressValidationMapping:
     """Validate an address using google's address validation API.
 
@@ -52,6 +53,7 @@ def validate(
         locality: locality to use for validation, optional
         enable_usps_cass: whether to use USPS validation
         fail_on_api_error: whether to raise an error if API call fails, or continue processing
+        ignore_bad_matches: whether to fill entries with granularity 'OTHER' with null values
 
     Returns:
         toolbox address validation mapping
@@ -94,6 +96,13 @@ def validate(
             raise RuntimeError(message)
         else:
             return get_empty_address_validation(address_to_validate)
+
+    if ignore_bad_matches and json_resp.get("verdict", dict()).get(
+        "validationGranularity", "GRANULARITY_UNSPECIFIED"
+    ) in ["OTHER", "GRANULARITY_UNSPECIFIED"]:
+        message = f"Got limited info for {address_to_validate}."
+        LOGGER.info(message)
+        return get_empty_address_validation(address_to_validate)
 
     # Parse the response to extract the desired fields
     json_resp = json_resp["result"]
