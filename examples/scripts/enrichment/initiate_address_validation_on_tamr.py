@@ -1,12 +1,15 @@
 """An example script to create an address validation mapping on Tamr."""
 import argparse
-from typing import Dict, Any
+from typing import Dict
 
 import tamr_toolbox as tbox
 
 
 def main(
-    *, instance_connection_info: Dict[str, Any], existing_mapping_folder: str, dataset_name: str
+    *,
+    instance_connection_info: Dict[str, str],
+    existing_mapping_folder: str,
+    dataset_name: str,
 ) -> None:
     """Create a toolbox address validation mapping dataset on Tamr.
 

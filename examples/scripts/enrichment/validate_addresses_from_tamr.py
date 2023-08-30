@@ -4,6 +4,7 @@ from datetime import timedelta
 from typing import Any, Dict, List
 
 import tamr_toolbox as tbox
+from tamr_toolbox.enrichment.address_validation import get_addr_to_validate
 from tamr_toolbox.enrichment.api_client.google_address_validate import get_empty_address_validation
 from tamr_toolbox.enrichment.enrichment_utils import join_clean_tuple
 
@@ -66,17 +67,19 @@ def main(
     tuples = tbox.enrichment.enrichment_utils.dataframe_to_tuples(
         dataframe=df, columns_to_join=dataset_addr_columns
     )
+    addr_strings = get_addr_to_validate(
+        input_addresses=tuples, addr_mapping=mapping, expiration_date_buffer=timedelta(days=2)
+    )
 
     # Update the `region_code` below to match the expected region of your dataset, or set it to
     # `None` if no region code can be inferred.
     # Update the expiration date buffer depending on update frequency of your pipeline
     mapping = tbox.enrichment.address_validation.from_list(
-        all_addresses=tuples,
+        addresses_to_validate=addr_strings,
         client=maps_client,
         dictionary=mapping,
         enable_usps_cass=False,
         region_code="US",
-        expiration_date_buffer=timedelta(days=2),
     )
 
     if required_columns:

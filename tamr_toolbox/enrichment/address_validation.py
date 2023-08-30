@@ -7,7 +7,6 @@ from typing import Dict, List, Optional, Tuple
 
 from tamr_toolbox.enrichment.address_mapping import AddressValidationMapping, save, update
 from tamr_toolbox.enrichment.api_client.google_address_validate import validate
-
 from tamr_toolbox.enrichment.enrichment_utils import join_clean_tuple
 
 # Building our documentation requires access to all dependencies, including optional ones
@@ -42,6 +41,8 @@ def get_addr_to_validate(
     if str(expiration_date_buffer)[0] == "-":
         raise ValueError("Buffer time for expiration date cannot be negative.")
 
+    input_addresses = list(set(input_addresses))  # De-duplicate inputs
+
     count_new_addr = 0
     count_stale_addr = 0
     addr_to_validate = []
@@ -61,12 +62,13 @@ def get_addr_to_validate(
         count_new_addr,
         count_stale_addr,
     )
+
     LOGGER.debug("Items to validate: %s", addr_to_validate)
     return addr_to_validate
 
 
 def from_list(
-    all_addresses: List[Tuple[Optional[str], ...]],
+    addresses_to_validate: List[str],
     client: "GoogleMapsClient",
     dictionary: Dict[str, AddressValidationMapping],
     *,
@@ -75,7 +77,6 @@ def from_list(
     intermediate_save_every_n: Optional[int] = None,
     intermediate_save_to_disk: bool = False,
     intermediate_folder: str = "/tmp",
-    expiration_date_buffer: timedelta = timedelta(days=1)
 ) -> Dict[str, AddressValidationMapping]:
     """Validate a list of addresses.
 
@@ -83,7 +84,7 @@ def from_list(
     main dictionary.
 
     Args:
-        all_addresses: List of addresses to validate
+        addresses_to_validate: List of addresses to validate
         client: a googlemaps api client
         dictionary: a toolbox validation dictionary
         region_code: optional region code, e.g. 'US' or 'FR', to pass to the maps API
@@ -94,31 +95,14 @@ def from_list(
             avoid loss of validation data if code breaks
         intermediate_folder: path to folder where dictionary will be save periodically to avoid
             loss of validation data
-        expiration_date_buffer: re-validate addresses if they are within this period of expiring
 
     Returns:
         The updated validation dictionary
     """
     if intermediate_save_every_n == 0 or intermediate_save_every_n is None:
-        intermediate_save_every_n = math.inf
-
-    unique_all_addresses = list(set(all_addresses))
-    nbr_of_unique_addresses = len(unique_all_addresses)
-
-    addresses_to_validate = get_addr_to_validate(
-        unique_all_addresses, dictionary, expiration_date_buffer=expiration_date_buffer
-    )
-    nbr_addresses_to_validate = len(addresses_to_validate)
-
-    if nbr_addresses_to_validate == 0:
-        LOGGER.info("All addresses to validate are found in the local dictionary.")
-        return dictionary
-
-    LOGGER.info(
-        "Of %s addresses to validate, %s were not found in the dictionary or were expired.",
-        nbr_of_unique_addresses,
-        nbr_addresses_to_validate,
-    )
+        save_every_n = math.inf
+    else:
+        save_every_n = intermediate_save_every_n
 
     tmp_dictionary = {}
     for idx, address in enumerate(addresses_to_validate):
@@ -132,7 +116,7 @@ def from_list(
 
         tmp_dictionary.update({address: validated_address})
 
-        if ((idx + 1) % intermediate_save_every_n) == 0:
+        if ((idx + 1) % save_every_n) == 0:
             LOGGER.info("Saving intermediate outputs")
             update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
             if intermediate_save_to_disk:
