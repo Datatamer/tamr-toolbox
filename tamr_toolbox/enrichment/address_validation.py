@@ -74,8 +74,8 @@ def from_list(
     *,
     region_code: Optional[str],
     enable_usps_cass: bool = False,
-    intermediate_save_every_n: Optional[int] = None,
     intermediate_save_to_disk: bool = False,
+    intermediate_save_every_n: Optional[int] = None,
     intermediate_folder: str = "/tmp",
 ) -> Dict[str, AddressValidationMapping]:
     """Validate a list of addresses.

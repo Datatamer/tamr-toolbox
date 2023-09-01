@@ -1,5 +1,6 @@
 """Tests for Google Address Validation API functions."""
 
+from unittest import mock
 import pytest
 
 from tamr_toolbox.enrichment.address_mapping import AddressValidationMapping
@@ -110,9 +111,24 @@ def test_with_cass_and_locality():
     assert result == expected
 
 
-@mock_api()
-def test_no_result():
+def test_empty_string_result():
     client = google_address_validate.get_maps_client("AIzaTestKeyTestKeyTestKeyTestKeyTestKey")
 
-    with pytest.raises(RuntimeError, match="Got no result"):
-        google_address_validate.validate(address_to_validate="", client=client, region_code="US")
+    assert google_address_validate.get_empty_address_validation(
+        input_addr=""
+    ) == google_address_validate.validate(address_to_validate="", client=client, region_code="US")
+
+
+def test_api_errors():
+    client = google_address_validate.get_maps_client("AIzaTestKeyTestKeyTestKeyTestKeyTestKey")
+
+    with mock.patch(
+        "googlemaps.Client._request", return_value={"this": "is a dict", "without a": "result key"}
+    ):
+        with pytest.raises(RuntimeError, match="Got no result for "):
+            google_address_validate.validate(
+                address_to_validate="this is a bad address", client=client, fail_on_api_error=True
+            )
+        assert google_address_validate.validate(
+            address_to_validate="this is a bad address", client=client, fail_on_api_error=False
+        ) == google_address_validate.get_empty_address_validation("this is a bad address")
