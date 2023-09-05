@@ -6,10 +6,7 @@ import tamr_toolbox as tbox
 
 
 def main(
-    *,
-    instance_connection_info: Dict[str, str],
-    existing_mapping_folder: str,
-    dataset_name: str,
+    *, instance_connection_info: Dict[str, str], existing_mapping_folder: str, dataset_name: str
 ) -> None:
     """Create a toolbox address validation mapping dataset on Tamr.
 
