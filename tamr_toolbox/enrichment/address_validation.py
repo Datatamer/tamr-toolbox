@@ -45,15 +45,15 @@ def get_addr_to_validate(
 
     count_new_addr = 0
     count_stale_addr = 0
-    addr_to_validate = []
+    addr_to_validate = set()
 
     for addr in input_addresses:
         joined_addr = join_clean_tuple(addr)
         if joined_addr not in addr_mapping.keys():
-            addr_to_validate.append(joined_addr)
+            addr_to_validate.add(joined_addr)
             count_new_addr += 1
         elif addr_mapping[joined_addr].expiration < str(datetime.now() + expiration_date_buffer):
-            addr_to_validate.append(joined_addr)
+            addr_to_validate.add(joined_addr)
             count_stale_addr += 1
 
     LOGGER.info(
@@ -64,7 +64,7 @@ def get_addr_to_validate(
     )
 
     LOGGER.debug("Items to validate: %s", addr_to_validate)
-    return addr_to_validate
+    return list(addr_to_validate)
 
 
 def from_list(
