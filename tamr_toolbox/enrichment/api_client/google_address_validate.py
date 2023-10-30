@@ -1,3 +1,5 @@
+"""Functions to interact with Google Maps API Client."""
+
 import logging
 import os
 from datetime import datetime, timedelta
@@ -39,7 +41,8 @@ def validate(
     locality: Optional[str] = None,
     region_code: Optional[str] = None,
     enable_usps_cass: bool = False,
-) -> Optional[AddressValidationMapping]:
+    fail_on_api_error: bool = False,
+) -> AddressValidationMapping:
     """Validate an address using google's address validation API.
 
     Args:
@@ -48,14 +51,19 @@ def validate(
         region_code: region to use for validation, optional
         locality: locality to use for validation, optional
         enable_usps_cass: whether to use USPS validation
+        fail_on_api_error: whether to raise an error if API call fails, or continue processing
 
     Returns:
-        toolbox address validation mapping, or None if API call fails
+        toolbox address validation mapping
 
     Raises:
-        RuntimeError: if API key is invalid
+        RuntimeError: if API key is invalid, or if API call fails and fail_on_api_error is True
     """
-    params = {"address": {"addressLines": [address_to_validate]}}
+
+    if address_to_validate == "":
+        return get_empty_address_validation("")
+
+    params: JsonDict = {"address": {"addressLines": [address_to_validate]}}
 
     if region_code:
         params["address"]["regionCode"] = region_code
@@ -82,7 +90,10 @@ def validate(
     if not json_resp.get("result"):
         message = f"Got no result for {address_to_validate}: API returned {json_resp}."
         LOGGER.error(message)
-        raise RuntimeError(message)
+        if fail_on_api_error:
+            raise RuntimeError(message)
+        else:
+            return get_empty_address_validation(address_to_validate)
 
     # Parse the response to extract the desired fields
     json_resp = json_resp["result"]
@@ -126,4 +137,45 @@ def validate(
         has_unconfirmed=json_resp.get("verdict", dict()).get("hasUnconfirmedComponents", False),
         has_replaced=json_resp.get("verdict", dict()).get("hasReplacedComponents", False),
         address_complete=json_resp.get("verdict", dict()).get("addressComplete", False),
+    )
+
+
+def get_empty_address_validation(input_addr: str) -> AddressValidationMapping:
+    """Get address validation data with only input address; other fields set to empty or default
+    values.
+
+    Expiration date is set to the year 2100 to avoid excess called to the API with null or bad
+    data.
+
+    Args:
+        input_address: the address to be validated
+
+    Returns:
+        A validation object with all fields except `input_address` and `expiration` set to null
+        values.
+    """
+    return AddressValidationMapping(
+        input_address=input_addr,
+        validated_formatted_address=None,
+        expiration=str(datetime(2100, 1, 1)),
+        region_code=None,
+        postal_code=None,
+        admin_area=None,
+        locality=None,
+        address_lines=[],
+        usps_first_address_line=None,
+        usps_city_state_zip_line=None,
+        usps_city=None,
+        usps_state=None,
+        usps_zip_code=None,
+        latitude=None,
+        longitude=None,
+        place_id=None,
+        input_granularity="GRANULARITY_UNSPECIFIED",
+        validation_granularity="GRANULARITY_UNSPECIFIED",
+        geocode_granularity="GRANULARITY_UNSPECIFIED",
+        has_inferred=True,
+        has_unconfirmed=True,
+        has_replaced=True,
+        address_complete=False,
     )

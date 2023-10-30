@@ -1,11 +1,13 @@
 """An example script to validate address data from disk and save results on disk."""
 import argparse
 from dataclasses import fields
+from datetime import timedelta
 from typing import List
 
 import pandas as pd
 
 import tamr_toolbox as tbox
+from tamr_toolbox.enrichment.address_validation import get_addr_to_validate
 from tamr_toolbox.enrichment.enrichment_utils import join_clean_tuple
 
 
@@ -45,10 +47,11 @@ def main(
     tuples = tbox.enrichment.enrichment_utils.dataframe_to_tuples(
         dataframe=dataframe, columns_to_join=address_columns
     )
+    addr = get_addr_to_validate(tuples, mapping, expiration_date_buffer=timedelta(days=1))
 
-    LOGGER.info("Generated %s tuples; beginning API validation", len(tuples))
+    LOGGER.info("Generated %s addresses; beginning API validation", len(tuples))
     mapping = tbox.enrichment.address_validation.from_list(
-        all_addresses=list(set(tuples)),
+        addresses_to_validate=addr,
         client=maps_client,
         dictionary=mapping,
         region_code="US",

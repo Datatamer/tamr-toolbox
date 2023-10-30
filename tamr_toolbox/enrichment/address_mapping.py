@@ -140,7 +140,9 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
             # Values are returned as a length-1 list of string, we change this to strings
             entry = AddressValidationMapping(
                 input_address=record["input_address"],
-                validated_formatted_address=record["validated_formatted_address"][0],
+                validated_formatted_address=record["validated_formatted_address"][0]
+                if record["validated_formatted_address"]
+                else None,
                 expiration=record["expiration"][0],
                 region_code=record["region_code"][0] if record["region_code"] else None,
                 postal_code=record["postal_code"][0] if record["postal_code"] else None,

@@ -41,17 +41,19 @@ def get_addr_to_validate(
     if str(expiration_date_buffer)[0] == "-":
         raise ValueError("Buffer time for expiration date cannot be negative.")
 
+    input_addresses = list(set(input_addresses))  # De-duplicate inputs
+
     count_new_addr = 0
     count_stale_addr = 0
-    addr_to_validate = []
+    addr_to_validate = set()
 
     for addr in input_addresses:
         joined_addr = join_clean_tuple(addr)
         if joined_addr not in addr_mapping.keys():
-            addr_to_validate.append(joined_addr)
+            addr_to_validate.add(joined_addr)
             count_new_addr += 1
         elif addr_mapping[joined_addr].expiration < str(datetime.now() + expiration_date_buffer):
-            addr_to_validate.append(joined_addr)
+            addr_to_validate.add(joined_addr)
             count_stale_addr += 1
 
     LOGGER.info(
@@ -60,21 +62,21 @@ def get_addr_to_validate(
         count_new_addr,
         count_stale_addr,
     )
+
     LOGGER.debug("Items to validate: %s", addr_to_validate)
-    return addr_to_validate
+    return list(addr_to_validate)
 
 
 def from_list(
-    all_addresses: List[Tuple[Optional[str], ...]],
+    addresses_to_validate: List[str],
     client: "GoogleMapsClient",
     dictionary: Dict[str, AddressValidationMapping],
     *,
     region_code: Optional[str],
     enable_usps_cass: bool = False,
-    intermediate_save_every_n: Optional[int] = None,
     intermediate_save_to_disk: bool = False,
+    intermediate_save_every_n: Optional[int] = None,
     intermediate_folder: str = "/tmp",
-    expiration_date_buffer: timedelta = timedelta(days=1)
 ) -> Dict[str, AddressValidationMapping]:
     """Validate a list of addresses.
 
@@ -82,7 +84,7 @@ def from_list(
     main dictionary.
 
     Args:
-        all_addresses: List of addresses to validate
+        addresses_to_validate: List of addresses to validate
         client: a googlemaps api client
         dictionary: a toolbox validation dictionary
         region_code: optional region code, e.g. 'US' or 'FR', to pass to the maps API
@@ -93,55 +95,38 @@ def from_list(
             avoid loss of validation data if code breaks
         intermediate_folder: path to folder where dictionary will be save periodically to avoid
             loss of validation data
-        expiration_date_buffer: re-validate addresses if they are within this period of expiring
 
     Returns:
         The updated validation dictionary
     """
     if intermediate_save_every_n == 0 or intermediate_save_every_n is None:
-        intermediate_save_every_n = math.inf
-
-    unique_all_addresses = list(set(all_addresses))
-    nbr_of_unique_addresses = len(unique_all_addresses)
-
-    addresses_to_validate = get_addr_to_validate(
-        unique_all_addresses, dictionary, expiration_date_buffer=expiration_date_buffer
-    )
-    nbr_addresses_to_validate = len(addresses_to_validate)
-
-    if nbr_addresses_to_validate == 0:
-        LOGGER.info("All addresses to validate are found in the local dictionary.")
-
+        save_every_n = math.inf
     else:
-        LOGGER.info(
-            "Of %s addresses to validate, %s were not found in the dictionary or were expired.",
-            nbr_of_unique_addresses,
-            nbr_addresses_to_validate,
+        save_every_n = intermediate_save_every_n
+
+    tmp_dictionary = {}
+    for idx, address in enumerate(addresses_to_validate):
+        validated_address = validate(
+            address_to_validate=address,
+            client=client,
+            locality=None,
+            region_code=region_code,
+            enable_usps_cass=enable_usps_cass,
         )
 
-        tmp_dictionary = {}
-        for idx, address in enumerate(addresses_to_validate):
-            validated_address = validate(
-                address_to_validate=address,
-                client=client,
-                locality=None,
-                region_code=region_code,
-                enable_usps_cass=enable_usps_cass,
-            )
-            if validated_address is not None:
-                tmp_dictionary.update({address: validated_address})
+        tmp_dictionary.update({address: validated_address})
 
-            if ((idx + 1) % intermediate_save_every_n) == 0:
-                LOGGER.info("Saving intermediate outputs")
-                update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
-                if intermediate_save_to_disk:
-                    save(addr_mapping=dictionary, addr_folder=intermediate_folder)
-                # Reset temporary results after saving
-                tmp_dictionary = {}
+        if ((idx + 1) % save_every_n) == 0:
+            LOGGER.info("Saving intermediate outputs")
+            update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
+            if intermediate_save_to_disk:
+                save(addr_mapping=dictionary, addr_folder=intermediate_folder)
+            # Reset temporary results after saving
+            tmp_dictionary = {}
 
-        # update dictionary
-        update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
-        if intermediate_save_to_disk:
-            save(addr_mapping=dictionary, addr_folder=intermediate_folder)
+    # update dictionary
+    update(main_dictionary=dictionary, tmp_dictionary=tmp_dictionary)
+    if intermediate_save_to_disk:
+        save(addr_mapping=dictionary, addr_folder=intermediate_folder)
 
     return dictionary
