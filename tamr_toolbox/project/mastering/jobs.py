@@ -422,7 +422,7 @@ def update_results_only(
         run_generate_pairs=False,
         run_apply_feedback=False,
         run_update_pair_results=True,
-        run_update_high_impact_pairs=True,
+        run_update_high_impact_pairs=False,
         run_update_cluster_results=True,
         run_publish_clusters=False,
         process_asynchronously=process_asynchronously,
