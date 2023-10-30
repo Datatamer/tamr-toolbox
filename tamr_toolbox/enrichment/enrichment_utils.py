@@ -1,8 +1,7 @@
 """Utilities shared by enrichment services."""
 import json
 import os
-from typing import Any, List, Optional, Tuple
-
+from typing import Any, Generator, List, Optional, Tuple
 
 # Building our documentation requires access to all dependencies, including optional ones
 # This environments variable is set automatically when `invoke docs` is used
@@ -30,7 +29,7 @@ class SetEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, python_object)
 
 
-def _yield_chunk(list_to_split: List[Any], chunk_size: int) -> List[List[Any]]:
+def _yield_chunk(list_to_split: List[Any], chunk_size: int) -> Generator[List[Any], Any, Any]:
     """
     Split a list into a List of List with constant length
 
@@ -105,4 +104,4 @@ def join_clean_tuple(tup: Tuple[Optional[str], ...]) -> str:
     Returns:
         uppercased string made from joining tuple entries.
     """
-    return " ".join([x.strip().upper() for x in tup if x])
+    return " ".join([x.strip().upper() for x in tup if x and x.strip()])

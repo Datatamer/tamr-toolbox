@@ -53,7 +53,7 @@ def test_empty_addr_mapping():
         addr_mapping={},
     )
 
-    assert result == ["TEST ADDRESS 1", "TEST ADDRESS 2", "TEST"]
+    assert set(result) == set(["TEST ADDRESS 1", "TEST ADDRESS 2", "TEST"])
 
 
 def test_stale_addr_mapping():
@@ -71,27 +71,26 @@ def test_stale_addr_mapping():
             1,
         )
 
-    assert result == ["TEST ADDRESS 1", "TEST ADDRESS 2", "TEST"]
+    assert set(result) == set(["TEST ADDRESS 1", "TEST ADDRESS 2", "TEST"])
 
 
 def test_from_list_all_in_dict():
-    googlemaps_api_key = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
-
     with patch.object(
         logging.getLogger("tamr_toolbox.enrichment.address_validation"), "info"
     ) as mock_logger:
-        from_list(
-            all_addresses=[("test", "address 1")],
-            client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
-            dictionary={
+        get_addr_to_validate(
+            input_addresses=[("TEST ", "ADDRESS 1 ")],
+            addr_mapping={
                 "TEST ADDRESS 1": replace(
                     ADDR_VAL_MAPPING_0, expiration=str(datetime.now() + timedelta(days=2))
                 )
             },
-            region_code="US",
         )
         mock_logger.assert_called_with(
-            "All addresses to validate are found in the local dictionary."
+            "From %s sent for validation, %s have been not been validated before; %s are stale.",
+            1,
+            0,
+            0,
         )
 
 
@@ -100,7 +99,7 @@ def test_from_list():
     googlemaps_api_key = "AIzaTestKeyTestKeyTestKeyTestKeyTestKey"
 
     result = from_list(
-        all_addresses=[("66 church st", "cambridge", "mass", "02138")],
+        addresses_to_validate=["66 CHURCH ST CAMBRIDGE MASS 02138"],
         client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
         dictionary={},
         region_code="US",
@@ -120,7 +119,7 @@ def test_from_list_intermediate_save():
     # Test saving after every lookup
     with patch.object(tamr_toolbox.enrichment.address_validation, "save") as mock_save:
         result = from_list(
-            all_addresses=[("66 church st", "cambridge", "mass", "02138")],
+            addresses_to_validate=["66 CHURCH ST CAMBRIDGE MASS 02138"],
             client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
             dictionary={},
             region_code="US",
@@ -132,7 +131,7 @@ def test_from_list_intermediate_save():
     # Test saving only at end
     with patch.object(tamr_toolbox.enrichment.address_validation, "save") as mock_save:
         result = from_list(
-            all_addresses=[("66 church st", "cambridge", "mass", "02138")],
+            addresses_to_validate=["66 CHURCH ST CAMBRIDGE MASS 02138"],
             client=get_maps_client(googlemaps_api_key=googlemaps_api_key),
             dictionary={},
             region_code="US",
