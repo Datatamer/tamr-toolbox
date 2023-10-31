@@ -3,10 +3,8 @@ from dataclasses import dataclass
 import json
 import logging
 import requests
-from enum import Enum
 from tamr_toolbox.data_io.core_connect import jdbc_info
 from tamr_toolbox.models.data_type import JsonDict
-from tamr_toolbox.data_io.file_system_type import FileSystemType
 from tamr_unify_client.auth import UsernamePasswordAuth
 from typing import Dict, List, Union, Optional
 
@@ -160,47 +158,6 @@ def _get_query_config(jdbc_info: jdbc_info.JdbcInfo) -> Dict:
     return query_config
 
 
-# def _get_export_config(
-#     multi_value_delimiter: str = "|",
-#     limit_records: int = 0,
-#     columns_exclude_regex: str = "",
-#     rename_fields: Dict[str, str] = {},
-# ) -> Dict:
-#     """Packages relevant pieces of JdbcExportInfo object into an exportDataConfig for jdbc export
-#      in form of json dictionary
-#
-#     Args:
-#         multi_value_delimiter: value with which to delimit multivalues. default is |
-#         limit_records: number of records to stream. default is 0 (export all records)
-#         columns_exclude_regex: override config file for columnsExcludeRegex, default is empty
-#             string
-#         rename_fields: Dictionary in the format {“field_to_be_renamed”:“new_name”}
-#
-#     Returns:
-#         A dictionary suitable for usage in all df_connect API calls around jdbc export
-#     """
-#
-#     # build json object
-#     export_config = {
-#         "mergedArrayValuesDelimiter": multi_value_delimiter,
-#         "limitRecords": limit_records,
-#         "columnsExcludeRegex": columns_exclude_regex,
-#         "renameFields": rename_fields,
-#     }
-#     return export_config
-
-
-# def _get_avro_url_export_config(url: str, dataset_name: str) -> JsonDict:
-#     """Generates json needed for using avro(schema) export endpoints.
-#     Primary key is always set to [] since needing it is an artifact of the df-connect endpoint
-#
-#     Args:
-#         url: the url to which the avro(schema) will be written
-#         dataset_name: the dataset for which the avro(schema) will be written
-#     """
-#     return {"url": url, "datasetName": dataset_name, "primaryKey": []}
-
-
 def get_connect_session(connect_info: Client) -> requests.Session:
     """Returns an authenticated session using Tamr credentials from configuration.
     Raises an exception if core_connect is not installed or running correctly.
@@ -333,7 +290,6 @@ def profile_query_results(
     # check if successful, and if so, return request JSON
     r.raise_for_status()
     return r.json()
-
 
 
 
