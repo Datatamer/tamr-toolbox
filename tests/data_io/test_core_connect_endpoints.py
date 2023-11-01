@@ -1,6 +1,5 @@
 """Tests for related to the Tamr auxiliary service DF-connect endpoints"""
 from tamr_toolbox.data_io.core_connect import client
-from tamr_toolbox.data_io.file_system_type import FileSystemType
 from tamr_toolbox import utils
 
 from tamr_toolbox.utils.testing import mock_api
@@ -50,4 +49,3 @@ def test_profile():
             "select * from dataset.attribute_ns_current limit 100",
         ],
     )
-
