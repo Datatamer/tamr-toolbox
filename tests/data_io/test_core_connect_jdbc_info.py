@@ -4,7 +4,9 @@ from tamr_toolbox.data_io.core_connect import jdbc_info
 from tamr_toolbox.utils import config
 from tests._common import get_toolbox_root_dir
 
-CONFIG = config.from_yaml(get_toolbox_root_dir() / "tests/mocking/resources/core_connect.config.yaml")
+CONFIG = config.from_yaml(
+    get_toolbox_root_dir() / "tests/mocking/resources/core_connect.config.yaml"
+)
 
 
 def test_from_json():

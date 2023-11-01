@@ -6,7 +6,7 @@ import requests
 from tamr_toolbox.data_io.core_connect import jdbc_info
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client.auth import UsernamePasswordAuth
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional
 
 LOGGER = logging.getLogger(__name__)
 
@@ -290,6 +290,5 @@ def profile_query_results(
     # check if successful, and if so, return request JSON
     r.raise_for_status()
     return r.json()
-
 
 
