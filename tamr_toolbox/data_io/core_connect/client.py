@@ -178,7 +178,7 @@ def get_connect_session(connect_info: Client) -> requests.Session:
     s.headers.update({"Accept": "application/json"})
     s.cert = connect_info.cert
 
-    # test that df_connect is running properly
+    # test that core_connect is running properly
     url = _get_url(connect_info, "/api/service/health")
     try:
         r = s.get(url)
@@ -218,7 +218,7 @@ def ingest_dataset(
     else:
         primary_key = primary_key.split(",")
 
-    # establish a df_connect session
+    # establish a core_connect session
     connect_session = get_connect_session(connect_info)
 
     # ingest data
@@ -267,7 +267,7 @@ def profile_query_results(
     # primary key must be passed but isn't used
     primary_key = []
 
-    # establish a df_connect session
+    # establish a core_connect session
     connect_session = get_connect_session(connect_info)
 
     # run profiling
