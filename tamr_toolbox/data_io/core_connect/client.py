@@ -290,4 +290,3 @@ def profile_query_results(
     # check if successful, and if so, return request JSON
     r.raise_for_status()
     return r.json()
-
