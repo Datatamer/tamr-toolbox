@@ -41,7 +41,9 @@ def ingest_dataset(
             tamr_version=version.current(client),
             min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']
     ):
-        LOGGER.info(f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}")
+        LOGGER.info(
+            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
+        )
     else:
         error_message = "Core-connect is not available in current version of Tamr."
         LOGGER.error(error_message)

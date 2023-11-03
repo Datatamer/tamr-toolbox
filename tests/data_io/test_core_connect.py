@@ -36,7 +36,7 @@ def test_ingest_dataset():
     jdbc_connect = CONFIG["core_connect"]["jdbc"]["ingest"]
 
     # Reset test datasets if they exist
-    remove_test_datasets(client=tamr_client)
+    # remove_test_datasets(client=tamr_client)
 
     tbox.data_io.core_connect.ingest_dataset(
         client=tamr_client,
