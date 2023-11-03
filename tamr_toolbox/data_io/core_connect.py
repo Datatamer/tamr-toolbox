@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 def ingest_dataset(
     *, client: Client, jdbc_connect: JsonDict, dataset_name: str, query: str, primary_key=None,
-    truncate_tamr_dataset=None, retrieve_connect_metadata=None, retrieve_source_metadata=None
+    truncate_tamr_dataset=None, retrieve_connect_metadata=None, retrieve_source_metadata=None,
 ) -> JsonDict:
     """
     Ingest a dataset into Tamr via core_connect given query config, dataset name, query string,
@@ -39,10 +39,10 @@ def ingest_dataset(
     # Check Tamr version
     if version.is_version_condition_met(
             tamr_version=version.current(client),
-            min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']
+            min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT'],
     ):
         LOGGER.info(
-            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
+            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}",
         )
     else:
         error_message = "Core-connect is not available in current version of Tamr."
@@ -84,7 +84,7 @@ def ingest_dataset(
         raise Exception(error_message)
     else:
         LOGGER.info(
-            f"Dataset {dataset_name} is ingested successfully. "
+            f"Dataset {dataset_name} is ingested successfully."
         )
 
     return
