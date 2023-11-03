@@ -4,12 +4,6 @@ from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
 from tamr_unify_client import Client
 from tests._common import get_toolbox_root_dir
-import os
-
-os.environ.setdefault("CONNECT_TOOLBOX_POSTGRES_JDBC", "jdbc:postgresql://localhost:5432/doit")
-os.environ.setdefault("CONNECT_TOOLBOX_DB_PASSWORD", "12345")
-os.environ.setdefault("TAMR_TOOLBOX_HOST", "10.20.0.250")
-os.environ.setdefault("TAMR_TOOLBOX_PASSWORD", "8&j0DhqrLrOF")
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
