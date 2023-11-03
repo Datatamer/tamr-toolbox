@@ -57,27 +57,6 @@ Check if Tamr dataset is streamable
 .. literalinclude:: ../../examples/snippets/data_io/df_connect/streamable_check.py
   :language: python
 
-Core-Connect
-------------------------------------------------------------------------
-Connecting to Tamr's Core-Connect
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Connecting to Tamr's core-connect is straightforward using the tamr-toolbox.
-The module that does this is `tamr_toolbox/data_io/core_connect` and the main object is an instance of type `ConnectInfo`.
-The easiest way to generate such an object is via reading in a configuration file like so:
-
-.. literalinclude:: ../../examples/resources/conf/core_connect.config.yaml
-  :language: yaml
-
-Ingesting a table as a Tamr dataset
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. literalinclude:: ../../examples/snippets/data_io/core_connect/ingest_simple.py
-  :language: python
-
-Profiling tables and writing results to a Tamr dataset
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. literalinclude:: ../../examples/snippets/data_io/core_connect/profile_simple.py
-  :language: python
-
 Dataframe
 ------------------------------------------------------------------------
 
