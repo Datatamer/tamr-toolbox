@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  schedule:
+    - cron: '0 0 * * 3'
   push:
     branches:
       - main
@@ -125,3 +127,25 @@ jobs:
           echo "cov total fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
           echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
           exit 1
+  Notify:
+    if: ${{ !cancelled() && github.event_name == 'schedule' }}  # notify for scheduled runs, not pushes
+    needs:  # list all preceding jobs
+      - Lint
+      - Test
+      - Test-Minimum-Versions
+      - Test-Windows
+      - Test-Core-Dependencies
+      - Enforce-Test-Coverage
+    runs-on: ubuntu-latest
+    permissions:
+      actions: 'read'
+    steps:
+    - name: Slack Workflow Notification
+      uses: Gamesight/slack-workflow-status@master
+      with:
+        repo_token: ${{secrets.GITHUB_TOKEN}}
+        slack_webhook_url: ${{secrets.TBOX_SLACK_WEBHOOK}}
+        include_jobs: 'on-failure'  # only include jobs specifics if failure
+    
+
+
