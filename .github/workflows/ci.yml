@@ -152,7 +152,7 @@ jobs:
                       "type": "section",
                       "text": {
                           "type": "mrkdwn",
-                          "text": "${{ job.status == 'success' && '\u2705' || '\u274C' }} Scheduled GitHub CI: ${{ job.status == 'success' && '*Success!*' || '*Failure*'}}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+                          "text": "${{ contains(needs.*.result, 'failure')  && '\u274C' || '\u2705' }} Scheduled GitHub CI: ${{ contains(needs.*.result, 'failure')  && '*Failure*' || '*Success*!' }}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
                       }
                   }
               ]
