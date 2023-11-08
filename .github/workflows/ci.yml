@@ -149,8 +149,8 @@ jobs:
             "text": "GitHub CI action result: ${{ job.status }}",
             "blocks": [
               # {
-			        #   "type": "rich_text",
-			        #    "elements": [
+              #   "type": "rich_text",
+              #    "elements": [
               #       {
               #         "type": "rich_text_section",
               #         "elements": [
@@ -160,8 +160,8 @@ jobs:
               #           }
               #         ]
               #       }
-			        #     ]
-		          # },
+              #     ]
+              # },
               {
                 "type": "section",
                 "text": {
