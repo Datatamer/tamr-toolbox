@@ -29,7 +29,7 @@ jobs:
     - name: Run flake8
       run: invoke lint
     - name: Run black
-      run: invoke format
+      run: invoke format && this-isnt-a-real-command
   # Test:
   #   strategy:
   #     matrix:
@@ -149,10 +149,24 @@ jobs:
             "text": "GitHub CI action result: ${{ job.status }}",
             "blocks": [
               {
+			          "type": "rich_text",
+			          "elements": [
+                  {
+                    "type": "rich_text_section",
+                    "elements": [
+                      {
+                        "type": "emoji",
+                        "name": ${{job.status == "success" && "white_check_mark" || "rotating_light" }}
+                      }
+                    ]
+                  }
+			          ]
+		          },
+              {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "GitHub CI Action result: ${{ job.status }}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+                  "text": "Scheduled GitHub CI: ${{ job.status == "success" && "*Success!*" || "*Failure*"}}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
                 }
               }
             ]
