@@ -29,7 +29,7 @@ jobs:
     - name: Run flake8
       run: invoke lint
     - name: Run black
-      run: invoke format && this-isnt-a-real-command
+      run: invoke format
   # Test:
   #   strategy:
   #     matrix:
@@ -156,7 +156,7 @@ jobs:
                     "elements": [
                       {
                         "type": "emoji",
-                        "name": ${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}
+                        "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}"
                       }
                     ]
                   }
