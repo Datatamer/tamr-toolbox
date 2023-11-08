@@ -142,7 +142,7 @@ jobs:
       actions: 'read'
     steps:
     - name: Slack Workflow Notification
-      uses: slackapi/slack-github-action@main
+      uses: slackapi/slack-github-action@v1.24.0
       with:
         payload: |
           {
