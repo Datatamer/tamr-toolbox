@@ -156,7 +156,7 @@ jobs:
                     "elements": [
                       {
                         "type": "emoji",
-                        "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}"
+                        "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}",
                       }
                     ]
                   }
