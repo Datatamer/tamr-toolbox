@@ -150,17 +150,17 @@ jobs:
             "blocks": [
               {
 			          "type": "rich_text",
-			          "elements": [
-                  {
-                    "type": "rich_text_section",
-                    "elements": [
-                      {
-                        "type": "emoji",
-                        "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}",
-                      }
-                    ]
-                  }
-			          ]
+			           "elements": [
+                    {
+                      "type": "rich_text_section",
+                      "elements": [
+                        {
+                          "type": "emoji",
+                          "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}",
+                        }
+                      ]
+                    }
+			            ]
 		          },
               {
                 "type": "section",
