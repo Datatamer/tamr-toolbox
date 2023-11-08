@@ -122,3 +122,4 @@ release/*
 examples/resources/*.yaml
 examples/resources/*.sh
 examples/resources/logs
+tests/mocking/resources/*.sh
