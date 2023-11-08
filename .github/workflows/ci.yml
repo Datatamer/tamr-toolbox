@@ -148,20 +148,20 @@ jobs:
           {
             "text": "GitHub CI action result: ${{ job.status }}",
             "blocks": [
-              {
-			          "type": "rich_text",
-			           "elements": [
-                    {
-                      "type": "rich_text_section",
-                      "elements": [
-                        {
-                          "type": "emoji",
-                          "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}",
-                        }
-                      ]
-                    }
-			            ]
-		          },
+              # {
+			        #   "type": "rich_text",
+			        #    "elements": [
+              #       {
+              #         "type": "rich_text_section",
+              #         "elements": [
+              #           {
+              #             "type": "emoji",
+              #             "name": "${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}",
+              #           }
+              #         ]
+              #       }
+			        #     ]
+		          # },
               {
                 "type": "section",
                 "text": {
