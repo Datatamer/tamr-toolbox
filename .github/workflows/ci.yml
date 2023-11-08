@@ -146,13 +146,13 @@ jobs:
       with:
         payload: |
           {
-            "text": "GitHub CI action result: ${{ job.status }}\n${{ github.event.head_commit.url }}",
+            "text": "GitHub CI action result: ${{ job.status }}",
             "blocks": [
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "GitHub CI Action result: ${{ job.status }}\n${{ github.event.head_commit.url }}"
+                  "text": "GitHub CI Action result: ${{ job.status }}\n${{ https://github.com/${{github.repository}}/commit/${{github.sha}}/checks/${{github.run_id}} }}"
                 }
               }
             ]
