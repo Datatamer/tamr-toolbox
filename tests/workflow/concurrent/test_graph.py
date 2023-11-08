@@ -54,9 +54,9 @@ def test_from_edges():
         ("minimal_categorization", "chained_minimal_mastering"),
         ("minimal_schema_mapping", "chained_minimal_schema_mapping"),
     }
-    test_graph = Graph.from_edges(test_edges)
+    test_graph = Graph.from_edges(test_edges, nodes={})
     # check nothing got mutated
-    assert test_graph.edges == test_edges
+    assert set(test_graph.edges()) == test_edges
 
     # check we have the right set of nodes
     expected_nodes = {
@@ -65,7 +65,7 @@ def test_from_edges():
         "chained_minimal_schema_mapping",
         "minimal_categorization",
     }
-    assert expected_nodes == {x for x in test_graph.directed_graph.nodes}
+    assert expected_nodes == {x for x in test_graph.nodes()}
 
 
 @mock_api()
@@ -87,9 +87,9 @@ def test_from_project_list():
         "chained_minimal_schema_mapping",
         "minimal_categorization",
     }
-    assert expected_nodes == {x for x in test_graph.directed_graph.nodes}
+    assert expected_nodes == {x for x in test_graph.nodes()}
     # and the right number (since set dedups for us)
-    assert len(expected_nodes) == len([x for x in test_graph.directed_graph.nodes])
+    assert len(expected_nodes) == len([x for x in test_graph.nodes()])
 
 
 @mock_api()
@@ -215,15 +215,15 @@ def test_add_edges():
     # take the original edges, remove one in the middle
     # create a graph from the resulting slices
     # then add the sliced out edge and ensure the project_tier_jsons from the graphs are the same
-    original_edges = test_graph.edges
-    test_edges = set(random.sample([x for x in original_edges], len(original_edges) - 1))
-    sliced_edge = {x for x in original_edges if x not in test_edges}
+    original_edges = set(test_graph.edges())
+    test_edges = set(random.sample(list(original_edges), len(original_edges) - 1))
+    sliced_edge_set = {x for x in original_edges if x not in test_edges}
 
     # build test graph
-    new_test_graph = Graph.from_edges(test_edges)
+    new_test_graph = Graph.from_edges(test_edges, set(test_graph.nodes()))
     # make sure the project_tier_jsons don't match at this point
     assert Graph.get_projects_by_tier(test_graph) != Graph.get_projects_by_tier(new_test_graph)
 
     # add sliced edge and make sure the project_tier_jsons now match
-    new_test_graph = Graph.add_edges(new_test_graph, sliced_edge)
+    new_test_graph = Graph.add_edges(new_test_graph, sliced_edge_set)
     assert Graph.get_projects_by_tier(test_graph) == Graph.get_projects_by_tier(new_test_graph)
