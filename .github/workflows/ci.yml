@@ -156,7 +156,7 @@ jobs:
                     "elements": [
                       {
                         "type": "emoji",
-                        "name": ${{job.status == "success" && "white_check_mark" || "rotating_light" }}
+                        "name": ${{job.status == 'success' && 'white_check_mark' || 'rotating_light' }}
                       }
                     ]
                   }
@@ -166,7 +166,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "Scheduled GitHub CI: ${{ job.status == "success" && "*Success!*" || "*Failure*"}}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+                  "text": "Scheduled GitHub CI: ${{ job.status == 'success' && '*Success!*' || '*Failure*'}}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
                 }
               }
             ]
