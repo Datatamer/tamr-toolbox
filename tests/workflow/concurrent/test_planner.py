@@ -22,14 +22,21 @@ CONFIG = utils.config.from_yaml(
 @mock_api()
 def test_from_graph():
     tamr = utils.client.create(**CONFIG["toolbox_test_instance"])
-    # get final project in pipeline
+    # Get final project in pipeline
     test_output_project_name = "chained_minimal_golden_records"
     test_output_project = tamr.projects.by_name(test_output_project_name)
-    test_graph = Graph.from_project_list([test_output_project], tamr)
+    # Get independent project
+    test_indep_project_name = "minimal_mastering"
+    test_indep_project = tamr.projects.by_name(test_indep_project_name)
+    # Build graph
+    test_graph = Graph.from_project_list([test_output_project, test_indep_project], tamr)
+
+    # Build plan
     test_planner = Planner.from_graph(test_graph, tamr_client=tamr)
     # make sure we got the right keys for the plan object created
     test_plan_keys = {x for x in test_planner.plan.keys()}
     assert test_plan_keys == {
+        "minimal_mastering",
         "minimal_categorization",
         "minimal_schema_mapping",
         "chained_minimal_schema_mapping",
@@ -38,13 +45,33 @@ def test_from_graph():
     }
 
 
+@mock_api()
+def test_plan_indep_project():
+    tamr = utils.client.create(**CONFIG["toolbox_test_instance"])
+    # Get independent project
+    test_indep_project_name = "minimal_mastering"
+    test_indep_project = tamr.projects.by_name(test_indep_project_name)
+    # Build graph
+    test_graph = Graph.from_project_list([test_indep_project], tamr)
+
+    # Build plan
+    test_planner = Planner.from_graph(test_graph, tamr_client=tamr)
+    # Make sure we got the right keys for the plan object created
+    assert {"minimal_mastering"} == {x for x in test_planner.plan.keys()}
+    assert test_planner.plan["minimal_mastering"].status == PlanNodeStatus.PlanNodeStatus.RUNNABLE
+
+
 @mock_api(asynchronous=True)
 def test_update_plan_for_failed():
     tamr = utils.client.create(**CONFIG["toolbox_test_instance"])
-    # get final project in pipeline
+    # Get final project in pipeline
     test_output_project_name = "chained_minimal_golden_records"
     test_output_project = tamr.projects.by_name(test_output_project_name)
-    test_graph = Graph.from_project_list([test_output_project], tamr)
+    # Get independent project
+    test_indep_project_name = "minimal_mastering"
+    test_indep_project = tamr.projects.by_name(test_indep_project_name)
+    # Build graph and planner
+    test_graph = Graph.from_project_list([test_output_project, test_indep_project], tamr)
     test_planner = Planner.from_graph(test_graph, tamr_client=tamr)
 
     # now grab the plan node for minimal categorization, set its status to failed
@@ -59,6 +86,7 @@ def test_update_plan_for_failed():
     chained_schema_mapping_node = test_planner.plan["chained_minimal_schema_mapping"]
     golden_records_node = test_planner.plan["chained_minimal_golden_records"]
     categorization_node = test_planner.plan["minimal_categorization"]
+    indep_node = test_planner.plan["minimal_mastering"]
 
     # make sure the node itself is updated
     assert categorization_node.status == PlanNodeStatus.PlanNodeStatus.FAILED
@@ -67,6 +95,7 @@ def test_update_plan_for_failed():
     assert golden_records_node.status == PlanNodeStatus.PlanNodeStatus.BLOCKED
     # and finally that unaffected nodes are really unaffected the first node should be runnable
     assert schema_mapping_node.status == PlanNodeStatus.PlanNodeStatus.RUNNABLE
+    assert indep_node.status == PlanNodeStatus.PlanNodeStatus.RUNNABLE
     # the chained one should be planned
     assert chained_schema_mapping_node.status == PlanNodeStatus.PlanNodeStatus.PLANNED
 

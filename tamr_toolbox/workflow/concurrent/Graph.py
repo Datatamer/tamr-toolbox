@@ -94,27 +94,6 @@ def _build_edges(
     return edges
 
 
-def from_edges(edges: Set[Tuple[str, str]], nodes: Set[str]) -> nx.DiGraph:
-    """Directly build a graph from sets of edges and nodes.
-
-    Edges are tuples of format (source project name, target project name) dependencies. Nodes are
-    project names.
-
-    Only used for testing.
-
-    Args:
-        edges: Set of edges in tuple format
-        nodes: Set of nodes of graph
-
-    Returns:
-        nx.DiGraph object
-    """
-    graph = nx.DiGraph()
-    graph.add_edges_from(edges)
-    graph.add_nodes_from(nodes)
-    return graph
-
-
 def from_project_list(projects: List[Project], client: Client) -> nx.DiGraph:
     """
     Creates a graph from a list of projects
@@ -133,8 +112,7 @@ def from_project_list(projects: List[Project], client: Client) -> nx.DiGraph:
     for project in projects:
         graph_edges = graph_edges.union(_build_edges(project, client, all_projects=all_projects))
 
-    graph = nx.DiGraph()
-    graph.add_edges_from(graph_edges)
+    graph = nx.DiGraph(graph_edges)
     graph.add_nodes_from([p.name for p in projects])  # add nodes to ensure singletons are retained
     return graph
 
@@ -156,21 +134,19 @@ def get_source_nodes(graph: nx.DiGraph) -> List[str]:
     return source_nodes
 
 
-def get_end_nodes(graph: nx.DiGraph):
+def get_end_nodes(graph: nx.DiGraph) -> Set[str]:
     """Returns all end nodes in a directed graph.
-
-    Only used for testing.
 
     Args:
         graph: nx.DiGraph for which to find end nodes
 
     Returns:
-        List of names of all end nodes
+        Set of names of all end nodes
     """
-    end_nodes = []
+    end_nodes: Set[str] = set()
     for n in graph.nodes():
         if not [x for x in graph.successors(n)]:
-            end_nodes.append(n)
+            end_nodes.add(n)
     return end_nodes
 
 
@@ -266,21 +242,3 @@ def get_predecessors(graph: nx.DiGraph, node: str) -> Set[str]:
         A set of nodes that are predecessors to the current node
     """
     return set(x for x in graph.predecessors(node))
-
-
-def add_edges(graph: nx.DiGraph, new_edges: Set[Tuple[str, str]]) -> nx.DiGraph:
-    """Takes an existing graph and creates a new one with the new edges.
-
-    Only used for testing.
-
-    Args:
-        graph: the graph to start with
-        new_edges: the edges to add
-
-    Returns:
-        A copy of initial graph with new edges
-    """
-
-    old_edges = set(graph.edges())
-    new_edges = old_edges.union(new_edges)
-    return from_edges(new_edges, set(graph.nodes()))
