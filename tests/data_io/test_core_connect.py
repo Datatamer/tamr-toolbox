@@ -45,5 +45,5 @@ def test_ingest_dataset():
         query="select * from dataset.dataset_ns_current limit 10",
         primary_key=PRIMARY_KEYS,
         # truncate_tamr_dataset="true",
-        retrieve_connect_metadata="true",
+        retrieve_connect_metadata="true"
     )

@@ -20,7 +20,7 @@ def ingest_dataset(
         primary_key=None,
         truncate_tamr_dataset=None,
         retrieve_connect_metadata=None,
-        retrieve_source_metadata=None,
+        retrieve_source_metadata=None
 ) -> JsonDict:
     """
     Ingest a dataset into Tamr via core_connect given query config, dataset name, query string,
@@ -46,10 +46,10 @@ def ingest_dataset(
     # Check Tamr version
     if version.is_version_condition_met(
             tamr_version=version.current(client),
-            min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT'],
+            min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']
     ):
         LOGGER.info(
-            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}",
+            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
         )
     else:
         error_message = "Core-connect is not available in current version of Tamr."
@@ -74,7 +74,7 @@ def ingest_dataset(
         "metadataConfig": {
             "retrieveConnectMetadata": retrieve_connect_metadata,
             "retrieveSourceMetadata": retrieve_source_metadata
-        },
+        }
     }
 
     LOGGER.info(
