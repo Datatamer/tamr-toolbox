@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Set, Tuple
 
 import networkx as nx
 from tamr_unify_client import Client
@@ -50,11 +50,7 @@ def _get_upstream_projects(project: Project, *, all_projects: List[Project]) -> 
 
 
 def _build_edges(
-    project: Project,
-    client: Client,
-    *,
-    edges: Set[Tuple[str, str]],
-    all_projects: List[Project],
+    project: Project, client: Client, *, edges: Set[Tuple[str, str]], all_projects: List[Project]
 ) -> Set[Tuple[str, str]]:
     """
     builds a set of tuples of all edges of format (source, target)
@@ -157,12 +153,8 @@ def get_projects_by_tier(graph: nx.DiGraph) -> Dict[int, Set[str]]:
 
     Returns:
         A json dict who's structure is {'tier': {projects_at_that_tier}, ...}
-        e.g.
-            {
-                1: {'SM_project_1', 'Classification_project_1'},
-                2: {Mastering_project'},
-                3: {'Golden_records_project'}
-            }
+        e.g. {1: {'SM_project_1', 'Classification_project_1'}, 2: {Mastering_project'},
+        3: {'Golden_records_project'}}
     """
     source_nodes = get_source_nodes(graph)
 
