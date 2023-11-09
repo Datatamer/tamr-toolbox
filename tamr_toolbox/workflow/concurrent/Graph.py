@@ -13,7 +13,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 def _get_upstream_projects(project: Project, *, all_projects: List[Project]) -> List[Project]:
-    """Get projects immediately upstream of a given project.
+    """
+    get projects immediately upstream of a given project
 
     Args:
         project: the project to check
@@ -135,10 +136,11 @@ def get_source_nodes(graph: nx.DiGraph) -> List[str]:
 
 
 def get_end_nodes(graph: nx.DiGraph) -> Set[str]:
-    """Returns all end nodes in a directed graph.
+    """
+    Returns all end nodes in a directed graph
 
     Args:
-        graph: nx.DiGraph for which to find end nodes
+        graph: the graph for which to find end nodes
 
     Returns:
         Set of names of all end nodes
@@ -188,7 +190,7 @@ def get_projects_by_tier(graph: nx.DiGraph) -> Dict[int, Set[str]]:
             if max_path_length > tier:
                 tier = max_path_length
 
-        # decrement tier since we count starting at 0
+        # decrement tier to count from 0
         tier = tier - 1
         path_tier_dict[tier].add(n)
 
