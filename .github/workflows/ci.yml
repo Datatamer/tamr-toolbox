@@ -29,57 +29,57 @@ jobs:
     - name: Run flake8
       run: invoke lint
     - name: Run black
-      run: invoke foormat
-  # Test:
-  #   strategy:
-  #     matrix:
-  #       python_version: [3.7, 3.8, 3.9, '3.10']
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install Python
-  #       uses: actions/setup-python@v3
-  #       with:
-  #         python-version: ${{ matrix.python_version }}
-  #     - name: Install requirements
-  #       run: python install.py
-  #     - name: Run tests
-  #       run: invoke test
-  #     - name: Run docs
-  #       run: invoke docs
-  # Test-Minimum-Versions:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install Python
-  #       uses: actions/setup-python@v3
-  #       with:
-  #         python-version: 3.7
-  #     - name: Set requirements to minimum
-  #       run: sed -i 's/>=/==/g' requirements.txt
-  #     - name: Set optional_requirements to minimum
-  #       run: sed -i 's/>=/==/g' optional_requirements.txt
-  #     - name: Install requirements
-  #       run: python install.py
-  #     - name: Run tests
-  #       run: invoke test
-  # Test-Windows:
-  #   runs-on: windows-latest
-  #   strategy:
-  #     matrix:
-  #       python_version: [3.7, 3.8, 3.9, '3.10']
-  #   steps:
-  #     - name: Support longpaths
-  #       run: git config --system core.longpaths true
-  #     - uses: actions/checkout@v3
-  #     - name: Install Python
-  #       uses: actions/setup-python@v3
-  #       with:
-  #         python-version: ${{ matrix.python_version }}
-  #     - name: Install requirements
-  #       run: python install.py
-  #     - name: Run tests
-  #       run: python -m pytest
+      run: invoke format
+  Test:
+    strategy:
+      matrix:
+        python_version: [3.7, 3.8, 3.9, '3.10']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: invoke test
+      - name: Run docs
+        run: invoke docs
+  Test-Minimum-Versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.7
+      - name: Set requirements to minimum
+        run: sed -i 's/>=/==/g' requirements.txt
+      - name: Set optional_requirements to minimum
+        run: sed -i 's/>=/==/g' optional_requirements.txt
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: invoke test
+  Test-Windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python_version: [3.7, 3.8, 3.9, '3.10']
+    steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      - uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install requirements
+        run: python install.py
+      - name: Run tests
+        run: python -m pytest
   Test-Core-Dependencies:
     runs-on: ubuntu-latest
     steps:
@@ -94,48 +94,48 @@ jobs:
           python -m pip install .
       - name: Import tamr_toolbox
         run: python -c 'import tamr_toolbox'
-  # Enforce-Test-Coverage:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     COVERAGE_SINGLE: 0
-  #     COVERAGE_TOTAL: 27
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Install Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.7
-  #     - name: Install requirements
-  #       run: python install.py
-  #     - name: pytester-cov
-  #       id: pytester-cov
-  #       uses: programmingwithalex/pytester-cov@main
-  #       with:
-  #         pytest-root-dir: '.'
-  #         cov-omit-list: 'examples/*, doc_src/*, tests/*, install.py, setup.py, tasks.py'
-  #         cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
-  #         cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
-  #     - name: Coverage single fail - exit
-  #       if: ${{ steps.pytester-cov.outputs.cov-threshold-single-fail == 'true' }}
-  #       run: |
-  #         echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-single-fail }}"
-  #         echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
-  #         exit 1
-  #     - name: Coverage total fail - exit
-  #       if: ${{ steps.pytester-cov.outputs.cov-threshold-total-fail == 'true' }}
-  #       run: |
-  #         echo "cov total fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
-  #         echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
-  #         exit 1
+  Enforce-Test-Coverage:
+    runs-on: ubuntu-latest
+    env:
+      COVERAGE_SINGLE: 0
+      COVERAGE_TOTAL: 27
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install requirements
+        run: python install.py
+      - name: pytester-cov
+        id: pytester-cov
+        uses: programmingwithalex/pytester-cov@main
+        with:
+          pytest-root-dir: '.'
+          cov-omit-list: 'examples/*, doc_src/*, tests/*, install.py, setup.py, tasks.py'
+          cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
+          cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
+      - name: Coverage single fail - exit
+        if: ${{ steps.pytester-cov.outputs.cov-threshold-single-fail == 'true' }}
+        run: |
+          echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-single-fail }}"
+          echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
+          exit 1
+      - name: Coverage total fail - exit
+        if: ${{ steps.pytester-cov.outputs.cov-threshold-total-fail == 'true' }}
+        run: |
+          echo "cov total fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
+          echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
+          exit 1
   Notify:
-    needs:  # list all preceding jobs
+    needs:  # List of all preceding jobs
       - Lint
-      # - Test
-      # - Test-Minimum-Versions
-      # - Test-Windows
+      - Test
+      - Test-Minimum-Versions
+      - Test-Windows
       - Test-Core-Dependencies
-      # - Enforce-Test-Coverage
-    if: ${{ !cancelled() && contains(needs.*.result, 'failure') }} # Notify on failed scheduled runs only
+      - Enforce-Test-Coverage
+    if: ${{ !cancelled() && github.event_name == 'schedule' && contains(needs.*.result, 'failure') }} # Notify on failed scheduled runs only
     runs-on: ubuntu-latest
     permissions:
       actions: 'read'
