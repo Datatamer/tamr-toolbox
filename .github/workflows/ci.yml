@@ -29,7 +29,7 @@ jobs:
     - name: Run flake8
       run: invoke lint
     - name: Run black
-      run: invoke format
+      run: invoke foormat
   # Test:
   #   strategy:
   #     matrix:
