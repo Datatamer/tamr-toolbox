@@ -74,6 +74,7 @@ def ingest_dataset(
     }
 
     LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.",)
+
     # Initiate ingestion
     response = client.post(api_path, json=ingest_body)
     response_dict = json.loads(response.content)
