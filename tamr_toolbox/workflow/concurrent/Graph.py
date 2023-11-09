@@ -53,7 +53,7 @@ def _build_edges(
     project: Project,
     client: Client,
     *,
-    edges: Union[None, Set[Tuple[str, str]]] = None,
+    edges: Set[Tuple[str, str]],
     all_projects: List[Project],
 ) -> Set[Tuple[str, str]]:
     """
@@ -61,7 +61,7 @@ def _build_edges(
     Args:
         project: the project to get edges for
         client: tamr client
-        edges: set of tuples (source, target), or None
+        edges: set of tuples (source, target)
         all_projects: a list of all Projects on the Tamr Core instance
 
     Returns:
@@ -69,9 +69,6 @@ def _build_edges(
 
     """
     upstream_projects = _get_upstream_projects(project, all_projects=all_projects)
-
-    if edges is None:
-        edges = set()
 
     for upstream_project in upstream_projects:
         # add the edge for this upstream dataset
@@ -84,13 +81,12 @@ def _build_edges(
                 f" in edges as target: {[ x for x in edges if x[1] ==upstream_project.name]}"
             )
             continue
-        else:
-            # and then go to it and get its upstream datasets
-            further_upstream_edges = _build_edges(
-                upstream_project, client, edges=set(edges), all_projects=all_projects
-            )
-            # print(f"adding further upstream edges {further_upstream_edges}")
-            edges = edges.union(further_upstream_edges)
+
+        # and then go to it and get its upstream datasets
+        further_upstream_edges = _build_edges(
+            upstream_project, client, edges=edges, all_projects=all_projects
+        )
+        edges = edges.union(further_upstream_edges)
 
     return edges
 
@@ -111,7 +107,7 @@ def from_project_list(projects: List[Project], client: Client) -> nx.DiGraph:
     all_projects = [x for x in client.projects.stream()]
     # for each project get the edges and take union
     for project in projects:
-        graph_edges = graph_edges.union(_build_edges(project, client, all_projects=all_projects))
+        graph_edges = _build_edges(project, client, edges=graph_edges, all_projects=all_projects)
 
     graph = nx.DiGraph(graph_edges)
     graph.add_nodes_from([p.name for p in projects])  # add nodes to ensure singletons are retained

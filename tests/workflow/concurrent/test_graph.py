@@ -46,7 +46,7 @@ def test_get_edges():
     test_project_name = "chained_minimal_mastering"
     test_project = tamr.projects.by_name(test_project_name)
     all_projects = [x for x in tamr.projects.stream()]
-    edges = Graph._build_edges(test_project, tamr, all_projects=all_projects)
+    edges = Graph._build_edges(test_project, tamr, edges=set(), all_projects=all_projects)
     expected_edges = {
         ("chained_minimal_schema_mapping", "chained_minimal_mastering"),
         ("minimal_categorization", "chained_minimal_mastering"),
