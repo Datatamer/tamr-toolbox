@@ -20,25 +20,21 @@ def ingest_dataset(
         primary_key=None,
         truncate_tamr_dataset=None,
         retrieve_connect_metadata=None,
-        retrieve_source_metadata=None
+        retrieve_source_metadata=None,
 ) -> JsonDict:
     """
     Ingest a dataset into Tamr via core_connect given query config, dataset name, query string,
     and optional list of columns for primary key
 
     Args:
-        client: Tamr unify client object
-        jdbc_connect: queryConfig used by the API call. It should include jdbcUrl, dbUsername,
-            dbPassword and fetchSize.
-        dataset_name: Name of Tamr dataset
-        query: jdbc query to execute in the database and results of which will be loaded into Tamr
-        primary_key(optional): list of columns to use as primary key. If None then core_connect
-            will generate its own primary key
-        truncate_tamr_dataset(optional): Truncate the Tamr dataset if it exists before ingesting
-            new data
-        retrieve_connect_metadata(optional): Core Connect retrieves the metadata for services
-        retrieve_source_metadata(optional): Only applies to Snowflake. Core Connect retrieves the
-            metadata for the dataset stored in the Snowflake source
+        client: Tamr unify client object.
+        jdbc_connect: queryConfig used by the API call.
+        dataset_name: Name of Tamr dataset.
+        query: jdbc query to execute in the database and results of which will be loaded into Tamr.
+        primary_key(optional): list of columns to use as primary key.
+        truncate_tamr_dataset(optional): Truncate the Tamr dataset if it exists.
+        retrieve_connect_metadata(optional): Core Connect retrieves the metadata for services.
+        retrieve_source_metadata(optional): Only applies to Snowflake.
 
     Raises:
         HTTPError: if the call to ingest the dataset was unsuccessful
@@ -46,7 +42,7 @@ def ingest_dataset(
     # Check Tamr version
     if version.is_version_condition_met(
             tamr_version=version.current(client),
-            min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']
+            min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT'],
     ):
         LOGGER.info(
             f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
@@ -73,7 +69,7 @@ def ingest_dataset(
         "truncateTamrDataset": truncate_tamr_dataset,
         "metadataConfig": {
             "retrieveConnectMetadata": retrieve_connect_metadata,
-            "retrieveSourceMetadata": retrieve_source_metadata
+            "retrieveSourceMetadata": retrieve_source_metadata,
         }
     }
 

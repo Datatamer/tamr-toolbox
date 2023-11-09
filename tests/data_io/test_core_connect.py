@@ -21,7 +21,7 @@ def remove_test_datasets(client: Client):
         DATASET_NAME + "_2",
         DATASET_NAME + "_profile",
         DATASET_NAME + "_sample",
-        DATASET_NAME + "_2_sample"
+        DATASET_NAME + "_2_sample",
     ]
     for dataset_name in dataset_names:
         if tbox.dataset.manage.exists(client=client, dataset_name=dataset_name):
@@ -45,5 +45,5 @@ def test_ingest_dataset():
         query="select * from dataset.dataset_ns_current limit 10",
         primary_key=PRIMARY_KEYS,
         # truncate_tamr_dataset="true",
-        retrieve_connect_metadata="true"
+        retrieve_connect_metadata="true",
     )
