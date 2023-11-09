@@ -135,7 +135,7 @@ jobs:
       # - Test-Windows
       - Test-Core-Dependencies
       # - Enforce-Test-Coverage
-    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') }}  # notify for failed scheduled runs only
+    if: ${{ !cancelled() && !contains(needs.*.result, "failure") }}  # notify for failed scheduled runs only
     runs-on: ubuntu-latest
     permissions:
       actions: 'read'
