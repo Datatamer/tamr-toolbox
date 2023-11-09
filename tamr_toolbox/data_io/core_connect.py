@@ -45,7 +45,7 @@ def ingest_dataset(
         min_version=os.environ["TAMR_MIN_VERSION_W_CORE_CONNECT"],
     ):
         LOGGER.info(
-            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}",
+            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
         )
     else:
         error_message = "Core-connect is not available in current version of Tamr."
@@ -73,7 +73,7 @@ def ingest_dataset(
         },
     }
 
-    LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.",)
+    LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.")
 
     # Initiate ingestion
     response = client.post(api_path, json=ingest_body)
@@ -84,6 +84,6 @@ def ingest_dataset(
         LOGGER.error(error_message)
         raise Exception(error_message)
     else:
-        LOGGER.info(f"Dataset {dataset_name} is ingested successfully.",)
+        LOGGER.info(f"Dataset {dataset_name} is ingested successfully.")
 
     return
