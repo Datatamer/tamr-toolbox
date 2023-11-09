@@ -12,8 +12,15 @@ LOGGER = logging.getLogger(__name__)
 
 
 def ingest_dataset(
-    *, client: Client, jdbc_connect: JsonDict, dataset_name: str, query: str, primary_key=None,
-    truncate_tamr_dataset=None, retrieve_connect_metadata=None, retrieve_source_metadata=None,
+        *,
+        client: Client,
+        jdbc_connect: JsonDict,
+        dataset_name: str,
+        query: str,
+        primary_key=None,
+        truncate_tamr_dataset=None,
+        retrieve_connect_metadata=None,
+        retrieve_source_metadata=None,
 ) -> JsonDict:
     """
     Ingest a dataset into Tamr via core_connect given query config, dataset name, query string,
@@ -67,12 +74,11 @@ def ingest_dataset(
         "metadataConfig": {
             "retrieveConnectMetadata": retrieve_connect_metadata,
             "retrieveSourceMetadata": retrieve_source_metadata
-        }
+        },
     }
 
     LOGGER.info(
-        f"Streaming data from {jdbc_connect['jdbcUrl']} to "
-        f"Tamr with the following query: \n\t{query}"
+        f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}."
     )
     # Initiate ingestion
     response = client.post(api_path, json=ingest_body)
