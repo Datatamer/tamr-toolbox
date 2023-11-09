@@ -6,7 +6,10 @@ from tamr_unify_client import Client
 from tamr_toolbox.utils import version
 import os
 
-os.environ.setdefault("TAMR_MIN_VERSION_W_CORE_CONNECT", "2022.005.0")
+os.environ.setdefault(
+    "TAMR_MIN_VERSION_W_CORE_CONNECT",
+    "2022.005.0",
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -45,7 +48,7 @@ def ingest_dataset(
             min_version=os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT'],
     ):
         LOGGER.info(
-            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
+            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}",
         )
     else:
         error_message = "Core-connect is not available in current version of Tamr."
@@ -70,11 +73,11 @@ def ingest_dataset(
         "metadataConfig": {
             "retrieveConnectMetadata": retrieve_connect_metadata,
             "retrieveSourceMetadata": retrieve_source_metadata,
-        }
+        },
     }
 
     LOGGER.info(
-        f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}."
+        f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.",
     )
     # Initiate ingestion
     response = client.post(api_path, json=ingest_body)
@@ -86,7 +89,7 @@ def ingest_dataset(
         raise Exception(error_message)
     else:
         LOGGER.info(
-            f"Dataset {dataset_name} is ingested successfully."
+            f"Dataset {dataset_name} is ingested successfully.",
         )
 
     return
