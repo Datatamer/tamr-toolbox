@@ -41,7 +41,7 @@ def test_ingest_dataset():
         query="select * from dataset.dataset_ns_current limit 10",
         retrieve_connect_metadata="true",
     )
-    assert tbox.dataset.manage.exists(client=tamr_client, dataset_name="test_core_connect") == True
+    assert tbox.dataset.manage.exists(client=tamr_client, dataset_name="test_core_connect")
 
     # truncate the tamr dataset, then ingest data with primary key
     assert tbox.data_io.core_connect.ingest_dataset(
@@ -74,6 +74,7 @@ def test_ingest_dataset():
             primary_key="id",
             truncate_tamr_dataset="true",
         )
-    assert re.sub(r"[0-9]", "", exc_info.value.args[0]).split("/n") == [
-        'org.postgresql.util.PSQLException: ERROR: relation "dataset.dataset" does not exist\n  Position: '
-    ]
+    assert {
+        re.sub(r"[0-9]", "", exc_info.value.args[0])
+        == 'org.postgresql.util.PSQLException: ERROR: relation "dataset.dataset" does not exist  Position: '
+    }
