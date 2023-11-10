@@ -76,5 +76,6 @@ def test_ingest_dataset():
         )
     assert {
         re.sub(r"[0-9]", "", exc_info.value.args[0])
-        == 'org.postgresql.util.PSQLException: ERROR: relation "dataset.dataset" does not exist  Position: '
+        == 'org.postgresql.util.PSQLException: ERROR: relation "dataset.dataset" does not exist  '
+           'Position: '
     }
