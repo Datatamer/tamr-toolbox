@@ -4,9 +4,6 @@ import logging
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client import Client
 from tamr_toolbox.utils import version
-import os
-
-os.environ.setdefault("TAMR_MIN_VERSION_W_CORE_CONNECT", "2022.005.0")
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,6 +18,7 @@ def ingest_dataset(
     truncate_tamr_dataset=None,
     retrieve_connect_metadata=None,
     retrieve_source_metadata=None,
+    tamr_min_version="2022.005.0",
 ) -> JsonDict:
     """
     Ingest a dataset into Tamr via core_connect given query config, dataset name, query string,
@@ -35,18 +33,16 @@ def ingest_dataset(
         truncate_tamr_dataset(optional): Truncate the Tamr dataset if it exists.
         retrieve_connect_metadata(optional): Core Connect retrieves the metadata for services.
         retrieve_source_metadata(optional): Only applies to Snowflake.
+        tamr_min_version(optional): The minimum version of Tamr to use Core Connect.
 
     Raises:
         HTTPError: if the call to ingest the dataset was unsuccessful
     """
     # Check Tamr version
     if version.is_version_condition_met(
-        tamr_version=version.current(client),
-        min_version=os.environ["TAMR_MIN_VERSION_W_CORE_CONNECT"],
+        tamr_version=version.current(client), min_version=tamr_min_version
     ):
-        LOGGER.info(
-            f"Tamr version is equal to or after {os.environ['TAMR_MIN_VERSION_W_CORE_CONNECT']}"
-        )
+        LOGGER.info(f"Core-connect is available in current version of Tamr.")
     else:
         error_message = "Core-connect is not available in current version of Tamr."
         LOGGER.error(error_message)
@@ -80,10 +76,10 @@ def ingest_dataset(
     response_dict = json.loads(response.content)
 
     if not response.ok:
-        error_message = f'Ingest failed with message: {response_dict["message"]}'
+        error_message = f"{response_dict['message'].strip()}"
         LOGGER.error(error_message)
         raise Exception(error_message)
     else:
         LOGGER.info(f"Dataset {dataset_name} is ingested successfully.")
 
-    return
+    return response_dict
