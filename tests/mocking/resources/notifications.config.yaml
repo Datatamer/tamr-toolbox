@@ -18,6 +18,8 @@ my_email_notification:
     sender_address: "sender@mail.com"
     sender_password: "sender_password"
     recipient_addresses: ["recipient@mail.com"]
+    cc_addresses: ["cc-0@example.com", "cc-1@example.com"]
+    bcc_addresses: ["bcc-0@example.com", "bcc-1@example.com"]
     smtp_server: "smtp.mail.com"
     smtp_port: 465
     tls_port: 587
