@@ -11,6 +11,8 @@ config = {
     "sender_address": "sender@gmail.com",
     "sender_password": "sender_email_password",
     "recipient_addresses": ["recipient@gmail.com"],
+    "cc_addresses": ["cc_address@example.com", "another_cc@gmail.com"],
+    "bcc_addresses": ["bcc_address@example.com", "another_bcc@gmail.com"],
     "smtp_server": "smtp.gmail.com",
     "smtp_port": 587,
 }
@@ -50,4 +52,17 @@ tbox.notifications.emails.monitor_job(
     smtp_port=config["smtp_port"],
     operation=op,
     notify_states=[OperationState.SUCCEEDED, OperationState.FAILED, OperationState.CANCELED],
+)
+
+# Use case 3: Send status updates for a specific job with CC and BCC recipients
+tbox.notifications.emails.monitor_job(
+    tamr=tamr,
+    sender_address=config["sender_address"],
+    sender_password=config["sender_password"],
+    recipient_addresses=config["recipient_addresses"],
+    cc_addresses=config["cc_addresses"],
+    bcc_addresses=config["bcc_addresses"],
+    smtp_server=config["smtp_server"],
+    smtp_port=config["smtp_port"],
+    operation="my_job_id",
 )
