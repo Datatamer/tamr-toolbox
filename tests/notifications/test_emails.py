@@ -1,12 +1,10 @@
 """Tests for tasks related to creation of Email notifications"""
 from unittest.mock import patch
 
-from tamr_toolbox import utils
 import tamr_toolbox as tbox
-
+from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
-
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/notifications.config.yaml"
@@ -135,9 +133,7 @@ def test_send_email_tls():
 def test_monitor_job_succeed():
     with patch("smtplib.SMTP_SSL", autospec=True) as mock_smtp:
         client = utils.client.create(**CONFIG["my_instance_name"])
-        project = client.projects.by_resource_id(
-            CONFIG["projects"]["minimal_schema_mapping"]
-        )
+        project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
         op = project.unified_dataset().refresh(asynchronous=True)
 
         list_responses = tbox.notifications.emails.monitor_job(
@@ -182,9 +178,7 @@ def test_monitor_job_succeed():
 def test_monitor_job_timeout():
     with patch("smtplib.SMTP_SSL", autospec=True) as mock_smtp:
         client = utils.client.create(**CONFIG["my_instance_name"])
-        project = client.projects.by_resource_id(
-            CONFIG["projects"]["minimal_schema_mapping"]
-        )
+        project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
         op = project.unified_dataset().refresh(asynchronous=True)
 
         timeout_seconds = 0.02
