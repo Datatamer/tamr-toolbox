@@ -21,7 +21,7 @@ def _build_message(
     message: str,
     subject_line: str,
     sender: str,
-    to: List[str],
+    recipients: List[str],
     cc: Optional[List[str]] = None,
     bcc: Optional[List[str]] = None,
 ) -> EmailMessage:
@@ -31,7 +31,7 @@ def _build_message(
         message: Body of email message
         subject_line: subject of email
         sender: email address of sender
-        to: list of emails to send message to
+        recipients: list of emails to send message to
         cc: optional list of email addresses to be cc'd
         bcc: optional list of email addresses to be bcc'd
 
@@ -45,7 +45,7 @@ def _build_message(
     msg.set_charset("us-ascii")
     msg["Subject"] = subject_line
     msg["From"] = sender
-    msg["To"] = ",".join(to)
+    msg["To"] = ",".join(recipients)
     if cc:
         msg["Cc"] = ",".join(cc)
     if bcc:
@@ -95,11 +95,11 @@ def send_email(
         SMTPException. The base exception class used by the smtplib module
     """
     # build email
-    msgObj = _build_message(
+    msg = _build_message(
         message=message,
         subject_line=subject_line,
         sender=sender_address,
-        to=recipient_addresses,
+        recipients=recipient_addresses,
         cc=cc_addresses,
         bcc=bcc_addresses,
     )
@@ -115,7 +115,7 @@ def send_email(
 
         # login and send message
         server.login(sender_address, sender_password)
-        errors = server.send_message(msgObj)
+        errors = server.send_message(msg)
         response["errors"] = errors
 
     return response

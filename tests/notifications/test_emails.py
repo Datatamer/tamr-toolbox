@@ -26,7 +26,7 @@ def test_build_message():
         message=test_message,
         subject_line=subject_line,
         sender=CONFIG["my_email_notification"]["sender_address"],
-        to=CONFIG["my_email_notification"]["recipient_addresses"],
+        recipients=CONFIG["my_email_notification"]["recipient_addresses"],
     )
 
     assert msg.as_string() == test_response
@@ -49,7 +49,7 @@ def test_build_message_with_cc_bcc():
         message=test_message,
         subject_line=subject_line,
         sender=CONFIG["my_email_notification"]["sender_address"],
-        to=CONFIG["my_email_notification"]["recipient_addresses"],
+        recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         cc=CONFIG["my_email_notification"]["cc_addresses"],
         bcc=CONFIG["my_email_notification"]["bcc_addresses"],
     )
@@ -85,7 +85,7 @@ def test_send_email_succeed():
             message=test_message,
             subject_line=subject_line,
             sender=CONFIG["my_email_notification"]["sender_address"],
-            to=CONFIG["my_email_notification"]["recipient_addresses"],
+            recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         )
         context.send_message.assert_called_once()
         args, _ = context.send_message.call_args
@@ -122,7 +122,7 @@ def test_send_email_tls():
             message=test_message,
             subject_line=subject_line,
             sender=CONFIG["my_email_notification"]["sender_address"],
-            to=CONFIG["my_email_notification"]["recipient_addresses"],
+            recipients=CONFIG["my_email_notification"]["recipient_addresses"],
         )
         context.send_message.assert_called_once()
         args, _ = context.send_message.call_args
