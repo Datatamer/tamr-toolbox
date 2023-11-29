@@ -13,7 +13,7 @@ CONFIG = utils.config.from_yaml(
 
 DATASET_NAME = "test_core_connect"
 
-enforce_online_test = True
+enforce_online_test = False
 
 
 def remove_test_datasets(client: Client):
@@ -60,8 +60,7 @@ def test_jdbc_ingest():
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",
             query="select * from dataset.dataset_ns_current limit 10",
-            tamr_min_version="2023.001.0",
-            re_direct_to_df_connect=False,
+            tamr_min_version="2023.008.0",
         )
     assert exc_info.value.args[0] == "Core-connect is not available in current version of Tamr."
 

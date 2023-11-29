@@ -39,48 +39,48 @@ def jdbc_ingest(
     Raises:
         HTTPError: if the call to ingest the dataset was unsuccessful
     """
+
+    # Check Tamr version
+    if version.is_version_condition_met(
+        tamr_version=version.current(client), min_version=tamr_min_version
+    ):
+        None
+    else:
+        error_message = "Core-connect is not available in current version of Tamr."
+        LOGGER.error(error_message)
+        raise Exception(error_message)
+
     # handle primary key
     if primary_key is None:
         primary_key = []
     else:
         primary_key = primary_key.split(",")
 
-    # Check Tamr version, if fails, raise a flag
-    if not version.is_version_condition_met(
-        tamr_version=version.current(client), min_version=tamr_min_version
-    ):
-        error_message = "Core-connect is not available in current version of Tamr."
+    # ingest data
+    api_path = "/api/connect/jdbcIngest/ingest"
+    ingest_body = {
+        "query": query,
+        "datasetName": dataset_name,
+        "primaryKey": primary_key,
+        "queryConfig": jdbc_connect,
+        "truncateTamrDataset": truncate_tamr_dataset,
+        "metadataConfig": {
+            "retrieveConnectMetadata": retrieve_connect_metadata,
+            "retrieveSourceMetadata": retrieve_source_metadata,
+        },
+    }
+
+    LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.")
+
+    # Initiate ingestion
+    response = client.post(api_path, json=ingest_body)
+    response_dict = json.loads(response.content)
+
+    if not response.ok:
+        error_message = f'Ingest failed with message: {response_dict["message"]}'
         LOGGER.error(error_message)
         raise Exception(error_message)
     else:
-        LOGGER.info(f"Core-connect is available in current version of Tamr.")
-
-        # ingest data
-        api_path = "/api/connect/jdbcIngest/ingest"
-
-        ingest_body = {
-            "query": query,
-            "datasetName": dataset_name,
-            "primaryKey": primary_key,
-            "queryConfig": jdbc_connect,
-            "truncateTamrDataset": truncate_tamr_dataset,
-            "metadataConfig": {
-                "retrieveConnectMetadata": retrieve_connect_metadata,
-                "retrieveSourceMetadata": retrieve_source_metadata,
-            },
-        }
-
-        LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.")
-
-        # Initiate ingestion
-        response = client.post(api_path, json=ingest_body)
-        response_dict = json.loads(response.content)
-
-        if not response.ok:
-            error_message = f"{response_dict['message'].strip()}"
-            LOGGER.error(error_message)
-            raise Exception(error_message)
-        else:
-            LOGGER.info(f"Dataset {dataset_name} is ingested successfully.")
+        LOGGER.info(f"Dataset {dataset_name} is ingested successfully.")
 
     return response_dict
