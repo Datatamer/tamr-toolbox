@@ -58,11 +58,6 @@ df_connect:
             fetch_size: 10000
 
 core_connect:
-    host: $TAMR_TOOLBOX_HOST
-    protocol: "http"
-    port: "9050"
-    tamr_username: "admin"
-    tamr_password: $TAMR_TOOLBOX_PASSWORD
     jdbc:
         ingest:
             jdbcUrl: $CONNECT_TOOLBOX_POSTGRES_JDBC

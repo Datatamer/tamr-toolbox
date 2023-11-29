@@ -87,7 +87,6 @@ def test_flatten_list_error(val: Any, delimiter: str, force: bool):
     [([1, 2], [1, 2, 3], True), ([1, 2, 3], [1, 2], False), ([1, 2, 3], [1, 2, 3], True)],
 )
 def test_check_column_subset(input_list: List, reference_list: List, expected: bool):
-
     assert expected == common._check_columns_subset(
         input_list=input_list, reference_list=reference_list, raise_error=False
     )

@@ -1,0 +1,18 @@
+# dataset.config.yaml
+
+logging_dir: $TAMR_PROJECT_LOGGING_DIR # Example: "/home/users/jane/my-project/logs"
+
+my_tamr_instance:
+    host: $TAMR_HOST # Example: "1.2.3.4"
+    protocol: "http"
+    port: "9100"
+    username: "admin"
+    password: $TAMR_PASSWORD  # Example: "abc123"
+
+core_connect:
+    jdbc:
+        ingest:
+            jdbcUrl: $JDBC_URL # Example: "jdbc:mysql://localhost:3306/mydata?characterEncoding=utf8"
+            dbUsername: $JDBC_UID # Example: "jane"
+            dbPassword: $JDBC_PWD # Example: "abc123"
+            fetchSize: 10000

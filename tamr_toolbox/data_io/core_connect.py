@@ -8,7 +8,7 @@ from tamr_toolbox.utils import version
 LOGGER = logging.getLogger(__name__)
 
 
-def ingest_dataset(
+def jdbc_ingest(
     *,
     client: Client,
     jdbc_connect: JsonDict,
@@ -34,52 +34,53 @@ def ingest_dataset(
         retrieve_connect_metadata(optional): Core Connect retrieves the metadata for services.
         retrieve_source_metadata(optional): Only applies to Snowflake.
         tamr_min_version(optional): The minimum version of Tamr to use Core Connect.
+        re_direct_to_df_connect(optional): If Tamr version doesn't meet the tamr_min_version, ingest data using df-connect
 
     Raises:
         HTTPError: if the call to ingest the dataset was unsuccessful
     """
-    # Check Tamr version
-    if version.is_version_condition_met(
-        tamr_version=version.current(client), min_version=tamr_min_version
-    ):
-        LOGGER.info(f"Core-connect is available in current version of Tamr.")
-    else:
-        error_message = "Core-connect is not available in current version of Tamr."
-        LOGGER.error(error_message)
-        raise Exception(error_message)
-
     # handle primary key
     if primary_key is None:
         primary_key = []
     else:
         primary_key = primary_key.split(",")
 
-    # ingest data
-    api_path = "/api/connect/jdbcIngest/ingest"
-
-    ingest_body = {
-        "query": query,
-        "datasetName": dataset_name,
-        "primaryKey": primary_key,
-        "queryConfig": jdbc_connect,
-        "truncateTamrDataset": truncate_tamr_dataset,
-        "metadataConfig": {
-            "retrieveConnectMetadata": retrieve_connect_metadata,
-            "retrieveSourceMetadata": retrieve_source_metadata,
-        },
-    }
-
-    LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.")
-
-    # Initiate ingestion
-    response = client.post(api_path, json=ingest_body)
-    response_dict = json.loads(response.content)
-
-    if not response.ok:
-        error_message = f"{response_dict['message'].strip()}"
+    # Check Tamr version, if fails, raise a flag
+    if not version.is_version_condition_met(
+        tamr_version=version.current(client), min_version=tamr_min_version
+    ):
+        error_message = "Core-connect is not available in current version of Tamr."
         LOGGER.error(error_message)
         raise Exception(error_message)
     else:
-        LOGGER.info(f"Dataset {dataset_name} is ingested successfully.")
+        LOGGER.info(f"Core-connect is available in current version of Tamr.")
+
+        # ingest data
+        api_path = "/api/connect/jdbcIngest/ingest"
+
+        ingest_body = {
+            "query": query,
+            "datasetName": dataset_name,
+            "primaryKey": primary_key,
+            "queryConfig": jdbc_connect,
+            "truncateTamrDataset": truncate_tamr_dataset,
+            "metadataConfig": {
+                "retrieveConnectMetadata": retrieve_connect_metadata,
+                "retrieveSourceMetadata": retrieve_source_metadata,
+            },
+        }
+
+        LOGGER.info(f"Streaming data from {jdbc_connect['jdbcUrl']} to {dataset_name}.")
+
+        # Initiate ingestion
+        response = client.post(api_path, json=ingest_body)
+        response_dict = json.loads(response.content)
+
+        if not response.ok:
+            error_message = f"{response_dict['message'].strip()}"
+            LOGGER.error(error_message)
+            raise Exception(error_message)
+        else:
+            LOGGER.info(f"Dataset {dataset_name} is ingested successfully.")
 
     return response_dict

@@ -13,7 +13,7 @@ CONFIG = utils.config.from_yaml(
 
 DATASET_NAME = "test_core_connect"
 
-enforce_online_test = False
+enforce_online_test = True
 
 
 def remove_test_datasets(client: Client):
@@ -26,7 +26,7 @@ def remove_test_datasets(client: Client):
 
 
 @mock_api(enforce_online_test=enforce_online_test)
-def test_ingest_dataset():
+def test_jdbc_ingest():
     tamr_client = utils.client.create(**CONFIG["toolbox_test_instance"])
     jdbc_connect = CONFIG["core_connect"]["jdbc"]["ingest"]
 
@@ -34,7 +34,7 @@ def test_ingest_dataset():
     remove_test_datasets(client=tamr_client)
 
     # ingest data and retrieve metdata, then check if the ingested data exists
-    tbox.data_io.core_connect.ingest_dataset(
+    tbox.data_io.core_connect.jdbc_ingest(
         client=tamr_client,
         jdbc_connect=jdbc_connect,
         dataset_name="test_core_connect",
@@ -44,7 +44,7 @@ def test_ingest_dataset():
     assert tbox.dataset.manage.exists(client=tamr_client, dataset_name="test_core_connect")
 
     # truncate the tamr dataset, then ingest data with primary key
-    assert tbox.data_io.core_connect.ingest_dataset(
+    assert tbox.data_io.core_connect.jdbc_ingest(
         client=tamr_client,
         jdbc_connect=jdbc_connect,
         dataset_name="test_core_connect",
@@ -55,18 +55,19 @@ def test_ingest_dataset():
 
     # check if error is raised correctly when tamr version doesn't meet the requirement
     with pytest.raises(Exception) as exc_info:
-        assert tbox.data_io.core_connect.ingest_dataset(
+        assert tbox.data_io.core_connect.jdbc_ingest(
             client=tamr_client,
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",
             query="select * from dataset.dataset_ns_current limit 10",
             tamr_min_version="2023.001.0",
+            re_direct_to_df_connect=False,
         )
     assert exc_info.value.args[0] == "Core-connect is not available in current version of Tamr."
 
     # check if error is raised correctly when ingestion fails
     with pytest.raises(Exception) as exc_info:
-        tbox.data_io.core_connect.ingest_dataset(
+        tbox.data_io.core_connect.jdbc_ingest(
             client=tamr_client,
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",

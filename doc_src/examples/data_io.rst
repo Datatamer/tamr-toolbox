@@ -57,6 +57,22 @@ Check if Tamr dataset is streamable
 .. literalinclude:: ../../examples/snippets/data_io/df_connect/streamable_check.py
   :language: python
 
+
+Core-Connect
+------------------------------------------------------------------------
+Create a Tamr client and ingest a table as a Tamr dataset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create a configuration file like so:
+
+.. literalinclude:: ../../examples/resources/conf/core_connect_jdbc_ingest.config.yaml
+  :language: yaml
+
+Read the configuration file and ingest a Tamr dataset
+
+.. literalinclude:: ../../examples/snippets/data_io/core_connect/jdbc_ingest.py
+  :language: python
+
+
 Dataframe
 ------------------------------------------------------------------------
 
