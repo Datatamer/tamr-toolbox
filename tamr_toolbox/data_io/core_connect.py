@@ -34,7 +34,6 @@ def jdbc_ingest(
         retrieve_connect_metadata(optional): Core Connect retrieves the metadata for services.
         retrieve_source_metadata(optional): Only applies to Snowflake.
         tamr_min_version(optional): The minimum version of Tamr to use Core Connect.
-        re_direct_to_df_connect(optional): If Tamr version doesn't meet the tamr_min_version, ingest data using df-connect
 
     Raises:
         HTTPError: if the call to ingest the dataset was unsuccessful
