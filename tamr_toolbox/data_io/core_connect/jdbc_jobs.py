@@ -4,7 +4,6 @@ import logging
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client import Client
 from tamr_toolbox.utils import version
-from airflow.exceptions import AirflowException
 import time
 
 LOGGER = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ def _run_and_poll_connect_job(tamr_client, api_path, ingest_body):
     response_dict = json.loads(response.content)
     if not response.ok:
         error_message = f'Ingest failed with message: {response_dict["message"]}'
-        raise AirflowException(error_message)
+        raise Exception(error_message)
     else:
         job_id = response_dict["jobId"]
         job_poll_url = f"/api/connect/jobs/{job_id}"
@@ -35,7 +34,7 @@ def _run_and_poll_connect_job(tamr_client, api_path, ingest_body):
                 error_message = {
                     f'Ingest failed with message: {job_response_dict["errors"]["error"]}'
                 }
-                raise AirflowException(error_message)
+                raise Exception(error_message)
 
     return response_dict
 
