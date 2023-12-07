@@ -34,7 +34,7 @@ def test_jdbc_ingest():
     remove_test_datasets(client=tamr_client)
 
     # ingest data and retrieve metdata, then check if the ingested data exists
-    tbox.data_io.core_connect.jdbc_ingest(
+    tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
         client=tamr_client,
         jdbc_connect=jdbc_connect,
         dataset_name="test_core_connect",
@@ -44,7 +44,7 @@ def test_jdbc_ingest():
     assert tbox.dataset.manage.exists(client=tamr_client, dataset_name="test_core_connect")
 
     # truncate the tamr dataset, then ingest data with primary key
-    assert tbox.data_io.core_connect.jdbc_ingest(
+    assert tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
         client=tamr_client,
         jdbc_connect=jdbc_connect,
         dataset_name="test_core_connect",
@@ -55,7 +55,7 @@ def test_jdbc_ingest():
 
     # check if error is raised correctly when tamr version doesn't meet the requirement
     with pytest.raises(Exception) as exc_info:
-        assert tbox.data_io.core_connect.jdbc_ingest(
+        assert tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
             client=tamr_client,
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",
@@ -66,7 +66,7 @@ def test_jdbc_ingest():
 
     # check if error is raised correctly when ingestion fails
     with pytest.raises(Exception) as exc_info:
-        tbox.data_io.core_connect.jdbc_ingest(
+        tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
             client=tamr_client,
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",
