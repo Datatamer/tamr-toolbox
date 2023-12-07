@@ -2,41 +2,56 @@
 import logging
 import smtplib
 import ssl
-
-from typing import Union, List, Optional, Tuple
-from tamr_toolbox.models.data_type import JsonDict
-from email.mime.text import MIMEText
-from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
+from email.message import EmailMessage
+from typing import List, Optional, Tuple, Union
 
 from tamr_unify_client import Client
 from tamr_unify_client.operation import Operation
 
+from tamr_toolbox.models.data_type import JsonDict
 from tamr_toolbox.models.operation_state import OperationState
+from tamr_toolbox.notifications.common import _monitor_job as monitor_job_common
 from tamr_toolbox.utils.operation import get_details
 
 LOGGER = logging.getLogger(__name__)
 
 
-def _build_message(*, message: str, subject_line: str, sender: str, recipients: List[str]) -> str:
-    """Builds email message in Multipurpose Internet Mail Extensions (MIME) format. MIME is an
-    Internet standard that extends the format of email messages
+def _build_message(
+    *,
+    message: str,
+    subject_line: str,
+    sender: str,
+    recipients: List[str],
+    cc: Optional[List[str]] = None,
+    bcc: Optional[List[str]] = None,
+) -> EmailMessage:
+    """Builds email message.
 
     Args:
         message: Body of email message
         subject_line: subject of email
         sender: email address of sender
         recipients: list of emails to send message to
+        cc: optional list of email addresses to be cc'd
+        bcc: optional list of email addresses to be bcc'd
 
     Returns:
-        Email as a string
+        Email object
     """
 
     # build email
-    msg = MIMEText(message)
+    msg = EmailMessage()
+    msg.set_content(message)
+    msg.set_charset("us-ascii")
     msg["Subject"] = subject_line
     msg["From"] = sender
-    msg["To"] = ", ".join(recipients)
-    return msg.as_string()
+    msg["To"] = ",".join(recipients)
+    if cc:
+        msg["Cc"] = ",".join(cc)
+    if bcc:
+        msg["Bcc"] = ",".join(bcc)
+
+    return msg
 
 
 def send_email(
@@ -51,6 +66,8 @@ def send_email(
     use_tls: bool = True,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
+    cc_addresses: Optional[List[str]] = None,
+    bcc_addresses: Optional[List[str]] = None,
 ) -> JsonDict:
     """Sends a message via email to list of recipients
 
@@ -65,6 +82,8 @@ def send_email(
         use_tls: A boolean value to turn on/off TLS protocol
         keyfile: the private key to a TLS/SSL certificate, usually PEM format
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
+        cc_addresses: optional list of email addresses to be cc'd
+        bcc_addresses: optional list of email addresses to be bcc'd
 
     Returns:
         A dict with the message and response codes from the smtp server if there are any
@@ -81,6 +100,8 @@ def send_email(
         subject_line=subject_line,
         sender=sender_address,
         recipients=recipient_addresses,
+        cc=cc_addresses,
+        bcc=bcc_addresses,
     )
     response = dict()
     response["message"] = message
@@ -94,7 +115,7 @@ def send_email(
 
         # login and send message
         server.login(sender_address, sender_password)
-        errors = server.sendmail(sender_address, recipient_addresses, msg)
+        errors = server.send_message(msg)
         response["errors"] = errors
 
     return response
@@ -112,6 +133,8 @@ def _send_job_status_message(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
+    cc_addresses: Optional[List[str]] = None,
+    bcc_addresses: Optional[List[str]] = None,
 ) -> JsonDict:
     """Checks operation state and if in `notify_states` sends the message.
 
@@ -126,6 +149,8 @@ def _send_job_status_message(
         use_tls: A boolean value to opt to use TLS protocol
         keyfile: the private key to a TLS/SSL certificate, usually PEM format
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
+        cc_addresses: optional list of email addresses to be cc'd
+        bcc_addresses: optional list of email addresses to be bcc'd
 
     Returns:
         A dict with the message and response codes from the smtp server if there are any
@@ -148,6 +173,8 @@ def _send_job_status_message(
             use_tls=use_tls,
             keyfile=keyfile,
             certfile=certfile,
+            bcc_addresses=bcc_addresses,
+            cc_addresses=cc_addresses,
         )
     return resp
 
@@ -167,6 +194,8 @@ def monitor_job(
     use_tls: bool = False,
     keyfile: Optional[str] = None,
     certfile: Optional[str] = None,
+    cc_addresses: Optional[List[str]] = None,
+    bcc_addresses: Optional[List[str]] = None,
 ) -> List[Tuple[str, JsonDict]]:
     """Monitors a Tamr Operation and sends an email when the job status is updated
 
@@ -184,6 +213,8 @@ def monitor_job(
         use_tls: A boolean value to opt to use TLS protocol
         keyfile: the private key to a TLS/SSL certificate, usually PEM format
         certfile: TLS/SSL cert file issued by a Certificate Authority (CA), usually PEM format
+        cc_addresses: optional list of email addresses to be cc'd
+        bcc_addresses: optional list of email addresses to be bcc'd
 
     Returns:
         A list of dicts. Each dict comtains the message and error response codes from the smtp
@@ -207,6 +238,8 @@ def monitor_job(
         use_tls=use_tls,
         keyfile=keyfile,
         certfile=certfile,
+        bcc_addresses=bcc_addresses,
+        cc_addresses=cc_addresses,
     )
 
     return list_responses

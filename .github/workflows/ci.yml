@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  schedule:
+    - cron: '0 0 * * 4'
   push:
     branches:
       - main
@@ -125,3 +127,38 @@ jobs:
           echo "cov total fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
           echo "coverage table ${{ steps.pytester-cov.outputs.output-table }}"
           exit 1
+  Notify:
+    needs:  # List of all preceding jobs
+      - Lint
+      - Test
+      - Test-Minimum-Versions
+      - Test-Windows
+      - Test-Core-Dependencies
+      - Enforce-Test-Coverage
+    if: ${{ !cancelled() && github.event_name == 'schedule' && contains(needs.*.result, 'failure') }} # Notify on failed scheduled runs only
+    runs-on: ubuntu-latest
+    permissions:
+      actions: 'read'
+    steps:
+    - name: Slack Workflow Notification
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        payload: |
+          {
+              "text": "Scheduled GitHub CI result", 
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "${{ contains(needs.*.result, 'failure')  && '\u274C' || '\u2705' }} Scheduled GitHub CI: ${{ contains(needs.*.result, 'failure')  && '*Failure*' || '*Success*!' }}\nhttps://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
+                      }
+                  }
+              ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.TBOX_SLACK_WEBHOOK }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    
+
+

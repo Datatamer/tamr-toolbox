@@ -1,0 +1,8 @@
+# Template to export environment variables which can be fed to yaml config files
+# Copy this file to a file `setup-variables.sh` and fill in variables.
+# Use the bash command `source <repo root>/tests/mocking/resources/setup-variables.sh` to export the contents.
+export TAMR_TOOLBOX_HOST="<hostname or IP>"
+export TAMR_TOOLBOX_PASSWORD="<password>"
+export TAMR_TOOLBOX_BACKUP_HOST="<hostname or IP>"
+export CONNECT_TOOLBOX_POSTGRES_JDBC="<jdbc>"
+export CONNECT_TOOLBOX_DB_PASSWORD="<database password>"
