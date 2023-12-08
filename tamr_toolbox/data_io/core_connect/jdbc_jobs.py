@@ -26,7 +26,7 @@ def _run_and_poll_connect_job(tamr_client, api_path, ingest_body):
         job_status = job_response_dict["status"]
         while job_status != "SUCCEEDED":
             # Wait for 10 seconds between polling:
-            time.sleep(300)
+            time.sleep(10)
             job_response = tamr_client.get(job_poll_url)
             job_response_dict = json.loads(job_response.content)
             job_status = job_response_dict["status"]
