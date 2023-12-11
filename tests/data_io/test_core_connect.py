@@ -5,7 +5,6 @@ from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
 from tamr_unify_client import Client
 from tests._common import get_toolbox_root_dir
-import re
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"
@@ -13,7 +12,7 @@ CONFIG = utils.config.from_yaml(
 
 DATASET_NAME = "test_core_connect"
 
-enforce_online_test = False
+enforce_online_test = True
 
 
 def remove_test_datasets(client: Client):
@@ -34,7 +33,7 @@ def test_jdbc_ingest():
     remove_test_datasets(client=tamr_client)
 
     # ingest data and retrieve metdata, then check if the ingested data exists
-    tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
+    tbox.data_io.core_connect.jdbc.jdbc_ingest(
         client=tamr_client,
         jdbc_connect=jdbc_connect,
         dataset_name="test_core_connect",
@@ -44,7 +43,7 @@ def test_jdbc_ingest():
     assert tbox.dataset.manage.exists(client=tamr_client, dataset_name="test_core_connect")
 
     # truncate the tamr dataset, then ingest data with primary key
-    assert tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
+    assert tbox.data_io.core_connect.jdbc.jdbc_ingest(
         client=tamr_client,
         jdbc_connect=jdbc_connect,
         dataset_name="test_core_connect",
@@ -55,7 +54,7 @@ def test_jdbc_ingest():
 
     # check if error is raised correctly when tamr version doesn't meet the requirement
     with pytest.raises(Exception) as exc_info:
-        assert tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
+        assert tbox.data_io.core_connect.jdbc.jdbc_ingest(
             client=tamr_client,
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",
@@ -66,7 +65,7 @@ def test_jdbc_ingest():
 
     # check if error is raised correctly when ingestion fails
     with pytest.raises(Exception) as exc_info:
-        tbox.data_io.core_connect.jdbc_jobs.jdbc_ingest(
+        tbox.data_io.core_connect.jdbc.jdbc_ingest(
             client=tamr_client,
             jdbc_connect=jdbc_connect,
             dataset_name="test_core_connect",
@@ -75,7 +74,6 @@ def test_jdbc_ingest():
             truncate_tamr_dataset="true",
         )
     assert {
-        re.sub(r"[0-9]", "", exc_info.value.args[0])
-        == "org.postgresql.util.PSQLException: ERROR: relation 'dataset.dataset' does not exist  "
-        "Position: "
+        exc_info.value.args[0]
+        == "org.postgresql.util.PSQLException: ERROR: relation 'dataset.dataset' does not exist\n  Position: 15"
     }

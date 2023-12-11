@@ -1,8 +1,9 @@
 """Tasks common to moving data in and out of Tamr"""
 from typing import Optional, List, Any, Iterable, Callable, Dict
 import logging
-
 from tamr_unify_client.dataset.resource import Dataset
+import json
+import time
 
 LOGGER = logging.getLogger(__name__)
 
@@ -181,3 +182,33 @@ def _get_column_mapping_dict(
         full_column_name_dict = dict(zip(columns, columns))
 
     return full_column_name_dict
+
+
+def _run_and_poll_connect_job(tamr_client, api_path, ingest_body) -> Dict:
+    """
+    Function to run and monitor a core-connect job till completion
+    """
+    response = tamr_client.post(api_path, json=ingest_body)
+    response_dict = json.loads(response.content)
+    if not response.ok:
+        error_message = f'Ingest failed with message: {response_dict["message"]}'
+        raise Exception(error_message)
+    else:
+        job_id = response_dict["jobId"]
+        job_poll_url = f"/api/connect/jobs/{job_id}"
+        job_response = tamr_client.get(job_poll_url)
+        job_response_dict = json.loads(job_response.content)
+        job_status = job_response_dict["status"]
+        while job_status != "SUCCEEDED":
+            # Wait for 10 seconds between polling:
+            time.sleep(10)
+            job_response = tamr_client.get(job_poll_url)
+            job_response_dict = json.loads(job_response.content)
+            job_status = job_response_dict["status"]
+            if job_status == "FAILED":
+                error_message = {
+                    f'Ingest failed with message: {job_response_dict["errors"]["error"]}'
+                }
+                raise Exception(error_message)
+
+    return response_dict

@@ -1,3 +1,3 @@
-from . import jdbc_jobs
+from . import jdbc
 
-__all__ = ["jdbc_jobs"]
+__all__ = ["jdbc.py"]
