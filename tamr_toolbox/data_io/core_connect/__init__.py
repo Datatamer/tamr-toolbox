@@ -1,3 +1,3 @@
 from . import jdbc
 
-__all__ = ["jdbc.py"]
+__all__ = ["jdbc"]

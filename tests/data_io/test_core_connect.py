@@ -75,5 +75,6 @@ def test_jdbc_ingest():
         )
     assert {
         exc_info.value.args[0]
-        == "org.postgresql.util.PSQLException: ERROR: relation 'dataset.dataset' does not exist\n  Position: 15"
+        == "org.postgresql.util.PSQLException: ERROR: relation 'dataset.dataset' does not exist\n"
+        "  Position: 15"
     }
