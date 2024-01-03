@@ -27,7 +27,7 @@ def get_maps_client(googlemaps_api_key: str) -> "googlemaps.Client":
         googlemaps_api_key: API key for the Google Maps address validation API
 
     Returns:
-        API client linekd to specified key
+        API client linked to specified key
     """
     import googlemaps
 
@@ -99,7 +99,9 @@ def validate(
     json_resp = json_resp["result"]
 
     # Get USPS address components
-    usps_address: JsonDict = json_resp.get("uspsData", dict()).get("standardizedAddress", dict())
+    usps_address: JsonDict = json_resp.get("uspsData", dict()).get(
+        "standardizedAddress", dict()
+    )
     usps_zipcode = usps_address.get("zipCode")
     if usps_zipcode and usps_address.get("zipCodeExtension"):
         usps_zipcode += "-" + usps_address.get("zipCodeExtension")
@@ -121,8 +123,12 @@ def validate(
         usps_city=usps_address.get("city"),
         usps_state=usps_address.get("state"),
         usps_zip_code=usps_zipcode,
-        latitude=json_resp.get("geocode", dict()).get("location", dict()).get("latitude"),
-        longitude=json_resp.get("geocode", dict()).get("location", dict()).get("longitude"),
+        latitude=json_resp.get("geocode", dict())
+        .get("location", dict())
+        .get("latitude"),
+        longitude=json_resp.get("geocode", dict())
+        .get("location", dict())
+        .get("longitude"),
         place_id=json_resp.get("geocode", dict()).get("placeId"),
         input_granularity=json_resp.get("verdict", dict()).get(
             "inputGranularity", "GRANULARITY_UNSPECIFIED"
@@ -133,9 +139,15 @@ def validate(
         geocode_granularity=json_resp.get("verdict", dict()).get(
             "geocodeGranularity", "GRANULARITY_UNSPECIFIED"
         ),
-        has_inferred=json_resp.get("verdict", dict()).get("hasInferredComponents", False),
-        has_unconfirmed=json_resp.get("verdict", dict()).get("hasUnconfirmedComponents", False),
-        has_replaced=json_resp.get("verdict", dict()).get("hasReplacedComponents", False),
+        has_inferred=json_resp.get("verdict", dict()).get(
+            "hasInferredComponents", False
+        ),
+        has_unconfirmed=json_resp.get("verdict", dict()).get(
+            "hasUnconfirmedComponents", False
+        ),
+        has_replaced=json_resp.get("verdict", dict()).get(
+            "hasReplacedComponents", False
+        ),
         address_complete=json_resp.get("verdict", dict()).get("addressComplete", False),
     )
 
