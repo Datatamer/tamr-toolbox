@@ -129,7 +129,7 @@ jobs:
           exit 1
   Notify:
     needs:  # List of all preceding jobs
-      - Lint
+      - Lint-And-Build-Docs
       - Test
       - Test-Minimum-Versions
       - Test-Windows
