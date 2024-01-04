@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Lint-And-Build-Docs:
+  Lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -129,7 +129,7 @@ jobs:
           exit 1
   Notify:
     needs:  # List of all preceding jobs
-      - Lint-And-Build-Docs
+      - Lint
       - Test
       - Test-Minimum-Versions
       - Test-Windows
