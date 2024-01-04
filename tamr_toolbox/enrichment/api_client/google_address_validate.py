@@ -27,7 +27,7 @@ def get_maps_client(googlemaps_api_key: str) -> "googlemaps.Client":
         googlemaps_api_key: API key for the Google Maps address validation API
 
     Returns:
-        API client linekd to specified key
+        API client linked to specified key
     """
     import googlemaps
 
