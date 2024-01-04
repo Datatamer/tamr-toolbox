@@ -29,9 +29,7 @@ CONFIG = utils.config.from_yaml(
 @mock_api()
 def test_from_resource_id():
     client = utils.client.create(**CONFIG["my_instance_name"])
-    project = client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_schema_mapping"]
-    )
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
     op_from_resource_id = from_resource_id(client, job_id=op.resource_id)
     assert op.resource_id == op_from_resource_id.resource_id
@@ -44,9 +42,7 @@ def test_from_resource_id():
 @mock_api()
 def test_get_latest():
     client = utils.client.create(**CONFIG["my_instance_name"])
-    project = client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_schema_mapping"]
-    )
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
     op_get_latest = get_latest(client)
     assert op.resource_id == op_get_latest.resource_id
@@ -55,15 +51,12 @@ def test_get_latest():
 @mock_api()
 def test_get_details_and_enforce_success():
     client = utils.client.create(**CONFIG["my_instance_name"])
-    project = client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_schema_mapping"]
-    )
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
     op_details = get_details(operation=op)
     assert (
         f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize views ["
-        f"minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING "
-        == op_details
+        f"minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING " == op_details
     )
 
     with pytest.raises(RuntimeError):
@@ -83,12 +76,8 @@ def test_get_active():
     schema_mapping_project = client.projects.by_resource_id(
         CONFIG["projects"]["minimal_schema_mapping"]
     )
-    op_schema_mapping = schema_mapping_project.unified_dataset().refresh(
-        asynchronous=True
-    )
-    mastering_project = client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_mastering"]
-    )
+    op_schema_mapping = schema_mapping_project.unified_dataset().refresh(asynchronous=True)
+    mastering_project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
     op_mastering = mastering_project.unified_dataset().refresh(asynchronous=True)
     op_get_active = get_active(client)
 
@@ -139,9 +128,7 @@ def test_wait():
 def test_get_safe_pair_estimate():
     client = utils.client.create(**CONFIG["my_instance_name"])
 
-    mastering_project = client.projects.by_resource_id(
-        CONFIG["projects"]["minimal_mastering"]
-    )
+    mastering_project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
     estimate_counts_op = safe_estimate_counts(mastering_project)
 
     assert OperationState[estimate_counts_op.state] == OperationState.SUCCEEDED
@@ -159,9 +146,7 @@ def test_timeout_error():
     op = project.pairs().refresh(asynchronous=True)
     with pytest.raises(TimeoutError, match="Waiting for operation took longer than"):
         with mock.patch.object(
-            tamr_unify_client.operation.Operation,
-            attribute="poll",
-            new=mock_timeout_fcn,
+            tamr_unify_client.operation.Operation, attribute="poll", new=mock_timeout_fcn
         ):
             monitor(op, timeout_seconds=1)
 
@@ -170,9 +155,7 @@ def test_none_status():
     client = utils.client.create(**CONFIG["my_instance_name"])
     op = from_resource_id(client, job_id="-1")
 
-    with mock.patch.object(
-        tamr_unify_client.operation.Operation, attribute="status", new=None
-    ):
+    with mock.patch.object(tamr_unify_client.operation.Operation, attribute="status", new=None):
         with mock.patch.object(
             tamr_unify_client.operation.Operation, attribute="state", new="PENDING"
         ):
