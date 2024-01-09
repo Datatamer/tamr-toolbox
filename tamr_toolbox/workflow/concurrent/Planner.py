@@ -1,23 +1,22 @@
-import json
 import copy
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
-from typing import Dict, List
+import json
 import logging
+from dataclasses import dataclass
+from typing import Dict, List
 
+import networkx as nx
+from dataclasses_json import dataclass_json
 from tamr_unify_client import Client
 
-from tamr_toolbox.workflow.concurrent.Graph import (
-    Graph,
-    get_projects_by_tier,
-    get_all_downstream_nodes,
-    get_successors,
-    get_predecessors,
-)
 from tamr_toolbox.workflow.concurrent import PlanNodeStatus
+from tamr_toolbox.workflow.concurrent.Graph import (
+    get_all_downstream_nodes,
+    get_predecessors,
+    get_projects_by_tier,
+    get_successors,
+)
+from tamr_toolbox.workflow.concurrent.PlanNode import PlanNode, monitor, run_next_step
 from tamr_toolbox.workflow.concurrent.PlanStatus import PlanStatus, from_planner
-from tamr_toolbox.workflow.concurrent.PlanNode import PlanNode, run_next_step, monitor
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,11 +36,11 @@ class Planner:
 
     plan: Dict[str, PlanNode]
     starting_tier: int
-    graph: Graph
+    graph: nx.DiGraph
 
 
 def from_graph(
-    graph: Graph, *, tamr_client: Client, starting_tier: int = 0, train=False
+    graph: nx.DiGraph, *, tamr_client: Client, starting_tier: int = 0, train=False
 ) -> Planner:
     """
     Creates a Planner class from a Graph. The plan object is a json dict specifying how

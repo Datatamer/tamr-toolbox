@@ -30,6 +30,8 @@ jobs:
       run: invoke lint
     - name: Run black
       run: invoke format
+    - name: Run docs
+      run: invoke docs
   Test:
     strategy:
       matrix:
@@ -45,8 +47,6 @@ jobs:
         run: python install.py
       - name: Run tests
         run: invoke test
-      - name: Run docs
-        run: invoke docs
   Test-Minimum-Versions:
     runs-on: ubuntu-latest
     steps:
