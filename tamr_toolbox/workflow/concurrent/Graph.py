@@ -74,7 +74,7 @@ def _build_edges(
         if any(upstream_project.name == x[1] for x in edges):
             LOGGER.debug(
                 f"skipping dataset {upstream_project.name} since it is already"
-                f" in edges as target: {[ x for x in edges if x[1]==upstream_project.name]}"
+                f" in edges as target: {[ x for x in edges if x[1] ==upstream_project.name]}"
             )
             continue
 

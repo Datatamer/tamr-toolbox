@@ -140,6 +140,7 @@ def _find_datasets(dataset: Dataset) -> List[Dataset]:
 
 
 def _request_upstream_datasets(dataset: Dataset) -> Dataset:
+
     """Returns a dataset's upstream dataset
 
     Args:
@@ -150,7 +151,7 @@ def _request_upstream_datasets(dataset: Dataset) -> Dataset:
     # Find upstream datasets, output is a DatasetURI
     upstream = dataset.upstream_datasets()
     dataset_upstream = []
-    # Make Dataset out of DatasetURI
+    # Make Dataset our of DatasetURI
     for data in upstream:
         dataset_upstream.append(dataset.client.datasets.by_resource_id(data.resource_id))
     return dataset_upstream
@@ -162,7 +163,7 @@ def datasets(dataset: Dataset) -> List[Dataset]:
     Args:
         dataset: the Tamr dataset for which associated upstream datasets are retrieved
     Returns:
-        List of Tamr datasets upstream of the target dataset
+            List of Tamr datasets upstream of the target dataset
     """
     upstream_datasets = _find_datasets(dataset)
 
