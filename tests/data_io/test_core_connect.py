@@ -12,7 +12,7 @@ CONFIG = utils.config.from_yaml(
 
 DATASET_NAME = "test_core_connect"
 
-enforce_online_test = True
+enforce_online_test = False
 
 
 def remove_test_datasets(client: Client):
