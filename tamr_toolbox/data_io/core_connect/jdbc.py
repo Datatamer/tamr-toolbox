@@ -46,7 +46,7 @@ def jdbc_ingest(
     ):
         None
     else:
-        error_message = "Core-connect is not available in current version of Tamr."
+        error_message = "Toolbox does not support core-connect for current version of Tamr."
         LOGGER.error(error_message)
         raise Exception(error_message)
 
