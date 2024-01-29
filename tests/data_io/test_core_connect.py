@@ -61,7 +61,10 @@ def test_jdbc_ingest():
             query="select * from dataset.dataset_ns_current limit 10",
             tamr_min_version="2023.008.0",
         )
-    assert exc_info.value.args[0] == "Toolbox does not support core-connect for current version of Tamr."
+    assert {
+        exc_info.value.args[0]
+        == "Toolbox does not support core-connect for current version of Tamr."
+    }
 
     # check if error is raised correctly when ingestion fails
     with pytest.raises(Exception) as exc_info:
