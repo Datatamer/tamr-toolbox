@@ -56,3 +56,11 @@ df_connect:
             db_user: "tamr"
             db_password: $CONNECT_TOOLBOX_DB_PASSWORD
             fetch_size: 10000
+
+core_connect:
+    jdbc:
+        ingest:
+            jdbcUrl: $CONNECT_TOOLBOX_POSTGRES_JDBC
+            dbUsername: "tamr"
+            dbPassword: $CONNECT_TOOLBOX_DB_PASSWORD
+            fetchSize: 10000
