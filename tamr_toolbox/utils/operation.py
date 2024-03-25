@@ -133,49 +133,53 @@ def get_active(tamr: Client) -> List[Operation]:
 
 
 def wait(
-    operation: Operation, *, poll_interval_seconds: int = 3, timeout_seconds: Optional[int] = None
+    operation: Operation,
+    *,
+    poll_interval_seconds: float = 3,
+    timeout_seconds: Optional[float] = None,
 ) -> Operation:
     """Continuously polls for this operation's server-side state.
 
     Args:
         operation: Operation to be polled.
         poll_interval_seconds: Time interval (in seconds) between subsequent polls.
-        timeout_seconds: Time (in seconds) to wait for operation to resolve.
-
-    Raises:
-        TimeoutError: If operation takes longer than `timeout_seconds` to resolve.
+        timeout_seconds: Time (in seconds) to wait for each stage of operation to resolve.
     """
-    started = now()
-    while timeout_seconds is None or now() - started < timeout_seconds:
-        if operation.status is None:
-            return operation
-        elif operation.status["state"] in [OperationState.PENDING, OperationState.RUNNING]:
-            sleep(poll_interval_seconds)
-        elif operation.status["state"] in [
-            OperationState.CANCELED,
-            OperationState.SUCCEEDED,
-            OperationState.FAILED,
-        ]:
-            return operation
-        operation = operation.poll()
-    raise TimeoutError(f"Waiting for operation took longer than {timeout_seconds} seconds.")
+    while operation.status is not None and OperationState[operation.status["state"]] in [
+        OperationState.PENDING,
+        OperationState.RUNNING,
+    ]:
+        operation = monitor(
+            operation=operation,
+            poll_interval_seconds=poll_interval_seconds,
+            timeout_seconds=timeout_seconds,
+        )
+    return operation
 
 
 def monitor(
-    operation: Operation, *, poll_interval_seconds: float = 1, timeout_seconds: float = 300
+    operation: Operation,
+    *,
+    poll_interval_seconds: float = 1,
+    timeout_seconds: Optional[float] = 300,
 ) -> Operation:
     """Continuously polls for this operation's server-side state and returns operation
-    when there is a state change
+    when there is a state change, or if it is complete.
 
     Args:
         operation: Operation to be monitored.
         poll_interval_seconds: Time interval (in seconds) between subsequent polls.
-        timeout_seconds: Time (in seconds) to wait for operation to resolve.
+        timeout_seconds: Time (in seconds) to wait for operation to resolve; if None, will wait
+            indefinitely
 
     Raises:
         TimeoutError: If operation takes longer than `timeout_seconds` to resolve.
     """
     status = OperationState[operation.state]
+
+    if status in [OperationState.SUCCEEDED, OperationState.CANCELED, OperationState.FAILED]:
+        return operation
+
     started = now()
     while timeout_seconds is None or now() - started < timeout_seconds:
         operation = operation.poll()

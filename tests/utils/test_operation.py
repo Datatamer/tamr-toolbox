@@ -1,15 +1,24 @@
 """Tests for tasks related to Tamr operations (or jobs)"""
+from time import sleep
+from unittest import mock
+
+import pytest
+import tamr_unify_client
+
 from tamr_toolbox import utils
+from tamr_toolbox.models.operation_state import OperationState
 from tamr_toolbox.utils.operation import (
+    enforce_success,
     from_resource_id,
-    get_latest,
-    get_details,
-    get_all,
     get_active,
+    get_all,
+    get_details,
+    get_latest,
     monitor,
+    safe_estimate_counts,
+    wait,
 )
 from tamr_toolbox.utils.testing import mock_api
-from tamr_toolbox.models.operation_state import OperationState
 from tests._common import get_toolbox_root_dir
 
 CONFIG = utils.config.from_yaml(
@@ -25,6 +34,9 @@ def test_from_resource_id():
     op_from_resource_id = from_resource_id(client, job_id=op.resource_id)
     assert op.resource_id == op_from_resource_id.resource_id
 
+    null_op_from_resource_id = from_resource_id(client, job_id="-1")
+    assert null_op_from_resource_id.type == "NOOP"
+
 
 @mock_api()
 def test_get_latest():
@@ -36,7 +48,7 @@ def test_get_latest():
 
 
 @mock_api()
-def test_get_details():
+def test_get_details_and_enforce_success():
     client = utils.client.create(**CONFIG["my_instance_name"])
     project = client.projects.by_resource_id(CONFIG["projects"]["minimal_schema_mapping"])
     op = project.unified_dataset().refresh(asynchronous=True)
@@ -45,6 +57,9 @@ def test_get_details():
         f"Host: {client.host} \n Job: {op.resource_id} \n Description: Materialize views ["
         f"minimal_schema_mapping_unified_dataset] to Elastic \n Status: PENDING " == op_details
     )
+
+    with pytest.raises(RuntimeError):
+        enforce_success(op)
 
 
 @mock_api()
@@ -94,3 +109,63 @@ def test_monitor():
     succeeded_status = OperationState[op_succeeded.state]
     assert op.resource_id == op_succeeded.resource_id
     assert succeeded_status == OperationState.SUCCEEDED
+
+
+@mock_api()
+def test_wait():
+    client = utils.client.create(**CONFIG["my_instance_name"])
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    project = project.as_mastering()
+    op = project.pairs().refresh(asynchronous=True)
+    op_after_wait = wait(op, poll_interval_seconds=1)
+    succeeded_status = OperationState[op_after_wait.state]
+    assert op.resource_id == op_after_wait.resource_id
+    assert succeeded_status == OperationState.SUCCEEDED
+
+
+@mock_api()
+def test_get_safe_pair_estimate():
+    client = utils.client.create(**CONFIG["my_instance_name"])
+
+    mastering_project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    estimate_counts_op = safe_estimate_counts(mastering_project)
+
+    assert OperationState[estimate_counts_op.state] == OperationState.SUCCEEDED
+
+
+@mock_api()
+def test_timeout_error():
+    def mock_timeout_fcn(_op: tamr_unify_client.operation.Operation) -> None:
+        sleep(2)
+        return _op
+
+    client = utils.client.create(**CONFIG["my_instance_name"])
+    project = client.projects.by_resource_id(CONFIG["projects"]["minimal_mastering"])
+    project = project.as_mastering()
+    op = project.pairs().refresh(asynchronous=True)
+    with pytest.raises(TimeoutError, match="Waiting for operation took longer than"):
+        with mock.patch.object(
+            tamr_unify_client.operation.Operation, attribute="poll", new=mock_timeout_fcn
+        ):
+            monitor(op, timeout_seconds=1)
+
+
+def test_none_status():
+    client = utils.client.create(**CONFIG["my_instance_name"])
+    op = from_resource_id(client, job_id="-1")
+
+    with mock.patch.object(tamr_unify_client.operation.Operation, attribute="status", new=None):
+        with mock.patch.object(
+            tamr_unify_client.operation.Operation, attribute="state", new="PENDING"
+        ):
+            with mock.patch.object(
+                tamr_unify_client.operation.Operation, attribute="poll", new=lambda x: x
+            ):
+                assert op.relative_id == "operations/-1"
+
+
+def test_monitor_complete_job():
+    client = utils.client.create(**CONFIG["my_instance_name"])
+    op = from_resource_id(client, job_id="-1")
+    monitor(op)
+    assert op.relative_id == "operations/-1"
