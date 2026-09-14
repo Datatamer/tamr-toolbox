@@ -111,7 +111,7 @@ jobs:
         run: python install.py
       - name: pytester-cov
         id: pytester-cov
-        uses: programmingwithalex/pytester-cov@main
+        uses: programmingwithalex/pytester-cov@6ce63dd8e8f48dd07095d098db7375bb0e4ffea8  # v1.2.4
         with:
           pytest-root-dir: '.'
           cov-omit-list: 'examples/*, doc_src/*, tests/*, install.py, setup.py, tasks.py'
