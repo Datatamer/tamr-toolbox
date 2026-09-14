@@ -355,10 +355,8 @@ def edit_attributes(
 
     # Check description or type changes are passed in
     if attribute_types is None and attribute_descriptions is None:
-        raise ValueError(
-            """Updates to attributes must be passed in via attribute_types
-            or attribute_descriptions arguments"""
-        )
+        raise ValueError("""Updates to attributes must be passed in via attribute_types
+            or attribute_descriptions arguments""")
 
     # Get list of attributes that need updating from attribute_types and
     # attribute_descriptions dictionaries
@@ -428,12 +426,10 @@ def edit_attributes(
             dataset.attributes.create(new_attr_spec)
             LOGGER.info(f"Updated attribute '{attribute_name}' in {dataset_name}")
         else:
-            LOGGER.info(
-                f"""The attribute '{attribute_name}' in {dataset_name} curently has
+            LOGGER.info(f"""The attribute '{attribute_name}' in {dataset_name} curently has
                  the type '{str(old_type_class)}'. Set 'override_existing_types' to
                  True to update the type to '{str(new_type_class)}'
-                """
-            )
+                """)
 
     return dataset
 

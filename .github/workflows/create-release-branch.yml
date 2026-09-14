@@ -12,12 +12,12 @@ on:
 
 jobs:
   CreateReleasePRs:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     outputs:
       release_branch: release-${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout develop branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: "develop"
       - name: Update version file
@@ -31,9 +31,9 @@ jobs:
         id: get_version_short
 
       - name: Install Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: '3.12'
       - name: Install requirements
         run: python install.py
 

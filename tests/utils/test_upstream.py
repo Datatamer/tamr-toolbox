@@ -1,4 +1,5 @@
 """Tests for tasks related to upstream projects"""
+
 from tamr_toolbox import utils
 from tamr_toolbox.utils import upstream
 from tamr_toolbox.utils.testing import mock_api

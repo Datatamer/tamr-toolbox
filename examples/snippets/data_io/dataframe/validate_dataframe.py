@@ -1,5 +1,6 @@
 """Snippet for validating the contents of a pandas.Dataframe followed by ingestion into a
 Tamr dataset"""
+
 import tamr_toolbox as tbox
 import pandas as pd
 

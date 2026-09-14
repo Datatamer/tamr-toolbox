@@ -3,6 +3,7 @@ Example script for checking and cleaning up downstream datasets.
 NOTE: USE AT YOUR OWN RISK. Deleting datasets can sometimes break the system
 and should only be done when necessary. Always take backup before you perform the cleanup.
 """
+
 import tamr_toolbox as tbox
 from requests.exceptions import HTTPError
 from typing import Dict, Any

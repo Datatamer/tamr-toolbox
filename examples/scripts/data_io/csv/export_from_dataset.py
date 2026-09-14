@@ -1,4 +1,5 @@
 """Example script for exporting a dataset from Tamr as a CSV"""
+
 import argparse
 from typing import Dict, Any
 

@@ -4,10 +4,10 @@
 To send Slack notifications, you'll need to have your own Slack app. If you don't have one,
 you may follow steps 1 and 2 to create it. Otherwise, please proceed to Step 3.
 
-Note: This module also requires an optional dependency. See [Installation](../../installation.md) for details.
+Note: This module also requires an optional dependency. See [Installation](../installation.md) for details.
 
 
-```eval_rst
+```{eval-rst}
 Step 1: Set up a Slack environment to receive messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Create a `Slack app <https://api.slack.com/apps/new>`_
@@ -42,7 +42,7 @@ Step 3: Use Cases
 
 ## Email Notifications
 
-```eval_rst
+```{eval-rst}
 .. literalinclude:: ../../examples/snippets/notifications/enable_email_notifications.py
   :language: python
 

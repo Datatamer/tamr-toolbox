@@ -1,12 +1,16 @@
 # Modules
-* [Data Input/Output](modules/data_io.md)
-* [Dataset](modules/dataset.md)
-* [Enrichment](modules/enrichment.md)
-* [Filesystem](modules/filesystem.rst)
-* [RealTime](modules/realtime.rst)
-* [Models](modules/models.rst)
-* [Notifications](modules/notifications.md)
-* [Project](modules/project.md)
-* [Sysadmin](modules/sysadmin.rst)
-* [Utilities](modules/utils.rst)
-* [Workflow](modules/workflow.md)
+```{toctree}
+:maxdepth: 2
+
+Data Input/Output <modules/data_io>
+Dataset <modules/dataset>
+Enrichment <modules/enrichment>
+Filesystem <modules/filesystem>
+RealTime <modules/realtime>
+Models <modules/models>
+Notifications <modules/notifications>
+Project <modules/project>
+Sysadmin <modules/sysadmin>
+Utilities <modules/utils>
+Workflow <modules/workflow>
+```

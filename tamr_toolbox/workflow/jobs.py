@@ -1,4 +1,5 @@
 """Tasks related to running jobs for groups of Tamr projects"""
+
 import time
 from typing import List, Optional
 import logging

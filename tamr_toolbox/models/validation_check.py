@@ -1,4 +1,5 @@
 """Dataclass for validation check information"""
+
 from dataclasses import dataclass
 
 from tamr_toolbox.models.data_type import JsonDict

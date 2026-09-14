@@ -1,4 +1,5 @@
 """Example script for managing backup and restore operations for a Tamr instance"""
+
 import tamr_toolbox as tbox
 
 # Read config, make Tamr Client, make logger

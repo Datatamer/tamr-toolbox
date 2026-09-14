@@ -1,4 +1,5 @@
 """Tasks related to translating data with the google translation API"""
+
 import html
 import logging
 import os

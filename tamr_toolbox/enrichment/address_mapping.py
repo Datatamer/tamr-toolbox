@@ -1,4 +1,5 @@
 """Tasks related to creating, updating, saving, and moving address validation data from Tamr"""
+
 import copy
 import json
 import logging
@@ -83,7 +84,7 @@ class AddressValidationMapping:
 
 
 def to_dict(
-    dictionary: Dict[str, AddressValidationMapping]
+    dictionary: Dict[str, AddressValidationMapping],
 ) -> List[Dict[str, Union[str, List[str], float, None]]]:
     """
     Convert a toolbox address validation mapping entries to  list-of-dictionary format.
@@ -140,44 +141,56 @@ def from_dataset(dataset: Dataset) -> Dict[str, AddressValidationMapping]:
             # Values are returned as a length-1 list of string, we change this to strings
             entry = AddressValidationMapping(
                 input_address=record["input_address"],
-                validated_formatted_address=record["validated_formatted_address"][0]
-                if record["validated_formatted_address"]
-                else None,
+                validated_formatted_address=(
+                    record["validated_formatted_address"][0]
+                    if record["validated_formatted_address"]
+                    else None
+                ),
                 expiration=record["expiration"][0],
                 region_code=record["region_code"][0] if record["region_code"] else None,
                 postal_code=record["postal_code"][0] if record["postal_code"] else None,
                 admin_area=record["admin_area"][0] if record["admin_area"] else None,
                 locality=record["locality"][0] if record["locality"] else None,
                 address_lines=record["address_lines"] if record["address_lines"] else [],
-                usps_first_address_line=record["usps_first_address_line"]
-                if record["usps_first_address_line"]
-                else None,
-                usps_city_state_zip_line=record["usps_city_state_zip_line"]
-                if record["usps_city_state_zip_line"]
-                else None,
+                usps_first_address_line=(
+                    record["usps_first_address_line"]
+                    if record["usps_first_address_line"]
+                    else None
+                ),
+                usps_city_state_zip_line=(
+                    record["usps_city_state_zip_line"]
+                    if record["usps_city_state_zip_line"]
+                    else None
+                ),
                 usps_city=record["usps_city"] if record["usps_city"] else None,
                 usps_state=record["usps_state"] if record["usps_state"] else None,
                 usps_zip_code=record["usps_zip_code"] if record["usps_zip_code"] else None,
                 latitude=float(record["latitude"][0]) if record["latitude"] else None,
                 longitude=float(record["longitude"][0]) if record["longitude"] else None,
                 place_id=record["place_id"][0] if record["place_id"] else None,
-                input_granularity=record["input_granularity"][0]
-                if record["input_granularity"]
-                else "GRANULARITY_UNSPECIFIED",
-                validation_granularity=record["validation_granularity"][0]
-                if record["validation_granularity"]
-                else "GRANULARITY_UNSPECIFIED",
-                geocode_granularity=record["geocode_granularity"][0]
-                if record["geocode_granularity"]
-                else "GRANULARITY_UNSPECIFIED",
+                input_granularity=(
+                    record["input_granularity"][0]
+                    if record["input_granularity"]
+                    else "GRANULARITY_UNSPECIFIED"
+                ),
+                validation_granularity=(
+                    record["validation_granularity"][0]
+                    if record["validation_granularity"]
+                    else "GRANULARITY_UNSPECIFIED"
+                ),
+                geocode_granularity=(
+                    record["geocode_granularity"][0]
+                    if record["geocode_granularity"]
+                    else "GRANULARITY_UNSPECIFIED"
+                ),
                 has_inferred=record["has_inferred"][0] if record["has_inferred"] else False,
-                has_unconfirmed=record["has_unconfirmed"][0]
-                if record["has_unconfirmed"]
-                else False,
+                has_unconfirmed=(
+                    record["has_unconfirmed"][0] if record["has_unconfirmed"] else False
+                ),
                 has_replaced=record["has_replaced"][0] if record["has_replaced"] else False,
-                address_complete=record["address_complete"][0]
-                if record["address_complete"]
-                else False,
+                address_complete=(
+                    record["address_complete"][0] if record["address_complete"] else False
+                ),
             )
 
         except KeyError as exp:

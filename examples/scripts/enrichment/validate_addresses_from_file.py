@@ -1,4 +1,5 @@
 """An example script to validate address data from disk and save results on disk."""
+
 import argparse
 from dataclasses import fields
 from datetime import timedelta

@@ -1,4 +1,5 @@
 """Tests for tasks related to calculating metrics for Tamr Categorization projects"""
+
 import math
 import pytest
 

@@ -1,4 +1,5 @@
 """Tasks related to the Tamr auxiliary service DF-connect"""
+
 from . import client
 from . import jdbc_info
 

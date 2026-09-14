@@ -1,4 +1,5 @@
 """Tasks related to Tamr operations (or jobs)"""
+
 import logging
 from typing import Union, List, Optional
 from time import sleep, time as now

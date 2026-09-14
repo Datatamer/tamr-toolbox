@@ -1,4 +1,5 @@
 """Tasks related to handling jdbc information for the Tamr auxiliary service DF-connect"""
+
 from dataclasses import dataclass
 from tamr_toolbox.models.data_type import JsonDict
 

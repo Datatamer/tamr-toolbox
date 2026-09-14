@@ -1,4 +1,5 @@
-"""Tests for tasks common to moving data in and out of Tamr """
+"""Tests for tasks common to moving data in and out of Tamr"""
+
 import pytest
 import pandas as pd
 from tamr_toolbox.data_io import common
@@ -10,7 +11,6 @@ from functools import partial
 import json
 from math import isnan
 from typing import Optional, List, Any
-
 
 # Raw export of people_tiny_copy
 TEST_DATA = """

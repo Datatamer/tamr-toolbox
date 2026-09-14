@@ -1,4 +1,5 @@
 """Tasks related to creation of Email notifications"""
+
 import logging
 import smtplib
 import ssl
@@ -92,7 +93,8 @@ def send_email(
         message sent by the server. A successful response will contain an empty dict.
 
     Raises:
-        SMTPException. The base exception class used by the smtplib module
+        SMTPException: The base exception class used by the smtplib module
+        ValueError: If a keyfile is provided without a certfile
     """
     # build email
     msg = _build_message(
@@ -107,11 +109,21 @@ def send_email(
     response["message"] = message
 
     context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server, smtp_port) if use_tls else smtplib.SMTP_SSL(
-        smtp_server, smtp_port, keyfile=keyfile, certfile=certfile, context=context
+    if keyfile is not None or certfile is not None:
+        # smtplib dropped its keyfile/certfile arguments in Python 3.12; the certificate
+        # chain must be loaded onto the SSL context instead
+        if certfile is None:
+            error_message = "A certfile is required when a keyfile is provided"
+            LOGGER.error(error_message)
+            raise ValueError(error_message)
+        context.load_cert_chain(certfile=certfile, keyfile=keyfile)
+    with (
+        smtplib.SMTP(smtp_server, smtp_port)
+        if use_tls
+        else smtplib.SMTP_SSL(smtp_server, smtp_port, context=context)
     ) as server:
         if use_tls:
-            server.starttls(keyfile=keyfile, certfile=certfile, context=context)
+            server.starttls(context=context)
 
         # login and send message
         server.login(sender_address, sender_password)

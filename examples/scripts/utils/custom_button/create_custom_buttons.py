@@ -2,6 +2,7 @@
 Example script for creating, saving & registering custom button yaml files.
 NB: This script needs to be run on the server on which Tamr is installed, not remotely.
 """
+
 import tamr_toolbox as tbox
 import argparse
 import logging

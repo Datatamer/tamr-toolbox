@@ -1,4 +1,5 @@
-""" Project artifacts data classes """
+"""Project artifacts data classes"""
+
 from dataclasses import dataclass
 
 

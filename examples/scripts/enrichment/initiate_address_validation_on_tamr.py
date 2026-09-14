@@ -1,4 +1,5 @@
 """An example script to create an address validation mapping on Tamr."""
+
 import argparse
 from typing import Dict
 

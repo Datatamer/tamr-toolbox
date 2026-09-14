@@ -3,8 +3,8 @@ The below code is an example that reads a config file, shows how to use it to cr
  `Client` object, and then streams an example table into Tamr. Relies on default values and
  everything being specified by config file.
 """
-import tamr_toolbox as tbox
 
+import tamr_toolbox as tbox
 
 my_config = tbox.utils.config.from_yaml("examples/resources/conf/connect.config.yaml")
 my_connect = tbox.data_io.df_connect.client.from_config(my_config)

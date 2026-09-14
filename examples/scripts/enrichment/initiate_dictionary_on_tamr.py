@@ -1,4 +1,5 @@
 """An example script to create an empty translation dictionary on Tamr"""
+
 from typing import Dict, Any
 import tamr_toolbox as tbox
 import argparse

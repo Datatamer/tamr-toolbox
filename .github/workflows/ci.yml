@@ -19,11 +19,11 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
-        python-version: 3.7
+        python-version: '3.12'
     - name: Install requirements
       run: python install.py
     - name: Run flake8
@@ -35,12 +35,12 @@ jobs:
   Test:
     strategy:
       matrix:
-        python_version: [3.7, 3.8, 3.9, '3.10']
+        python_version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install requirements
@@ -50,15 +50,17 @@ jobs:
   Test-Minimum-Versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: '3.10'
       - name: Set requirements to minimum
         run: sed -i 's/>=/==/g' requirements.txt
-      - name: Set optional_requirements to minimum
-        run: sed -i 's/>=/==/g' optional_requirements.txt
+      - name: Set optional dependencies (setup.py extras) to minimum
+        # Only rewrites '>=' that follows a quoted package name, e.g. "pandas>=1.5,<3" -> "pandas==1.5,<3",
+        # so python_requires=">=3.10" is left alone.
+        run: sed -i -E 's/"([][A-Za-z0-9_.-]+)>=/"\1==/g' setup.py
       - name: Install requirements
         run: python install.py
       - name: Run tests
@@ -67,13 +69,13 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python_version: [3.7, 3.8, 3.9, '3.10']
+        python_version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install requirements
@@ -83,14 +85,14 @@ jobs:
   Test-Core-Dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: '3.10'
       - name: Install requirements
         run: |
-          python -m pip install --upgrade pip==20.0.2
+          python -m pip install --upgrade pip
           python -m pip install .
       - name: Import tamr_toolbox
         run: python -c 'import tamr_toolbox'
@@ -100,16 +102,16 @@ jobs:
       COVERAGE_SINGLE: 0
       COVERAGE_TOTAL: 27
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: '3.12'
       - name: Install requirements
         run: python install.py
       - name: pytester-cov
         id: pytester-cov
-        uses: programmingwithalex/pytester-cov@main
+        uses: programmingwithalex/pytester-cov@6ce63dd8e8f48dd07095d098db7375bb0e4ffea8  # v1.2.4
         with:
           pytest-root-dir: '.'
           cov-omit-list: 'examples/*, doc_src/*, tests/*, install.py, setup.py, tasks.py'

@@ -1,4 +1,5 @@
 """Snippet for retrieving confidence metrics from a Tamr Categorization project"""
+
 import tamr_toolbox as tbox
 from tamr_toolbox.project.categorization.metrics import get_tier_confidence
 

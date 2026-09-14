@@ -1,7 +1,7 @@
 # Email
 
 ## Email Notifications
- ```eval_rst
+ ```{eval-rst}
 .. automodule:: tamr_toolbox.notifications.emails
 
  ```

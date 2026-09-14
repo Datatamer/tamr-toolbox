@@ -1,4 +1,5 @@
 """Example script for creation and editing of transformations of a Tamr project"""
+
 from typing import Dict, Any
 
 import tamr_toolbox as tbox

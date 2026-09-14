@@ -1,4 +1,5 @@
 """Tests for tasks related to Tamr operations (or jobs)"""
+
 from time import sleep
 from unittest import mock
 

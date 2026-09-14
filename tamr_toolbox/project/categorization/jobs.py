@@ -1,4 +1,5 @@
 """Tasks related to running jobs for Tamr Categorization projects"""
+
 import logging
 from typing import List
 

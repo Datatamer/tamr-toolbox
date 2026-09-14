@@ -11,6 +11,8 @@ __Installation:__ https://datatamer.github.io/tamr-toolbox/latest/installation.h
 
 __Examples:__ https://datatamer.github.io/tamr-toolbox/latest/examples.html
 
+__Requirements:__ Python 3.10 through 3.14
+
 ## Community Contributions
 Contributions to the Tamr Toolbox are currently limited to Tamr employees only. 
 Tamr does not routinely review or merge community submitted pull requests.
