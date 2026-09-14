@@ -1,4 +1,5 @@
 """Example script for running a Tamr Golden Records project step-by-step"""
+
 import argparse
 from typing import List, Dict, Any
 

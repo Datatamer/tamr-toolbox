@@ -1,4 +1,5 @@
 """Enum representing project types in Tamr"""
+
 from enum import Enum
 
 

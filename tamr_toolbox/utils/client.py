@@ -1,4 +1,5 @@
 """Tasks related to connecting to a Tamr instance"""
+
 import logging
 import re
 from base64 import b64decode

@@ -1,4 +1,5 @@
 """Tests for tasks related to running jobs for groups of Tamr projects"""
+
 import pytest
 
 from tamr_unify_client.project.resource import Project

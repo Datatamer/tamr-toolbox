@@ -2,8 +2,8 @@
 # https://ljvmiranda921.github.io/notebook/2018/06/21/precommits-using-black-and-flake8/
 
 [flake8]
-ignore = E203, E266, W503, F403
+ignore = E201, E203, E225, E226, E266, E721, F541, W503, F403
 max-line-length = 99
 max-complexity = 18
 select = B,C,E,F,I,W,T4,B9
-exclude = .venv*,*.egg-info
+exclude = *venv*,*.egg-info

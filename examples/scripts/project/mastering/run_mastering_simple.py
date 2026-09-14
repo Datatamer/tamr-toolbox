@@ -1,4 +1,5 @@
 """Example script for running a Tamr Mastering project without model training"""
+
 import argparse
 from typing import List, Dict, Any
 

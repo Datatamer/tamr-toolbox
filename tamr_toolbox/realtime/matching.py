@@ -153,7 +153,7 @@ def match_query(
     if batch_size is None:
         batch_size = len(records)
         if batch_size == 0:
-            LOGGER.warn("No input supplied to match_query -- returning empty result.")
+            LOGGER.warning("No input supplied to match_query -- returning empty result.")
             return result_dict
     elif batch_size <= 0:
         raise ValueError(f"Batch size must be non-negative: received {batch_size}")
@@ -256,7 +256,7 @@ def transform_and_match_query(
     if batch_size is None:
         batch_size = len(records)
         if batch_size == 0:
-            LOGGER.warn("No input supplied to match_query -- returning empty result.")
+            LOGGER.warning("No input supplied to match_query -- returning empty result.")
             return result_dict
     elif batch_size <= 0:
         raise ValueError(f"Batch size must be non-negative: received {batch_size}")

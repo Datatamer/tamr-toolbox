@@ -1,7 +1,7 @@
 # Common
 
 ## Common Functions
- ```eval_rst
+ ```{eval-rst}
 .. automodule:: tamr_toolbox.notifications.common
 
  ```

@@ -1,7 +1,6 @@
 import pandas as pd
 import tamr_toolbox as tbox
 
-
 # Initialize Tamr match client -- note port must be 9170 for RealTime match service
 match_client = tbox.utils.client.create(
     username="user", password="pw", host="localhost", port=9170

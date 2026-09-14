@@ -6,22 +6,22 @@ on:
         description: 'The name of the branch or tag to create an offline install zip for'
         required: true
       os:
-        description: 'Operation system to create an offline install zip for. Supported versions: centos:7, centos:8, ubuntu:16.04, ubuntu:18.04, ubuntu:20.04 '
+        description: 'Operation system to create an offline install zip for. Examples: ubuntu:22.04, ubuntu:24.04, rockylinux:9, almalinux:9 (any apt- or yum-based image)'
         required: true
       python_version:
-        description: 'Python version to create an offline install zip for. Example: 3.7.5'
+        description: 'Python version to create an offline install zip for. Example: 3.12.7 (must be 3.10 or newer and an exact release available on python.org)'
         required: true
 
 jobs:
   CreateZip:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container:
       image: ${{ github.event.inputs.os }}
     steps:
 
       # Checkout the target branch
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch_name }}
 
@@ -30,7 +30,7 @@ jobs:
         if: startsWith(github.event.inputs.os, 'ubuntu')
         run: apt update -y  && apt install -y software-properties-common && apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget zip
       - name: Install environment specific requirements
-        if: startsWith(github.event.inputs.os, 'centos')
+        if: "!startsWith(github.event.inputs.os, 'ubuntu')"
         run: yum update -y && yum -y groupinstall "Development Tools" && yum install -y wget gcc openssl-devel bzip2-devel libffi-devel zip
 
       # Install toolbox and Python
@@ -40,8 +40,8 @@ jobs:
         run: python3 install.py
 
       # Create zip file
-      - name: Upgrade wheel
-        run: pip install --upgrade wheel==0.34.2
+      - name: Upgrade pip and wheel
+        run: python3 -m pip install --upgrade pip wheel
       - name: Export Python Verion
         id: get_python
         run: echo "version=$(python3 -V | sed 's/ //g')" >> $GITHUB_OUTPUT
@@ -54,7 +54,7 @@ jobs:
       - name: Zip wheel dir - minimal
         run:  zip -r tamr_toolbox_minimal_dependencies.zip tamr_toolbox_minimal_dependencies
       - name: Upload wheel dir - minimal
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: tamr_toolbox_minimal_dependencies.zip
           name: ${{ steps.get_name.outputs.file_name }}_minimal_dependencies.zip
@@ -64,7 +64,7 @@ jobs:
       - name: Zip wheel dir - all
         run: zip -r tamr_toolbox_all_dependencies.zip tamr_toolbox_all_dependencies
       - name: Upload wheel dir - all
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: tamr_toolbox_all_dependencies.zip
           name: ${{ steps.get_name.outputs.file_name }}_all_dependencies.zip
@@ -76,7 +76,7 @@ jobs:
       - name: Zip wheel dir - pip and setuptools
         run: zip -r pip_and_setuptools.zip pip_setuptools
       - name: Upload wheel dir - pip and setuptools
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: pip_and_setuptools.zip
           name: ${{ steps.get_name.outputs.file_name }}_pip_and_setuptools.zip

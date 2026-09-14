@@ -1,5 +1,9 @@
 # Installation
 
+**Requirements**
+
+`tamr-toolbox` supports Python 3.10 through 3.14.
+
 **Pip Install**
 
 `pip install 'tamr-toolbox[all]'`
@@ -33,7 +37,7 @@ Install instructions:
 
 Required for [Translation Enrichment](modules/enrichment/translation.md)
 
-Library: [GoogleTranslate](https://github.com/googleapis/python-translate) (`tamr-toolbox` uses version == 2.0.1)
+Library: [GoogleTranslate](https://github.com/googleapis/python-translate) (`tamr-toolbox` uses version >= 3.15)
 
 Note: You will additionally need your own google API key in order to use translation capabilities.
 
@@ -44,7 +48,7 @@ Install instructions:
 
 Required for [Address Validation](modules/enrichment/address_validation.md)
 
-Library: [Google Maps API](https://github.com/googlemaps/google-maps-services-python) (`tamr-toolbox` uses version == 4.10.0)
+Library: [Google Maps API](https://github.com/googlemaps/google-maps-services-python) (`tamr-toolbox` uses version >= 4.10.0)
 
 Note: You will additionally need your own Google Maps API key in order to use address validation capabilities.
 
@@ -55,7 +59,7 @@ Install instructions:
 
 Required for [Testing](modules/utils)
 
-Library: [Responses](https://github.com/getsentry/responses) (`tamr-toolbox` uses version == 0.10.14)
+Library: [Responses](https://github.com/getsentry/responses) (`tamr-toolbox` uses version >= 0.23)
 
 ***Optional Feature: Pandas dataframes***
 
@@ -64,7 +68,7 @@ Install instructions:
 
 Required for [DataFrame I/O](modules/data_io/dataframe.md)
 
-Library: [Pandas](https://pandas.pydata.org/pandas-docs/stable/) (`tamr-toolbox` uses version >= 0.21.0)
+Library: [Pandas](https://pandas.pydata.org/pandas-docs/stable/) (`tamr-toolbox` uses version >= 1.5, < 3)
 
 ***Optional Feature: Slack Notifications***
 
@@ -73,7 +77,7 @@ Install instructions:
 
 Required for [Slack](modules/notifications/slack.md)
 
-Library: [Slack Client](https://github.com/slackapi/python-slackclient) (`tamr-toolbox` uses version >= 2.7.2)
+Library: [Slack SDK](https://github.com/slackapi/python-slack-sdk) (`tamr-toolbox` uses version >= 3.19)
 
 ***Optional Feature: Remote SSH Connection***
 
@@ -82,13 +86,13 @@ Install instructions:
 
 Required for [Instance](modules/sysadmin)
 
-Library: [Paramiko](https://github.com/paramiko/paramiko) (`tamr-toolbox` uses version >= 2.8.0)
+Library: [Paramiko](https://github.com/paramiko/paramiko) (`tamr-toolbox` uses version >= 3.4)
 
 
 
 **Offline installation**
 
-Download `tamr-toolbox` and its dependencies on a machine with the same operating system and python version as your target system, that has online access to PyPI:
+Download `tamr-toolbox` and its dependencies on a machine with the same operating system and Python version as your target system (for example, Python 3.12 on both machines), that has online access to PyPI:
 
 ```bash
 pip download 'tamr-toolbox[all]' -d tamr-toolbox-requirements

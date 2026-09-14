@@ -1,4 +1,5 @@
 """Dataclasses, enums, and  types related to Tamr"""
+
 from . import project_type
 from . import attribute_type
 from . import data_type

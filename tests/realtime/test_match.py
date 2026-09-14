@@ -1,6 +1,7 @@
 """Tests for RealTime match utilities"""
-from logging import warning
+
 from typing import Optional
+from unittest import mock
 
 import pytest
 
@@ -229,12 +230,13 @@ def test_match_no_input_data():
     project = client.projects.by_name("minimal_mastering")
     match_client = utils.client.create(**CONFIG["toolbox_realtime_match_instance"])
 
-    with pytest.warns(
-        expected_warning=warning("No input supplied to match_query -- returning empty result.")
-    ):
+    with mock.patch("tamr_toolbox.realtime.matching.LOGGER.warning") as mock_warning:
         result = match_query(
             match_client=match_client, project=project, records=[], type="records"
         )
+    mock_warning.assert_called_once_with(
+        "No input supplied to match_query -- returning empty result."
+    )
     assert len(result) == 0
     return None
 
@@ -250,7 +252,7 @@ def test_poll_match_status():
     # Test project that is not queryable
     project = client.projects.by_name("minimal_incomplete_mastering")
     queryable = poll_realtime_match_status(match_client=match_client, project=project)
-    assert ~queryable
+    assert not queryable
     return None
 
 

@@ -1,4 +1,5 @@
 """Defines the package tamr_toolbox for user installations"""
+
 from setuptools import setup, find_packages
 
 with open("requirements.txt") as f:
@@ -11,6 +12,19 @@ with open("version.txt") as f:
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
 
+# Individual sets of optional dependencies. This is the single source of truth for optional
+# dependencies; the "all" extra is derived from it below.
+optional_dependencies = {
+    "address-validation": ["googlemaps>=4.10.0"],
+    "pandas": ["pandas>=1.5,<3"],
+    "slack": ["slack_sdk>=3.19"],
+    "testing": ["responses>=0.23"],
+    "translation": ["google-cloud-translate>=3.15"],
+    "ssh": ["paramiko>=3.4"],
+    "gcs": ["google-cloud-storage>=2.0.0"],
+    "s3": ["boto3>=1.21.21", "boto3-stubs-lite[essential]>=1.21.21"],
+}
+
 setup(
     name="tamr_toolbox",
     version=version_number,
@@ -20,30 +34,21 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/Datatamer/tamr-toolbox",
+    license="Apache-2.0",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+    ],
     packages=find_packages(exclude=["tests", "tests.*"]),
-    python_requires=">=3.6",
+    python_requires=">=3.10",
     install_requires=required,
     extras_require={
         # Super set including all optional dependencies
-        "all": [
-            "pandas>=0.21.0",
-            "aiohttp==3.7.4.post0",
-            "slackclient==2.7.2",
-            "responses==0.10.14",
-            "paramiko>=2.8.0",
-            "google-cloud-translate==3.7.4",
-            "google-cloud-storage>=2.0.0",
-            "boto3>=1.21.21",
-            "boto3-stubs-lite[essential]>=1.21.21",
-        ],
-        # Individual sets of dependencies
-        "address-validation": ["googlemaps==4.10.0"],
-        "pandas": ["pandas>=0.21.0"],
-        "slack": ["aiohttp==3.7.4.post0", "slackclient==2.7.2"],
-        "testing": ["responses==0.10.14"],
-        "translation": ["google-cloud-translate==3.7.4"],
-        "ssh": ["paramiko>=2.8.0"],
-        "gcs": ["google-cloud-storage>=2.0.0"],
-        "s3": ["boto3>=1.21.21", "boto3-stubs-lite[essential]>=1.21.21"],
+        "all": sorted({dep for deps in optional_dependencies.values() for dep in deps}),
+        **optional_dependencies,
     },
 )

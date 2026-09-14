@@ -1,9 +1,9 @@
 """
 An example script to change dataset attributes for a Tamr dataset
 """
+
 import tamr_toolbox as tbox
 from tamr_toolbox.models import attribute_type
-
 
 # load example multi config
 my_config = tbox.utils.config.from_yaml("examples/resources/conf/migrate_dataset.config.yaml")

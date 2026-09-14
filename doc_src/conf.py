@@ -12,9 +12,6 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-from recommonmark.transform import AutoStructify
-
-
 # -- Project information -----------------------------------------------------
 
 project = "Tamr Toolbox"
@@ -38,7 +35,7 @@ version = f"{raw_version_parts[0]} - {raw_version_parts[1].capitalize()}"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "recommonmark",
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.napoleon",
@@ -50,8 +47,10 @@ extensions = [
 autodoc_default_options = {"inherited-members": True, "members": True}
 autodoc_member_order = "bysource"
 autosectionlabel_prefix_document = True
+# Markdown is parsed by myst_parser (see extensions). Navigation is written as explicit
+# ```{toctree} directives in the .md files;
 intersphinx_mapping = {
-    "https://docs.python.org/": None,
+    "python": ("https://docs.python.org/3", None),
     "requests": ("https://requests.readthedocs.io/en/latest/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "tamr_client": ("https://tamr-client.readthedocs.io/en/stable/", None),
@@ -95,7 +94,7 @@ html_theme = "sphinx_rtd_theme"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {"display_version": True}
+html_theme_options = {"version_selector": True}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -187,13 +186,3 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
-
-
-def setup(app):
-    """
-    https://recommonmark.readthedocs.io/en/latest/auto_structify.html#configuring-autostructify
-    """
-    app.add_config_value(
-        "recommonmark_config", {"enable_auto_toc_tree": True, "auto_toc_maxdepth": 2}, True
-    )
-    app.add_transform(AutoStructify)

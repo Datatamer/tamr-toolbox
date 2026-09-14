@@ -3,6 +3,7 @@ parameter. The default value of *ingest* is what is used in the simple example.
 However, the code below shows how to connect to multiple source databases using a more
 complicated config file.
 """
+
 import tamr_toolbox as tbox
 
 # load example config file for multiple databases

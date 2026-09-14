@@ -1,4 +1,5 @@
 """Example script for running a Schema Mapping project step-by-step"""
+
 import argparse
 from typing import List, Dict, Any
 

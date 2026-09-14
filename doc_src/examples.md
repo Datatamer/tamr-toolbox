@@ -1,11 +1,15 @@
 # Examples
-* [Data Input/Output](examples/data_io.rst)
-* [Dataset](examples/dataset.rst)
-* [Enrichment](examples/enrichment.rst)
-* [Filesystem](examples/filesystem.rst)
-* [RealTime](examples/realtime.rst)
-* [Notifications](examples/notifications.md)
-* [Project](examples/project.rst)
-* [Sysadmin](examples/sysadmin.rst)
-* [Utilities](examples/utils.rst)
-* [Workflow](examples/workflow.rst)
+```{toctree}
+:maxdepth: 2
+
+Data Input/Output <examples/data_io>
+Dataset <examples/dataset>
+Enrichment <examples/enrichment>
+Filesystem <examples/filesystem>
+RealTime <examples/realtime>
+Notifications <examples/notifications>
+Project <examples/project>
+Sysadmin <examples/sysadmin>
+Utilities <examples/utils>
+Workflow <examples/workflow>
+```

@@ -1,4 +1,5 @@
 """Tasks related to attribute configurations as part of Tamr projects"""
+
 from tamr_unify_client.project.attribute_configuration.resource import AttributeConfigurationSpec
 
 from tamr_unify_client.project.resource import Project
@@ -204,7 +205,7 @@ def update_attribute_configuration(
     for key, value in attribute_variable_dict.items():
         # Check if an update
         if value == attribute_config[key]:
-            LOGGER.warn(f"Attribute configuration variable {key} will not change!")
+            LOGGER.warning(f"Attribute configuration variable {key} will not change!")
             pass
         else:
             LOGGER.info(

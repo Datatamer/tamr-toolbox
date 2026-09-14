@@ -1,4 +1,5 @@
 """Tasks related to creation of Slack notifications"""
+
 import logging
 import os
 from typing import Union, List, Optional
@@ -18,12 +19,12 @@ LOGGER = logging.getLogger(__name__)
 BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
 if BUILDING_DOCS:
     # Import relevant optional dependencies
-    import slack
+    import slack_sdk
 
 
 def send_message(
     *,
-    slack_client: "slack.WebClient",
+    slack_client: "slack_sdk.WebClient",
     channel: str,
     message: str,
     raise_error: bool = True,
@@ -46,7 +47,7 @@ def send_message(
     """
 
     # This function requires slack, an optional dependency
-    from slack.errors import SlackApiError
+    from slack_sdk.errors import SlackApiError
 
     try:
         slack_response = slack_client.chat_postMessage(channel=channel, text=message)
@@ -68,7 +69,7 @@ def send_message(
 
 def _send_job_status_message(
     *,
-    slack_client: "slack.WebClient",
+    slack_client: "slack_sdk.WebClient",
     channel: str,
     operation: Operation,
     notify_states: List[OperationState],
@@ -93,14 +94,15 @@ def _send_job_status_message(
 def monitor_job(
     tamr: Client,
     *,
-    slack_client: "slack.WebClient",
+    slack_client: "slack_sdk.WebClient",
     channel: str,
     operation: Union[int, str, Operation],
     poll_interval_seconds: float = 1,
     timeout_seconds: Optional[float] = None,
     notify_states: Optional[List[OperationState]] = None,
 ) -> List[JsonDict]:
-    """Monitors a Tamr Operation and sends a Slack message to a channel when the job status is updated
+    """Monitors a Tamr Operation and sends a Slack message to a channel when the job status is
+    updated
 
     Args:
         tamr: A Tamr client

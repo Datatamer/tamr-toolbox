@@ -1,4 +1,5 @@
 """An example script to translate data from disk and save results on disk"""
+
 from typing import List
 
 import tamr_toolbox as tbox

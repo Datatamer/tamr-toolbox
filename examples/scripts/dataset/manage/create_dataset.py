@@ -1,4 +1,5 @@
 """Example script for creating a dataset"""
+
 import argparse
 from typing import Dict, Any, List
 

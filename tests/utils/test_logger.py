@@ -110,8 +110,7 @@ def test_log_uncaught_exception():
             os.remove(log_file_path)
 
         with open(script_path, "w") as f:
-            f.write(
-                f"""from pathlib import Path
+            f.write(f"""from pathlib import Path
 import tamr_toolbox
 
 logger = tamr_toolbox.utils.logger.create(
@@ -121,8 +120,7 @@ logger = tamr_toolbox.utils.logger.create(
     log_prefix="{log_prefix}",
 )
 1/0
-"""
-            )
+""")
             f.close()
 
         os.system(f"python {script_path}")

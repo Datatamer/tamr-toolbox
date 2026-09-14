@@ -1,4 +1,5 @@
 """Tests for tasks related to creation of Email notifications"""
+
 from unittest.mock import patch
 
 import tamr_toolbox as tbox

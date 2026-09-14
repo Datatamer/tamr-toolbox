@@ -1,4 +1,5 @@
 """An example script to translate data from Tamr and save results in Tamr"""
+
 from typing import Dict, Any
 
 import tamr_toolbox as tbox

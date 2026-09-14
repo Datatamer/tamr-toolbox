@@ -1,4 +1,5 @@
 """Tasks related to testing code"""
+
 import logging
 import json
 import os
@@ -15,7 +16,6 @@ from requests import Response, ConnectionError
 from tamr_unify_client.operation import Operation
 
 from tamr_toolbox import utils
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -310,7 +310,7 @@ try:
             response = _BASE_SEND_REAL(*args, **kwargs)
 
             # Prevent recursion
-            with mock.patch("responses._real_send", new=_BASE_SEND_REAL):
+            with mock.patch.object(responses.mock, "_real_send", new=_BASE_SEND_REAL):
                 _log_response(
                     log_path=response_log_path,
                     response=response,
@@ -319,7 +319,9 @@ try:
                 )
             return response
 
-        with mock.patch("responses._real_send", new=_send_real_with_log):
+        # responses>=0.17 binds the real send function onto the RequestsMock instance at
+        # construction time, so the instance attribute (not the module global) must be patched
+        with mock.patch.object(responses.mock, "_real_send", new=_send_real_with_log):
             test_function(**kwargs)
 
         # Setting the passthru above permanently changes state for online testing

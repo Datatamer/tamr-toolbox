@@ -27,6 +27,7 @@ ensure that you neither run any SQL deleterious to the database. Related,
 DO NOT RUN ARBITRARY SQL PASSED FROM UNKNOWN SOURCES.
 Doing so opens you up to SQL-injection vulnerabilities. https://xkcd.com/327/
 """
+
 from typing import List
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_toolbox.data_io.file_system_type import FileSystemType

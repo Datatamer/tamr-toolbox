@@ -1,4 +1,5 @@
 """Tests for tasks related to moving data in or out of Tamr using delimited files"""
+
 import pytest
 from typing import List, Optional, Dict
 import io

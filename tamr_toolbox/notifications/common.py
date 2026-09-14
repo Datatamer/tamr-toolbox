@@ -1,4 +1,5 @@
 """Tasks related to creation of Email notifications"""
+
 from typing import Union, List, Optional, Callable
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client import Client
