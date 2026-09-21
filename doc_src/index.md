@@ -61,8 +61,10 @@ Because Tamr Toolbox is aimed at advanced functionality not available through th
 your client using a user with `admin` permissions.
 
 ## Reference
-  * [Installation](installation.md)
-  
-  * [Examples](examples.md)
+```{toctree}
+:maxdepth: 2
 
-  * [Modules](modules.md)
+Installation <installation>
+Examples <examples>
+Modules <modules>
+```

@@ -1,4 +1,5 @@
 """Tests for tasks related to running jobs for Tamr Golden Records projects"""
+
 import pytest
 
 from tamr_toolbox.project import golden_records

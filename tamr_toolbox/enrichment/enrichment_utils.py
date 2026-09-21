@@ -1,4 +1,5 @@
 """Utilities shared by enrichment services."""
+
 import json
 import os
 from typing import Any, Generator, List, Optional, Tuple

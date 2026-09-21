@@ -1,4 +1,5 @@
 """Snippet for importing project artifacts into a Tamr project"""
+
 import tamr_toolbox as tbox
 from tamr_toolbox.project import import_artifacts
 

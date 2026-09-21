@@ -1,4 +1,5 @@
 """Snippet explicitly check that a dataset is streamable when exporting with df_connect"""
+
 import tamr_toolbox as tbox
 
 # read config and connect Tamr client

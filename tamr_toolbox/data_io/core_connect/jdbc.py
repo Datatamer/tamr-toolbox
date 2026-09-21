@@ -1,10 +1,10 @@
 """Tasks related to interacting with the Tamr Core-connect"""
+
 import logging
 from tamr_toolbox.models.data_type import JsonDict
 from tamr_unify_client import Client
 from tamr_toolbox.utils import version
 from tamr_toolbox.data_io import common
-
 
 LOGGER = logging.getLogger(__name__)
 

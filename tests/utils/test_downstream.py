@@ -1,4 +1,5 @@
 """Tests for tasks related to getting downstream artifacts"""
+
 import tamr_toolbox
 from tests._common import get_toolbox_root_dir
 from tamr_toolbox.utils.testing import mock_api

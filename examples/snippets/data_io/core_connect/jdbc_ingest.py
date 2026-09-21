@@ -3,6 +3,7 @@ The below code is an example that reads a config file, shows how to use it to cr
  `Client` object, and then streams an example table into Tamr. Relies on default values and
  everything being specified by config file.
 """
+
 import tamr_toolbox as tbox
 
 # read in all the configurations

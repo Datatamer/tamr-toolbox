@@ -1,7 +1,11 @@
 # Project
- * [Categorization](project/categorization.rst)
- * [Golden Records](project/golden_records.rst)
- * [Mastering](project/mastering.rst)
- * [Schema Mapping](project/schema_mapping.rst)
- * [Project Movement](project/movement.rst)
- * [Common](project/common.rst)
+```{toctree}
+:maxdepth: 2
+
+Categorization <project/categorization>
+Golden Records <project/golden_records>
+Mastering <project/mastering>
+Schema Mapping <project/schema_mapping>
+Project Movement <project/movement>
+Common <project/common>
+```

@@ -1,0 +1,19 @@
+# gitleaks configuration. Extends the default ruleset with an allowlist for the placeholder
+# credentials used in tests, examples, and the published docs.
+title = "tamr-toolbox gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Placeholder credentials in tests, examples, and docs"
+regexes = [
+    '''AIzaTestKeyTestKeyTestKeyTestKeyTestKey''',
+    '''example-password''',
+    '''xoxb-12345-12345-A1b2C3d4E5''',
+    '''d8mO2yX\.\.\.prnfp2FL4=''',
+    '''"(my_password|sender_password|ingest_pw|oracle_pw|postgres_pw)"''',
+]
+paths = [
+    '''^docs/''',
+]

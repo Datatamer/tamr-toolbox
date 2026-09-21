@@ -1,4 +1,5 @@
 """Tasks related to metrics for Tamr Categorization projects"""
+
 import logging
 
 from tamr_unify_client.categorization.taxonomy import Taxonomy

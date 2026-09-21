@@ -1,4 +1,5 @@
 """Tests for tasks related to loading and using csutom button yaml files"""
+
 import pytest
 from tamr_toolbox.utils.custom_button import (
     create_redirect_button,

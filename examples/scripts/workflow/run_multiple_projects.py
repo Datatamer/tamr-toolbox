@@ -1,4 +1,5 @@
 """Example script for running a pipeline consisting of multiple Tamr projects"""
+
 import argparse
 from typing import List, Dict
 

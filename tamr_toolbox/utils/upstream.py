@@ -1,4 +1,5 @@
 """Functions related to projects upstream of a specified project"""
+
 from typing import List, Optional
 import logging
 
@@ -140,7 +141,6 @@ def _find_datasets(dataset: Dataset) -> List[Dataset]:
 
 
 def _request_upstream_datasets(dataset: Dataset) -> Dataset:
-
     """Returns a dataset's upstream dataset
 
     Args:

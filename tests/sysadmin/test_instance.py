@@ -1,4 +1,5 @@
 """Test for tasks related to a Tamr instance"""
+
 from unittest import mock
 from unittest.mock import MagicMock, call
 
@@ -129,7 +130,7 @@ def test_start_tamr(run_command):
 
     # Test starting with dependencies
     tbox.sysadmin.instance.start_tamr(tamr_install_dir=tamr_dir, include_dependencies=True)
-    run_command.has_calls(
+    run_command.assert_has_calls(
         [
             call(
                 command=f"{tamr_dir}/tamr/start-dependencies.sh",
@@ -169,7 +170,7 @@ def test_stop_tamr(run_command):
 
     # Test stopping with dependencies
     tbox.sysadmin.instance.stop_tamr(tamr_install_dir=tamr_dir, include_dependencies=True)
-    run_command.has_calls(
+    run_command.assert_has_calls(
         [
             call(
                 command=f"{tamr_dir}/tamr/stop-unify.sh",
@@ -209,7 +210,7 @@ def test_restart_tamr(run_command):
 
     # Test restarting with dependencies
     tbox.sysadmin.instance.restart_tamr(tamr_install_dir=tamr_dir, include_dependencies=True)
-    run_command.has_calls(
+    run_command.assert_has_calls(
         [
             call(
                 command=f"{tamr_dir}/tamr/stop-unify.sh",
@@ -217,6 +218,7 @@ def test_restart_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
             call(
                 command=f"{tamr_dir}/tamr/stop-dependencies.sh",
@@ -224,6 +226,7 @@ def test_restart_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
             call(
                 command=f"{tamr_dir}/tamr/start-dependencies.sh",
@@ -231,6 +234,7 @@ def test_restart_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
             call(
                 command=f"{tamr_dir}/tamr/start-unify.sh",
@@ -238,6 +242,7 @@ def test_restart_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
         ]
     )
@@ -245,7 +250,7 @@ def test_restart_tamr(run_command):
     # Test restarting without dependencies
     run_command.reset_mock()
     tbox.sysadmin.instance.restart_tamr(tamr_install_dir=tamr_dir, include_dependencies=False)
-    run_command.has_calls(
+    run_command.assert_has_calls(
         [
             call(
                 command=f"{tamr_dir}/tamr/stop-unify.sh",
@@ -253,6 +258,7 @@ def test_restart_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
             call(
                 command=f"{tamr_dir}/tamr/start-unify.sh",
@@ -260,6 +266,7 @@ def test_restart_tamr(run_command):
                 impersonation_username=None,
                 impersonation_password=None,
                 enforce_success=True,
+                verbose=False,
             ),
         ]
     )

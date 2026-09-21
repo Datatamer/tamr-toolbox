@@ -1,4 +1,5 @@
 """Tests for Tamr Categorization project example scripts"""
+
 from tamr_toolbox import utils
 from tamr_toolbox.utils.testing import mock_api
 

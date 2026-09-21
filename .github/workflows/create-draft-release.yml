@@ -4,14 +4,14 @@ on:
 
 jobs:
   CreateDraftRelease:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Install Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: '3.12'
       - name: Checkout release branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -29,6 +29,8 @@ jobs:
       - name: Build docs
         run: invoke docs
 
+      # TODO: verify on ubuntu-latest (24.04). The 0.12.4 linux-generic binary links against
+      # OpenSSL 1.0, which the runner no longer ships; this step was last known-good on ubuntu-20.04.
       - name: Install wkhtmltopdf
         run:  sudo apt-get update && sudo apt-get install openssl build-essential xorg libssl-dev && wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && tar xvJf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && sudo cp wkhtmltox/bin/wkhtmlto* /usr/bin/
       - name: Create pdf
@@ -61,7 +63,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1  # archived by GitHub, unmaintained; still functional
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -72,7 +74,7 @@ jobs:
           body: ${{ env.release }}
 
       - name: Upload pdf docs
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1  # archived by GitHub, unmaintained; still functional
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

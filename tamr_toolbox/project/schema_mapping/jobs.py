@@ -1,4 +1,5 @@
 """Tasks related to running jobs for Tamr Schema Mapping projects"""
+
 from typing import List
 import logging
 

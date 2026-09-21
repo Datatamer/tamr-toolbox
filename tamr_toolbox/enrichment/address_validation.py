@@ -1,4 +1,5 @@
 """Tasks related to validation and refresh of address data using Google Maps API"""
+
 import logging
 import math
 import os

@@ -1,4 +1,5 @@
 """Tasks related to a Tamr instance"""
+
 import re
 from typing import Optional, Dict, List, Any
 

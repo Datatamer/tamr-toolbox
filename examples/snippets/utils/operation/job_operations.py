@@ -1,4 +1,5 @@
 """Snippet for interacting with Tamr operations (or jobs)"""
+
 import tamr_toolbox as tbox
 
 # Make Tamr Client

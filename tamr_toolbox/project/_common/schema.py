@@ -1,4 +1,5 @@
 """Tasks related to schema mapping as part of Tamr projects"""
+
 from tamr_unify_client.project.attribute_mapping.resource import (
     AttributeMappingSpec,
     AttributeMapping,

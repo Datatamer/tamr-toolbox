@@ -1,4 +1,5 @@
 """Tasks related to running jobs for Tamr Mastering projects"""
+
 from typing import List
 import logging
 

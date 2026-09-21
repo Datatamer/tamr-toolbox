@@ -1,4 +1,5 @@
 """Example script for bootstrapping a Tamr Categorization project with taxonomy categories"""
+
 import argparse
 import logging
 import pandas as pd

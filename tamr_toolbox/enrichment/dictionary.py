@@ -1,5 +1,6 @@
 """Tasks related to creating, updating, saving and moving translation dictionaries
 in and out of Tamr"""
+
 import json
 import logging
 import os

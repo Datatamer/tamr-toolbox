@@ -1,4 +1,5 @@
 """Tests for tasks related to schema mapping as part of Tamr projects"""
+
 import logging
 from json import JSONDecodeError
 from unittest.mock import patch

@@ -1,4 +1,8 @@
 # Notifications
- * [Slack](/modules/notifications/slack.md)
- * [Emails](/modules/notifications/emails.md)
- * [Common](/modules/notifications/common.md)
+```{toctree}
+:maxdepth: 2
+
+Slack <notifications/slack>
+Emails <notifications/emails>
+Common <notifications/common>
+```

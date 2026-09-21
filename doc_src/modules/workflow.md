@@ -1,4 +1,8 @@
 # Workflow
- * [Backup](workflow/backup.rst)
- * [Concurrent](workflow/concurrent.rst)
- * [Jobs](workflow/jobs.rst)
+```{toctree}
+:maxdepth: 2
+
+Backup <workflow/backup>
+Concurrent <workflow/concurrent>
+Jobs <workflow/jobs>
+```

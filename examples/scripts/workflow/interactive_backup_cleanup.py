@@ -1,4 +1,5 @@
 """Example script for an interactive command prompt for Tamr backup management"""
+
 from typing import Union
 import argparse
 from pathlib import Path

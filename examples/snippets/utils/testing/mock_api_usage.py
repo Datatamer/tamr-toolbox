@@ -1,4 +1,5 @@
 """Example script for using the mock_api decorator for testing your code"""
+
 import pytest
 
 import tamr_toolbox as tbox

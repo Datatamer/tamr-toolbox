@@ -1,4 +1,5 @@
 """Example script for running a Tamr Schema Mapping project"""
+
 import argparse
 from typing import List, Dict, Any
 

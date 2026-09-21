@@ -1,4 +1,5 @@
 """Tests for tasks related to transformations with Tamr projects"""
+
 import pytest
 
 from tamr_toolbox.project.mastering import attribute_configuration

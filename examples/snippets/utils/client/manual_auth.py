@@ -3,6 +3,7 @@ Snippet for creating a tamr client object with manual passing of credentials dur
 
 Note: This approach cannot be coupled with fully automated workflows (e.g., crontab jobs)
 """
+
 from getpass import getpass
 from tamr_toolbox import utils as tbu
 

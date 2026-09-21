@@ -1,4 +1,5 @@
 """Tasks related to logging within scripts"""
+
 import os
 import sys
 import logging

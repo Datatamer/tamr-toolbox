@@ -1,4 +1,5 @@
 """Tests for updating PlanNodeStatus"""
+
 import time
 
 from tamr_unify_client.operation import Operation

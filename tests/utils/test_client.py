@@ -1,4 +1,5 @@
 """Tests for tasks related to connecting to a Tamr instance"""
+
 import logging
 import os
 import pytest

@@ -1,4 +1,5 @@
 """Enum representing plan status"""
+
 from enum import Enum
 from tamr_toolbox.workflow.concurrent.PlanNodeStatus import PlanNodeStatus
 

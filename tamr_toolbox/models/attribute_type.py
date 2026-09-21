@@ -1,4 +1,5 @@
 """Enum and dataclasses representing attribute types in Tamr"""
+
 from enum import Enum
 from dataclasses import dataclass
 from typing import ClassVar, Tuple, Union

@@ -1,4 +1,5 @@
 """Tests for related to the Tamr auxiliary service DF-connect"""
+
 import pytest
 from tamr_toolbox.data_io.df_connect import client
 from tamr_toolbox.utils.config import from_yaml

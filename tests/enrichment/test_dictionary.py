@@ -1,5 +1,6 @@
 """Tests for tasks related to creating, updating, saving and moving translation dictionaries
 in and out of Tamr"""
+
 from tamr_toolbox.enrichment.dictionary import TranslationDictionary
 
 from tamr_toolbox import utils
@@ -13,7 +14,6 @@ from typing import Optional
 import tempfile
 import pytest
 from unittest.mock import patch
-
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/toolbox_test.yaml"

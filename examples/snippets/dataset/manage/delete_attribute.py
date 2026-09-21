@@ -1,6 +1,7 @@
 """
 An example script to delete attributes from a Tamr dataset
 """
+
 import tamr_toolbox as tbox
 
 # load example multi config

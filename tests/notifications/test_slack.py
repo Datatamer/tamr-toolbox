@@ -1,17 +1,17 @@
 """Tests for tasks related to creation of Slack notifications"""
+
 import pytest
 
 from requests import HTTPError
-from slack import WebClient
-from slack.errors import SlackApiError
-from slack.web.slack_response import SlackResponse
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+from slack_sdk.web.slack_response import SlackResponse
 from unittest.mock import MagicMock
 
 from tamr_toolbox import utils, notifications
 from tamr_toolbox.utils.operation import from_resource_id, get_details
 from tamr_toolbox.utils.testing import mock_api
 from tests._common import get_toolbox_root_dir
-
 
 CONFIG = utils.config.from_yaml(
     get_toolbox_root_dir() / "tests/mocking/resources/notifications.config.yaml"

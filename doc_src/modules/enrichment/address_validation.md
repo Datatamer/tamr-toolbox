@@ -4,14 +4,14 @@ This module requires an optional dependency. See [Installation](../../installati
 
 ## Validate
 
- ```eval_rst
+ ```{eval-rst}
  .. automodule:: tamr_toolbox.enrichment.address_validation
 
  ```
 
 ## Address Validation Mappings
 
- ```eval_rst
+ ```{eval-rst}
  .. automodule:: tamr_toolbox.enrichment.address_mapping
 
  ```

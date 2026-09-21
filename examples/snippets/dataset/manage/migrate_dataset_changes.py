@@ -1,6 +1,7 @@
 """
 An example script to migrate changes to a dataset attributes from one instance of Tamr to another
 """
+
 import tamr_toolbox as tbox
 
 # load example multi config

@@ -1,4 +1,5 @@
 """Tests for common tasks to the testing framework only"""
+
 from types import ModuleType
 
 from tests._common import get_toolbox_root_dir

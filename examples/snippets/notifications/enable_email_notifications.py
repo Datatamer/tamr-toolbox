@@ -1,4 +1,5 @@
 """Example script for generating Email notifications based on Tamr jobs"""
+
 import tamr_toolbox as tbox
 from tamr_toolbox.models.operation_state import OperationState
 

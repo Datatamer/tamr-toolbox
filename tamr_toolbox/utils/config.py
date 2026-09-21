@@ -1,4 +1,5 @@
 """Tasks related to loading and using configuration files"""
+
 from typing import Union, Optional
 from pathlib import Path
 

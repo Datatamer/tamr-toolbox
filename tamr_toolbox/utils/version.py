@@ -1,4 +1,5 @@
 """Tasks related to the version of Tamr instances"""
+
 from functools import wraps
 import inspect
 import json

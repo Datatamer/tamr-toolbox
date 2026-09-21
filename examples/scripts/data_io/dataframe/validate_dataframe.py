@@ -1,4 +1,5 @@
 """Example script for validating the contents of a DataFrame"""
+
 import pandas as pd
 
 from tamr_toolbox.data_io import dataframe

@@ -4,7 +4,7 @@ This module requires an optional dependency. See [Installation](../../installati
 
 ## Dataframe operations
 
- ```eval_rst
+ ```{eval-rst}
  .. automodule:: tamr_toolbox.data_io.dataframe
 
  ```

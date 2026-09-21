@@ -1,4 +1,5 @@
 """Enum representing types of the filesystems"""
+
 from enum import Enum
 
 

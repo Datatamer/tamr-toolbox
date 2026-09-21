@@ -1,4 +1,5 @@
 """Tests for tasks related to the version of Tamr instances"""
+
 from typing import Union, Type
 
 import pytest

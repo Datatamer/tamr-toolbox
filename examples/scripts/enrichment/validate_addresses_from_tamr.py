@@ -1,4 +1,5 @@
 """An example script to validate address data from Tamr and save results in Tamr"""
+
 import argparse
 from datetime import timedelta
 from typing import Any, Dict, List

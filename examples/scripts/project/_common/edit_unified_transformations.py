@@ -1,5 +1,6 @@
 """Example script for creation and editing of transformations scoped to the unified dataset
 in a Tamr project"""
+
 from typing import Dict, Any
 
 import tamr_toolbox as tbox

@@ -1,4 +1,5 @@
 """Snippet for exporting project artifacts from a Tamr project"""
+
 import tamr_toolbox as tbox
 from tamr_toolbox.project import export_artifacts
 from tamr_toolbox.models.project_artifacts import CategorizationArtifacts

@@ -1,8 +1,8 @@
 """Starting and stopping Tamr"""
+
 import tamr_toolbox as tbox
 import paramiko
 import os
-
 
 # Activate logging
 tbox.utils.logger.enable_toolbox_logging()

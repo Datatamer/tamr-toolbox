@@ -6,6 +6,7 @@ need to be run on the actual server on which Tamr is installed to work as expect
 
 Important: Custom buttons are only available to versions 2022.008.0 and later
 """
+
 import logging
 from typing import List, Optional, Union
 import yaml
@@ -16,6 +17,13 @@ from tamr_toolbox.sysadmin.instance import _run_command
 from tamr_toolbox.utils.version import requires_tamr_version
 
 LOGGER = logging.getLogger(__name__)
+
+# Building our documentation requires access to all dependencies, including optional ones
+# This environments variable is set automatically when `invoke docs` is used
+BUILDING_DOCS = os.environ.get("TAMR_TOOLBOX_DOCS") == "1"
+if BUILDING_DOCS:
+    # Import relevant optional dependencies
+    import paramiko
 
 TAMR_RELEASE_VERSION = "2022.008.0"
 

@@ -1,4 +1,5 @@
 """Tests for asks related to translating data with the google translation API"""
+
 from typing import Dict, List, Optional
 from tamr_toolbox.enrichment.dictionary import TranslationDictionary
 
@@ -8,7 +9,6 @@ from google.cloud.translate_v2 import Client as GoogleTranslateClient
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 
 # Raw export of minimal_schema_mapping_unified_dataset
 TEST_TRANSLATION_DICTIONARY = {

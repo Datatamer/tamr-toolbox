@@ -4,7 +4,7 @@ This module requires an optional dependency. See [Installation](../../installati
 
 ## Translate
 
- ```eval_rst
+ ```{eval-rst}
  .. automodule:: tamr_toolbox.enrichment.translate
 
  ```
@@ -49,7 +49,7 @@ the primary key and the following attributes:
 <br />
 
 
- ```eval_rst
+ ```{eval-rst}
  .. automodule:: tamr_toolbox.enrichment.dictionary
 
  ```

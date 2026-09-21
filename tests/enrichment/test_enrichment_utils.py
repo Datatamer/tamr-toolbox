@@ -1,4 +1,5 @@
 """Tests for enrichment utility functions."""
+
 import json
 
 import pandas as pd

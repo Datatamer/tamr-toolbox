@@ -1,4 +1,5 @@
 """Tasks related to interacting with the Tamr auxiliary service DF-connect"""
+
 from dataclasses import dataclass
 import json
 import logging

@@ -5,6 +5,7 @@ Can be used for any project type that has a schema mapping element
 (e.g. all of 'from tamr_toolbox.project.<mastering,categorization,schema_mapping> import schema'
 will work)
 """
+
 import tamr_toolbox as tbox
 import click
 
@@ -86,7 +87,7 @@ def main(
         logger.error(error_message)
         raise RuntimeError(error_message)
 
-    for (source_attr, unified_attr) in mapping_tuples:
+    for source_attr, unified_attr in mapping_tuples:
         logger.debug(f"applying the following mapping: {source_attr} --> {unified_attr}")
         tbox.project.mastering.schema.map_attribute(
             project,

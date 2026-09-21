@@ -1,4 +1,5 @@
 """Enum representing operation states in Tamr"""
+
 from enum import Enum
 
 

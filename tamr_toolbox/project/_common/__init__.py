@@ -1,4 +1,5 @@
 """Tasks related to Tamr projects"""
+
 from . import attribute_configuration
 from . import schema
 from . import transformations
